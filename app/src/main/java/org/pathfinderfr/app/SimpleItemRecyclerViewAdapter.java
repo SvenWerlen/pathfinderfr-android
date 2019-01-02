@@ -19,11 +19,11 @@ import java.util.Map;
 public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-    private final ItemListActivity mParentActivity;
+    private final MainActivity mParentActivity;
     private final List<DBEntity> mValues;
     private final boolean mTwoPane;
 
-    SimpleItemRecyclerViewAdapter(ItemListActivity parent,
+    SimpleItemRecyclerViewAdapter(MainActivity parent,
                                   List<DBEntity> items,
                                   boolean twoPane) {
         mValues = items;

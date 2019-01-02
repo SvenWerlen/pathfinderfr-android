@@ -82,6 +82,6 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
+        //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
     }
 }
