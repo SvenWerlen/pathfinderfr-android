@@ -5,12 +5,18 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import java.util.Map;
+
 public class SpellFactory extends DBEntityFactory {
 
     private static final String TABLENAME   = "spells";
     private static final String COLUMN_ID   = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "description";
+
+    private static final String YAML_NAME   = "Nom";
+    private static final String YAML_DESC   = "Description";
+
 
     private static SpellFactory instance;
     private SpellFactory() {}
@@ -51,13 +57,23 @@ public class SpellFactory extends DBEntityFactory {
     @Override
     public DBEntity generateEntity(@NonNull final Cursor resource) {
         Spell spell = new Spell();
-        spell.setId(resource.getInt(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
+        spell.setId(resource.getLong(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
         spell.setName(resource.getString(resource.getColumnIndex(SpellFactory.COLUMN_NAME)));
         spell.setDescription(resource.getString(resource.getColumnIndex(SpellFactory.COLUMN_DESC)));
         return spell;
     }
 
+    @Override
+    public DBEntity generateEntity(@NonNull Map<String, String> attributes) {
+        Spell spell = new Spell();
+        spell.setName(attributes.get(YAML_NAME));
+        spell.setDescription(attributes.get(YAML_DESC));
+        return spell.isValid() ? spell : null;
+    }
 
-
+    @Override
+    public String getQueryFetchById(long id) {
+        return String.format("SELECT * FROM %s where %s=%d", getTableName(), COLUMN_ID, id);
+    }
 
 }

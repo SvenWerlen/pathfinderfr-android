@@ -1,20 +1,29 @@
 package org.pathfinderfr.app.database.entity;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-
 public class Spell extends DBEntity {
 
-    private int id;
+    private long id;
     private String name;
     private String description;
 
+    // spell-specific
+    private String school;
+    private String level;
+    private String castingTime;
+    private String components;
+    private String range;
+    private String target;
+    private String duration;
+    private String savingThrow;
+    private String spellResistance;
+
+
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

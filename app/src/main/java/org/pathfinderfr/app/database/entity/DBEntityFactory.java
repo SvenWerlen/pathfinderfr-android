@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import java.util.Map;
+
 public abstract class DBEntityFactory {
 
     /**
@@ -17,10 +19,15 @@ public abstract class DBEntityFactory {
     public abstract String getQueryCreateTable();
 
     /**
+     * @return the query to fetch one entity (search by ID)
+     */
+    public abstract String getQueryFetchById(long id);
+
+    /**
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll() {
-        return "select * from " + getTableName();
+        return "SELECT * FROM " + getTableName();
     }
 
     /**
@@ -37,4 +44,12 @@ public abstract class DBEntityFactory {
      * @return a new instance of the entity filled according to data from DB
      */
     public abstract DBEntity generateEntity(@NonNull final Cursor resource);
+
+    /**
+     * Generates an entity based on a map (build from YAML file)
+     *
+     * @param attributes map with all attributes for that entry/entity
+     * @return a new instance of the entity filled according to attributes
+     */
+    public abstract DBEntity generateEntity(@NonNull final Map<String,String> attributes);
 }

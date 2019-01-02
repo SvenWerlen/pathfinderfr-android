@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ import java.util.List;
 public class ItemListActivity extends AppCompatActivity {
 
     DBHelper dbhelper;
-    List<DBEntity> list= new ArrayList<>();
+    List<DBEntity> list = new ArrayList<>();
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -47,19 +49,18 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        dbhelper = new DBHelper(this);
-        list.addAll(dbhelper.getAllEntities(SpellFactory.getInstance()));
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-
+        
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Loading data...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                new DataClient().execute("https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml");
             }
         });
 
@@ -71,6 +72,10 @@ public class ItemListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+        dbhelper = DBHelper.getInstance(this);
+        List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
+        list.addAll(entities);
+
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
@@ -78,75 +83,5 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
-    }
-
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final ItemListActivity mParentActivity;
-        private final List<DBEntity> mValues;
-        private final boolean mTwoPane;
-
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DBEntity item = (DBEntity) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, String.valueOf(item.getId()));
-                    ItemDetailFragment fragment = new ItemDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, String.valueOf(item.getId()));
-
-                    context.startActivity(intent);
-                }
-            }
-        };
-
-        SimpleItemRecyclerViewAdapter(ItemListActivity parent,
-                                      List<DBEntity> items,
-                                      boolean twoPane) {
-            mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).getName());
-            holder.mContentView.setText(mValues.get(position).getDescription());
-
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-        }
     }
 }

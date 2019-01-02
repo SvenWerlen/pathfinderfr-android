@@ -16,11 +16,22 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-
     private List<DBEntityFactory> factories;
 
-    public DBHelper(Context context) {
-        super(context,DATABASE_NAME,null,1);
+    private static DBHelper instance;
+
+    public static synchronized DBHelper getInstance(Context context) {
+        if(instance == null) {
+            if(context == null) {
+                throw new IllegalArgumentException("Cannot create new DBHelper instance without context!");
+            }
+            instance = new DBHelper(context);
+        }
+        return instance;
+    }
+
+    private DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, 1);
 
         factories = new ArrayList<>();
         factories.add(SpellFactory.getInstance());
@@ -28,14 +39,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for(DBEntityFactory f : factories) {
+        for (DBEntityFactory f : factories) {
+            db.execSQL(f.getQueryCreateTable());
+        }
+    }
+
+    public void clear() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (DBEntityFactory f : factories) {
+            db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
             db.execSQL(f.getQueryCreateTable());
         }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        for(DBEntityFactory f : factories) {
+        for (DBEntityFactory f : factories) {
             db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
         }
         onCreate(db);
@@ -54,14 +73,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return rowId != -1;
     }
 
+    public DBEntity fetchEntity(long id, DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchById(id), null );
+        res.moveToFirst();
+        return factory.generateEntity(res);
+    }
+
 
     public List<DBEntity> getAllEntities(DBEntityFactory factory) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( factory.getQueryFetchAll(), null );
+        Cursor res = db.rawQuery(factory.getQueryFetchAll(), null);
         res.moveToFirst();
-        while(res.isAfterLast() == false){
+        while (res.isAfterLast() == false) {
             list.add(factory.generateEntity(res));
             res.moveToNext();
         }
