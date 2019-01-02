@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import org.pathfinderfr.app.util.StringUtil;
+
 import java.util.Map;
 
 public class SpellFactory extends DBEntityFactory {
@@ -20,21 +22,20 @@ public class SpellFactory extends DBEntityFactory {
     private static final String COLUMN_SAVING     = "savingthrow";
     private static final String COLUMN_SPELL_RES  = "spellresistance";
     private static final String COLUMN_AREA       = "area";
-    private static final String COLUMN_EFFECT     = "effect";
 
     private static final String YAML_NAME       = "Nom";
     private static final String YAML_DESC       = "Description";
+    private static final String YAML_REFERENCE  = "Référence";
     private static final String YAML_SCHOOL     = "École";
     private static final String YAML_LEVEL      = "Niveau";
     private static final String YAML_CASTING    = "Temps d’incantation";
     private static final String YAML_COMPONENTS = "Composantes";
     private static final String YAML_RANGE      = "Portée";
-    private static final String YAML_TARGET     = "Cible"; // also cibles
+    private static final String YAML_TARGET     = "Cible";
     private static final String YAML_DURATION   = "Durée";
     private static final String YAML_SAVING     = "Jet de sauvegarde";
     private static final String YAML_SPELL_RES  = "Résistance à la magie";
     private static final String YAML_AREA       = "Zone";
-    private static final String YAML_EFFECT     = "Effet"; // also zone d'effet
 
 
     private static SpellFactory instance;
@@ -64,14 +65,14 @@ public class SpellFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE %s (" +
                         "%s integer PRIMARY key, " +
-                        "%s text, %s text, " +
-                        "%s text, %s text, %s text, %s text, %s text, %s text," +
+                        "%s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
-                COLUMN_NAME, COLUMN_DESC,
-                COLUMN_SCHOOL, COLUMN_LEVEL, COLUMN_CASTING,  COLUMN_COMPONENTS, COLUMN_RANGE, COLUMN_TARGET,
-                COLUMN_DURATION, COLUMN_SAVING, COLUMN_SPELL_RES, COLUMN_AREA, COLUMN_EFFECT);
+                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE,
+                COLUMN_SCHOOL, COLUMN_LEVEL, COLUMN_CASTING,  COLUMN_COMPONENTS, COLUMN_RANGE,
+                COLUMN_TARGET, COLUMN_DURATION, COLUMN_SAVING, COLUMN_SPELL_RES, COLUMN_AREA);
         return query;
     }
 
@@ -84,6 +85,7 @@ public class SpellFactory extends DBEntityFactory {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SpellFactory.COLUMN_NAME, spell.getName());
         contentValues.put(SpellFactory.COLUMN_DESC, spell.getDescription());
+        contentValues.put(SpellFactory.COLUMN_REFERENCE, spell.getReference());
         contentValues.put(SpellFactory.COLUMN_SCHOOL, spell.getSchool());
         contentValues.put(SpellFactory.COLUMN_LEVEL, spell.getLevel());
         contentValues.put(SpellFactory.COLUMN_CASTING, spell.getCastingTime());
@@ -94,7 +96,6 @@ public class SpellFactory extends DBEntityFactory {
         contentValues.put(SpellFactory.COLUMN_SAVING, spell.getSavingThrow());
         contentValues.put(SpellFactory.COLUMN_SPELL_RES, spell.getSpellResistance());
         contentValues.put(SpellFactory.COLUMN_AREA, spell.getArea());
-        contentValues.put(SpellFactory.COLUMN_EFFECT, spell.getEffect());
         return contentValues;
     }
 
@@ -113,6 +114,7 @@ public class SpellFactory extends DBEntityFactory {
         spell.setId(resource.getLong(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
         spell.setName(extractValue(resource,SpellFactory.COLUMN_NAME));
         spell.setDescription(extractValue(resource,SpellFactory.COLUMN_DESC));
+        spell.setReference(extractValue(resource,SpellFactory.COLUMN_REFERENCE));
         spell.setSchool(extractValue(resource,SpellFactory.COLUMN_SCHOOL));
         spell.setLevel(extractValue(resource,SpellFactory.COLUMN_LEVEL));
         spell.setCastingTime(extractValue(resource,SpellFactory.COLUMN_CASTING));
@@ -123,7 +125,6 @@ public class SpellFactory extends DBEntityFactory {
         spell.setSavingThrow(extractValue(resource,SpellFactory.COLUMN_SAVING));
         spell.setSpellResistance(extractValue(resource,SpellFactory.COLUMN_SPELL_RES));
         spell.setArea(extractValue(resource,SpellFactory.COLUMN_AREA));
-        spell.setEffect(extractValue(resource,SpellFactory.COLUMN_EFFECT));
         return spell;
     }
 
@@ -133,6 +134,7 @@ public class SpellFactory extends DBEntityFactory {
         spell.setName(attributes.get(YAML_NAME));
         spell.setDescription(attributes.get(YAML_DESC));
         spell.setSchool(attributes.get(YAML_SCHOOL));
+        spell.setReference(attributes.get(YAML_REFERENCE));
         spell.setLevel(attributes.get(YAML_LEVEL));
         spell.setCastingTime(attributes.get(YAML_CASTING));
         spell.setComponents(attributes.get(YAML_COMPONENTS));
@@ -142,7 +144,6 @@ public class SpellFactory extends DBEntityFactory {
         spell.setSavingThrow(attributes.get(YAML_SAVING));
         spell.setSpellResistance(attributes.get(YAML_SPELL_RES));
         spell.setArea(attributes.get(YAML_AREA));
-        spell.setEffect(attributes.get(YAML_EFFECT));
         return spell.isValid() ? spell : null;
     }
 
@@ -178,7 +179,6 @@ public class SpellFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_SAVING, spell.getSavingThrow()));
         buf.append(generateItemDetail(templateItem, YAML_SPELL_RES, spell.getSpellResistance()));
         buf.append(generateItemDetail(templateItem, YAML_AREA, spell.getArea()));
-        buf.append(generateItemDetail(templateItem, YAML_EFFECT, spell.getEffect()));
         return String.format(templateList,buf.toString());
     }
 

@@ -3,6 +3,7 @@ package org.pathfinderfr.app;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Spell;
+import org.pathfinderfr.app.database.entity.SpellFactory;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -41,8 +43,10 @@ public class ItemDetailActivity extends AppCompatActivity {
         FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
         if(showDetails) {
             moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_lessdetails, getApplicationContext().getTheme()));
+            findViewById(R.id.fabLinkExternal).setVisibility(View.VISIBLE);
         } else {
             moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_moredetails, getApplicationContext().getTheme()));
+            findViewById(R.id.fabLinkExternal).setVisibility(View.GONE);
         }
     }
 
@@ -70,6 +74,21 @@ public class ItemDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "TODO: implémenter la fonction de \"favori\"", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+        // Favorite button
+        FloatingActionButton externalLink = (FloatingActionButton) findViewById(R.id.fabLinkExternal);
+        externalLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
+                if(itemID >0 ) {
+                    DBHelper dbhelper = DBHelper.getInstance(null);
+                    String url = dbhelper.fetchEntity(itemID, SpellFactory.getInstance()).getReference();
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                }
             }
         });
 

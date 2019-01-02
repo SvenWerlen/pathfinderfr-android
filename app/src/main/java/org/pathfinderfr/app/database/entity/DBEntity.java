@@ -6,11 +6,34 @@ public abstract class DBEntity implements Serializable {
 
     public abstract DBEntityFactory getFactory();
 
-    public abstract long getId();
+    protected long id;
+    protected String name;
+    protected String description;
+    protected String reference;
 
-    public abstract String getName();
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-    public abstract String getDescription();
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
 
     public boolean isValid() {
         return getName() != null && getName().length() > 0

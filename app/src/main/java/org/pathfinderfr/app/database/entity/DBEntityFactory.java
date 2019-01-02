@@ -8,9 +8,10 @@ import java.util.Map;
 
 public abstract class DBEntityFactory {
 
-    public static final String COLUMN_ID         = "id";
-    public static final String COLUMN_NAME       = "name";
-    public static final String COLUMN_DESC       = "description";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_DESC = "description";
+    public static final String COLUMN_REFERENCE = "reference";
 
     /**
      * @return name of the table to be used with that entity
@@ -55,7 +56,7 @@ public abstract class DBEntityFactory {
      * @param attributes map with all attributes for that entry/entity
      * @return a new instance of the entity filled according to attributes
      */
-    public abstract DBEntity generateEntity(@NonNull final Map<String,String> attributes);
+    public abstract DBEntity generateEntity(@NonNull final Map<String, String> attributes);
 
     /**
      * Generates the content (generally HTML) based on entity details

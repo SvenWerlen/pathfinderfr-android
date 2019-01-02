@@ -84,7 +84,7 @@ public class ItemDetailFragment extends Fragment {
         if (mItem != null) {
 
             boolean showDetails = getArguments().getBoolean(ARG_ITEM_SHOWDETAILS);
-            String text = mItem.getDescription();
+            String text = mItem.getDescription().replaceAll("\n","<br />");
             if(showDetails) {
                 String detail = mItem.getFactory().generateDetails(mItem,
                         templates.getProperty("template.spell.details"),
