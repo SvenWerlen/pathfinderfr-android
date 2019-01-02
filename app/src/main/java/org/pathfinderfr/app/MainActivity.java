@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
@@ -29,6 +35,10 @@ public class MainActivity extends AppCompatActivity
 
     DBHelper dbhelper;
     List<DBEntity> list = new ArrayList<>();
+    List<DBEntity> listFull = new ArrayList<>();
+
+    RecyclerView recyclerView;
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -43,15 +53,61 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // search button appears only for item-list view
+        ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                toolbar.setVisibility(View.VISIBLE);
+                findViewById(R.id.searchButton).setVisibility(View.GONE);
+                findViewById(R.id.closeSearchButton).setVisibility(View.VISIBLE);
 
-                Snackbar.make(view, "Search filter", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                EditText input = (EditText) findViewById(R.id.searchinput);
+                input.setVisibility(View.VISIBLE);
+                input.requestFocus();
+
+                //Snackbar.make(view, "Search filter", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+            }
+        });
+
+        // search input appears when user clicks on search button
+        EditText searchInput = (EditText) findViewById(R.id.searchinput);
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String criteria = s.toString().toLowerCase();
+                if(criteria.length() >= 3) {
+                    list.clear();
+                    for(DBEntity el : listFull) {
+                        if(el.getName().toLowerCase().indexOf(criteria)>=0) {
+                            list.add(el);
+                        }
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
+            }
+        });
+
+        ImageButton closeSearchButton = (ImageButton) findViewById(R.id.closeSearchButton);
+        closeSearchButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // Clear search input and close and make search visible again
+                findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
+                findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
+                EditText searchInput = (EditText) findViewById(R.id.searchinput);
+                searchInput.setText("");
+                searchInput.setVisibility(View.GONE);
+                list.clear();
+                list.addAll(listFull);
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
         });
 
@@ -71,9 +127,8 @@ public class MainActivity extends AppCompatActivity
 
         dbhelper = DBHelper.getInstance(this);
 
-        View recyclerView = findViewById(R.id.item_list);
-        assert recyclerView != null;
-        ((RecyclerView) recyclerView).setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
+        recyclerView = (RecyclerView)findViewById(R.id.item_list);
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -123,13 +178,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_spells) {
             List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
             list.clear();
+            listFull.clear();
             list.addAll(entities);
+            listFull.addAll(entities);
             dataChanged = true;
         } else if (id == R.id.nav_skills) {
             list.clear();
+            listFull.clear();
             dataChanged = true;
         } else if (id == R.id.nav_feats) {
             list.clear();
+            listFull.clear();
             dataChanged = true;
         } else if (id == R.id.nav_share) {
 
@@ -137,10 +196,13 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        if(dataChanged) {
-            View recyclerView = findViewById(R.id.item_list);
-            assert recyclerView != null;
-            ((RecyclerView) recyclerView).getAdapter().notifyDataSetChanged();
+        if (dataChanged) {
+            findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
+            EditText searchInput = (EditText) findViewById(R.id.searchinput);
+            searchInput.setText("");
+            searchInput.setVisibility(View.GONE);
+            findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

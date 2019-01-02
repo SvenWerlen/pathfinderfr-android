@@ -10,6 +10,9 @@
     <string name="action_settings">Paramètres</string>
     <string name="title_activity_settings">Paramètres</string>
 
+    <!-- Strings related to Toolbar -->
+    <string name="toolbar_search">Saisir du texte pour filtrer...</string>
+
     <!-- Strings related to Navigation -->
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
