@@ -11,10 +11,8 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.dummy.DummyContent;
 
 import java.util.List;
-import java.util.Map;
 
 public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {

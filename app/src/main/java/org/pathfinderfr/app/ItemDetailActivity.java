@@ -1,14 +1,23 @@
 package org.pathfinderfr.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
@@ -18,11 +27,24 @@ import org.pathfinderfr.app.database.entity.Spell;
  * An activity representing a single Item detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link ItemListActivity}.
  */
 public class ItemDetailActivity extends AppCompatActivity {
 
+    private final static String PREF_SHOWDETAILS = "general_showdetails";
+    private boolean showDetails;
 
+
+    /**
+     * Updates the button icon (showMore, showLess) according to status
+     */
+    private void updateButtonIcon() {
+        FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
+        if(showDetails) {
+            moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_lessdetails, getApplicationContext().getTheme()));
+        } else {
+            moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_moredetails, getApplicationContext().getTheme()));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +53,19 @@ public class ItemDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        showDetails = preferences.getBoolean(PREF_SHOWDETAILS, false);
+        updateButtonIcon();
+
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        // Favorite button
+        ImageButton favorite = (ImageButton) findViewById(R.id.favoriteButton);
+        favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "TODO: implémenter la fonction de \"favori\"", Snackbar.LENGTH_LONG)
@@ -40,11 +73,25 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        // More details button
+        FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
+        moreDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showDetails = !showDetails;
+                updateButtonIcon();
+
+                // refresh fragment
+                Bundle arguments = new Bundle();
+                arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
+                arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails);
+
+                Fragment frg = getSupportFragmentManager().findFragmentById(R.id.item_detail_container);
+                frg.setArguments(arguments);
+                getSupportFragmentManager().beginTransaction().detach(frg).attach(frg).commit();
+            }
+        });
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -59,16 +106,14 @@ public class ItemDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putLong(ItemDetailFragment.ARG_ITEM_ID,
-                    getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID,0));
+            arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
+            arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
-
-
 
 
     }
@@ -83,7 +128,8 @@ public class ItemDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, ItemListActivity.class));
+            //navigateUpTo(new Intent(this, MainActivity.class));
+            super.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

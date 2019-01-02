@@ -8,6 +8,10 @@ import java.util.Map;
 
 public abstract class DBEntityFactory {
 
+    public static final String COLUMN_ID         = "id";
+    public static final String COLUMN_NAME       = "name";
+    public static final String COLUMN_DESC       = "description";
+
     /**
      * @return name of the table to be used with that entity
      */
@@ -27,7 +31,7 @@ public abstract class DBEntityFactory {
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll() {
-        return "SELECT * FROM " + getTableName();
+        return String.format("SELECT %s,%s FROM %s", COLUMN_ID, COLUMN_NAME, getTableName());
     }
 
     /**
@@ -52,4 +56,14 @@ public abstract class DBEntityFactory {
      * @return a new instance of the entity filled according to attributes
      */
     public abstract DBEntity generateEntity(@NonNull final Map<String,String> attributes);
+
+    /**
+     * Generates the content (generally HTML) based on entity details
+     * (for example, spell duration or spell range)
+     *
+     * @param templateList template for the list. Must contain %s (content).
+     * @param templateItem template for one item. Must contain %s (attribute name), and %s (attribute value)
+     * @return
+     */
+    public abstract String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem);
 }

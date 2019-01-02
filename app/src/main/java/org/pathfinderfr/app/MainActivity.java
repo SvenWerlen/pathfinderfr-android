@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -160,8 +161,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //Intent intent = new Intent(this, SettingsActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -191,6 +192,7 @@ public class MainActivity extends AppCompatActivity
             listFull.clear();
             dataChanged = true;
         } else if (id == R.id.nav_share) {
+            new DataClient().execute("https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml");
 
         } else if (id == R.id.nav_send) {
 
