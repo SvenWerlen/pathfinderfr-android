@@ -4,11 +4,14 @@ import java.util.List;
 
 public class EntityFactories {
 
-    private static DBEntityFactory[] factories = new DBEntityFactory[] { SpellFactory.getInstance() };
+    public static final DBEntityFactory[] FACTORIES = new DBEntityFactory[] {
+            SpellFactory.getInstance(),
+            FavoriteFactory.getInstance(),
+    };
 
 
     public static DBEntityFactory getFactoryById(String id) {
-        for(DBEntityFactory f: factories) {
+        for(DBEntityFactory f: FACTORIES) {
             if(f.getFactoryId().equalsIgnoreCase(id)) {
                 return f;
             }

@@ -10,7 +10,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context=".app.ItemListActivity">
+    tools:context=".app.MainActivity">
 
     <!--
     This layout is a two-pane layout for the Items
@@ -26,7 +26,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        app:layoutManager="LinearLayoutManager"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:context="org.pathfinderfr.app.ItemListActivity"
         tools:listitem="@layout/item_list_content" />
 

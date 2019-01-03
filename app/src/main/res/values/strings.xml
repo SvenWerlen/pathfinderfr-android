@@ -14,10 +14,18 @@
 
     <string name="action_settings">Paramètres</string>
 
+    <!-- Strings related to favorites -->
+    <string name="favorite_generic_failed">Élément introuvable (opération échouée)!</string>
+    <string name="favorite_added_success">Favori ajouté avec succès!</string>
+    <string name="favorite_removed_success">Favori retiré avec succès!</string>
+    <string name="favorite_added_failed">Échec de l\'ajout en tant que favori!</string>
+    <string name="favorite_removed_failed">Échec de la suppression du favori!</string>
+
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
 
     <!-- Strings related to Navigation -->
+    <string name="navigation_item_favorites">Favoris</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_spells">Sorts</string>

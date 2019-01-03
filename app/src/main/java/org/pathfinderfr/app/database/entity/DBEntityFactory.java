@@ -8,10 +8,10 @@ import java.util.Map;
 
 public abstract class DBEntityFactory {
 
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_DESC = "description";
-    public static final String COLUMN_REFERENCE = "reference";
+    protected static final String COLUMN_ID = "id";
+    protected static final String COLUMN_NAME = "name";
+    protected static final String COLUMN_DESC = "description";
+    protected static final String COLUMN_REFERENCE = "reference";
 
     /**
      * @return the factory identifier
@@ -31,13 +31,16 @@ public abstract class DBEntityFactory {
     /**
      * @return the query to fetch one entity (search by ID)
      */
-    public abstract String getQueryFetchById(long id);
+    public String getQueryFetchById(long id) {
+        return String.format("SELECT * FROM %s where %s=%d", getTableName(), COLUMN_ID, id);
+    }
 
     /**
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll() {
-        return String.format("SELECT %s,%s FROM %s", COLUMN_ID, COLUMN_NAME, getTableName());
+        return String.format("SELECT %s,%s FROM %s ORDER BY %s",
+                COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_ID);
     }
 
     /**

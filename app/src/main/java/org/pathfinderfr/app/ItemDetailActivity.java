@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
+import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
@@ -40,15 +43,24 @@ public class ItemDetailActivity extends AppCompatActivity {
     /**
      * Updates the button icon (showMore, showLess) according to status
      */
-    private void updateButtonIcon() {
+    private void updateShowDetailsButtonIcon(boolean showDetails) {
         FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
-        if(showDetails) {
-            moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_lessdetails, getApplicationContext().getTheme()));
+        if (showDetails) {
+            moreDetails.setImageDrawable(getResources().getDrawable(R.drawable.ic_lessdetails, getApplicationContext().getTheme()));
             findViewById(R.id.fabLinkExternal).setVisibility(View.VISIBLE);
         } else {
-            moreDetails.setImageDrawable(getResources(). getDrawable(R.drawable.ic_moredetails, getApplicationContext().getTheme()));
+            moreDetails.setImageDrawable(getResources().getDrawable(R.drawable.ic_moredetails, getApplicationContext().getTheme()));
             findViewById(R.id.fabLinkExternal).setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * Updates the button icon (showMore, showLess) according to status
+     */
+    private void updateFavoriteButtonIcon(boolean isFavorite) {
+        ImageButton favoriteButton = (ImageButton) findViewById(R.id.favoriteButton);
+        int drawableId = isFavorite ? android.R.drawable.star_big_on : android.R.drawable.star_big_off;
+        favoriteButton.setImageDrawable(getResources().getDrawable(drawableId, getApplicationContext().getTheme()));
     }
 
     @Override
@@ -60,7 +72,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         showDetails = preferences.getBoolean(PREF_SHOWDETAILS, false);
-        updateButtonIcon();
+        updateShowDetailsButtonIcon(showDetails);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -70,11 +82,53 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         // Favorite button
         ImageButton favorite = (ImageButton) findViewById(R.id.favoriteButton);
+        String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                getString(MainActivity.KEY_CUR_FACTORY, null);
+        long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
+        boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
+        updateFavoriteButtonIcon(isFavorite);
+
+
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "TODO: implémenter la fonction de \"favori\"", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                boolean success = false;
+                String message = getResources().getString(R.string.favorite_generic_failed);
+
+                long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
+                String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                        getString(MainActivity.KEY_CUR_FACTORY, null);
+                boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
+                if (itemID > 0 && factoryID != null) {
+                    DBHelper dbhelper = DBHelper.getInstance(null);
+                    DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
+                    if (entity != null && !isFavorite) {
+                        success = dbhelper.insertFavorite(entity);
+                        message = success ?
+                                getResources().getString(R.string.favorite_added_success) :
+                                getResources().getString(R.string.favorite_added_failed);
+                    } else if (entity != null && isFavorite) {
+                        success = dbhelper.deleteFavorite(entity);
+                        message = success ?
+                                getResources().getString(R.string.favorite_removed_success) :
+                                getResources().getString(R.string.favorite_removed_failed);
+                    }
+                }
+
+                if (success) {
+                    isFavorite = !isFavorite;
+                    updateFavoriteButtonIcon(isFavorite);
+                    // update list if currently viewing favorites
+                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factoryID)) {
+                        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                                .putBoolean(MainActivity.KEY_REFRESH_REQUIRED, true).commit();
+                    }
+                    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
 
@@ -86,7 +140,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
                 String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
                         getString(MainActivity.KEY_CUR_FACTORY, null);
-                if(itemID >0 && factoryID != null) {
+                if (itemID > 0 && factoryID != null) {
                     DBHelper dbhelper = DBHelper.getInstance(null);
                     String url = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID)).getReference();
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -102,7 +156,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 showDetails = !showDetails;
-                updateButtonIcon();
+                updateShowDetailsButtonIcon(showDetails);
 
                 // refresh fragment
                 Bundle arguments = new Bundle();

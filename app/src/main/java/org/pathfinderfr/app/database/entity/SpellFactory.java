@@ -70,7 +70,7 @@ public class SpellFactory extends DBEntityFactory {
 
     @Override
     public String getQueryCreateTable() {
-        String query = String.format( "CREATE TABLE %s (" +
+        String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text," +
@@ -187,11 +187,6 @@ public class SpellFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_SPELL_RES, spell.getSpellResistance()));
         buf.append(generateItemDetail(templateItem, YAML_AREA, spell.getArea()));
         return String.format(templateList,buf.toString());
-    }
-
-    @Override
-    public String getQueryFetchById(long id) {
-        return String.format("SELECT * FROM %s where %s=%d", getTableName(), COLUMN_ID, id);
     }
 
 }

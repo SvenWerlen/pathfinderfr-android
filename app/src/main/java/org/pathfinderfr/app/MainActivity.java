@@ -29,6 +29,7 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -41,7 +42,10 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String KEY_CUR_FACTORY = "current_factory";
+    // current factory (which list is currently been displayed)
+    public static final String KEY_CUR_FACTORY      = "current_factory";
+    // list must be refreshed (something has been done outside of main activity)
+    public static final String KEY_REFRESH_REQUIRED = "refresh_required";
 
     DBHelper dbhelper;
     List<DBEntity> list = new ArrayList<>();
@@ -129,8 +133,9 @@ public class MainActivity extends AppCompatActivity
         long countSkills = 0;
         long countFeats = 0;
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
+        long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         String welcomeText = String.format(props.getProperty("template.welcome"),
-                countFeats, countSkills, countSpells);
+                countFeats, countSkills, countSpells, countFavorites);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
         } else {
@@ -202,14 +207,15 @@ public class MainActivity extends AppCompatActivity
 
         boolean dataChanged = false;
         String factoryId = null;
-        if (id == R.id.nav_spells) {
-            List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
+
+        if (id == R.id.nav_favorites) {
+            List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
             list.clear();
             listFull.clear();
             list.addAll(entities);
             listFull.addAll(entities);
             dataChanged = true;
-            factoryId = SpellFactory.FACTORY_ID;
+            factoryId = FavoriteFactory.FACTORY_ID;
         } else if (id == R.id.nav_skills) {
             list.clear();
             listFull.clear();
@@ -218,6 +224,14 @@ public class MainActivity extends AppCompatActivity
             list.clear();
             listFull.clear();
             dataChanged = true;
+        } else if (id == R.id.nav_spells) {
+            List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
+            list.clear();
+            listFull.clear();
+            list.addAll(entities);
+            listFull.addAll(entities);
+            dataChanged = true;
+            factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             Intent intent = new Intent(this, LoadDataActivity.class);
             startActivity(intent);
@@ -241,5 +255,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean refreshRequired = prefs.getBoolean(MainActivity.KEY_REFRESH_REQUIRED, false);
+        String factory = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        if(refreshRequired) {
+            if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
+                List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
+                list.clear();
+                listFull.clear();
+                list.addAll(entities);
+                listFull.addAll(entities);
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+            prefs.edit().putBoolean(MainActivity.KEY_REFRESH_REQUIRED, false).commit();
+        }
     }
 }

@@ -8,6 +8,6 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".app.ItemListActivity"
+    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+    tools:context=".app.MainActivity"
     tools:listitem="@layout/item_list_content" />

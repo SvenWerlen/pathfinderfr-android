@@ -43,7 +43,7 @@ public abstract class DBEntity implements Serializable {
     @Override
     public String toString() {
         String id = getId() > 0 ? String.valueOf(getId()) : "-";
-        String desc = getDescription();
+        String desc = getDescription() == null ? "" : getDescription();
         desc = desc.length() > 20 ? desc.substring(0, 20) + "..." : desc;
         return String.format("%s(%s, %s, %s)", this.getClass().getSimpleName(), id, getName(), desc);
     }
