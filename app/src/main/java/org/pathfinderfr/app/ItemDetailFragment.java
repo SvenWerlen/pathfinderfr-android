@@ -1,6 +1,7 @@
 package org.pathfinderfr.app;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -87,6 +88,7 @@ public class ItemDetailFragment extends Fragment {
         if (mItem != null) {
 
             boolean showDetails = getArguments().getBoolean(ARG_ITEM_SHOWDETAILS);
+
             String text = mItem.getDescription().replaceAll("\n","<br />");
             if(showDetails) {
                 String detail = mItem.getFactory().generateDetails(mItem,
@@ -94,11 +96,10 @@ public class ItemDetailFragment extends Fragment {
                         templates.getProperty("template.spell.detail"));
                 text = detail + String.format(
                         templates.getProperty("template.spell.description"),text);
+
             }
             TextView textview = (TextView) rootView.findViewById(R.id.item_description);
             textview.setText(Html.fromHtml(text));
-
-            ((TextView) rootView.findViewById(R.id.item_description)).setText(Html.fromHtml(text));
         }
 
         return rootView;

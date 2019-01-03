@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+            mTwoPane = false; // TODO: enable when two-pane mode will be fixed
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);

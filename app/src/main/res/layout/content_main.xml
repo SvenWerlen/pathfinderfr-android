@@ -22,6 +22,7 @@
             style="?android:attr/textAppearanceMedium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorWhite"
             android:padding="5dp"
             android:textIsSelectable="true"
             tools:context=".app.ItemDetailFragment" />
