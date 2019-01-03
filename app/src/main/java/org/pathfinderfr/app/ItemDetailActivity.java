@@ -133,8 +133,6 @@ public class ItemDetailActivity extends AppCompatActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
-
-
     }
 
     @Override

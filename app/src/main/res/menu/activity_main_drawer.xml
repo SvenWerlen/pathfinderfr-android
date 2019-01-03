@@ -19,16 +19,12 @@
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/navigation_title_advanced">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_refresh_data"
+                android:icon="@android:drawable/stat_notify_sync"
+                android:title="@string/navigation_refresh_data" />
         </menu>
     </item>
 

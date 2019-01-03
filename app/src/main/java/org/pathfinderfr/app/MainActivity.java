@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
         // search button appears only for item-list view
         ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -73,9 +73,6 @@ public class MainActivity extends AppCompatActivity
                 EditText input = (EditText) findViewById(R.id.searchinput);
                 input.setVisibility(View.VISIBLE);
                 input.requestFocus();
-
-                //Snackbar.make(view, "Search filter", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
             }
         });
 
@@ -215,11 +212,9 @@ public class MainActivity extends AppCompatActivity
             list.clear();
             listFull.clear();
             dataChanged = true;
-        } else if (id == R.id.nav_share) {
-            new DataClient().execute("https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml");
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_refresh_data) {
+            Intent intent = new Intent(this, LoadDataActivity.class);
+            startActivity(intent);
         }
 
         if (dataChanged) {

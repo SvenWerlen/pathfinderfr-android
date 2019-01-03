@@ -17,6 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,6 +33,15 @@
         <activity
             android:name=".app.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".app.LoadDataActivity"
+            android:label="@string/title_activity_load_data"
+            android:parentActivityName=".app.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.pathfinderfr.app.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
