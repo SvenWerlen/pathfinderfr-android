@@ -24,8 +24,8 @@
     <string name="pref_header_general">Général</string>
 
     <string name="pref_title_showdetails">Voir les détails</string>
-    <string name="pref_description_showdetails">Lorsque activé, les détails sont affichés par défaut (et peuvent être masqués).
-    </string>
+    <string name="pref_description_showdetails_on">Les détails sont affichés par défaut</string>
+    <string name="pref_description_showdetails_off">Les détails sont masqués par défaut</string>
 
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>

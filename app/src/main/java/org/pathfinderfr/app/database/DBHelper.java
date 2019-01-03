@@ -95,5 +95,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public long getCountEntities(DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = String.format("SELECT COUNT(*) as total FROM %s", factory.getTableName());
+        Cursor res = db.rawQuery(query, null);
+        res.moveToFirst();
+        return res.getLong(res.getColumnIndex("total"));
+    }
+
 }
 

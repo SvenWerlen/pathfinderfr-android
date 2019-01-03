@@ -14,6 +14,7 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -51,11 +52,7 @@ public class ItemDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            templates.load(getContext().getAssets().open("templates.properties"));
-        } catch (IOException e) {
-            System.out.println("templates.properties not found!!!");
-        }
+        templates = ConfigurationUtil.getInstance(getContext()).getProperties();
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment

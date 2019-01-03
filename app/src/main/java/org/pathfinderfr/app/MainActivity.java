@@ -2,10 +2,12 @@ package org.pathfinderfr.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,9 +29,12 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,9 +56,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbhelper = DBHelper.getInstance(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        
         // search button appears only for item-list view
         ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -75,18 +83,20 @@ public class MainActivity extends AppCompatActivity
         EditText searchInput = (EditText) findViewById(R.id.searchinput);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
                 String criteria = s.toString().toLowerCase();
-                if(criteria.length() >= 3) {
+                if (criteria.length() >= 3) {
                     list.clear();
-                    for(DBEntity el : listFull) {
-                        if(el.getName().toLowerCase().indexOf(criteria)>=0) {
+                    for (DBEntity el : listFull) {
+                        if (el.getName().toLowerCase().indexOf(criteria) >= 0) {
                             list.add(el);
                         }
                     }
@@ -112,6 +122,22 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // Welcome screen
+        TextView textview = (TextView) findViewById(R.id.welcome_screen);
+        Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
+        long countSkills = 0;
+        long countFeats = 0;
+        long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
+        String welcomeText = String.format(props.getProperty("template.welcome"),
+                countFeats, countSkills, countSpells);
+        if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
+            welcomeText += props.getProperty("template.welcome.first");
+        } else {
+            welcomeText += props.getProperty("template.welcome.second");
+        }
+        textview.setText(Html.fromHtml(welcomeText));
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -126,9 +152,7 @@ public class MainActivity extends AppCompatActivity
             mTwoPane = true;
         }
 
-        dbhelper = DBHelper.getInstance(this);
-
-        recyclerView = (RecyclerView)findViewById(R.id.item_list);
+        recyclerView = (RecyclerView) findViewById(R.id.item_list);
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -199,6 +223,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (dataChanged) {
+            findViewById(R.id.welcome_screen).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
