@@ -93,7 +93,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 boolean success = false;
-                String message = getResources().getString(R.string.favorite_generic_failed);
+                String message = getResources().getString(R.string.generic_failed);
 
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
                 String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
@@ -132,7 +132,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Favorite button
+        // Open external link button
         FloatingActionButton externalLink = (FloatingActionButton) findViewById(R.id.fabLinkExternal);
         externalLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,9 +142,15 @@ public class ItemDetailActivity extends AppCompatActivity {
                         getString(MainActivity.KEY_CUR_FACTORY, null);
                 if (itemID > 0 && factoryID != null) {
                     DBHelper dbhelper = DBHelper.getInstance(null);
-                    String url = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID)).getReference();
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(browserIntent);
+                    DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
+                    if(entity != null) {
+                        String url = entity.getReference();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(browserIntent);
+                    } else {
+                        String message = getResources().getString(R.string.generic_failed);
+                        Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
                 }
             }
         });

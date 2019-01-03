@@ -16,14 +16,16 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
+import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
 public class LoadDataActivity extends AppCompatActivity implements DataClient.IDataUI {
 
     private static final String[] SOURCES = new String[]{
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml" };
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/dons.yml",
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml"};
 
-    private static final String[] SOURCES_NAMES = new String[]{"Sorts"};
+    private static final String[] SOURCES_NAMES = new String[]{"Dons", "Sorts"};
     private DataClient taskInProgress;
 
     @Override
@@ -47,9 +49,10 @@ public class LoadDataActivity extends AppCompatActivity implements DataClient.ID
                     findViewById(R.id.loaddataProgressBar).setVisibility(View.VISIBLE);
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], SpellFactory.getInstance());
                     taskInProgress = new DataClient(LoadDataActivity.this);
-                    taskInProgress.execute(source0);
+                    taskInProgress.execute(source0,source1);
                 } else {
                     taskInProgress.cancel(false);
                 }
@@ -74,7 +77,9 @@ public class LoadDataActivity extends AppCompatActivity implements DataClient.ID
         ProgressBar bar = (ProgressBar) findViewById(R.id.loaddataProgressBar);
         int totalProgress = 0;
         for(Pair<Integer,Integer> p : progress) {
-            totalProgress += (int)((p.first / (float)p.second) * 100);
+            if(p != null) {
+                totalProgress += (int) ((p.first / (float) p.second) * 100);
+            }
         }
         bar.setProgress(totalProgress / progress.length);
 

@@ -30,6 +30,7 @@ import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -106,6 +107,10 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     recyclerView.getAdapter().notifyDataSetChanged();
+                } else if(list.size() < listFull.size()) {
+                    list.clear();
+                    list.addAll(listFull);
+                    recyclerView.getAdapter().notifyDataSetChanged();
                 }
             }
         });
@@ -121,9 +126,11 @@ public class MainActivity extends AppCompatActivity
                 EditText searchInput = (EditText) findViewById(R.id.searchinput);
                 searchInput.setText("");
                 searchInput.setVisibility(View.GONE);
-                list.clear();
-                list.addAll(listFull);
-                recyclerView.getAdapter().notifyDataSetChanged();
+                if(list.size() < listFull.size()) {
+                    list.clear();
+                    list.addAll(listFull);
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
             }
         });
 
@@ -131,11 +138,11 @@ public class MainActivity extends AppCompatActivity
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
         long countSkills = 0;
-        long countFeats = 0;
+        long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         String welcomeText = String.format(props.getProperty("template.welcome"),
-                countFeats, countSkills, countSpells, countFavorites);
+                countSkills, countFeats, countSpells, countFavorites);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
         } else {
@@ -222,9 +229,13 @@ public class MainActivity extends AppCompatActivity
             listFull.clear();
             dataChanged = true;
         } else if (id == R.id.nav_feats) {
+            List<DBEntity> entities = dbhelper.getAllEntities(FeatFactory.getInstance());
             list.clear();
             listFull.clear();
+            list.addAll(entities);
+            listFull.addAll(entities);
             dataChanged = true;
+            factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
             List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
             list.clear();

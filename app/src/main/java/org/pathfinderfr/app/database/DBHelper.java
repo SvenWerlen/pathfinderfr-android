@@ -124,6 +124,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public DBEntity fetchEntity(long id, DBEntityFactory factory) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( factory.getQueryFetchById(id), null );
+        // not found?
+        if(res.getCount()<1) {
+            return null;
+        }
         res.moveToFirst();
         return factory.generateEntity(res);
     }

@@ -39,8 +39,8 @@ public abstract class DBEntityFactory {
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll() {
-        return String.format("SELECT %s,%s FROM %s ORDER BY %s",
-                COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_ID);
+        return String.format("SELECT %s,%s FROM %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_NAME);
     }
 
     /**

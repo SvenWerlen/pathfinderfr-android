@@ -5,6 +5,7 @@ import java.util.List;
 public class EntityFactories {
 
     public static final DBEntityFactory[] FACTORIES = new DBEntityFactory[] {
+            FeatFactory.getInstance(),
             SpellFactory.getInstance(),
             FavoriteFactory.getInstance(),
     };

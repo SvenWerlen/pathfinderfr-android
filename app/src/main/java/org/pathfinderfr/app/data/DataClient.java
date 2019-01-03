@@ -74,8 +74,10 @@ public class DataClient extends AsyncTask<Pair<String,DBEntityFactory>, Pair<Int
                     if(list.get(i) instanceof Map) {
                         DBEntity entity = factory.generateEntity((Map<String,String>)list.get(i));
                         if(entity != null) {
-                            dbHelper.insertEntity(entity);
-                            count[idx]++;
+                            boolean success = dbHelper.insertEntity(entity);
+                            if(success) {
+                                count[idx]++;
+                            }
                         }
                     }
                     if (isCancelled()) break;
@@ -90,6 +92,10 @@ public class DataClient extends AsyncTask<Pair<String,DBEntityFactory>, Pair<Int
                         lastPercentage = percentage;
                     }
                 }
+
+                // file completed => update progress
+                progresses[idx] = new Pair<>(count[idx],count[idx]);
+                publishProgress(progresses);
 
             } catch (Exception e) {
                 e.printStackTrace();

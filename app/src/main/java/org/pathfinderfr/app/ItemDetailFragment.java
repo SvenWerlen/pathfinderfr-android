@@ -72,7 +72,7 @@ public class ItemDetailFragment extends Fragment {
                 // Change menu title by entity name
                 Activity activity = this.getActivity();
                 CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-                if (appBarLayout != null) {
+                if (appBarLayout != null && mItem != null) {
                     appBarLayout.setTitle(mItem.getName());
                 }
             }
@@ -89,7 +89,15 @@ public class ItemDetailFragment extends Fragment {
 
             boolean showDetails = getArguments().getBoolean(ARG_ITEM_SHOWDETAILS);
 
-            String text = mItem.getDescription().replaceAll("\n","<br />");
+            String text;
+            // if no description is available, details must always be visible
+            if(mItem.getDescription() == null) {
+                showDetails = true;
+                text = "";
+            } else {
+                text = mItem.getDescription().replaceAll("\n","<br />");
+            }
+
             if(showDetails) {
                 String detail = mItem.getFactory().generateDetails(mItem,
                         templates.getProperty("template.spell.details"),
