@@ -14,6 +14,11 @@ public abstract class DBEntityFactory {
     public static final String COLUMN_REFERENCE = "reference";
 
     /**
+     * @return the factory identifier
+     */
+    public abstract String getFactoryId();
+
+    /**
      * @return name of the table to be used with that entity
      */
     public abstract String getTableName();

@@ -1,10 +1,12 @@
 package org.pathfinderfr.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -38,6 +40,8 @@ import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String KEY_CUR_FACTORY = "current_factory";
 
     DBHelper dbhelper;
     List<DBEntity> list = new ArrayList<>();
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         boolean dataChanged = false;
+        String factoryId = null;
         if (id == R.id.nav_spells) {
             List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
             list.clear();
@@ -204,6 +209,7 @@ public class MainActivity extends AppCompatActivity
             list.addAll(entities);
             listFull.addAll(entities);
             dataChanged = true;
+            factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_skills) {
             list.clear();
             listFull.clear();
@@ -218,12 +224,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (dataChanged) {
+            // reset activity
             findViewById(R.id.welcome_screen).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
+            findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
             searchInput.setVisibility(View.GONE);
-            findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
+
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                    putString(KEY_CUR_FACTORY,factoryId).commit();
+
             recyclerView.getAdapter().notifyDataSetChanged();
         }
 

@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class SpellFactory extends DBEntityFactory {
 
+    public static final String FACTORY_ID        = "SPELLS";
+
     private static final String TABLENAME         = "spells";
     private static final String COLUMN_SCHOOL     = "school";
     private static final String COLUMN_LEVEL      = "level";
@@ -51,6 +53,11 @@ public class SpellFactory extends DBEntityFactory {
             instance = new SpellFactory();
         }
         return instance;
+    }
+
+    @Override
+    public String getFactoryId() {
+        return FACTORY_ID;
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
@@ -83,9 +84,11 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-                if(itemID >0 ) {
+                String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                        getString(MainActivity.KEY_CUR_FACTORY, null);
+                if(itemID >0 && factoryID != null) {
                     DBHelper dbhelper = DBHelper.getInstance(null);
-                    String url = dbhelper.fetchEntity(itemID, SpellFactory.getInstance()).getReference();
+                    String url = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID)).getReference();
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);
                 }

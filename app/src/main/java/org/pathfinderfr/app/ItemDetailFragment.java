@@ -2,6 +2,7 @@ package org.pathfinderfr.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
@@ -61,13 +63,17 @@ public class ItemDetailFragment extends Fragment {
 
             DBHelper dbhelper = DBHelper.getInstance(null);
             long itemID = getArguments().getLong(ARG_ITEM_ID);
-            mItem = dbhelper.fetchEntity(itemID, SpellFactory.getInstance());
+            String factoryID = PreferenceManager.getDefaultSharedPreferences(getContext()).
+                    getString(MainActivity.KEY_CUR_FACTORY, null);
+            if(itemID >0 && factoryID != null) {
+                mItem = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
 
-            // Change menu title by entity name
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.getName());
+                // Change menu title by entity name
+                Activity activity = this.getActivity();
+                CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+                if (appBarLayout != null) {
+                    appBarLayout.setTitle(mItem.getName());
+                }
             }
         }
     }
