@@ -24,5 +24,6 @@ _Note: l'application va télécharger environ 3 Mb de données_
 Lorsque l'application dispose de données, la page d'accueil présentera les statistiques et la
 navigation latérale permettra d'accéder aux différentes rubriques:
 
-| ![Écran d'accueil](../images/pathfinderfr_welcome-android_small.jpg) | ![Navigation latérale](../images/pathfinderfr_navigation-android_small.jpg) |
+![Écran d'accueil](../images/pathfinderfr_welcome-android_small.jpg)
+![Navigation latérale](../images/pathfinderfr_navigation-android_small.jpg) |
  
