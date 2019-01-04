@@ -1,9 +1,11 @@
 package org.pathfinderfr.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -262,6 +264,13 @@ public class MainActivity extends AppCompatActivity
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
             searchInput.setVisibility(View.GONE);
+
+            // Change menu title by factory (ie. type) name
+            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+            String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
+            if (toolBar != null && title != null) {
+                toolBar.setTitle(title);
+            }
 
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
                     putString(KEY_CUR_FACTORY,factoryId).commit();
