@@ -31,6 +31,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
-        long countSkills = 0;
+        long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
@@ -225,9 +226,13 @@ public class MainActivity extends AppCompatActivity
             dataChanged = true;
             factoryId = FavoriteFactory.FACTORY_ID;
         } else if (id == R.id.nav_skills) {
+            List<DBEntity> entities = dbhelper.getAllEntities(SkillFactory.getInstance());
             list.clear();
             listFull.clear();
+            list.addAll(entities);
+            listFull.addAll(entities);
             dataChanged = true;
+            factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
             List<DBEntity> entities = dbhelper.getAllEntities(FeatFactory.getInstance());
             list.clear();

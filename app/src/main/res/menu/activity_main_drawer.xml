@@ -9,16 +9,16 @@
             android:icon="@android:drawable/star_big_on"
             android:title="@string/navigation_item_favorites" />
         <item
-            android:id="@+id/nav_feats"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/navigation_item_feats" />
-        <item
             android:id="@+id/nav_skills"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_list"
             android:title="@string/navigation_item_skills" />
         <item
+            android:id="@+id/nav_feats"
+            android:icon="@drawable/ic_menu_list"
+            android:title="@string/navigation_item_feats" />
+        <item
             android:id="@+id/nav_spells"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_list"
             android:title="@string/navigation_item_spells" />
 
     </group>

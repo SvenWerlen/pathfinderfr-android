@@ -17,15 +17,17 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
 public class LoadDataActivity extends AppCompatActivity implements DataClient.IDataUI {
 
     private static final String[] SOURCES = new String[]{
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/competences.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/dons.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml"};
 
-    private static final String[] SOURCES_NAMES = new String[]{"Dons", "Sorts"};
+    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts"};
     private DataClient taskInProgress;
 
     @Override
@@ -49,10 +51,11 @@ public class LoadDataActivity extends AppCompatActivity implements DataClient.ID
                     findViewById(R.id.loaddataProgressBar).setVisibility(View.VISIBLE);
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SkillFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
                     taskInProgress = new DataClient(LoadDataActivity.this);
-                    taskInProgress.execute(source0,source1);
+                    taskInProgress.execute(source0,source1,source2);
                 } else {
                     taskInProgress.cancel(false);
                 }

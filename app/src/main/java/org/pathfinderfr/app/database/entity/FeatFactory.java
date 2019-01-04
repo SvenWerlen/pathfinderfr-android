@@ -96,7 +96,7 @@ public class FeatFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Cursor resource) {
         Feat feat = new Feat();
 
-        feat.setId(resource.getLong(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
+        feat.setId(resource.getLong(resource.getColumnIndex(FeatFactory.COLUMN_ID)));
         feat.setName(extractValue(resource,FeatFactory.COLUMN_NAME));
         feat.setDescription(extractValue(resource,FeatFactory.COLUMN_DESC));
         feat.setReference(extractValue(resource,FeatFactory.COLUMN_REFERENCE));
@@ -119,7 +119,6 @@ public class FeatFactory extends DBEntityFactory {
         feat.setAdvantage(attributes.get(YAML_ADVANTAGE));
         feat.setSpecial(attributes.get(YAML_SPECIAL));
         feat.setNormal(attributes.get(YAML_NORMAL));
-        Log.d(FeatFactory.class.getSimpleName(),feat.toString());
         return feat.isValid() ? feat : null;
     }
 
