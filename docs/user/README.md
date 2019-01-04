@@ -22,8 +22,16 @@ _Note: l'application va télécharger environ 3 Mb de données_
 ## Visionner les listes
 
 Lorsque l'application dispose de données, la page d'accueil présentera les statistiques et la
-navigation latérale permettra d'accéder aux différentes rubriques:
+navigation latérale permettra d'accéder aux différentes rubriques (compétences, dons, sorts). 
+
+* Cliquer sur une rubrique pour obtenir la liste des éléments correspondants
+* Cliquer sur un élément pour obtenir sa description
+  * Le bouton _plus/moins_ (en bas à droite) permet d'afficher les détails (attributs/métadonnées)
+  * Le bouton _étoile_ (en haut à droite) permet de mettre l'élément dans la liste des favoris
+  * Le bouton _lien_ (en bas à gauche), visible uniquement en mode "détails" ouvre un navigateur vers la fiche [pathfinder-fr.org](https://www.pathfinder-fr.org) correspondante.
 
 ![Écran d'accueil](../images/pathfinderfr_welcome-android_small.jpg)
-![Navigation latérale](../images/pathfinderfr_navigation-android_small.jpg) |
+![Navigation latérale](../images/pathfinderfr_navigation-android_small.jpg)
+![Liste de sorts](../images/pathfinderfr_spell-android_small.jpg)
+![Détails d'un sort](../images/pathfinderfr_details-android_small.jpg)
  
