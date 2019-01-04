@@ -7,7 +7,7 @@ Pathfinder FR is an android application which provides a quick reference for Pat
 * **Search**: users can filter lists by using the search bar
 * **Favorites**: users can bookmark entries for quick access during their games
 
-For more details, see the [documentation](../docs/)
+For more details, see the [documentation](docs/)
 
 The application is available on:
 * [Google Play](https://play.google.com/store/apps/details?id=org.pathfinderfr)
