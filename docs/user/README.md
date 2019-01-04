@@ -16,7 +16,7 @@ extraites du site web [pathfinder-fr.org](http://www.pathfinder-fr.org).
 
 _Note: l'application va télécharger environ 3 Mb de données_ 
 
-![Capture import de données](../images/pathfinderfr_download-data-android.jpg)
+![Capture import de données](../images/pathfinderfr_download-data-android_small.jpg)
 
 
 ## Visionner les listes
