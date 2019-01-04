@@ -121,7 +121,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                     // update list if currently viewing favorites
                     if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factoryID)) {
                         PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
-                                .putBoolean(MainActivity.KEY_REFRESH_REQUIRED, true).commit();
+                                .putBoolean(MainActivity.KEY_REFRESH_REQUIRED, true).apply();
                     }
                     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();

@@ -140,10 +140,10 @@ public class MainActivity extends AppCompatActivity
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
+        long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
-        long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         String welcomeText = String.format(props.getProperty("template.welcome"),
                 countSkills, countFeats, countSpells, countFavorites);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
@@ -152,7 +152,6 @@ public class MainActivity extends AppCompatActivity
             welcomeText += props.getProperty("template.welcome.second");
         }
         textview.setText(Html.fromHtml(welcomeText));
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -172,7 +171,21 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
 
+        // Navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if(countFavorites == 0) {
+            navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
+        }
+        if(countSkills == 0) {
+            navigationView.getMenu().findItem(R.id.nav_skills).setVisible(false);
+        }
+        if(countFeats == 0) {
+            navigationView.getMenu().findItem(R.id.nav_feats).setVisible(false);
+        }
+        if(countSpells == 0) {
+            navigationView.getMenu().findItem(R.id.nav_spells).setVisible(false);
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -219,7 +232,15 @@ public class MainActivity extends AppCompatActivity
         boolean dataChanged = false;
         String factoryId = null;
 
-        if (id == R.id.nav_favorites) {
+        String factory = PreferenceManager.getDefaultSharedPreferences(
+                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        if (id == R.id.nav_home && factory != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                    .putString(KEY_CUR_FACTORY,null).apply();
+        } else if (id == R.id.nav_favorites) {
             List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
             list.clear();
             listFull.clear();
@@ -259,6 +280,7 @@ public class MainActivity extends AppCompatActivity
         if (dataChanged) {
             // reset activity
             findViewById(R.id.welcome_screen).setVisibility(View.GONE);
+            findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
@@ -273,7 +295,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                    putString(KEY_CUR_FACTORY,factoryId).commit();
+                    putString(KEY_CUR_FACTORY,factoryId).apply();
 
             recyclerView.getAdapter().notifyDataSetChanged();
         }
@@ -300,7 +322,7 @@ public class MainActivity extends AppCompatActivity
                 listFull.addAll(entities);
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
-            prefs.edit().putBoolean(MainActivity.KEY_REFRESH_REQUIRED, false).commit();
+            prefs.edit().putBoolean(MainActivity.KEY_REFRESH_REQUIRED, false).apply();
         }
     }
 }

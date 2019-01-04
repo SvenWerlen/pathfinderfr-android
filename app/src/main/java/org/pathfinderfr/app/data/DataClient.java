@@ -71,6 +71,7 @@ public class DataClient extends AsyncTask<Pair<String,DBEntityFactory>, Pair<Int
 
                 int lastPercentage = 0;
                 for(int i=0; i<list.size(); i++) {
+                    if (isCancelled()) break;
                     if(list.get(i) instanceof Map) {
                         DBEntity entity = factory.generateEntity((Map<String,String>)list.get(i));
                         if(entity != null) {
@@ -80,7 +81,6 @@ public class DataClient extends AsyncTask<Pair<String,DBEntityFactory>, Pair<Int
                             }
                         }
                     }
-                    if (isCancelled()) break;
 
                     progresses[idx] = new Pair<>(i,list.size());
 

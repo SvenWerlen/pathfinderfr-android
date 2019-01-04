@@ -24,7 +24,11 @@
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
 
+    <!-- Strings related to Welcome page -->
+    <string name="welcome_copyright">Cette application et ses contenus utilisent des marques déposées et/ou des copyrights appartenant à Paizo Publishing, LLC selon les règles de la Community Use Policy de Paizo. Il nous est expressément interdit de rendre payant l’utilisation ou l’accès à son contenu. Les données sont issues du site www.pathfinder-fr.org.</string>
+
     <!-- Strings related to Navigation -->
+    <string name="navigation_item_home">Accueil</string>
     <string name="navigation_item_favorites">Favoris</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
