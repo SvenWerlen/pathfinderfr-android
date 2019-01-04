@@ -35,3 +35,17 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
 ![Liste de sorts](../images/pathfinderfr_spell-android_small.jpg)
 ![Détails d'un sort](../images/pathfinderfr_details-android_small.jpg)
  
+ 
+ ## Filtrer / rechercher les listes
+ 
+ L'application permet de filtrer les listes grâce à sa fonction de recherche intégrée dans la 
+ barre supérieure de l'application.
+ 
+ * La recherche est uniquement disponible dans la vue _liste_
+ * Le filtre prend effet uniquement lorsqu'au moins 3 charactères sont saisis
+ * Cliquer sur le bouton _x_ (croix) pour fermer la recherche et réinitialiser la liste complète
+ * Changer de liste ré-initialisera la recherche
+ 
+ ![Fonction de recherche / filtre](../images/pathfinderfr_search-android_small.jpg)
+ 
+ 
