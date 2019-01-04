@@ -1,7 +1,7 @@
 # User documentation
 
 This page describes how to use the application. Since the application is targeting the french community,
-the documentation is only available in French.
+the documentation is only available in french.
 
 ## Pré-requis: importer les données
 
@@ -49,3 +49,8 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
  ![Fonction de recherche / filtre](../images/pathfinderfr_search-android_small.jpg)
  
  
+  ## Paramètres et configuration
+  
+  L'application offre des configurations et paramètres selon les besoins de l'utilisateur.
+  
+  * **Général | Voir les détails**: affiche le mode détaillé par défaut (voir ci-dessus). Évite de devoir cliquer systématiquement sur le bouton _plus_ pour voir les métadonnées. 
