@@ -7,6 +7,8 @@
 /.idea/workspace.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
+/app/release
 /build
 /captures
+/publish
 .externalNativeBuild

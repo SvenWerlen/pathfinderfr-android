@@ -1,34 +1,32 @@
 package org.pathfinderfr.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.data.DataClient;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -37,19 +35,21 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.SpellFilter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SpellFilterFragment.OnFragmentInteractionListener {
 
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY      = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
     public static final String KEY_REFRESH_REQUIRED = "refresh_required";
+    // spell filters
+    public static final String KEY_SPELL_FILTERS = "filter_spells";
 
     DBHelper dbhelper;
     List<DBEntity> list = new ArrayList<>();
@@ -134,6 +134,17 @@ public class MainActivity extends AppCompatActivity
                     list.addAll(listFull);
                     recyclerView.getAdapter().notifyDataSetChanged();
                 }
+            }
+        });
+
+
+        // filter button
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.filterButton).setVisibility(View.GONE);
+                showDialog();
             }
         });
 
@@ -283,6 +294,7 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.filterButton).setVisibility(View.VISIBLE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
             searchInput.setVisibility(View.GONE);
@@ -324,5 +336,41 @@ public class MainActivity extends AppCompatActivity
             }
             prefs.edit().putBoolean(MainActivity.KEY_REFRESH_REQUIRED, false).apply();
         }
+    }
+
+
+    void showDialog() {
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("filter");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        String factory = PreferenceManager.getDefaultSharedPreferences(
+                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        if(SpellFactory.FACTORY_ID.equals(factory)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            List<Spell> spellList = (List<Spell>)(List<?>)listFull;
+            DialogFragment newFragment = SpellFilterFragment.newInstance(
+                    new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
+            newFragment.show(ft, "dialog");
+        }
+
+    }
+
+    @Override
+    public void onApplyFilter(SpellFilter filter) {
+        findViewById(R.id.filterButton).setVisibility(View.VISIBLE);
+        list.clear();
+        list.addAll(filter.getFilteredList());
+        recyclerView.getAdapter().notifyDataSetChanged();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
     }
 }

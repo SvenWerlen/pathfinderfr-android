@@ -44,7 +44,7 @@
     </string>
     <string name="loaddata_start">Démarrer</string>
     <string name="loaddata_stop">Arrêter</string>
-    <string name="loaddata_pleasewait">"Veuillez svp attendre la fin du processus..."</string>
+    <string name="loaddata_pleasewait">Veuillez svp attendre la fin du processus...</string>
     <string name="loaddata_waiting">en attente</string>
     <string name="loaddata_downloading">fichier en téléchargement</string>
     <string name="loaddata_inprogress">%s/%s (%s) traité</string>
@@ -55,5 +55,12 @@
     <string name="pref_title_showdetails">Voir les détails</string>
     <string name="pref_description_showdetails_on">Les détails sont affichés par défaut</string>
     <string name="pref_description_showdetails_off">Les détails sont masqués par défaut</string>
+
+    <!-- Spell filters -->
+    <string name="spellfilter_all">Tous</string>
+    <string name="spellfilter_school">École:</string>
+    <string name="spellfilter_class">Classe:</string>
+    <string name="spellfilter_level">Niveau:</string>
+    <string name="apply_filters">Appliquer</string>
 
 </resources>
