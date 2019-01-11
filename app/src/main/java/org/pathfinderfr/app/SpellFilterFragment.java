@@ -85,7 +85,9 @@ public class SpellFilterFragment extends DialogFragment implements View.OnClickL
         CheckBox checkSchool = (CheckBox)rootView.findViewById(R.id.schoolAll);
         CheckBox checkClass = (CheckBox)rootView.findViewById(R.id.classAll);
         CheckBox checkLevel = (CheckBox)rootView.findViewById(R.id.levelAll);
+
         rootView.findViewById(R.id.applyButton).setOnClickListener(this);
+        rootView.findViewById(R.id.cancelButton).setOnClickListener(this);
 
         checkSchool.setOnClickListener(this);
         checkClass.setOnClickListener(this);
@@ -177,6 +179,13 @@ public class SpellFilterFragment extends DialogFragment implements View.OnClickL
                 dismiss();
                 mListener.onApplyFilter(filter);
             }
+            return;
+        }
+
+        // cancel button was pressed!
+        if(v.getId() == R.id.cancelButton) {
+            dismiss();
+            return;
         }
 
         // checkboxes only

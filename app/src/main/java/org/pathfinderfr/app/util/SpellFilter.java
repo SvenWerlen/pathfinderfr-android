@@ -205,6 +205,7 @@ public class SpellFilter {
 
     public List<Spell> getFilteredList() {
         List<Spell> filtered = new ArrayList<>();
+
         for(Spell s: spells) {
             boolean ok = true;
             if(ok && !filterSchool.isEmpty()) {

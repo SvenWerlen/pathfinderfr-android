@@ -98,13 +98,22 @@
         tools:context=".app.SpellFilterFragment">
 
         <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp"/>
+
+        <Button
             android:id="@+id/applyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/apply_filters"
             android:background="@drawable/rounded_button"
             android:textColor="@color/colorWhite"
-            android:layout_marginVertical="10dp"/>
+            android:layout_margin="10dp" />
 
     </com.wefika.flowlayout.FlowLayout>
 

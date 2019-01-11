@@ -62,5 +62,6 @@
     <string name="spellfilter_class">Classe:</string>
     <string name="spellfilter_level">Niveau:</string>
     <string name="apply_filters">Appliquer</string>
+    <string name="cancel">Annuler</string>
 
 </resources>

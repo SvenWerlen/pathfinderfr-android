@@ -45,15 +45,22 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SpellFilterFragment.OnFragmentInteractionListener {
 
     // current factory (which list is currently been displayed)
-    public static final String KEY_CUR_FACTORY      = "current_factory";
+    public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
-    public static final String KEY_REFRESH_REQUIRED = "refresh_required";
+    public static final String KEY_RELOAD_REQUIRED = "refresh_required";
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
 
     DBHelper dbhelper;
-    List<DBEntity> list = new ArrayList<>();
+
+    // list that is displayed
+    List<DBEntity> listCur = new ArrayList<>();
+    // complete list (from database)
     List<DBEntity> listFull = new ArrayList<>();
+    // filtered list
+    List<DBEntity> listFiltered = null;
+    // search criteria
+    String search = null;
 
     RecyclerView recyclerView;
 
@@ -92,29 +99,14 @@ public class MainActivity extends AppCompatActivity
         EditText searchInput = (EditText) findViewById(R.id.searchinput);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
-                String criteria = s.toString().toLowerCase();
-                if (criteria.length() >= 3) {
-                    list.clear();
-                    for (DBEntity el : listFull) {
-                        if (el.getName().toLowerCase().indexOf(criteria) >= 0) {
-                            list.add(el);
-                        }
-                    }
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                } else if(list.size() < listFull.size()) {
-                    list.clear();
-                    list.addAll(listFull);
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
+                search = s.toString().toLowerCase();
+                applyFiltersAndSearch();
             }
         });
 
@@ -129,11 +121,8 @@ public class MainActivity extends AppCompatActivity
                 EditText searchInput = (EditText) findViewById(R.id.searchinput);
                 searchInput.setText("");
                 searchInput.setVisibility(View.GONE);
-                if(list.size() < listFull.size()) {
-                    list.clear();
-                    list.addAll(listFull);
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
+                search = null;
+                applyFiltersAndSearch();
             }
         });
 
@@ -143,7 +132,6 @@ public class MainActivity extends AppCompatActivity
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findViewById(R.id.filterButton).setVisibility(View.GONE);
                 showDialog();
             }
         });
@@ -180,7 +168,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, list, mTwoPane));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, listCur, mTwoPane));
 
         // Navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -198,6 +186,62 @@ public class MainActivity extends AppCompatActivity
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    /**
+     * This function applies filter and search, then refreshes recycler view
+     */
+    private void applyFiltersAndSearch() {
+        // pick filtered list or whole list
+        List<DBEntity> list = (listFiltered == null ? listFull : listFiltered);
+
+        listCur.clear();
+        for (DBEntity el : list) {
+            if (search == null || search.length() < 3 || el.getName().toLowerCase().indexOf(search) >= 0) {
+                listCur.add(el);
+            }
+        }
+        recyclerView.getAdapter().notifyDataSetChanged();
+
+        String factoryId = PreferenceManager.getDefaultSharedPreferences(
+                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        if(factoryId != null) {
+            // Change menu title by factory (ie. type) name
+            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+            String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
+            if (listFiltered == null) {
+                title += String.format(" (%d)", listFull.size());
+            } else {
+                title += String.format(" (%d/%d)", listCur.size(), listFull.size());
+            }
+            if (toolBar != null && title != null) {
+                toolBar.setTitle(title);
+            }
+        }
+    }
+
+    /**
+     * Applies the filters on list and updates the listFiltered variable
+     */
+    private void generateFilteredList() {
+        String factoryId = PreferenceManager.getDefaultSharedPreferences(
+                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        if(SpellFactory.FACTORY_ID.equals(factoryId)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            List<Spell> spells = (List<Spell>)(List<?>)listFull;
+            SpellFilter filter = new SpellFilter(spells,prefs.getString(KEY_SPELL_FILTERS, null));
+            listFiltered = (List<DBEntity>)(List<?>)filter.getFilteredList();
+            if(listFiltered.size() == listFull.size()) {
+                listFiltered = null;
+            }
+        }
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = listFiltered == null ? R.drawable.ic_filter : R.drawable.ic_filtered;
+        filterButton.setImageDrawable(getResources().getDrawable(filterButtonId, getApplicationContext().getTheme()));
     }
 
     @Override
@@ -240,76 +284,55 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        boolean dataChanged = false;
-        String factoryId = null;
-
-        String factory = PreferenceManager.getDefaultSharedPreferences(
+        String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
-        if (id == R.id.nav_home && factory != null) {
+        List<DBEntity> newEntities = null;
+        if (id == R.id.nav_home && factoryId != null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
                     .putString(KEY_CUR_FACTORY,null).apply();
         } else if (id == R.id.nav_favorites) {
-            List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
-            list.clear();
-            listFull.clear();
-            list.addAll(entities);
-            listFull.addAll(entities);
-            dataChanged = true;
+            newEntities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
             factoryId = FavoriteFactory.FACTORY_ID;
         } else if (id == R.id.nav_skills) {
-            List<DBEntity> entities = dbhelper.getAllEntities(SkillFactory.getInstance());
-            list.clear();
-            listFull.clear();
-            list.addAll(entities);
-            listFull.addAll(entities);
-            dataChanged = true;
+            newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
-            List<DBEntity> entities = dbhelper.getAllEntities(FeatFactory.getInstance());
-            list.clear();
-            listFull.clear();
-            list.addAll(entities);
-            listFull.addAll(entities);
-            dataChanged = true;
+            newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
-            List<DBEntity> entities = dbhelper.getAllEntities(SpellFactory.getInstance());
-            list.clear();
-            listFull.clear();
-            list.addAll(entities);
-            listFull.addAll(entities);
-            dataChanged = true;
+            newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
             factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             Intent intent = new Intent(this, LoadDataActivity.class);
             startActivity(intent);
         }
 
-        if (dataChanged) {
+        if (newEntities != null) {
+            boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
             // reset activity
             findViewById(R.id.welcome_screen).setVisibility(View.GONE);
             findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
-            findViewById(R.id.filterButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.filterButton).setVisibility(filterEnabled ? View.VISIBLE : View.GONE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
             searchInput.setVisibility(View.GONE);
 
-            // Change menu title by factory (ie. type) name
-            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
-            String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
-            if (toolBar != null && title != null) {
-                toolBar.setTitle(title);
-            }
-
+            // Update preferences
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
                     putString(KEY_CUR_FACTORY,factoryId).apply();
 
-            recyclerView.getAdapter().notifyDataSetChanged();
+            // Update view
+            listFull.clear();
+            listFull.addAll(newEntities);
+            listFiltered = null;
+            search = null;
+            generateFilteredList();
+            applyFiltersAndSearch();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -322,19 +345,18 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean refreshRequired = prefs.getBoolean(MainActivity.KEY_REFRESH_REQUIRED, false);
+        boolean reloadRequired = prefs.getBoolean(MainActivity.KEY_RELOAD_REQUIRED, false);
         String factory = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
-        if(refreshRequired) {
+        if(reloadRequired) {
             if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
                 List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
-                list.clear();
                 listFull.clear();
-                list.addAll(entities);
                 listFull.addAll(entities);
-                recyclerView.getAdapter().notifyDataSetChanged();
+                generateFilteredList();
+                applyFiltersAndSearch();
             }
-            prefs.edit().putBoolean(MainActivity.KEY_REFRESH_REQUIRED, false).apply();
+            prefs.edit().putBoolean(MainActivity.KEY_RELOAD_REQUIRED, false).apply();
         }
     }
 
@@ -366,11 +388,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onApplyFilter(SpellFilter filter) {
-        findViewById(R.id.filterButton).setVisibility(View.VISIBLE);
-        list.clear();
-        list.addAll(filter.getFilteredList());
-        recyclerView.getAdapter().notifyDataSetChanged();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
+        generateFilteredList();
+        applyFiltersAndSearch();
     }
 }
