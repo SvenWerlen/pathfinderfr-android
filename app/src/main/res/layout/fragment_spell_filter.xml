@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.wefika.flowlayout.FlowLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="start|top"
+    tools:context=".app.SpellFilterFragment"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/labelSchool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/spellfilter_school"
+        android:textStyle="bold" />
+
+    <com.wefika.flowlayout.FlowLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/flowSchool"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|top"
+        tools:context=".app.SpellFilterFragment">
+
+        <CheckBox
+            android:id="@+id/schoolAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:checked="true"
+            android:text="@string/spellfilter_all" />
+    </com.wefika.flowlayout.FlowLayout>
+
+    <TextView
+        android:id="@+id/labelClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/spellfilter_class"
+        android:textStyle="bold" />
+
+    <com.wefika.flowlayout.FlowLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/flowClass"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|top"
+        tools:context=".app.SpellFilterFragment">
+
+        <CheckBox
+            android:id="@+id/classAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:checked="true"
+            android:text="@string/spellfilter_all" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+    <TextView
+        android:id="@+id/labelLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/spellfilter_level"
+        android:textStyle="bold" />
+
+        <com.wefika.flowlayout.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/flowLevel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start|top"
+            tools:context=".app.SpellFilterFragment">
+
+        <CheckBox
+            android:id="@+id/levelAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:checked="true"
+            android:text="@string/spellfilter_all" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/flowActions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|top"
+        tools:context=".app.SpellFilterFragment">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp"/>
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/apply_filters"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+</com.wefika.flowlayout.FlowLayout>
