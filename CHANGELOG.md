@@ -16,4 +16,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Data import from Yaml files (spells, skills, feats)
 - List pages (spells, skills, feats) with search
 - Detail page with toggle (metadata) and link to source (www.pathfinderfr.org)
+- Favorites (add/remove, list)
 - Preference menu with "Always show details" option
