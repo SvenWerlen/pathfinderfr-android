@@ -102,7 +102,15 @@ public class SpellFilter {
         for(String s : regex) {
             s = s.toLowerCase().trim();
             if(s.indexOf('/') > 0) {
-                classes.addAll(Arrays.asList(s.split("/")));
+                // extract level
+                String level = s.substring(s.length()-2);
+                for(String el: s.split("/")) {
+                    if(el.endsWith(level)) {
+                        classes.add(el);
+                    } else {
+                        classes.add(el + level);
+                    }
+                }
             } else {
                 classes.add(s);
             }
