@@ -25,6 +25,8 @@ public abstract class DBEntity implements Serializable {
         this.name = name;
     }
 
+    public String getNameLong() { return name; }
+
     public String getDescription() {
         return description;
     }

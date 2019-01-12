@@ -57,12 +57,12 @@ public class FavoriteFactory extends DBEntityFactory {
     }
 
     /**
-     * Replaces default implementation in order to add column "factoryid" and change default ordering
+     * Replaces default implementation in order to add column "factoryid" and "entityid" and change default ordering
      */
     @Override
     public String getQueryFetchAll() {
-        return String.format("SELECT %s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_FACTORY_ID, getTableName(),
+        return String.format("SELECT %s,%s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_FACTORY_ID, COLUMN_ENTITY_ID, getTableName(),
                 COLUMN_FACTORY_ID + "," + COLUMN_NAME);
     }
 
@@ -82,7 +82,7 @@ public class FavoriteFactory extends DBEntityFactory {
             return null;
         }
         ContentValues contentValues = new ContentValues();
-        contentValues.put(FavoriteFactory.COLUMN_NAME, entity.getName());
+        contentValues.put(FavoriteFactory.COLUMN_NAME, entity.getNameLong());
         contentValues.put(FavoriteFactory.COLUMN_FACTORY_ID, entity.getFactory().getFactoryId());
         contentValues.put(FavoriteFactory.COLUMN_ENTITY_ID, entity.getId());
         return contentValues;
@@ -90,29 +90,25 @@ public class FavoriteFactory extends DBEntityFactory {
 
     @Override
     public DBEntity generateEntity(@NonNull Cursor resource) {
-        // short view (only id and name available)
-        if(resource.getColumnIndex(FavoriteFactory.COLUMN_ENTITY_ID)<0) {
-            DBEntity entity = new Spell(); // could be any entity
 
-            String factoryId = resource.getString(resource.getColumnIndex(FavoriteFactory.COLUMN_FACTORY_ID));
-            String name = resource.getString(resource.getColumnIndex(FavoriteFactory.COLUMN_NAME));
-            String classifier = ConfigurationUtil.getInstance().getProperties().getProperty("template.favorite." + factoryId.toLowerCase());
-
-            entity.setId(resource.getLong(resource.getColumnIndex(FavoriteFactory.COLUMN_ID)));
-            entity.setName(classifier + " " + name);
-            return entity;
-        }
-
-        // retrieve entityId
         String factoryId = resource.getString(resource.getColumnIndex(FavoriteFactory.COLUMN_FACTORY_ID));
-        long entityId = resource.getLong(resource.getColumnIndex(FavoriteFactory.COLUMN_ENTITY_ID));
+        String name = resource.getString(resource.getColumnIndex(FavoriteFactory.COLUMN_NAME));
+        //String classifier = ConfigurationUtil.getInstance().getProperties().getProperty("template.favorite." + factoryId.toLowerCase());
 
-        // use another factory to get entity
-        DBEntityFactory factory = EntityFactories.getFactoryById(factoryId);
-        if(factory != null) {
-            return DBHelper.getInstance(null).fetchEntity(entityId,factory);
+        DBEntity entity;
+        if(SkillFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new Skill();
+        } else if(FeatFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new Feat();
+        } else if(SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new Spell();
+        } else {
+            return null;
         }
-        return null;
+
+        entity.setId(resource.getLong(resource.getColumnIndex(FavoriteFactory.COLUMN_ENTITY_ID)));
+        entity.setName(name);
+        return entity;
     }
 
     @Override

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Number of items in title (header) on list page
 - Filters for spells based on school, class and level
+- Setting for showing long names in lists. List of spells shows then levels.
+- Icons for items
 
 ## [1.0.0] - 2019-01-03
 ### Added

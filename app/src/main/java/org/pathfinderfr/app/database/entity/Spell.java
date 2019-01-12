@@ -1,6 +1,15 @@
 package org.pathfinderfr.app.database.entity;
 
+import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.StringUtil;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class Spell extends DBEntity {
+
+    public static final String TEMPLATE_SPELL_LIST = "template.spell.list";
 
     // spell-specific
     private String school;
@@ -17,6 +26,31 @@ public class Spell extends DBEntity {
     @Override
     public DBEntityFactory getFactory() {
         return SpellFactory.getInstance();
+    }
+
+    @Override
+    public String getNameLong() {
+
+        // extract levels
+        if(level != null && level.length() > 0) {
+            Set<Integer> levels = new TreeSet();
+            for(int idx = 0; idx < level.length(); idx++) {
+                if(Character.isDigit(level.charAt(idx))) {
+                    levels.add(Integer.valueOf(level.substring(idx,idx+1)));
+                }
+            }
+            StringBuffer levelDetail = new StringBuffer();
+            for(int l : levels) {
+                levelDetail.append(l).append('/');
+            }
+            if(levelDetail.length() > 1) {
+                levelDetail.deleteCharAt(levelDetail.length()-1);
+            }
+
+            String detailTemplate = ConfigurationUtil.getInstance(null).getProperties().getProperty(TEMPLATE_SPELL_LIST);
+            return String.format(detailTemplate, name, levelDetail);
+        }
+        return name;
     }
 
     public String getSchool() {

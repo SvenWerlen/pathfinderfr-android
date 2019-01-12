@@ -44,6 +44,8 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SpellFilterFragment.OnFragmentInteractionListener {
 
+    // preferences for showing long or short name
+    private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
@@ -201,10 +203,15 @@ public class MainActivity extends AppCompatActivity
                 listCur.add(el);
             }
         }
-        recyclerView.getAdapter().notifyDataSetChanged();
 
         String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+        boolean showNameLong = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_NAMELONG, true);
+
+        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
+        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
+        recyclerView.getAdapter().notifyDataSetChanged();
 
         if(factoryId != null) {
             // Change menu title by factory (ie. type) name

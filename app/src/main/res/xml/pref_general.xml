@@ -1,7 +1,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
+        android:key="general_list_namelong"
+        android:title="@string/pref_title_list_namelong"
+        android:summaryOn="@string/pref_description_list_namelong_on"
+        android:summaryOff="@string/pref_description_list_namelong_off"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
         android:key="general_showdetails"
         android:title="@string/pref_title_showdetails"
         android:summaryOn="@string/pref_description_showdetails_on"

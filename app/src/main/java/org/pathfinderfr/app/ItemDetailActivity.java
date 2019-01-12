@@ -82,9 +82,11 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         // Favorite button
         ImageButton favorite = (ImageButton) findViewById(R.id.favoriteButton);
-        String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
-                getString(MainActivity.KEY_CUR_FACTORY, null);
         long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
+        String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
+
+        System.out.println("FactoryId (" + factoryID + ") => " + itemID);
+
         boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
         updateFavoriteButtonIcon(isFavorite);
 
@@ -96,8 +98,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 String message = getResources().getString(R.string.generic_failed);
 
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-                String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
-                        getString(MainActivity.KEY_CUR_FACTORY, null);
+                String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
                 boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
                 if (itemID > 0 && factoryID != null) {
                     DBHelper dbhelper = DBHelper.getInstance(null);
@@ -119,7 +120,11 @@ public class ItemDetailActivity extends AppCompatActivity {
                     isFavorite = !isFavorite;
                     updateFavoriteButtonIcon(isFavorite);
                     // update list if currently viewing favorites
-                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factoryID)) {
+
+                    String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
+                            getBaseContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
+
+                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
                         PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
                                 .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
                     }
@@ -138,8 +143,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-                String factoryID = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
-                        getString(MainActivity.KEY_CUR_FACTORY, null);
+                String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
                 if (itemID > 0 && factoryID != null) {
                     DBHelper dbhelper = DBHelper.getInstance(null);
                     DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
@@ -167,6 +171,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 // refresh fragment
                 Bundle arguments = new Bundle();
                 arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
+                arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
                 arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails);
 
                 Fragment frg = getSupportFragmentManager().findFragmentById(R.id.item_detail_container);
@@ -189,6 +194,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
+            arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
             arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);

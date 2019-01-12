@@ -34,6 +34,7 @@ public class ItemDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM_FACTORY_ID = "item_factoryid";
     public static final String ARG_ITEM_SHOWDETAILS = "item_showdetails";
 
     private Properties templates = new Properties();
@@ -57,15 +58,17 @@ public class ItemDetailFragment extends Fragment {
 
         templates = ConfigurationUtil.getInstance(getContext()).getProperties();
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(ARG_ITEM_ID) && getArguments().containsKey(ARG_ITEM_FACTORY_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
 
             DBHelper dbhelper = DBHelper.getInstance(null);
             long itemID = getArguments().getLong(ARG_ITEM_ID);
-            String factoryID = PreferenceManager.getDefaultSharedPreferences(getContext()).
-                    getString(MainActivity.KEY_CUR_FACTORY, null);
+            String factoryID = getArguments().getString(ARG_ITEM_FACTORY_ID);;
+
+            System.out.println("Fragment - FactoryId (" + factoryID + ") => " + itemID);
+
             if(itemID >0 && factoryID != null) {
                 mItem = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
 
