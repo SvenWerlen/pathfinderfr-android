@@ -16,7 +16,7 @@ extraites du site web [pathfinder-fr.org](http://www.pathfinder-fr.org).
 
 _Note: l'application va télécharger environ 3 Mb de données_ 
 
-![Capture import de données](../images/pathfinderfr_download-data-android_small.jpg)
+![Capture import de données](../images/02-loaddata_small.jpg)
 
 
 ## Visionner les listes
@@ -30,10 +30,10 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
   * Le bouton _étoile_ (en haut à droite) permet de mettre l'élément dans la liste des favoris
   * Le bouton _lien_ (en bas à gauche), visible uniquement en mode "détails" ouvre un navigateur vers la fiche [pathfinder-fr.org](https://www.pathfinder-fr.org) correspondante.
 
-![Écran d'accueil](../images/pathfinderfr_welcome-android_small.jpg)
-![Navigation latérale](../images/pathfinderfr_navigation-android_small.jpg)
-![Liste de sorts](../images/pathfinderfr_spell-android_small.jpg)
-![Détails d'un sort](../images/pathfinderfr_details-android_small.jpg)
+![Écran d'accueil](../images/01-welcome_small.jpg)
+![Navigation latérale](../images/03-navigation_small.jpg)
+![Liste de sorts](../images/04-spell-list_small.jpg)
+![Détails d'un sort](../images/07-spell-detail_small.jpg)
  
  
  ## Filtrer / rechercher les listes
@@ -46,11 +46,22 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
  * Cliquer sur le bouton _x_ (croix) pour fermer la recherche et réinitialiser la liste complète
  * Changer de liste ré-initialisera la recherche
  
- ![Fonction de recherche / filtre](../images/pathfinderfr_search-android_small.jpg)
+ L'application permet également de filtrer les listes grâce à sa fonction de filtre (bouton dans le coin inférieur droit)
  
+ * Le bouton de filtre est uniquement disponible dans la vue _liste_ et pour les _sorts_
+ * Décocher l'option _Tous_ et cocher les catégories souhaitées individuellement
+ * Cliquer sur le bouton _Appliquer_ pour appliquer les filtres
+ * Noter que le bouton change de couleur pour indiquer que des filtres sont actifs. 
+ 
+ Les options de filtre sont conservées dans les préférences de l'application. Vous pouvez changer
+ d'écran ou redémarrer l'application, les filtres continueront de s'appliquer.  
+ 
+ ![Fonction de recherche](../images/05-search-list_small.jpg)
+ ![Fonction de filtre](../images/06-filter-list_small.jpg)
  
   ## Paramètres et configuration
   
   L'application offre des configurations et paramètres selon les besoins de l'utilisateur.
   
-  * **Général | Voir les détails**: affiche le mode détaillé par défaut (voir ci-dessus). Évite de devoir cliquer systématiquement sur le bouton _plus_ pour voir les métadonnées. 
+  * **Général | Nom long dans les listes**: affiche un nom long dans les listes. Exemple: affiche le niveau du sort directement dans la liste. 
+  * **Général | Détail des compétences, dons, sorts**: affiche le mode détaillé par défaut (voir ci-dessus). Évite de devoir cliquer systématiquement sur le bouton _plus_ pour voir les métadonnées.
