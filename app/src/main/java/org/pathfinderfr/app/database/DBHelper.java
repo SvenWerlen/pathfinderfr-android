@@ -55,10 +55,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        /*
         for (DBEntityFactory f : EntityFactories.FACTORIES) {
             db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
         }
         onCreate(db);
+        */
     }
 
     /**
