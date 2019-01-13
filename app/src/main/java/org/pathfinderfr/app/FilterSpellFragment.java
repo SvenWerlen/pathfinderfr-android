@@ -1,7 +1,6 @@
 package org.pathfinderfr.app;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -22,12 +21,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SpellFilterFragment.OnFragmentInteractionListener} interface
+ * {@link FilterSpellFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SpellFilterFragment#newInstance} factory method to
+ * Use the {@link FilterSpellFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SpellFilterFragment extends DialogFragment implements View.OnClickListener {
+public class FilterSpellFragment extends DialogFragment implements View.OnClickListener {
 
     private static final String ARG_FILTER = "filter";
 
@@ -42,7 +41,7 @@ public class SpellFilterFragment extends DialogFragment implements View.OnClickL
 
     private OnFragmentInteractionListener mListener;
 
-    public SpellFilterFragment() {
+    public FilterSpellFragment() {
         // Required empty public constructor
     }
 
@@ -50,10 +49,10 @@ public class SpellFilterFragment extends DialogFragment implements View.OnClickL
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment SpellFilterFragment.
+     * @return A new instance of fragment FilterSpellFragment.
      */
-    public static SpellFilterFragment newInstance(SpellFilter filter) {
-        SpellFilterFragment fragment = new SpellFilterFragment();
+    public static FilterSpellFragment newInstance(SpellFilter filter) {
+        FilterSpellFragment fragment = new FilterSpellFragment();
         fragment.setFilter(filter);
         return fragment;
     }

@@ -2,7 +2,6 @@ package org.pathfinderfr.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -42,7 +41,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SpellFilterFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener {
 
     // preferences for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, listCur, mTwoPane));
+        recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, mTwoPane));
 
         // Navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -209,8 +208,8 @@ public class MainActivity extends AppCompatActivity
 
         boolean showNameLong = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_NAMELONG, true);
 
-        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
-        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
+        ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
+        ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
         recyclerView.getAdapter().notifyDataSetChanged();
 
         if(factoryId != null) {
@@ -386,7 +385,7 @@ public class MainActivity extends AppCompatActivity
         if(SpellFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             List<Spell> spellList = (List<Spell>)(List<?>)listFull;
-            DialogFragment newFragment = SpellFilterFragment.newInstance(
+            DialogFragment newFragment = FilterSpellFragment.newInstance(
                     new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
             newFragment.show(ft, "dialog");
         }

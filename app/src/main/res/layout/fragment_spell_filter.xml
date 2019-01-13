@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="start|top"
-    tools:context=".app.SpellFilterFragment"
+    tools:context=".app.FilterSpellFragment"
     android:padding="20dp">
 
     <TextView
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="start|top"
-        tools:context=".app.SpellFilterFragment">
+        tools:context=".app.FilterSpellFragment">
 
         <CheckBox
             android:id="@+id/schoolAll"
@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="start|top"
-        tools:context=".app.SpellFilterFragment">
+        tools:context=".app.FilterSpellFragment">
 
         <CheckBox
             android:id="@+id/classAll"
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="start|top"
-            tools:context=".app.SpellFilterFragment">
+            tools:context=".app.FilterSpellFragment">
 
         <CheckBox
             android:id="@+id/levelAll"
@@ -95,7 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="start|top"
-        tools:context=".app.SpellFilterFragment">
+        tools:context=".app.FilterSpellFragment">
 
         <Button
             android:id="@+id/cancelButton"

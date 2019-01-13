@@ -32,6 +32,12 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/dons.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/spells.yml"};
 
+    private static final String[] SOURCES_NEW = new String[]{
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/competences.yml",
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/dons.yml",
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/spells.yml"};
+
+
     private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts"};
     private LoadDataTask loadTaskInProgress;
 
@@ -57,9 +63,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
                     boolean deleteOrpheans = ((CheckBox)findViewById(R.id.loaddataDeleteOrpheans)).isChecked();
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SkillFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES_NEW[0], SkillFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES_NEW[1], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES_NEW[2], SpellFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
                     loadTaskInProgress.execute(source0,source1,source2);
 
