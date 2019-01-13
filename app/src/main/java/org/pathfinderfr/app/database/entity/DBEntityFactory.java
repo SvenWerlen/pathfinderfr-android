@@ -36,6 +36,13 @@ public abstract class DBEntityFactory {
     }
 
     /**
+     * @return the query to fetch one entity (search by name)
+     */
+    public String getQueryFetchByName(String name) {
+        return String.format("SELECT * FROM %s where %s=\"%s\"", getTableName(), COLUMN_NAME, name);
+    }
+
+    /**
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll() {
