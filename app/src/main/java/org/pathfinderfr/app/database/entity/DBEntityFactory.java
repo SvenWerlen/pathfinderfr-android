@@ -29,6 +29,11 @@ public abstract class DBEntityFactory {
     public abstract String getTableName();
 
     /**
+     * @return name of the source column
+     */
+    public String getColumnSource() { return COLUMN_SOURCE; }
+
+    /**
      * @return SQL statement for creating the table
      */
     public abstract String getQueryCreateTable();

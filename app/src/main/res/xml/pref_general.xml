@@ -2,6 +2,14 @@
 
     <SwitchPreference
         android:defaultValue="true"
+        android:key="general_show_disclaimer"
+        android:title="@string/pref_title_show_disclaimer"
+        android:summaryOn="@string/pref_description_show_disclaimer_on"
+        android:summaryOff="@string/pref_description_show_disclaimer_off"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
         android:key="general_list_namelong"
         android:title="@string/pref_title_list_namelong"
         android:summaryOn="@string/pref_description_list_namelong_on"

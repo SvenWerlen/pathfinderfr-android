@@ -15,6 +15,7 @@ import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,54 @@ public class DBHelper extends SQLiteOpenHelper {
             return 0;
         }
     }
+
+    public long getCountEntities(DBEntityFactory factory, String... sources) {
+        try {
+            // check that column "source" exist for that table
+            SQLiteDatabase db = this.getReadableDatabase();
+            int count = 0;
+
+            // Works with old SQLite versions
+            Cursor res = db.rawQuery(String.format("PRAGMA table_info(%s);",
+                    factory.getTableName()),null);
+
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                if(res.getColumnIndex("name")>=0 && factory.getColumnSource().equalsIgnoreCase(res.getString(res.getColumnIndex("name")))) {
+                    count++;
+                    break;
+                }
+                res.moveToNext();
+            }
+
+            /**
+             * PRAGMA feature was added in SQLite version 3.16.0 (2017-01-02).
+             *
+            Cursor res = db.rawQuery(String.format("SELECT COUNT(*) AS total FROM pragma_table_info('%s') WHERE name='%s'",
+                    factory.getTableName(),factory.getColumnSource()),null);
+            res.moveToFirst();
+            int count = res.getInt(res.getColumnIndex("total"));
+             **/
+            if(sources.length == 0 || count == 0) {
+                if(count == 0) {
+                    Log.i(DBHelper.class.getSimpleName(), String.format("No column %s found in table %s",
+                            factory.getColumnSource(), factory.getTableName()));
+                }
+                return getCountEntities(factory);
+            }
+
+            String query = String.format("SELECT COUNT(*) as total FROM %s WHERE %s IN (%s)",
+                    factory.getTableName(), factory.getColumnSource(), StringUtil.listToString(sources,',', '\''));
+
+            res = db.rawQuery(query, null);
+            res.moveToFirst();
+            return res.getLong(res.getColumnIndex("total"));
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+            return 0;
+        }
+    }
+
 
 }
 

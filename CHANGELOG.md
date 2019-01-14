@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Source in item detail
 - Source filtering for feats and spells
 - Data migration for favorites
+- Preference to disable disclaimer on welcome page
+### Changed
+- More information on welcome page
+### Fixed
+- Duplicated class (Rôd & Rod)
 
 ## [1.0.0] - 2019-01-12 
 ### Changed

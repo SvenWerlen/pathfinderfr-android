@@ -25,7 +25,10 @@
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
 
     <!-- Strings related to Welcome page -->
-    <string name="welcome_copyright">Cette application et ses contenus utilisent des marques déposées et/ou des copyrights appartenant à Paizo Publishing, LLC selon les règles de la Community Use Policy de Paizo. Il nous est expressément interdit de rendre payant l’utilisation ou l’accès à son contenu. Les données sont issues du site www.pathfinder-fr.org.</string>
+    <string name="welcome_copyright">Cette application et ses contenus utilisent des marques déposées
+        et/ou des copyrights appartenant à Paizo Publishing, LLC selon les règles de la Community
+        Use Policy de Paizo. Il nous est expressément interdit de rendre payant l’utilisation ou
+        l’accès à son contenu. Les données sont issues du site www.pathfinder-fr.org.</string>
 
     <!-- Strings related to Navigation -->
     <string name="navigation_item_home">Accueil</string>
@@ -63,6 +66,10 @@
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>
     <string name="pref_header_sources">Sources de données</string>
+
+    <string name="pref_title_show_disclaimer">Afficher l\'avertissement</string>
+    <string name="pref_description_show_disclaimer_on">Le copyright s\'affiche sur la page d\'accueil</string>
+    <string name="pref_description_show_disclaimer_off">Le copyright n\'encombre plus la page d\'accueil</string>
 
     <string name="pref_title_list_namelong">Nom long dans les listes</string>
     <string name="pref_description_list_namelong_on">Les noms  longs sont affichés dans les listes</string>

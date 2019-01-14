@@ -45,8 +45,10 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener {
 
-    // preferences for showing long or short name
+    // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
+    // preference for showing disclaimer on welcome page
+    private static final String PREF_SHOW_DISCLAIMER = "general_show_disclaimer";
 
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
@@ -143,18 +145,47 @@ public class MainActivity extends AppCompatActivity
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
+
+        String[] sources = getSources();
+        if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+            sources = new String[0];
+        }
+
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
+
+        long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
+        long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
+
+        long countSources = sources.length;
+        long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
+
         String welcomeText = String.format(props.getProperty("template.welcome"),
-                countSkills, countFeats, countSpells, countFavorites);
+                countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
+                countFavorites, countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
         } else {
             welcomeText += props.getProperty("template.welcome.second");
         }
+        welcomeText += props.getProperty("template.welcome.userdoc");
+
         textview.setText(Html.fromHtml(welcomeText));
+
+        // Disclaimer / copyright
+        boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
+        findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_copyright).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
+            }
+        });
+
+        // Navigation
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -174,7 +205,6 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
         recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, mTwoPane));
 
-        // Navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if(countFavorites == 0) {
             navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
@@ -333,7 +363,7 @@ public class MainActivity extends AppCompatActivity
         if (newEntities != null) {
             boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
             // reset activity
-            findViewById(R.id.welcome_screen).setVisibility(View.GONE);
+            findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
