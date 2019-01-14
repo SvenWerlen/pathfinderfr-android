@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Sources as preferences
+- Source in item detail
+- Source filtering for feats and spells
+- Data migration for favorites
+
+## [1.0.0] - 2019-01-12 
 ### Changed
 - Number of items in title (header) on list page
+### Added
 - Filters for spells based on school, class and level
 - Setting for showing long names in lists. List of spells shows then levels.
 - Icons for items
