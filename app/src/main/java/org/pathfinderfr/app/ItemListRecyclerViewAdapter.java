@@ -2,9 +2,6 @@ package org.pathfinderfr.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +18,8 @@ import org.pathfinderfr.app.database.entity.Spell;
 
 import java.util.List;
 
-public class SimpleItemRecyclerViewAdapter
-        extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+public class ItemListRecyclerViewAdapter
+        extends RecyclerView.Adapter<ItemListRecyclerViewAdapter.ViewHolder> {
 
     private final MainActivity mParentActivity;
     private final List<DBEntity> mValues;
@@ -30,9 +27,9 @@ public class SimpleItemRecyclerViewAdapter
     private String factoryId;
     private boolean showNameLong;
 
-    SimpleItemRecyclerViewAdapter(MainActivity parent,
-                                  List<DBEntity> items,
-                                  boolean twoPane) {
+    ItemListRecyclerViewAdapter(MainActivity parent,
+                                List<DBEntity> items,
+                                boolean twoPane) {
         mValues = items;
         mParentActivity = parent;
         mTwoPane = twoPane;

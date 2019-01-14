@@ -10,6 +10,7 @@ public abstract class DBEntity implements Serializable {
     protected String name;
     protected String description;
     protected String reference;
+    protected String source;
 
     public long getId() {
         return id;
@@ -36,6 +37,9 @@ public abstract class DBEntity implements Serializable {
 
     public String getReference() { return reference; }
     public void setReference(String reference) { this.reference = reference; }
+
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
 
     public boolean isValid() {
         return getName() != null && getName().length() > 0

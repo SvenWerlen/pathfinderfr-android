@@ -2,7 +2,6 @@ package org.pathfinderfr.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,16 +36,20 @@ import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SpellFilterFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener {
 
-    // preferences for showing long or short name
+    // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
+    // preference for showing disclaimer on welcome page
+    private static final String PREF_SHOW_DISCLAIMER = "general_show_disclaimer";
+
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
@@ -141,18 +145,47 @@ public class MainActivity extends AppCompatActivity
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
+
+        String[] sources = getSources();
+        if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+            sources = new String[0];
+        }
+
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
+
+        long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
+        long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
+
+        long countSources = sources.length;
+        long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
+
         String welcomeText = String.format(props.getProperty("template.welcome"),
-                countSkills, countFeats, countSpells, countFavorites);
+                countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
+                countFavorites, countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
         } else {
             welcomeText += props.getProperty("template.welcome.second");
         }
+        welcomeText += props.getProperty("template.welcome.userdoc");
+
         textview.setText(Html.fromHtml(welcomeText));
+
+        // Disclaimer / copyright
+        boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
+        findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_copyright).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
+            }
+        });
+
+        // Navigation
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -170,9 +203,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, listCur, mTwoPane));
+        recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, mTwoPane));
 
-        // Navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if(countFavorites == 0) {
             navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
@@ -209,8 +241,8 @@ public class MainActivity extends AppCompatActivity
 
         boolean showNameLong = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_NAMELONG, true);
 
-        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
-        ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
+        ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
+        ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
         recyclerView.getAdapter().notifyDataSetChanged();
 
         if(factoryId != null) {
@@ -294,6 +326,9 @@ public class MainActivity extends AppCompatActivity
         String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
+        String[] sources = getSources();
+        Log.i(MainActivity.class.getSimpleName(), "Sources enabled: " + StringUtil.listToString(sources, ','));
+
         List<DBEntity> newEntities = null;
         if (id == R.id.nav_home && factoryId != null) {
             Intent intent = new Intent(this, MainActivity.class);
@@ -307,10 +342,18 @@ public class MainActivity extends AppCompatActivity
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
-            newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
+            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
+            } else {
+                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance(), sources);
+            }
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
-            newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
+            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
+            } else {
+                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance(), sources);
+            }
             factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             Intent intent = new Intent(this, LoadDataActivity.class);
@@ -320,7 +363,7 @@ public class MainActivity extends AppCompatActivity
         if (newEntities != null) {
             boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
             // reset activity
-            findViewById(R.id.welcome_screen).setVisibility(View.GONE);
+            findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
@@ -386,7 +429,7 @@ public class MainActivity extends AppCompatActivity
         if(SpellFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             List<Spell> spellList = (List<Spell>)(List<?>)listFull;
-            DialogFragment newFragment = SpellFilterFragment.newInstance(
+            DialogFragment newFragment = FilterSpellFragment.newInstance(
                     new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
             newFragment.show(ft, "dialog");
         }
@@ -399,5 +442,19 @@ public class MainActivity extends AppCompatActivity
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
         generateFilteredList();
         applyFiltersAndSearch();
+    }
+
+    /**
+     * @return the list of sources that are enabled in preferences
+     */
+    private String[] getSources() {
+        List<String> list = new ArrayList<>();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        for(String source: ConfigurationUtil.getInstance().getSources()) {
+            if(preferences.getBoolean("source_" + source, true)) {
+                list.add(source.toUpperCase());
+            }
+        }
+        return list.toArray(new String[0]);
     }
 }

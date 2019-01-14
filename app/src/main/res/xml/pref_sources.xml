@@ -1,0 +1,71 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">3
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_mj"
+        android:title="@string/source_mj"
+        android:summary="@string/pref_sources_default"
+        android:enabled="false"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_mjra"
+        android:title="@string/source_mjra"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_mca"
+        android:title="@string/source_mca"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_mr"
+        android:title="@string/source_mr"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_b1"
+        android:title="@string/source_b1"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_ag"
+        android:title="@string/source_ag"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_am"
+        android:title="@string/source_am"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_ao"
+        android:title="@string/source_ao"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_iswg"
+        android:title="@string/source_iswg"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_paizo"
+        android:title="@string/source_paizo"
+        />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="source_rtt"
+        android:title="@string/source_rtt"
+        />
+
+</PreferenceScreen>

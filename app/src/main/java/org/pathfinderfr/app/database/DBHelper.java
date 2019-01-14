@@ -6,11 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +23,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
+    public static final int DATABASE_VERSION = 2;
 
     private static DBHelper instance;
 
@@ -32,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -55,12 +61,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*
-        for (DBEntityFactory f : EntityFactories.FACTORIES) {
-            db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
+        // version 2 introduced a new column "source" in some tables (feats and spells)
+        // version 2 also merged columns "target" and "area" but data will be kept until next reload
+        if(oldVersion == 1) {
+            db.execSQL(FeatFactory.getInstance().getQueryUpgradeV2());
+            db.execSQL(SpellFactory.getInstance().getQueryUpgradeV2());
+            oldVersion = 2;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 2");
         }
-        onCreate(db);
-        */
     }
 
     /**
@@ -134,14 +142,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return factory.generateEntity(res);
     }
 
+    /**
+     * @param name entity name to be searched
+     * @param factory factory corresponding to the element (skill, feet, spell, etc.)
+     * @return the entity as object (or null if not found)
+     */
+    public DBEntity fetchEntityByName(String name, DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
+        // not found?
+        if(res.getCount()<1) {
+            return null;
+        }
+        res.moveToFirst();
+        return factory.generateEntity(res);
+    }
 
-    public List<DBEntity> getAllEntities(DBEntityFactory factory) {
+
+    public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
+
+        Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters",sources.length));
 
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery(factory.getQueryFetchAll(), null);
-            System.out.println("Number of elements found in database: " + res.getCount());
+            Cursor res;
+            if(sources.length > 0) {
+                res = db.rawQuery(factory.getQueryFetchAll(sources), null);
+            } else {
+                res = db.rawQuery(factory.getQueryFetchAll(), null);
+            }
+            Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
                 list.add(factory.generateEntity(res));
@@ -166,6 +197,54 @@ public class DBHelper extends SQLiteOpenHelper {
             return 0;
         }
     }
+
+    public long getCountEntities(DBEntityFactory factory, String... sources) {
+        try {
+            // check that column "source" exist for that table
+            SQLiteDatabase db = this.getReadableDatabase();
+            int count = 0;
+
+            // Works with old SQLite versions
+            Cursor res = db.rawQuery(String.format("PRAGMA table_info(%s);",
+                    factory.getTableName()),null);
+
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                if(res.getColumnIndex("name")>=0 && factory.getColumnSource().equalsIgnoreCase(res.getString(res.getColumnIndex("name")))) {
+                    count++;
+                    break;
+                }
+                res.moveToNext();
+            }
+
+            /**
+             * PRAGMA feature was added in SQLite version 3.16.0 (2017-01-02).
+             *
+            Cursor res = db.rawQuery(String.format("SELECT COUNT(*) AS total FROM pragma_table_info('%s') WHERE name='%s'",
+                    factory.getTableName(),factory.getColumnSource()),null);
+            res.moveToFirst();
+            int count = res.getInt(res.getColumnIndex("total"));
+             **/
+            if(sources.length == 0 || count == 0) {
+                if(count == 0) {
+                    Log.i(DBHelper.class.getSimpleName(), String.format("No column %s found in table %s",
+                            factory.getColumnSource(), factory.getTableName()));
+                }
+                return getCountEntities(factory);
+            }
+
+            String query = String.format("SELECT COUNT(*) as total FROM %s WHERE %s IN (%s)",
+                    factory.getTableName(), factory.getColumnSource(), StringUtil.listToString(sources,',', '\''));
+
+            res = db.rawQuery(query, null);
+            res.moveToFirst();
+            return res.getLong(res.getColumnIndex("total"));
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+            return 0;
+        }
+    }
+
 
 }
 

@@ -7,4 +7,9 @@
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
 
+    <header
+        android:fragment="org.pathfinderfr.app.SettingsActivity$SourcesPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/pref_header_sources" />
+
 </preference-headers>

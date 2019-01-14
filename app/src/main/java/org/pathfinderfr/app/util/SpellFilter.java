@@ -1,5 +1,6 @@
 package org.pathfinderfr.app.util;
 
+import android.util.Log;
 import android.util.Pair;
 
 import org.pathfinderfr.app.database.entity.Spell;
@@ -29,7 +30,7 @@ public class SpellFilter {
         filterClass = new HashSet<>();
         filterLevel = new HashSet<>();
 
-        System.out.println("PREFS = " + preferences);
+        Log.d(SpellFilter.class.getSimpleName(), "Preferences: " + preferences );
 
         // load preferences
         if(preferences != null) {
@@ -72,6 +73,10 @@ public class SpellFilter {
     public List<String> getSchools() {
         Set<String> schools = new HashSet<String>();
         for( Spell s: spells) {
+            if(s.getSchool() == null) {
+                Log.w(SpellFilter.class.getSimpleName(), "Missing school: " + s);
+                continue;
+            }
             String clean = cleanSchool(s.getSchool());
             if(clean != null) {
                 schools.add(clean);

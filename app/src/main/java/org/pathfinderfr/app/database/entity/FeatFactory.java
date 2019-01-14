@@ -21,6 +21,7 @@ public class FeatFactory extends DBEntityFactory {
     private static final String YAML_NAME         = "Nom";
     private static final String YAML_DESC         = "Description"; // no description yet
     private static final String YAML_REFERENCE    = "Référence";
+    private static final String YAML_SOURCE       = "Source";
     private static final String YAML_CATEGORY     = "Catégorie";
     private static final String YAML_CONDITIONS   = "Conditions";
     private static final String YAML_ADVANTAGE    = "Avantage";
@@ -57,11 +58,11 @@ public class FeatFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
-                        "%s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
-                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE,
+                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_CATEGORY, COLUMN_CONDITIONS, COLUMN_ADVANTAGE, COLUMN_SPECIAL,  COLUMN_NORMAL);
         return query;
     }
@@ -76,6 +77,7 @@ public class FeatFactory extends DBEntityFactory {
         contentValues.put(FeatFactory.COLUMN_NAME, feat.getName());
         contentValues.put(FeatFactory.COLUMN_DESC, feat.getDescription());
         contentValues.put(FeatFactory.COLUMN_REFERENCE, feat.getReference());
+        contentValues.put(FeatFactory.COLUMN_SOURCE, feat.getSource());
         contentValues.put(FeatFactory.COLUMN_CATEGORY, feat.getCategory());
         contentValues.put(FeatFactory.COLUMN_CONDITIONS, feat.getConditions());
         contentValues.put(FeatFactory.COLUMN_ADVANTAGE, feat.getAdvantage());
@@ -100,6 +102,7 @@ public class FeatFactory extends DBEntityFactory {
         feat.setName(extractValue(resource,FeatFactory.COLUMN_NAME));
         feat.setDescription(extractValue(resource,FeatFactory.COLUMN_DESC));
         feat.setReference(extractValue(resource,FeatFactory.COLUMN_REFERENCE));
+        feat.setSource(extractValue(resource,FeatFactory.COLUMN_SOURCE));
         feat.setCategory(extractValue(resource,FeatFactory.COLUMN_CATEGORY));
         feat.setConditions(extractValue(resource,FeatFactory.COLUMN_CONDITIONS));
         feat.setAdvantage(extractValue(resource,FeatFactory.COLUMN_ADVANTAGE));
@@ -114,6 +117,7 @@ public class FeatFactory extends DBEntityFactory {
         feat.setName(attributes.get(YAML_NAME));
         feat.setDescription(attributes.get(YAML_DESC));
         feat.setReference(attributes.get(YAML_REFERENCE));
+        feat.setSource(attributes.get(YAML_SOURCE));
         feat.setCategory(attributes.get(YAML_CATEGORY));
         feat.setConditions(attributes.get(YAML_CONDITIONS));
         feat.setAdvantage(attributes.get(YAML_ADVANTAGE));
@@ -144,6 +148,8 @@ public class FeatFactory extends DBEntityFactory {
         }
         Feat feat = (Feat)entity;
         StringBuffer buf = new StringBuffer();
+        String source = feat.getSource() == null ? null : getTranslatedText("source." + feat.getSource().toLowerCase());
+        buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CATEGORY, feat.getCategory()));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, feat.getConditions()));
         buf.append(generateItemDetail(templateItem, YAML_ADVANTAGE, feat.getAdvantage()));

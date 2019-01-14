@@ -63,6 +63,12 @@ public class SkillFactory extends DBEntityFactory {
     }
 
     @Override
+    public String getQueryFetchAll(String... sources) {
+        // Skills have no sources
+        return getQueryFetchAll();
+    }
+
+    @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Skill)) {
             return null;

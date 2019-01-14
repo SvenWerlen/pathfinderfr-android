@@ -66,6 +66,12 @@ public class FavoriteFactory extends DBEntityFactory {
                 COLUMN_FACTORY_ID + "," + COLUMN_NAME);
     }
 
+    @Override
+    public String getQueryFetchAll(String... sources) {
+        // Favorites have no sources
+        return getQueryFetchAll();
+    }
+
     public String getQueryFetchByIds(String factoryId, long id) {
         return String.format("SELECT * FROM %s where %s='%s' and %s=%d",
                 getTableName(), COLUMN_FACTORY_ID, factoryId, COLUMN_ENTITY_ID, id);

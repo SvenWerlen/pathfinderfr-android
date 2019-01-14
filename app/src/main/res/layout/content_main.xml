@@ -12,21 +12,31 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="46dp">
 
         <include layout="@layout/item_list" />
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/welcome_screen"
-            style="?android:attr/textAppearanceMedium"
+        <ScrollView
+            android:id="@+id/welcomeScroller"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
-            android:padding="5dp"
-            android:autoLink="web"
-            android:textIsSelectable="true"
-            tools:context=".app.ItemDetailFragment" />
+            android:scrollbars="vertical">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/welcome_screen"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:background="@color/colorWhite"
+                android:padding="5dp"
+                android:textIsSelectable="true"
+                tools:context=".app.ItemDetailFragment" />
+
+        </ScrollView>
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -36,9 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
-            android:textColor="@color/colorWhite"
-            android:text="@string/welcome_copyright"
             android:padding="5dp"
+            android:text="@string/welcome_copyright"
+            android:textColor="@color/colorWhite"
             android:textIsSelectable="true"
             tools:context=".app.ItemDetailFragment" />
     </FrameLayout>

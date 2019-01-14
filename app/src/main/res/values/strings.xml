@@ -25,7 +25,10 @@
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
 
     <!-- Strings related to Welcome page -->
-    <string name="welcome_copyright">Cette application et ses contenus utilisent des marques déposées et/ou des copyrights appartenant à Paizo Publishing, LLC selon les règles de la Community Use Policy de Paizo. Il nous est expressément interdit de rendre payant l’utilisation ou l’accès à son contenu. Les données sont issues du site www.pathfinder-fr.org.</string>
+    <string name="welcome_copyright">Cette application et ses contenus utilisent des marques déposées
+        et/ou des copyrights appartenant à Paizo Publishing, LLC selon les règles de la Community
+        Use Policy de Paizo. Il nous est expressément interdit de rendre payant l’utilisation ou
+        l’accès à son contenu. Les données sont issues du site www.pathfinder-fr.org.</string>
 
     <!-- Strings related to Navigation -->
     <string name="navigation_item_home">Accueil</string>
@@ -40,18 +43,33 @@
     <string name="loaddata_message">En cliquant sur le bouton ci-dessous, l\'application va procéder
         au téléchargement des données depuis internet et les insérer dans la base de données locale.
         Vous pourrez alors utiliser l\'application sans besoin de connexion à Internet. Si vous aviez
-        déjà des données, celles-ci seront remplacées.
+        déjà des données, celles-ci seront remplacées et les favoris seront ajustés pour pointer
+        vers les bonnes données ou supprimés (si la case ci-dessous est cochée).
     </string>
+    <string name="loaddata_deletefavorite">Supprimer les favoris orphelins</string>
     <string name="loaddata_start">Démarrer</string>
     <string name="loaddata_stop">Arrêter</string>
+    <string name="loaddata_stopping">Attendre</string>
     <string name="loaddata_pleasewait">Veuillez svp attendre la fin du processus...</string>
     <string name="loaddata_waiting">en attente</string>
     <string name="loaddata_downloading">fichier en téléchargement</string>
     <string name="loaddata_inprogress">%s/%s (%s) traité</string>
     <string name="loaddata_data_spells">Sorts</string>
 
+    <string name="loaddata_status_error">erreur inconnue</string>
+    <string name="loaddata_status_pending">...</string>
+    <string name="loaddata_status_notchanged">inchangé</string>
+    <string name="loaddata_status_changed">migré avec succés</string>
+    <string name="loaddata_status_notfound">introuvable</string>
+    <string name="loaddata_status_deleted">introuvable, à été supprimé!</string>
+
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>
+    <string name="pref_header_sources">Sources de données</string>
+
+    <string name="pref_title_show_disclaimer">Afficher l\'avertissement</string>
+    <string name="pref_description_show_disclaimer_on">Le copyright s\'affiche sur la page d\'accueil</string>
+    <string name="pref_description_show_disclaimer_off">Le copyright n\'encombre plus la page d\'accueil</string>
 
     <string name="pref_title_list_namelong">Nom long dans les listes</string>
     <string name="pref_description_list_namelong_on">Les noms  longs sont affichés dans les listes</string>
@@ -61,6 +79,9 @@
     <string name="pref_description_showdetails_on">Les détails sont affichés par défaut</string>
     <string name="pref_description_showdetails_off">Les détails sont masqués par défaut</string>
 
+    <string name="pref_sources_default">Cette source ne peut être désactivée</string>
+
+
     <!-- Spell filters -->
     <string name="spellfilter_all">Tous</string>
     <string name="spellfilter_school">École:</string>
@@ -69,4 +90,19 @@
     <string name="apply_filters">Appliquer</string>
     <string name="cancel">Annuler</string>
 
+    <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
+    <string name="source_mj">Manuel des joueurs</string>
+    <string name="source_mjra">Manuel des joueurs - règles avancées</string>
+    <string name="source_mca">Manuel du joueur - classes avancées</string>
+    <string name="source_mr">Manuel des races</string>
+    <string name="source_b1">Bestiaire 1</string>
+    <string name="source_ag">Art de la guerre</string>
+    <string name="source_am">Art de la magie</string>
+    <string name="source_ao">Aventures occultes</string>
+    <string name="source_iswg">Cadre de campagne: la mer intérieure</string>
+    <string name="source_paizo">Blog Paizo</string>
+    <string name="source_rtt">Ranged Tactics Toolbox</string>
+
+
 </resources>
+
