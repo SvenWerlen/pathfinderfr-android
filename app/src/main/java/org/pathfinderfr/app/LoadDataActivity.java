@@ -124,8 +124,6 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
         }
         if(completed) {
             text += "<br/>" + favoriteMigrationText(progresses);
-        } else {
-            System.out.println("Not completed!!!");
         }
 
         final int progress = totalProgress / progresses.length;

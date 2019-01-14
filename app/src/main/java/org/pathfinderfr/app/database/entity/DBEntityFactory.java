@@ -3,6 +3,9 @@ package org.pathfinderfr.app.database.entity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.Map;
 
@@ -12,6 +15,7 @@ public abstract class DBEntityFactory {
     protected static final String COLUMN_NAME = "name";
     protected static final String COLUMN_DESC = "description";
     protected static final String COLUMN_REFERENCE = "reference";
+    protected static final String COLUMN_SOURCE = "source";
 
     /**
      * @return the factory identifier
@@ -27,6 +31,13 @@ public abstract class DBEntityFactory {
      * @return SQL statement for creating the table
      */
     public abstract String getQueryCreateTable();
+
+    /**
+     * @return SQL statement for upgrading DB from v1 to v2
+     */
+    public String getQueryUpgradeV2() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_SOURCE);
+    }
 
     /**
      * @return the query to fetch one entity (search by ID)
@@ -82,4 +93,13 @@ public abstract class DBEntityFactory {
      * @return
      */
     public abstract String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem);
+
+
+    /**
+     * @param key key to identify the text in properties
+     * @return translated text from properties
+     */
+    protected String getTranslatedText(String key) {
+        return ConfigurationUtil.getInstance().getProperties().getProperty(key);
+    }
 }

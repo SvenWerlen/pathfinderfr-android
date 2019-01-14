@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.Map;
@@ -23,21 +24,20 @@ public class SpellFactory extends DBEntityFactory {
     private static final String COLUMN_DURATION   = "duration";
     private static final String COLUMN_SAVING     = "savingthrow";
     private static final String COLUMN_SPELL_RES  = "spellresistance";
-    private static final String COLUMN_AREA       = "area";
 
     private static final String YAML_NAME       = "Nom";
     private static final String YAML_DESC       = "Description";
     private static final String YAML_REFERENCE  = "Référence";
+    private static final String YAML_SOURCE     = "Source";
     private static final String YAML_SCHOOL     = "École";
     private static final String YAML_LEVEL      = "Niveau";
     private static final String YAML_CASTING    = "Temps d’incantation";
     private static final String YAML_COMPONENTS = "Composantes";
     private static final String YAML_RANGE      = "Portée";
-    private static final String YAML_TARGET     = "Cible";
+    private static final String YAML_TARGET     = "Cible ou zone d'effet";
     private static final String YAML_DURATION   = "Durée";
     private static final String YAML_SAVING     = "Jet de sauvegarde";
     private static final String YAML_SPELL_RES  = "Résistance à la magie";
-    private static final String YAML_AREA       = "Zone";
 
 
     private static SpellFactory instance;
@@ -72,14 +72,14 @@ public class SpellFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
-                        "%s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text," +
-                        "%s text, %s text, %s text, %s text, %s text" +
+                        "%s text, %s text, %s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
-                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE,
+                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_SCHOOL, COLUMN_LEVEL, COLUMN_CASTING,  COLUMN_COMPONENTS, COLUMN_RANGE,
-                COLUMN_TARGET, COLUMN_DURATION, COLUMN_SAVING, COLUMN_SPELL_RES, COLUMN_AREA);
+                COLUMN_TARGET, COLUMN_DURATION, COLUMN_SAVING, COLUMN_SPELL_RES);
         return query;
     }
 
@@ -101,6 +101,7 @@ public class SpellFactory extends DBEntityFactory {
         contentValues.put(SpellFactory.COLUMN_NAME, spell.getName());
         contentValues.put(SpellFactory.COLUMN_DESC, spell.getDescription());
         contentValues.put(SpellFactory.COLUMN_REFERENCE, spell.getReference());
+        contentValues.put(SpellFactory.COLUMN_SOURCE, spell.getSource());
         contentValues.put(SpellFactory.COLUMN_SCHOOL, spell.getSchool());
         contentValues.put(SpellFactory.COLUMN_LEVEL, spell.getLevel());
         contentValues.put(SpellFactory.COLUMN_CASTING, spell.getCastingTime());
@@ -110,7 +111,6 @@ public class SpellFactory extends DBEntityFactory {
         contentValues.put(SpellFactory.COLUMN_DURATION, spell.getDuration());
         contentValues.put(SpellFactory.COLUMN_SAVING, spell.getSavingThrow());
         contentValues.put(SpellFactory.COLUMN_SPELL_RES, spell.getSpellResistance());
-        contentValues.put(SpellFactory.COLUMN_AREA, spell.getArea());
         return contentValues;
     }
 
@@ -130,6 +130,7 @@ public class SpellFactory extends DBEntityFactory {
         spell.setName(extractValue(resource,SpellFactory.COLUMN_NAME));
         spell.setDescription(extractValue(resource,SpellFactory.COLUMN_DESC));
         spell.setReference(extractValue(resource,SpellFactory.COLUMN_REFERENCE));
+        spell.setSource(extractValue(resource,SpellFactory.COLUMN_SOURCE));
         spell.setSchool(extractValue(resource,SpellFactory.COLUMN_SCHOOL));
         spell.setLevel(extractValue(resource,SpellFactory.COLUMN_LEVEL));
         spell.setCastingTime(extractValue(resource,SpellFactory.COLUMN_CASTING));
@@ -139,7 +140,6 @@ public class SpellFactory extends DBEntityFactory {
         spell.setDuration(extractValue(resource,SpellFactory.COLUMN_DURATION));
         spell.setSavingThrow(extractValue(resource,SpellFactory.COLUMN_SAVING));
         spell.setSpellResistance(extractValue(resource,SpellFactory.COLUMN_SPELL_RES));
-        spell.setArea(extractValue(resource,SpellFactory.COLUMN_AREA));
         return spell;
     }
 
@@ -150,6 +150,7 @@ public class SpellFactory extends DBEntityFactory {
         spell.setDescription(attributes.get(YAML_DESC));
         spell.setSchool(attributes.get(YAML_SCHOOL));
         spell.setReference(attributes.get(YAML_REFERENCE));
+        spell.setSource(attributes.get(YAML_SOURCE));
         spell.setLevel(attributes.get(YAML_LEVEL));
         spell.setCastingTime(attributes.get(YAML_CASTING));
         spell.setComponents(attributes.get(YAML_COMPONENTS));
@@ -158,7 +159,6 @@ public class SpellFactory extends DBEntityFactory {
         spell.setDuration(attributes.get(YAML_DURATION));
         spell.setSavingThrow(attributes.get(YAML_SAVING));
         spell.setSpellResistance(attributes.get(YAML_SPELL_RES));
-        spell.setArea(attributes.get(YAML_AREA));
         return spell.isValid() ? spell : null;
     }
 
@@ -184,6 +184,8 @@ public class SpellFactory extends DBEntityFactory {
         }
         Spell spell = (Spell)entity;
         StringBuffer buf = new StringBuffer();
+        String source = spell.getSource() == null ? null : getTranslatedText("source." + spell.getSource().toLowerCase());
+        buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_SCHOOL, spell.getSchool()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, spell.getLevel()));
         buf.append(generateItemDetail(templateItem, YAML_CASTING, spell.getCastingTime()));
@@ -193,7 +195,6 @@ public class SpellFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_DURATION, spell.getDuration()));
         buf.append(generateItemDetail(templateItem, YAML_SAVING, spell.getSavingThrow()));
         buf.append(generateItemDetail(templateItem, YAML_SPELL_RES, spell.getSpellResistance()));
-        buf.append(generateItemDetail(templateItem, YAML_AREA, spell.getArea()));
         return String.format(templateList,buf.toString());
     }
 

@@ -79,21 +79,6 @@
     <string name="apply_filters">Appliquer</string>
     <string name="cancel">Annuler</string>
 
-    <!-- Sources -->
-    <string name="source_mj">Manuel des joueurs</string>
-    <string name="source_mjra">Manuel des joueurs - règles avancées</string>
-    <string name="source_mca">Manuel du joueur - classes avancées</string>
-    <string name="source_mr">Manuel des races</string>
-    <string name="source_b1">Bestiaire 1</string>
-    <string name="source_ag">Art de la guerre</string>
-    <string name="source_am">Art de la magie</string>
-    <string name="source_ao">Aventures occultes</string>
-    <string name="source_rtt">Ranged Tactics Toolbox</string>
-
-
-
-
-
 
 </resources>
 

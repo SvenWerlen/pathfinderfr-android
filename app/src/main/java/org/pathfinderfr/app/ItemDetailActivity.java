@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
@@ -71,7 +72,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        showDetails = preferences.getBoolean(PREF_SHOWDETAILS, false);
+        showDetails = preferences.getBoolean(PREF_SHOWDETAILS, true);
         updateShowDetailsButtonIcon(showDetails);
 
         // Show the Up button in the action bar.
@@ -84,8 +85,6 @@ public class ItemDetailActivity extends AppCompatActivity {
         ImageButton favorite = (ImageButton) findViewById(R.id.favoriteButton);
         long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
         String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
-
-        System.out.println("FactoryId (" + factoryID + ") => " + itemID);
 
         boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
         updateFavoriteButtonIcon(isFavorite);

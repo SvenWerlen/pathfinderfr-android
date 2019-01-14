@@ -6,11 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.database.entity.SpellFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
+    public static final int DATABASE_VERSION = 2;
 
     private static DBHelper instance;
 
@@ -32,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -55,12 +60,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*
-        for (DBEntityFactory f : EntityFactories.FACTORIES) {
-            db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
+        // version 2 introduced a new column "source" in some tables (feats and spells)
+        // version 2 also merged columns "target" and "area" but data will be kept until next reload
+        if(oldVersion == 1) {
+            db.execSQL(FeatFactory.getInstance().getQueryUpgradeV2());
+            db.execSQL(SpellFactory.getInstance().getQueryUpgradeV2());
+            oldVersion = 2;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 2");
         }
-        onCreate(db);
-        */
     }
 
     /**
@@ -151,13 +158,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public List<DBEntity> getAllEntities(DBEntityFactory factory) {
+    public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor res = db.rawQuery(factory.getQueryFetchAll(), null);
-            System.out.println("Number of elements found in database: " + res.getCount());
+            Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
                 list.add(factory.generateEntity(res));

@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,8 +67,6 @@ public class ItemDetailFragment extends Fragment {
             DBHelper dbhelper = DBHelper.getInstance(null);
             long itemID = getArguments().getLong(ARG_ITEM_ID);
             String factoryID = getArguments().getString(ARG_ITEM_FACTORY_ID);;
-
-            System.out.println("Fragment - FactoryId (" + factoryID + ") => " + itemID);
 
             if(itemID >0 && factoryID != null) {
                 mItem = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
