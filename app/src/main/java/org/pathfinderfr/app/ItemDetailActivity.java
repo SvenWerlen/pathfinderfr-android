@@ -87,7 +87,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         System.out.println("FactoryId (" + factoryID + ") => " + itemID);
 
-        boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
+        boolean isFavorite = DBHelper.getInstance(getBaseContext()).isFavorite(factoryID, itemID);
         updateFavoriteButtonIcon(isFavorite);
 
 
@@ -99,9 +99,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
                 String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
-                boolean isFavorite = DBHelper.getInstance(null).isFavorite(factoryID, itemID);
+                boolean isFavorite = DBHelper.getInstance(getBaseContext()).isFavorite(factoryID, itemID);
                 if (itemID > 0 && factoryID != null) {
-                    DBHelper dbhelper = DBHelper.getInstance(null);
+                    DBHelper dbhelper = DBHelper.getInstance(getBaseContext());
                     DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
                     if (entity != null && !isFavorite) {
                         success = dbhelper.insertFavorite(entity);
@@ -145,7 +145,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
                 String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
                 if (itemID > 0 && factoryID != null) {
-                    DBHelper dbhelper = DBHelper.getInstance(null);
+                    DBHelper dbhelper = DBHelper.getInstance(getBaseContext());
                     DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
                     if(entity != null) {
                         String url = entity.getReference();

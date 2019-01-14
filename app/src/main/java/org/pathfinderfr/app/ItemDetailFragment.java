@@ -63,7 +63,7 @@ public class ItemDetailFragment extends Fragment {
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
 
-            DBHelper dbhelper = DBHelper.getInstance(null);
+            DBHelper dbhelper = DBHelper.getInstance(getContext());
             long itemID = getArguments().getLong(ARG_ITEM_ID);
             String factoryID = getArguments().getString(ARG_ITEM_FACTORY_ID);;
 
