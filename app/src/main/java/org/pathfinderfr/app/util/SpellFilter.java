@@ -73,6 +73,10 @@ public class SpellFilter {
     public List<String> getSchools() {
         Set<String> schools = new HashSet<String>();
         for( Spell s: spells) {
+            if(s.getSchool() == null) {
+                Log.w(SpellFilter.class.getSimpleName(), "Missing school: " + s);
+                continue;
+            }
             String clean = cleanSchool(s.getSchool());
             if(clean != null) {
                 schools.add(clean);

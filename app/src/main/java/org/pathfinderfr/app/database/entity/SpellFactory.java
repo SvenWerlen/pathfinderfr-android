@@ -91,6 +91,15 @@ public class SpellFactory extends DBEntityFactory {
                 COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), COLUMN_NAME);
     }
 
+    /**
+     * @return the query to fetch all entities (including fields required for filtering)
+     */
+    public String getQueryFetchAll(String... sources) {
+        String sourceList = StringUtil.listToString( sources,',','\'');
+        return String.format("SELECT %s,%s,%s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Spell)) {

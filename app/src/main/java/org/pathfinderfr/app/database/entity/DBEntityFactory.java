@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.Map;
 
@@ -59,6 +60,15 @@ public abstract class DBEntityFactory {
     public String getQueryFetchAll() {
         return String.format("SELECT %s,%s FROM %s ORDER BY %s COLLATE UNICODE",
                 COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_NAME);
+    }
+
+    /**
+     * @return the query to fetch all entities
+     */
+    public String getQueryFetchAll(String... sources) {
+        String sourceList = StringUtil.listToString( sources,',','\'');
+        return String.format("SELECT %s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
     }
 
     /**

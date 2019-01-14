@@ -161,9 +161,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
+        Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters",sources.length));
+
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery(factory.getQueryFetchAll(), null);
+            Cursor res;
+            if(sources.length > 0) {
+                res = db.rawQuery(factory.getQueryFetchAll(sources), null);
+            } else {
+                res = db.rawQuery(factory.getQueryFetchAll(), null);
+            }
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {

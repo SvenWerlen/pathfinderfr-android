@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity
 
     // preferences for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
+
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
@@ -293,6 +296,9 @@ public class MainActivity extends AppCompatActivity
         String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
+        String[] sources = getSources();
+        Log.i(MainActivity.class.getSimpleName(), "Sources enabled: " + StringUtil.listToString(sources, ','));
+
         List<DBEntity> newEntities = null;
         if (id == R.id.nav_home && factoryId != null) {
             Intent intent = new Intent(this, MainActivity.class);
@@ -306,10 +312,18 @@ public class MainActivity extends AppCompatActivity
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
-            newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
+            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
+            } else {
+                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance(), sources);
+            }
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
-            newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
+            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
+            } else {
+                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance(), sources);
+            }
             factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             Intent intent = new Intent(this, LoadDataActivity.class);
@@ -398,5 +412,19 @@ public class MainActivity extends AppCompatActivity
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
         generateFilteredList();
         applyFiltersAndSearch();
+    }
+
+    /**
+     * @return the list of sources that are enabled in preferences
+     */
+    private String[] getSources() {
+        List<String> list = new ArrayList<>();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        for(String source: ConfigurationUtil.getInstance().getSources()) {
+            if(preferences.getBoolean("source_" + source, true)) {
+                list.add(source.toUpperCase());
+            }
+        }
+        return list.toArray(new String[0]);
     }
 }
