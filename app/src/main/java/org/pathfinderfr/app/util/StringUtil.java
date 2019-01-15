@@ -28,6 +28,9 @@ public class StringUtil {
      * @return String of sep separated values
      */
     public static final String listToString(String[] values, Character sep, Character quote) {
+        if(values == null) {
+            return null;
+        }
         StringBuffer sourceList = new StringBuffer();
         for(String s : values) {
             if(quote != null) {

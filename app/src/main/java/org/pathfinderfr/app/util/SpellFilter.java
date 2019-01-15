@@ -1,7 +1,6 @@
 package org.pathfinderfr.app.util;
 
 import android.util.Log;
-import android.util.Pair;
 
 import org.pathfinderfr.app.database.entity.Spell;
 
@@ -57,7 +56,7 @@ public class SpellFilter {
     private static String cleanSchool(String school) {
         // only take first word
         Pattern pattern = Pattern.compile("([A-zÀ-ú]+).*");
-        Matcher matcher = pattern.matcher(school);
+        Matcher matcher = pattern.matcher(school.toLowerCase());
         if (matcher.find())
         {
             String clean = matcher.group(1);
@@ -124,7 +123,7 @@ public class SpellFilter {
         List<Pair<String,String>> clean = new ArrayList<>();
         for(String c: classes) {
             Pattern pattern = Pattern.compile("([A-zÀ-ú]+).*([0-9])");
-            Matcher matcher = pattern.matcher(c);
+            Matcher matcher = pattern.matcher(c.toLowerCase());
             if (matcher.find())
             {
                 String cleanClass = matcher.group(1);
@@ -148,6 +147,10 @@ public class SpellFilter {
     public List<String> getClasses() {
         Set<String> classes = new HashSet<String>();
         for( Spell s: spells) {
+            if(s.getLevel() == null) {
+                Log.w(SpellFilter.class.getSimpleName(), "Missing level: " + s);
+                continue;
+            }
             List<Pair<String,String>> clean = cleanClasses(s.getLevel());
             if(clean != null) {
                 for(Pair<String,String> p : clean) {
