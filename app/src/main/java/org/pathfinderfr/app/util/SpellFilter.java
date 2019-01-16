@@ -33,7 +33,7 @@ public class SpellFilter {
 
         // load preferences
         if(preferences != null) {
-            String[] prefs = preferences.split(":");
+            String[] prefs = preferences.split(":", -1);
             if(prefs.length == 3) {
                 if(prefs[0].length()>0) {
                     filterSchool.addAll(Arrays.asList(prefs[0].split(",")));

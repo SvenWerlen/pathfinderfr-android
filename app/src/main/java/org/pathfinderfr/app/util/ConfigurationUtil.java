@@ -1,7 +1,6 @@
 package org.pathfinderfr.app.util;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.util.Log;
 
 import java.io.IOException;
@@ -20,7 +19,9 @@ public class ConfigurationUtil {
     private ConfigurationUtil(Context context) {
         properties = new Properties();
         try {
-            properties.load(context.getAssets().open(TEMPLATE_NAME));
+            if(context != null) {
+                properties.load(context.getAssets().open(TEMPLATE_NAME));
+            }
         } catch (IOException e) {
             Log.e(ConfigurationUtil.class.getSimpleName(),
                     String.format("Properties %s couldn't be found!",TEMPLATE_NAME), e);
