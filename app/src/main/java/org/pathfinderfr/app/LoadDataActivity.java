@@ -63,9 +63,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
                     boolean deleteOrpheans = ((CheckBox)findViewById(R.id.loaddataDeleteOrpheans)).isChecked();
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES_NEW[0], SkillFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES_NEW[1], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES_NEW[2], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SkillFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
                     loadTaskInProgress.execute(source0,source1,source2);
 
