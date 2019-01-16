@@ -12,6 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".character.CharacterSheetActivity"
+            android:label="@string/title_activity_character_sheet"
+            android:parentActivityName=".app.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.pathfinderfr.app.MainActivity" />
+        </activity>
+        <activity
             android:name=".app.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">

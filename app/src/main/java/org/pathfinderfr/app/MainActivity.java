@@ -37,6 +37,7 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
+import org.pathfinderfr.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -338,6 +339,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favorites) {
             newEntities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
             factoryId = FavoriteFactory.FACTORY_ID;
+        } else if (id == R.id.nav_sheet) {
+            Intent intent = new Intent(this, CharacterSheetActivity.class);
+            startActivity(intent);
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                    .putString(KEY_CUR_FACTORY,null).apply();
         } else if (id == R.id.nav_skills) {
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             factoryId = SkillFactory.FACTORY_ID;

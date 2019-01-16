@@ -33,6 +33,7 @@
     <!-- Strings related to Navigation -->
     <string name="navigation_item_home">Accueil</string>
     <string name="navigation_item_favorites">Favoris</string>
+    <string name="navigation_item_sheets">Personnages</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_spells">Sorts</string>
@@ -81,7 +82,6 @@
 
     <string name="pref_sources_default">Cette source ne peut être désactivée</string>
 
-
     <!-- Spell filters -->
     <string name="spellfilter_all">Tous</string>
     <string name="spellfilter_school">École:</string>
@@ -102,6 +102,27 @@
     <string name="source_iswg">Cadre de campagne: la mer intérieure</string>
     <string name="source_paizo">Blog Paizo</string>
     <string name="source_rtt">Ranged Tactics Toolbox</string>
+    <string name="title_activity_character_sheet">CharacterSheetActivity</string>
+
+    <!-- Character sheet -->
+    <string name="sheet_menu_activity">Personnage</string>
+    <string name="sheet_menu_main">Caracs</string>
+    <string name="sheet_menu_skills">Compétences</string>
+    <string name="sheet_menu_feats">Dons</string>
+    <string name="sheet_menu_spells">Sorts</string>
+
+    <!-- Character abilities -->
+    <string name="sheet_ability_str">Force</string>
+    <string name="sheet_ability_dex">Dextérité</string>
+    <string name="sheet_ability_con">Constitution</string>
+    <string name="sheet_ability_int">Intelligence</string>
+    <string name="sheet_ability_wis">Sagesse</string>
+    <string name="sheet_ability_cha">Charisme</string>
+
+    <string name="sheet_ability_value">10</string>
+
+
+
 
 
 </resources>

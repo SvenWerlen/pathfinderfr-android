@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sheet_home"
+        android:icon="@drawable/ic_item_icon_sheet"
+        android:title="@string/sheet_menu_main" />
+
+    <item
+        android:id="@+id/sheet_skills"
+        android:icon="@drawable/ic_item_icon_skill"
+        android:title="@string/sheet_menu_skills" />
+
+    <item
+        android:id="@+id/sheet_feats"
+        android:icon="@drawable/ic_item_icon_feat"
+        android:title="@string/sheet_menu_feats" />
+
+    <item
+        android:id="@+id/sheet_spells"
+        android:icon="@drawable/ic_item_icon_spell"
+        android:title="@string/sheet_menu_spells" />
+
+</menu>
