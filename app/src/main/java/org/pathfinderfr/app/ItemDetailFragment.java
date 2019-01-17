@@ -40,6 +40,9 @@ public class ItemDetailFragment extends Fragment {
 
     private Properties templates = new Properties();
 
+    private String text;
+    private TextView textview;
+
     /**
      * The item that this view is presenting
      */
@@ -91,7 +94,8 @@ public class ItemDetailFragment extends Fragment {
 
             boolean showDetails = getArguments().getBoolean(ARG_ITEM_SHOWDETAILS);
 
-            String text;
+            Log.d(ItemDetailFragment.class.getSimpleName(), "onCreateView " + showDetails);
+
             // if no description is available, details must always be visible
             if(mItem.getDescription() == null) {
                 showDetails = true;
@@ -108,10 +112,17 @@ public class ItemDetailFragment extends Fragment {
                         templates.getProperty("template.spell.description"),text);
 
             }
-            TextView textview = (TextView) rootView.findViewById(R.id.item_description);
-            textview.setText(Html.fromHtml(text));
+            textview = (TextView) rootView.findViewById(R.id.item_description);
         }
 
         return rootView;
+    }
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        textview.setText(Html.fromHtml(text));
     }
 }
