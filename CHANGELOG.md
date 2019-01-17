@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support back to SDK 19 (Kitkat - Android 4.4)
+### Fixed
+- Up button in settings doesn't bring the user back to welcome screen (sdk <= 21)
+- More/less button in item details view doesn't work (sdk <= 21)
+
+## [1.2.1] - 2019-01-15 
 ### Fixed
 - Spell filters don't work if only class and/or school selected (without level)
 ### Added

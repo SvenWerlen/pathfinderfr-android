@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity
         // change icon if filter applied
         FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
         int filterButtonId = listFiltered == null ? R.drawable.ic_filter : R.drawable.ic_filtered;
-        filterButton.setImageDrawable(getResources().getDrawable(filterButtonId, getApplicationContext().getTheme()));
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.pathfinderfr.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,11 +87,11 @@ public class ItemListRecyclerViewAdapter
 
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.itemIcon);
         if(entity instanceof Feat) {
-            icon.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_item_icon_feat, holder.itemView.getContext().getTheme()));
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
         } else if(entity instanceof Skill) {
-            icon.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_item_icon_skill, holder.itemView.getContext().getTheme()));
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {
-            icon.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_item_icon_spell, holder.itemView.getContext().getTheme()));
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
         }
     }
 

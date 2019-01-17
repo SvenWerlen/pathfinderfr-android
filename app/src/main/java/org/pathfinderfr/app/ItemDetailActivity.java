@@ -47,10 +47,11 @@ public class ItemDetailActivity extends AppCompatActivity {
     private void updateShowDetailsButtonIcon(boolean showDetails) {
         FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
         if (showDetails) {
-            moreDetails.setImageDrawable(getResources().getDrawable(R.drawable.ic_lessdetails, getApplicationContext().getTheme()));
+
+            moreDetails.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lessdetails));
             findViewById(R.id.fabLinkExternal).setVisibility(View.VISIBLE);
         } else {
-            moreDetails.setImageDrawable(getResources().getDrawable(R.drawable.ic_moredetails, getApplicationContext().getTheme()));
+            moreDetails.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_moredetails));
             findViewById(R.id.fabLinkExternal).setVisibility(View.GONE);
         }
     }
@@ -61,7 +62,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     private void updateFavoriteButtonIcon(boolean isFavorite) {
         ImageButton favoriteButton = (ImageButton) findViewById(R.id.favoriteButton);
         int drawableId = isFavorite ? android.R.drawable.star_big_on : android.R.drawable.star_big_off;
-        favoriteButton.setImageDrawable(getResources().getDrawable(drawableId, getApplicationContext().getTheme()));
+        favoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), drawableId));
     }
 
     @Override
