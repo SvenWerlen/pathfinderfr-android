@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".character.CharacterSheetActivity"
+            android:name=".app.character.CharacterSheetActivity"
             android:label="@string/title_activity_character_sheet"
             android:parentActivityName=".app.MainActivity">
             <meta-data

@@ -112,6 +112,10 @@
     <string name="sheet_menu_spells">Sorts</string>
 
     <!-- Character abilities -->
+    <string name="sheet_label_char">Caractéristique</string>
+    <string name="sheet_label_value">Valeur</string>
+    <string name="sheet_label_modif">Modif.</string>
+
     <string name="sheet_ability_str">Force</string>
     <string name="sheet_ability_dex">Dextérité</string>
     <string name="sheet_ability_con">Constitution</string>
@@ -120,9 +124,11 @@
     <string name="sheet_ability_cha">Charisme</string>
 
     <string name="sheet_ability_value">10</string>
+    <string name="sheet_ability_modif">0</string>
 
-
-
+    <string name="sheet_ability_seekbar">Glisser pour sélectionner une valeur:</string>
+    <string name="sheet_ability_predefined">Ou sélectionner une valeur pré-définie:</string>
+    <string name="sheet_ability_buttons">Cliquer sur la valeur ci-dessous pour l\'accepter.</string>
 
 
 </resources>

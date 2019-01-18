@@ -1,24 +1,16 @@
-package org.pathfinderfr.character;
+package org.pathfinderfr.app.character;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.FilterSpellFragment;
 import org.pathfinderfr.app.util.SpellFilter;
-
-import static org.pathfinderfr.app.MainActivity.KEY_SPELL_FILTERS;
 
 public class CharacterSheetActivity extends AppCompatActivity implements SheetMainFragment.OnFragmentInteractionListener {
 
@@ -68,4 +60,6 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 }

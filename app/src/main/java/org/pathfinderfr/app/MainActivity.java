@@ -38,7 +38,7 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
-import org.pathfinderfr.character.CharacterSheetActivity;
+import org.pathfinderfr.app.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
 import java.util.List;
