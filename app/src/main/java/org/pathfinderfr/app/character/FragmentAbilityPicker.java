@@ -10,21 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.FilterSpellFragment;
-import org.pathfinderfr.app.util.SpellFilter;
-
-import java.util.ArrayList;
 
 
-public class AbilityPickerFragment extends DialogFragment implements View.OnClickListener {
+public class FragmentAbilityPicker extends DialogFragment implements View.OnClickListener {
 
     public static final String ARG_ABILITY_ID = "ability_id";
     public static final String ARG_ABILITY_VALUE = "ability_value";
@@ -32,13 +26,13 @@ public class AbilityPickerFragment extends DialogFragment implements View.OnClic
     private static final int VALUE_PREDEFINED_MIN = 7;
     private static final int VALUE_PREDEFINED_MAX = 18;
 
-    private AbilityPickerFragment.OnFragmentInteractionListener mListener;
+    private FragmentAbilityPicker.OnFragmentInteractionListener mListener;
 
     private int abilityId;
     private int abilityValue;
     private TextView selected;
 
-    public AbilityPickerFragment() {
+    public FragmentAbilityPicker() {
         // Required empty public constructor
     }
 
@@ -50,10 +44,10 @@ public class AbilityPickerFragment extends DialogFragment implements View.OnClic
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment AbilityPickerFragment.
+     * @return A new instance of fragment FragmentAbilityPicker.
      */
-    public static AbilityPickerFragment newInstance(OnFragmentInteractionListener listener) {
-        AbilityPickerFragment fragment = new AbilityPickerFragment();
+    public static FragmentAbilityPicker newInstance(OnFragmentInteractionListener listener) {
+        FragmentAbilityPicker fragment = new FragmentAbilityPicker();
         fragment.setListener(listener);
         return fragment;
     }
@@ -102,7 +96,7 @@ public class AbilityPickerFragment extends DialogFragment implements View.OnClic
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_ability_picker, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sheet_main_abilitypicker, container, false);
         FlowLayout layout = rootView.findViewById(R.id.ability_predefined);
         TextView example = rootView.findViewById(R.id.ability_predefined_example);
         example.setVisibility(View.GONE);
@@ -123,7 +117,7 @@ public class AbilityPickerFragment extends DialogFragment implements View.OnClic
         ((SeekBar)rootView.findViewById(R.id.ability_seekbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
                 if(fromUser) {
-                    updateChosenValue(AbilityPickerFragment.this.getView(), progress);
+                    updateChosenValue(FragmentAbilityPicker.this.getView(), progress);
                 }
             }
             @Override

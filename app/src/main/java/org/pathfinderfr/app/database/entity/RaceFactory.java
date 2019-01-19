@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import org.pathfinderfr.app.util.StringUtil;
+
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +51,30 @@ public class RaceFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
-                        "%s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text," +
                         "%s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
-                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE,
+                COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_TRAITS);
         return query;
+    }
+
+    /**
+     * @return the query to fetch all entities (including fields required for picker)
+     */
+    public String getQueryFetchAll() {
+        return String.format("SELECT %s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_TRAITS, getTableName(), COLUMN_NAME);
+    }
+
+    /**
+     * @return the query to fetch all entities (including fields required for filtering)
+     */
+    public String getQueryFetchAll(String... sources) {
+        String sourceList = StringUtil.listToString( sources,',','\'');
+        return String.format("SELECT %s,%s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_TRAITS, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
     }
 
     @Override
@@ -68,6 +87,7 @@ public class RaceFactory extends DBEntityFactory {
         contentValues.put(RaceFactory.COLUMN_NAME, race.getName());
         contentValues.put(RaceFactory.COLUMN_DESC, race.getDescription());
         contentValues.put(RaceFactory.COLUMN_REFERENCE, race.getReference());
+        contentValues.put(RaceFactory.COLUMN_SOURCE, race.getSource());
 
         StringBuffer buf = new StringBuffer();
         for(Race.Trait t : race.getTraits()) {
@@ -96,9 +116,10 @@ public class RaceFactory extends DBEntityFactory {
         race.setName(extractValue(resource,RaceFactory.COLUMN_NAME));
         race.setDescription(extractValue(resource,RaceFactory.COLUMN_DESC));
         race.setReference(extractValue(resource,RaceFactory.COLUMN_REFERENCE));
+        race.setSource(extractValue(resource,RaceFactory.COLUMN_SOURCE));
         String traitsValue = extractValue(resource,RaceFactory.COLUMN_TRAITS);
         if(traitsValue != null && traitsValue.length() > 0) {
-            String[] traits = traitsValue.split("|");
+            String[] traits = traitsValue.split("\\|");
             for (int idx = 0; idx < traits.length; idx += 2) {
                 race.getTraits().add(new Race.Trait(traits[idx], traits[idx + 1]));
             }

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.wefika.flowlayout.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="start|top"
+    android:orientation="vertical"
     android:padding="20dp"
     tools:context=".app.FilterSpellFragment">
 
-
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TableRow
             android:layout_width="match_parent"
@@ -73,6 +72,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -117,6 +117,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -161,6 +162,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -205,6 +207,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -249,6 +252,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -293,6 +297,7 @@
                 android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:padding="4dp"
+                android:tag="ability"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:text="@string/sheet_ability_value" />
@@ -313,5 +318,31 @@
         </TableRow>
     </TableLayout>
 
+    <com.wefika.flowlayout.FlowLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="start|top">
 
-</com.wefika.flowlayout.FlowLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/sheet_race" />
+
+        <TextView
+            android:id="@+id/race_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:tag="race"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="@string/sheet_click_to_choose" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+
+
+</LinearLayout>

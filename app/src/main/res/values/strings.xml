@@ -130,6 +130,12 @@
     <string name="sheet_ability_predefined">Ou sélectionner une valeur pré-définie:</string>
     <string name="sheet_ability_buttons">Cliquer sur la valeur ci-dessous pour l\'accepter.</string>
 
+    <!-- Character race -->
+    <string name="sheet_race">Race:</string>
+    <string name="sheet_race_value">Aucune</string>
+    <string name="sheet_click_to_choose">Cliquer pour choisir</string>
+    <string name="sheet_example_name">Nom de la race</string>
+    <string name="sheet_example_details">Détails de la race</string>
 
 </resources>
 

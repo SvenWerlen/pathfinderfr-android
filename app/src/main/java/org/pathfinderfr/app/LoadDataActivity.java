@@ -70,7 +70,8 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
                     Pair<String, DBEntityFactory> source3 = new Pair(SOURCES[3], RaceFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
-                    loadTaskInProgress.execute(source0,source1,source2,source3);
+                    //loadTaskInProgress.execute(source0,source1,source2,source3);
+                    loadTaskInProgress.execute(source3);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

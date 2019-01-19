@@ -37,6 +37,7 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
 
-        String[] sources = getSources();
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
         if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
             sources = new String[0];
         }
@@ -332,7 +333,7 @@ public class MainActivity extends AppCompatActivity
         String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
-        String[] sources = getSources();
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
         Log.i(MainActivity.class.getSimpleName(), "Sources enabled: " + StringUtil.listToString(sources, ','));
 
         List<DBEntity> newEntities = null;
@@ -453,19 +454,5 @@ public class MainActivity extends AppCompatActivity
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
         generateFilteredList();
         applyFiltersAndSearch();
-    }
-
-    /**
-     * @return the list of sources that are enabled in preferences
-     */
-    private String[] getSources() {
-        List<String> list = new ArrayList<>();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        for(String source: ConfigurationUtil.getInstance().getSources()) {
-            if(preferences.getBoolean("source_" + source, true)) {
-                list.add(source.toUpperCase());
-            }
-        }
-        return list.toArray(new String[0]);
     }
 }

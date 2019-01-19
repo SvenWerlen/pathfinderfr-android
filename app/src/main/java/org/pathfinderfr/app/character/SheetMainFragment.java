@@ -6,17 +6,23 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.FilterSpellFragment;
-import org.pathfinderfr.app.ItemDetailFragment;
+import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
+import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.CharacterUtil;
-import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.PreferenceUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,7 +33,7 @@ import org.pathfinderfr.app.util.SpellFilter;
  * Use the {@link SheetMainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SheetMainFragment extends Fragment implements AbilityPickerFragment.OnFragmentInteractionListener {
+public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener, OnFragmentInteractionListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,6 +42,8 @@ public class SheetMainFragment extends Fragment implements AbilityPickerFragment
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private long raceId;
 
     private OnFragmentInteractionListener mListener;
 
@@ -82,6 +90,7 @@ public class SheetMainFragment extends Fragment implements AbilityPickerFragment
         view.findViewById(R.id.ability_int_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_wis_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
+        view.findViewById(R.id.race_picker).setOnClickListener(listener);
         return view;
     }
 
@@ -109,6 +118,7 @@ public class SheetMainFragment extends Fragment implements AbilityPickerFragment
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -135,23 +145,36 @@ public class SheetMainFragment extends Fragment implements AbilityPickerFragment
         @Override
         public void onClick(View v) {
 
-            if (v instanceof TextView) {
+            if (v instanceof TextView && "ability".equals(v.getTag())) {
                 TextView tv = (TextView) v;
                 int value = ( tv.getText() != null ? Integer.valueOf(tv.getText().toString()) : 10);
 
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("ability-picker");
                 if (prev != null) {
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
-                DialogFragment newFragment = AbilityPickerFragment.newInstance(parent);
+                DialogFragment newFragment = FragmentAbilityPicker.newInstance(parent);
 
                 Bundle arguments = new Bundle();
-                arguments.putInt(AbilityPickerFragment.ARG_ABILITY_ID, tv.getId());
-                arguments.putInt(AbilityPickerFragment.ARG_ABILITY_VALUE, value);
+                arguments.putInt(FragmentAbilityPicker.ARG_ABILITY_ID, tv.getId());
+                arguments.putInt(FragmentAbilityPicker.ARG_ABILITY_VALUE, value);
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "picker");
+                newFragment.show(ft, "ability-picker");
+            } else if(v instanceof TextView && "race".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("race-picker");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentRacePicker.newInstance(parent);
+
+                Bundle arguments = new Bundle();
+                arguments.putLong(FragmentRacePicker.ARG_RACE_ID, parent.raceId);
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, "race-picker");
             }
         }
     }
@@ -182,6 +205,16 @@ public class SheetMainFragment extends Fragment implements AbilityPickerFragment
                 tv.setText(String.valueOf(CharacterUtil.getAbilityBonus(abilityValue)));
             }
 
+        }
+    }
+
+    @Override
+    public void onRaceChosen(long raceId) {
+        DBEntity entity = DBHelper.getInstance(getContext()).fetchEntity(raceId, RaceFactory.getInstance());
+        TextView tv = getView().findViewById(R.id.race_picker);
+        this.raceId = raceId;
+        if(entity != null) {
+            tv.setText(entity.getName());
         }
     }
 }
