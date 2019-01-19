@@ -113,7 +113,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                 for(int i=0; i<list.size(); i++) {
                     if (isCancelled()) { progresses[idx].setHasEnded(true); break; }
                     if(list.get(i) instanceof Map) {
-                        DBEntity entity = factory.generateEntity((Map<String,String>)list.get(i));
+                        DBEntity entity = factory.generateEntity((Map<String,Object>)list.get(i));
                         if(entity != null) {
                             boolean success = dbHelper.insertEntity(entity);
                             if(success) {

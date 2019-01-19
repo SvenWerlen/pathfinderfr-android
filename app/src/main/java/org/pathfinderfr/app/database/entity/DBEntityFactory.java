@@ -97,7 +97,7 @@ public abstract class DBEntityFactory {
      * @param attributes map with all attributes for that entry/entity
      * @return a new instance of the entity filled according to attributes
      */
-    public abstract DBEntity generateEntity(@NonNull final Map<String, String> attributes);
+    public abstract DBEntity generateEntity(@NonNull final Map<String, Object> attributes);
 
     /**
      * Generates the content (generally HTML) based on entity details

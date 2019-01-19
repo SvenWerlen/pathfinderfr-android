@@ -106,7 +106,7 @@
 
     <!-- Character sheet -->
     <string name="sheet_menu_activity">Personnage</string>
-    <string name="sheet_menu_main">Caracs</string>
+    <string name="sheet_menu_main">Profil</string>
     <string name="sheet_menu_skills">Compétences</string>
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_spells">Sorts</string>

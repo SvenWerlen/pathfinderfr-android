@@ -112,17 +112,17 @@ public class FeatFactory extends DBEntityFactory {
     }
 
     @Override
-    public DBEntity generateEntity(@NonNull Map<String, String> attributes) {
+    public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Feat feat = new Feat();
-        feat.setName(attributes.get(YAML_NAME));
-        feat.setDescription(attributes.get(YAML_DESC));
-        feat.setReference(attributes.get(YAML_REFERENCE));
-        feat.setSource(attributes.get(YAML_SOURCE));
-        feat.setCategory(attributes.get(YAML_CATEGORY));
-        feat.setConditions(attributes.get(YAML_CONDITIONS));
-        feat.setAdvantage(attributes.get(YAML_ADVANTAGE));
-        feat.setSpecial(attributes.get(YAML_SPECIAL));
-        feat.setNormal(attributes.get(YAML_NORMAL));
+        feat.setName((String)attributes.get((String)YAML_NAME));
+        feat.setDescription((String)attributes.get(YAML_DESC));
+        feat.setReference((String)attributes.get(YAML_REFERENCE));
+        feat.setSource((String)attributes.get(YAML_SOURCE));
+        feat.setCategory((String)attributes.get(YAML_CATEGORY));
+        feat.setConditions((String)attributes.get(YAML_CONDITIONS));
+        feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE));
+        feat.setSpecial((String)attributes.get(YAML_SPECIAL));
+        feat.setNormal((String)attributes.get(YAML_NORMAL));
         return feat.isValid() ? feat : null;
     }
 

@@ -153,21 +153,21 @@ public class SpellFactory extends DBEntityFactory {
     }
 
     @Override
-    public DBEntity generateEntity(@NonNull Map<String, String> attributes) {
+    public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Spell spell = new Spell();
-        spell.setName(attributes.get(YAML_NAME));
-        spell.setDescription(attributes.get(YAML_DESC));
-        spell.setSchool(attributes.get(YAML_SCHOOL));
-        spell.setReference(attributes.get(YAML_REFERENCE));
-        spell.setSource(attributes.get(YAML_SOURCE));
-        spell.setLevel(attributes.get(YAML_LEVEL));
-        spell.setCastingTime(attributes.get(YAML_CASTING));
-        spell.setComponents(attributes.get(YAML_COMPONENTS));
-        spell.setRange(attributes.get(YAML_RANGE));
-        spell.setTarget(attributes.get(YAML_TARGET));
-        spell.setDuration(attributes.get(YAML_DURATION));
-        spell.setSavingThrow(attributes.get(YAML_SAVING));
-        spell.setSpellResistance(attributes.get(YAML_SPELL_RES));
+        spell.setName((String)attributes.get(YAML_NAME));
+        spell.setDescription((String)attributes.get(YAML_DESC));
+        spell.setSchool((String)attributes.get(YAML_SCHOOL));
+        spell.setReference((String)attributes.get(YAML_REFERENCE));
+        spell.setSource((String)attributes.get(YAML_SOURCE));
+        spell.setLevel((String)attributes.get(YAML_LEVEL));
+        spell.setCastingTime((String)attributes.get(YAML_CASTING));
+        spell.setComponents((String)attributes.get(YAML_COMPONENTS));
+        spell.setRange((String)attributes.get(YAML_RANGE));
+        spell.setTarget((String)attributes.get(YAML_TARGET));
+        spell.setDuration((String)attributes.get(YAML_DURATION));
+        spell.setSavingThrow((String)attributes.get(YAML_SAVING));
+        spell.setSpellResistance((String)attributes.get(YAML_SPELL_RES));
         return spell.isValid() ? spell : null;
     }
 

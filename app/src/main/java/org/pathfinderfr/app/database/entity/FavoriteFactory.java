@@ -118,7 +118,7 @@ public class FavoriteFactory extends DBEntityFactory {
     }
 
     @Override
-    public DBEntity generateEntity(@NonNull Map<String, String> attributes) {
+    public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         throw new UnsupportedOperationException("This method (generateEntity) should never be used for favorites");
     }
 

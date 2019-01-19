@@ -9,6 +9,7 @@ public class EntityFactories {
             FeatFactory.getInstance(),
             SpellFactory.getInstance(),
             FavoriteFactory.getInstance(),
+            RaceFactory.getInstance(),
     };
 
 

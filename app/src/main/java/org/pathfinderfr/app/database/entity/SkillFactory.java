@@ -96,7 +96,7 @@ public class SkillFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Cursor resource) {
         Skill skill = new Skill();
 
-        skill.setId(resource.getLong(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
+        skill.setId(resource.getLong(resource.getColumnIndex(SkillFactory.COLUMN_ID)));
         skill.setName(extractValue(resource,SkillFactory.COLUMN_NAME));
         skill.setDescription(extractValue(resource,SkillFactory.COLUMN_DESC));
         skill.setReference(extractValue(resource,SkillFactory.COLUMN_REFERENCE));
@@ -107,14 +107,14 @@ public class SkillFactory extends DBEntityFactory {
     }
 
     @Override
-    public DBEntity generateEntity(@NonNull Map<String, String> attributes) {
+    public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Skill skill = new Skill();
-        skill.setName(attributes.get(YAML_NAME));
-        skill.setDescription(attributes.get(YAML_DESC));
-        skill.setReference(attributes.get(YAML_REFERENCE));
-        skill.setAbility(attributes.get(YAML_ABILITY));
-        skill.setTraining(attributes.get(YAML_TRAINING));
-        skill.setArmorpenalty(attributes.get(YAML_ARMORPENALTY));
+        skill.setName((String)attributes.get(YAML_NAME));
+        skill.setDescription((String)attributes.get(YAML_DESC));
+        skill.setReference((String)attributes.get(YAML_REFERENCE));
+        skill.setAbility((String)attributes.get(YAML_ABILITY));
+        skill.setTraining((String)attributes.get(YAML_TRAINING));
+        skill.setArmorpenalty((String)attributes.get(YAML_ARMORPENALTY));
         return skill.isValid() ? skill : null;
     }
 

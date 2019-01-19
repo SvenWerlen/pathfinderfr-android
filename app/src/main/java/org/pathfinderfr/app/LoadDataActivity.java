@@ -17,6 +17,7 @@ import org.pathfinderfr.app.data.LoadDataTask;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
@@ -25,7 +26,8 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     private static final String[] SOURCES = new String[]{
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/competences.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/dons.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml"};
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml",
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/races.yml"};
 
     private static final String[] SOURCES_TEST = new String[]{
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/competences.yml",
@@ -38,7 +40,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/spells.yml"};
 
 
-    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts"};
+    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts", "Races"};
     private LoadDataTask loadTaskInProgress;
 
     @Override
@@ -66,8 +68,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SkillFactory.getInstance());
                     Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
                     Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCES[3], RaceFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
-                    loadTaskInProgress.execute(source0,source1,source2);
+                    loadTaskInProgress.execute(source0,source1,source2,source3);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

@@ -32,6 +32,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
@@ -157,15 +158,18 @@ public class MainActivity extends AppCompatActivity
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
+        long countRaces = dbhelper.getCountEntities(RaceFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
         long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
+        long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
 
         long countSources = sources.length;
         long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
                 countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
+                countRaces, countRacesFiltered,
                 countFavorites, countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");

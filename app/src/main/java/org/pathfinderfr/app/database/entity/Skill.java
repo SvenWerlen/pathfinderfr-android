@@ -4,7 +4,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 
 public class Skill extends DBEntity {
 
-    // feat-specific
+    // skill-specific
     private String ability;
     private String training;
     private String armorpenalty;
