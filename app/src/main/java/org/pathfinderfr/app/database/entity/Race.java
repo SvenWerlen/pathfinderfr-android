@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Race extends DBEntity {
 
-    // feat-specific
+    // race-specific
     private List<Trait> traits;
 
     public Race() {

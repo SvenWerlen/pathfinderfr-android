@@ -9,19 +9,19 @@
     android:padding="10dp">
 
     <ScrollView
-        android:id="@+id/choose_race_scrollview"
+        android:id="@+id/choose_class_scrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/choose_race_layout"
+            android:id="@+id/choose_class_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/choose_race_name"
+                android:id="@+id/choose_class_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -29,21 +29,45 @@
                 android:textSize="24sp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:text="@string/sheet_race_example_name" />
+                android:text="@string/sheet_class_example_name" />
 
             <TextView
-                android:id="@+id/choose_race_details"
+                android:id="@+id/choose_class_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/sheet_race_example_details"
-                android:maxWidth="300dp"
+                android:text="@string/sheet_class_example_details"
+                android:textSize="12sp"
                 android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:textSize="12sp" />
+                android:paddingEnd="10dp"/>
 
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/class_level_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_class_seekbar" />
+
+        <SeekBar
+            android:id="@+id/class_level_seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:progress="1"
+            android:min="1"
+            android:max="21"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,7 +76,16 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/race_cancel"
+            android:id="@+id/class_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/class_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel"
@@ -61,9 +94,12 @@
             android:layout_margin="10dp" />
 
         <Button
-            android:id="@+id/race_ok"
+            android:id="@+id/class_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/sheet_race_value"
             android:background="@drawable/rounded_button"
             android:textColor="@color/colorWhite"

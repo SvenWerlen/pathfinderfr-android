@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
@@ -51,8 +52,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void clear() {
         SQLiteDatabase db = this.getWritableDatabase();
         for (DBEntityFactory f : EntityFactories.FACTORIES) {
-            // never drop favorites!
-            if(!(f instanceof FavoriteFactory)) {
+            // never drop favorites && characters!
+            if(!(f instanceof FavoriteFactory) && !(f instanceof CharacterFactory)) {
                 db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
             }
             db.execSQL(f.getQueryCreateTable());
@@ -75,13 +76,26 @@ public class DBHelper extends SQLiteOpenHelper {
      * Inserts the entity into the database
      *
      * @param entity entity instance
-     * @return true if insertion succeeded
+     * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
-    public boolean insertEntity(DBEntity entity) {
+    public long insertEntity(DBEntity entity) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = entity.getFactory().generateContentValuesFromEntity(entity);
-        long rowId = db.insert(entity.getFactory().getTableName(), null, contentValues);
-        return rowId != -1;
+        return db.insert(entity.getFactory().getTableName(), null, contentValues);
+    }
+
+
+    /**
+     * Updates the entity into the database
+     *
+     * @param entity entity instance
+     * @return true if update succeeded
+     */
+    public boolean updateEntity(DBEntity entity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = entity.getFactory().generateContentValuesFromEntity(entity);
+        long rowId = db.update(entity.getFactory().getTableName(), contentValues, null, null);
+        return rowId > 0;
     }
 
     /**

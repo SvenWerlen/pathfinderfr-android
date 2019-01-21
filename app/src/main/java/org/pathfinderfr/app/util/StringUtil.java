@@ -27,7 +27,7 @@ public class StringUtil {
      * @param values list of String
      * @return String of sep separated values
      */
-    public static final String listToString(String[] values, Character sep, Character quote) {
+    public static final String listToString(String[] values, String sep, Character quote) {
         if(values == null) {
             return null;
         }
@@ -43,12 +43,40 @@ public class StringUtil {
             }
         }
         if(values.length>0 && sep != null) {
-            sourceList.deleteCharAt(sourceList.length()-1);
+            sourceList.delete(sourceList.length()-sep.length(),sourceList.length());
         }
         return sourceList.toString();
     }
 
+    public static final String listToString(String[] values, Character sep, Character quote) {
+        return listToString(values, sep != null ? Character.toString(sep) : null, quote);
+    }
+
+    public static final String listToString(String[] values, String sep) {
+        return listToString(values, sep, null);
+    }
+
     public static final String listToString(String[] values, Character sep) {
         return listToString(values, sep, null);
+    }
+
+    public static final String listToString(int[] values, String sep) {
+        String[] list = new String[values.length];
+        for(int i = 0; i<values.length; i++) {
+            list[i] = String.valueOf(values[i]);
+        }
+        return listToString(list, sep, null);
+    }
+
+    public static final String listToString(int[] values, Character sep) {
+        return listToString(values, sep != null ? Character.toString(sep) : null);
+    }
+
+    public static final int[] stringListToIntList(String[] values) {
+        int[] list = new int[values.length];
+        for(int i = 0; i<values.length; i++) {
+            list[i] = Integer.parseInt(values[i]);
+        }
+        return list;
     }
 }

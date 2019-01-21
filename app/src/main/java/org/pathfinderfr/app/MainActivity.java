@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
@@ -160,17 +161,19 @@ public class MainActivity extends AppCompatActivity
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countRaces = dbhelper.getCountEntities(RaceFactory.getInstance());
+        long countClasses = dbhelper.getCountEntities(ClassFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
         long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
         long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
+        long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
 
         long countSources = sources.length;
         long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
                 countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
-                countRaces, countRacesFiltered,
+                countRaces, countRacesFiltered, countClasses, countClassesFiltered,
                 countFavorites, countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");

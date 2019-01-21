@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.LoadDataTask;
+import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
@@ -27,20 +28,13 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/competences.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/dons.yml",
             "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/races.yml"};
-
-    private static final String[] SOURCES_TEST = new String[]{
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/competences.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/dons.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Test/datamigration/data/spells.yml"};
-
-    private static final String[] SOURCES_NEW = new String[]{
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/competences.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/dons.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/sources/data/spells.yml"};
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/races.yml",
+            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/classes.yml"};
 
 
-    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts", "Races"};
+
+
+    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts", "Races", "Classes"};
     private LoadDataTask loadTaskInProgress;
 
     @Override
@@ -69,9 +63,10 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
                     Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
                     Pair<String, DBEntityFactory> source3 = new Pair(SOURCES[3], RaceFactory.getInstance());
+                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCES[4], ClassFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
-                    //loadTaskInProgress.execute(source0,source1,source2,source3);
-                    loadTaskInProgress.execute(source3);
+                    //loadTaskInProgress.execute(source0,source1,source2,source3,source4);
+                    loadTaskInProgress.execute(source3, source4);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

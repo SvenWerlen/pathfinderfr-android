@@ -89,6 +89,7 @@
     <string name="spellfilter_level">Niveau:</string>
     <string name="apply_filters">Appliquer</string>
     <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
 
     <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
     <string name="source_mj">Manuel des joueurs</string>
@@ -112,16 +113,22 @@
     <string name="sheet_menu_spells">Sorts</string>
 
     <!-- Character abilities -->
-    <string name="sheet_label_char">Caractéristique</string>
+    <string name="sheet_label_char">Carac.</string>
     <string name="sheet_label_value">Valeur</string>
     <string name="sheet_label_modif">Modif.</string>
 
-    <string name="sheet_ability_str">Force</string>
-    <string name="sheet_ability_dex">Dextérité</string>
-    <string name="sheet_ability_con">Constitution</string>
-    <string name="sheet_ability_int">Intelligence</string>
-    <string name="sheet_ability_wis">Sagesse</string>
-    <string name="sheet_ability_cha">Charisme</string>
+    <string name="sheet_ability_str">FOR</string>
+    <string name="sheet_ability_strength">Force</string>
+    <string name="sheet_ability_dex">DEX</string>
+    <string name="sheet_ability_dexterity">Dextérité</string>
+    <string name="sheet_ability_con">CON</string>
+    <string name="sheet_ability_constitution">Constitution</string>
+    <string name="sheet_ability_int">INT</string>
+    <string name="sheet_ability_intelligence">Intelligence</string>
+    <string name="sheet_ability_wis">SAG</string>
+    <string name="sheet_ability_wisdom">Sagesse</string>
+    <string name="sheet_ability_cha">CHA</string>
+    <string name="sheet_ability_charisma">Charisme</string>
 
     <string name="sheet_ability_value">10</string>
     <string name="sheet_ability_modif">0</string>
@@ -134,8 +141,39 @@
     <string name="sheet_race">Race:</string>
     <string name="sheet_race_value">Aucune</string>
     <string name="sheet_click_to_choose">Cliquer pour choisir</string>
-    <string name="sheet_example_name">Nom de la race</string>
-    <string name="sheet_example_details">Détails de la race</string>
+    <string name="sheet_race_example_name">Nom de la race</string>
+    <string name="sheet_race_example_details">Détails de la race</string>
+
+    <!-- Character classes -->
+    <string name="sheet_classes">Classe(s):</string>
+    <string name="sheet_class_example_name">Nom de la classe</string>
+    <string name="sheet_class_example_details">Détails de la classe</string>
+    <string name="sheet_click_to_add">Cliquer pour ajouter</string>
+    <string name="sheet_class_seekbar">Glisser pour sélectionner un niveau:</string>
+
+    <!-- Other stats -->
+    <string name="sheet_label_other">Autres</string>
+    <string name="sheet_ini">INI</string>
+    <string name="sheet_initiative">Initiative</string>
+    <string name="sheet_ac">CA</string>
+    <string name="sheet_armorclass">Classe d\'armure</string>
+    <string name="sheet_mag">MAG</string>
+    <string name="sheet_magicresistance">Résistance magie</string>
+    <string name="sheet_saving">Sauv.</string>
+    <string name="sheet_savingthrows">Jets de sauvegarde</string>
+    <string name="sheet_bab">BBA</string>
+    <string name="sheet_baseattackbonus">Bonus de base à l\'attaque</string>
+    <string name="sheet_savingthrows_total">Total</string>
+    <string name="sheet_savingthrows_bonusbase">Base</string>
+    <string name="sheet_savingthrows_ability">Carac</string>
+    <string name="sheet_other_valuee">0</string>
+    <string name="sheet_savingthrows_for">VIG</string>
+    <string name="sheet_savingthrows_fortitude">Jet de sauvegarde: vigueur</string>
+    <string name="sheet_savingthrows_ref">REF</string>
+    <string name="sheet_savingthrows_reflex">Jet de sauvegarde: réflexes</string>
+    <string name="sheet_savingthrows_wil">VOL</string>
+    <string name="sheet_savingthrows_will">Jet de sauvegarde: volonté</string>
+
 
 </resources>
 

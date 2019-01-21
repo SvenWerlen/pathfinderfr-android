@@ -10,7 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.util.SpellFilter;
+
+import java.util.List;
 
 public class CharacterSheetActivity extends AppCompatActivity implements SheetMainFragment.OnFragmentInteractionListener {
 
@@ -49,7 +54,14 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.sheet_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        Fragment newFragment = new SheetMainFragment();
+        // search for already created characters
+        long characterId = 0;
+        List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
+        if(list != null && list.size() > 0) {
+            characterId = list.get(0).getId();
+        }
+
+        Fragment newFragment = SheetMainFragment.newInstance(characterId);
         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.sheet_container, newFragment);
         transaction.addToBackStack(null);

@@ -1,26 +1,17 @@
 package org.pathfinderfr.app.character;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
@@ -31,7 +22,6 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentRacePicker extends DialogFragment implements View.OnClickListener {

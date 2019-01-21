@@ -115,8 +115,8 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                     if(list.get(i) instanceof Map) {
                         DBEntity entity = factory.generateEntity((Map<String,Object>)list.get(i));
                         if(entity != null) {
-                            boolean success = dbHelper.insertEntity(entity);
-                            if(success) {
+                            long id = dbHelper.insertEntity(entity);
+                            if(id >= 0) {
                                 count[idx]++;
                             }
                         }
@@ -208,7 +208,9 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
     @Override
     protected void onCancelled(List<Integer> counts) {
-        caller.onProgressCompleted((Integer[])counts.toArray());
+        if(counts != null) {
+            caller.onProgressCompleted((Integer[]) counts.toArray());
+        }
     }
 
 }

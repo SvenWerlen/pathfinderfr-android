@@ -35,7 +35,7 @@ public class Spell extends DBEntity {
         if(level != null && level.length() > 0) {
             Set<Integer> levels = new TreeSet();
             for(int idx = 0; idx < level.length(); idx++) {
-                if(Character.isDigit(level.charAt(idx))) {
+                if(java.lang.Character.isDigit(level.charAt(idx))) {
                     levels.add(Integer.valueOf(level.substring(idx,idx+1)));
                 }
             }

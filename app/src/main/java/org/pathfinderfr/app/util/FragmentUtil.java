@@ -15,6 +15,7 @@ public class FragmentUtil {
         tv.setBackground(fragment.getBackground());
         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, fragment.getTextSize());
         tv.setPadding(fragment.getPaddingLeft(),fragment.getPaddingTop(), fragment.getPaddingRight(), fragment.getPaddingBottom());
+        tv.setTag(fragment.getTag());
         tv.setTypeface(fragment.getTypeface());
         tv.setTextColor(fragment.getTextColors());
         tv.setTextAlignment(fragment.getTextAlignment());

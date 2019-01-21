@@ -91,7 +91,9 @@ public class RaceFactory extends DBEntityFactory {
 
         StringBuffer buf = new StringBuffer();
         for(Race.Trait t : race.getTraits()) {
-            buf.append(t.getName()).append('|').append(t.getDescription()).append('|');
+            buf.append(t.getName()).append(':');
+            buf.append(t.getDescription());
+            buf.append('#');
         }
         if(buf.length() > 0) {
             buf.deleteCharAt(buf.length()-1);
@@ -119,9 +121,13 @@ public class RaceFactory extends DBEntityFactory {
         race.setSource(extractValue(resource,RaceFactory.COLUMN_SOURCE));
         String traitsValue = extractValue(resource,RaceFactory.COLUMN_TRAITS);
         if(traitsValue != null && traitsValue.length() > 0) {
-            String[] traits = traitsValue.split("\\|");
-            for (int idx = 0; idx < traits.length; idx += 2) {
-                race.getTraits().add(new Race.Trait(traits[idx], traits[idx + 1]));
+            String[] traits = traitsValue.split("#");
+            for(String trait : traits) {
+                String[] props = trait.split(":");
+                if(props.length < 2) {
+                    continue;
+                }
+                race.getTraits().add(new Race.Trait(props[0], props[1]));
             }
         }
         return race;
