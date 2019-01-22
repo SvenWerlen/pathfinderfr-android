@@ -149,9 +149,18 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_magicresistance));}
         });
-        view.findViewById(R.id.other_bab).setOnClickListener(new View.OnClickListener() {
+
+        view.findViewById(R.id.combat_bab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_baseattackbonus));}
+        });
+        view.findViewById(R.id.combat_cmb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_combat_man_bonus));}
+        });
+        view.findViewById(R.id.combat_cmd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_combat_man_defense));}
         });
 
         view.findViewById(R.id.savingthrows_for).setOnClickListener(new View.OnClickListener() {
@@ -247,6 +256,13 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         TextView savingReflexAbility = view.findViewById(R.id.savingthrows_reflex_ability);
         TextView savingWillAbility = view.findViewById(R.id.savingthrows_will_ability);
 
+        TextView baseAttackBonus = view.findViewById(R.id.base_attack_bonus_value);
+        TextView combatManBonusTotal = view.findViewById(R.id.combat_cmb_total);
+        TextView combatManBonusBab = view.findViewById(R.id.combat_cmb_bab);
+        TextView combatManBonusAbility = view.findViewById(R.id.combat_cmb_ability);
+        TextView combatManDefenseTotal = view.findViewById(R.id.combat_cmd_total);
+        TextView combatManDefenseBab = view.findViewById(R.id.combat_cmd_bab);
+        TextView combatManDefenseAbility = view.findViewById(R.id.combat_cmd_ability);
 
         initiative.setText(String.valueOf(character.getInitiative()));
         armorClass.setText(String.valueOf(character.getArmorClass()));
@@ -263,6 +279,15 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         savingFortitudeAbility.setText(String.valueOf(character.getConstitutionModif()));
         savingReflexAbility.setText(String.valueOf(character.getDexterityModif()));
         savingWillAbility.setText(String.valueOf(character.getWisdomModif()));
+
+        int[] bab = character.getBaseAttackBonus();
+        baseAttackBonus.setText(character.getBaseAttackBonusAsString());
+        combatManBonusTotal.setText(String.valueOf(character.getCombatManeuverBonus()));
+        combatManBonusBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
+        combatManBonusAbility.setText(String.valueOf(character.getStrengthModif()));
+        combatManDefenseTotal.setText(String.valueOf(character.getCombatManeuverDefense()));
+        combatManDefenseBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
+        combatManDefenseAbility.setText(String.valueOf(character.getStrengthModif()+character.getDexterityModif()));
     }
 
 

@@ -161,8 +161,6 @@
     <string name="sheet_magicresistance">Résistance magie</string>
     <string name="sheet_saving">Sauv.</string>
     <string name="sheet_savingthrows">Jets de sauvegarde</string>
-    <string name="sheet_bab">BBA</string>
-    <string name="sheet_baseattackbonus">Bonus de base à l\'attaque</string>
     <string name="sheet_savingthrows_total">Total</string>
     <string name="sheet_savingthrows_bonusbase">Base</string>
     <string name="sheet_savingthrows_ability">Carac</string>
@@ -173,6 +171,14 @@
     <string name="sheet_savingthrows_reflex">Jet de sauvegarde: réflexes</string>
     <string name="sheet_savingthrows_wil">VOL</string>
     <string name="sheet_savingthrows_will">Jet de sauvegarde: volonté</string>
+
+    <string name="sheet_combat">Combat</string>
+    <string name="sheet_bab">BBA</string>
+    <string name="sheet_baseattackbonus">Bonus de base à l\'attaque</string>
+    <string name="sheet_cmb">BMO</string>
+    <string name="sheet_combat_man_bonus">Bonus de manoeuvre offensive</string>
+    <string name="sheet_cmd">DMD</string>
+    <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
 
 
 </resources>

@@ -512,44 +512,14 @@
 
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/other_bab"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="@string/sheet_bab"
-                    android:layout_margin="2dp"
-                    android:padding="4dp"
-                    android:background="@color/colorPrimary"
-                    android:textColor="@color/colorWhite"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/base_attack_bonus_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/text_box"
-                    android:layout_marginVertical="2dp"
-                    android:layout_marginHorizontal="2dp"
-                    android:padding="4dp"
-                    android:tag="ability"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
-
-            </TableRow>
-
         </TableLayout>
 
 
         <TableLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
 
             <TableRow
                 android:layout_width="wrap_content"
@@ -761,6 +731,212 @@
 
                 <TextView
                     android:id="@+id/savingthrows_will_ability"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_combat"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:textStyle="italic"
+                    android:textSize="@dimen/sheet_font_labels"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_savingthrows_total"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textStyle="italic"
+                    android:textSize="@dimen/sheet_font_labels" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_bab"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textStyle="italic"
+                    android:textSize="@dimen/sheet_font_labels" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_savingthrows_ability"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textStyle="italic"
+                    android:textSize="@dimen/sheet_font_labels" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/combat_bab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_bab"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/base_attack_bonus_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_span="3"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/combat_cmb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_cmb"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/combat_cmb_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+                <TextView
+                    android:id="@+id/combat_cmb_bab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+                <TextView
+                    android:id="@+id/combat_cmb_ability"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+            </TableRow>
+
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/combat_cmd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_cmd"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/combat_cmd_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+                <TextView
+                    android:id="@+id/combat_cmd_bab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_valuee" />
+
+                <TextView
+                    android:id="@+id/combat_cmd_ability"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"

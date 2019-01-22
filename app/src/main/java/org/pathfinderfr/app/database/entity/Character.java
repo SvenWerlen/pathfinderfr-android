@@ -18,6 +18,10 @@ public class Character extends DBEntity {
     public static final int ABILITY_WISDOM       = 4;
     public static final int ABILITY_CHARISMA     = 5;
 
+    public static final int SIZE_SMALL = -1;
+    public static final int SIZE_MEDIUM = 0;
+
+
     // character-specific
     int[] abilities;
     Race race;
@@ -169,8 +173,24 @@ public class Character extends DBEntity {
         }
     }
 
+    public int getRaceSize() {
+        if(race == null) {
+            return SIZE_MEDIUM;
+        }
+        for(Race.Trait t : race.getTraits()) {
+            // TODO: improve size handling to be language independent
+            if("Petite taille".equalsIgnoreCase(t.getName())) {
+                return SIZE_SMALL;
+            }
+        }
+        return SIZE_MEDIUM;
+    }
+
     public int getInitiative() { return getDexterityModif(); }
-    public int getArmorClass() { return 10 + getDexterityModif(); }
+    public int getArmorClass() {
+        int sizeModif = getRaceSize() == SIZE_SMALL ? 1 : 0;
+        return 10 + getDexterityModif() + sizeModif;
+    }
     public int getMagicResistance() { return 0; }
 
     public int getSavingThrowsReflexesTotal() { return getDexterityModif() + getSavingThrowsReflexes(); }
@@ -251,4 +271,89 @@ public class Character extends DBEntity {
         }
         return total;
     }
+
+    /**
+     * @return base attack bonus (BAB) based on attached classes (and levels)
+     */
+    public int[] getBaseAttackBonus() {
+        if(classes == null || classes.size() == 0) {
+            return null;
+        }
+        int sizeModif = getRaceSize() == SIZE_SMALL ? 1 : 0;
+        List<Integer> bab = new ArrayList<>();
+        for(Pair<Class, Integer> cl : classes) {
+            // find matching level (should be in order but ...)
+            boolean found = false;
+            for(Class.Level lvl: cl.first.getLevels()) {
+                if(lvl.getLvl() == cl.second) {
+                    int[] bonus = lvl.getBaseAttackBonus();
+                    if(bonus != null) {
+                        for(int i=0; i<bonus.length; i++) {
+                            if(i>=bab.size()) {
+                                bab.add(bonus[i] + sizeModif);
+                            } else {
+                                bab.set(i, bab.get(i) + bonus[i]);
+                            }
+                        }
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                Log.w(Character.class.getSimpleName(), String.format("Couldn't find base attack bonus (bab) for %s and level %d", cl.first.getName(), cl.second));
+            }
+        }
+        // convert to int[]
+        int[] result = new int[bab.size()];
+        for(int i=0; i<bab.size(); i++) {
+            result[i]=bab.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * @return base attack bonus (BAB) based on attached classes (and levels), as string
+     */
+    public String getBaseAttackBonusAsString() {
+        int[] bab = getBaseAttackBonus();
+        if(bab == null) {
+            return null;
+        }
+        StringBuffer buf = new StringBuffer();
+        for(int val : bab) {
+            buf.append('+').append(val).append('/');
+        }
+        if(bab.length>0) {
+            buf.deleteCharAt(buf.length()-1);
+        }
+        return buf.toString();
+    }
+
+    /**
+     * @return combat maneuver bonus (CMB) = BAB + STR + SIZE
+     */
+    public int getCombatManeuverBonus() {
+        int[] bab = getBaseAttackBonus();
+        int bonus = 0;
+        if(bab != null && bab.length > 0) {
+            bonus += bab[0];
+        }
+        int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
+        return bonus + getStrengthModif() + sizeModif;
+    }
+
+    /**
+     * @return combat maneuver defense (CMD) = 10 + BAB + STR + DEX + SIZE
+     */
+    public int getCombatManeuverDefense() {
+        int[] bab = getBaseAttackBonus();
+        int bonus = 0;
+        if(bab != null && bab.length > 0) {
+            bonus += bab[0];
+        }
+        int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
+        return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif;
+    }
+
 }
