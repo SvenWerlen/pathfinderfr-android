@@ -149,7 +149,8 @@
     <string name="sheet_class_example_name">Nom de la classe</string>
     <string name="sheet_class_example_details">Détails de la classe</string>
     <string name="sheet_click_to_add">Cliquer pour ajouter</string>
-    <string name="sheet_class_seekbar">Glisser pour sélectionner un niveau:</string>
+    <string name="sheet_class_select">Sélectionner le niveau:</string>
+    <string name="sheet_class_level_value">1</string>
 
     <!-- Other stats -->
     <string name="sheet_label_other">Autres</string>

@@ -45,7 +45,6 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/class_level_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -55,17 +54,31 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sheet_class_seekbar" />
+            android:text="@string/sheet_class_select" />
 
-        <SeekBar
-            android:id="@+id/class_level_seekbar"
-            android:layout_width="fill_parent"
+        <com.wefika.flowlayout.FlowLayout
+            android:id="@+id/class_level_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:progress="1"
-            android:min="1"
-            android:max="21"
-            />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="left">
+
+            <TextView
+                android:id="@+id/level_predefined_example"
+                android:text="@string/sheet_class_level_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_box"
+                android:padding="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:textSize="16dp"
+                android:textStyle="bold"/>
+
+        </com.wefika.flowlayout.FlowLayout>
 
     </LinearLayout>
 

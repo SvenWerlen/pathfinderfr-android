@@ -15,6 +15,8 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.wefika.flowlayout.FlowLayout;
+
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
@@ -40,13 +42,14 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
 
     private FragmentClassPicker.OnFragmentInteractionListener mListener;
 
-    private Long classId;           // selected Class
-    private int selectedLevel;      // selected Level
+    private Long classId;    // selected Class
+    private int level;       // selected Level
     private long[] excluded; // excluded classes (already chosen!)
-    private int maxLevel;           // max level (could be less < 20 if other classes selected)
+    private int maxLevel;    // max level (could be less < 20 if other classes selected)
 
     private TextView selectedName;  // TextView (name) currently selected
     private TextView selectedDescr; // TextView (description) currently selected
+    private TextView selectedLevel; // TextView (level) currently selected
 
 
     public FragmentClassPicker() {
@@ -73,13 +76,13 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        selectedLevel = 1;
+        level = 1;
 
         if (getArguments() != null && getArguments().containsKey(ARG_CLASS_ID)) {
             classId = getArguments().getLong(ARG_CLASS_ID);
         }
         if (getArguments() != null && getArguments().containsKey(ARG_CLASS_LVL)) {
-            selectedLevel = getArguments().getInt(ARG_CLASS_LVL);
+            level = getArguments().getInt(ARG_CLASS_LVL);
         }
         if (getArguments() != null && getArguments().containsKey(ARG_CLASS_EXCL)) {
             excluded = getArguments().getLongArray(ARG_CLASS_EXCL);
@@ -120,10 +123,25 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         selectedDescr = descr == null ? selectedDescr : descr;
         selectedDescr.setVisibility(View.VISIBLE);
         classId = (Long)selectedName.getTag();
-        selectedLevel = level;
+        this.level = level;
+
+        if(selectedLevel != null) {
+            TextView example = rootView.findViewById(R.id.level_predefined_example);
+            selectedLevel.setBackground(example.getBackground());
+            selectedLevel.setTextColor(example.getTextColors());
+            selectedLevel = null;
+        }
+
+        TextView predefined = rootView.findViewWithTag("level" + this.level);
+        Log.d(FragmentClassPicker.class.getSimpleName(), "Predefined " + this.level + " " + (predefined == null ? "not found" : "found"));
+        if(predefined != null) {
+            predefined.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+            predefined.setTextColor(ContextCompat.getColor(getContext(), R.color.colorWhite));
+            selectedLevel = predefined;
+        }
 
         Button okButton = rootView.findViewById(R.id.class_ok);
-        okButton.setText(selectedName.getText() + " " + selectedLevel);
+        okButton.setText(selectedName.getText() + " " + this.level);
         okButton.setVisibility(View.VISIBLE);
         rootView.findViewById(R.id.class_level_layout).setVisibility(View.VISIBLE);
 
@@ -147,6 +165,18 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         TextView exampleDescr = rootView.findViewById(R.id.choose_class_details);
         exampleName.setVisibility(View.GONE);
         exampleDescr.setVisibility(View.GONE);
+
+        // Prepare levels
+        FlowLayout levelSelector = rootView.findViewById(R.id.class_level_layout);
+        TextView example = rootView.findViewById(R.id.level_predefined_example);
+        example.setVisibility(View.GONE);
+        for(int i = 1; i<=maxLevel; i++) {
+            TextView tv = FragmentUtil.copyExampleTextFragment(example);
+            tv.setText(String.valueOf(i));
+            tv.setTag("level" + i);
+            tv.setOnClickListener(this);
+            levelSelector.addView(tv);
+        }
 
         List<DBEntity> entities =
                 DBHelper.getInstance(rootView.getContext()).getAllEntities(ClassFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
@@ -178,14 +208,14 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
 
             // selected if matching
             if(this.classId != null && classId == this.classId) {
-                updateChosenClass(className, classDescr, selectedLevel, rootView);
+                updateChosenClass(className, classDescr, level, rootView);
             }
 
             // class selected
             className.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    updateChosenClass(className, classDescr, selectedLevel, getView());
+                    updateChosenClass(className, classDescr, level, getView());
                 }
             });
 
@@ -196,22 +226,8 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
                     classDescr.setVisibility(View.GONE);
                 }
             });
-
-            SeekBar levelSelector = (SeekBar)rootView.findViewById(R.id.class_level_seekbar);
-            levelSelector.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                    if(fromUser) {
-                        updateChosenClass(null, null, progress, FragmentClassPicker.this.getView());
-                    }
-                }
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {}
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {}
-            });
-            levelSelector.setProgress(selectedLevel);
-            levelSelector.setMax(maxLevel+1);
         }
+
         rootView.findViewById(R.id.class_delete).setOnClickListener(this);
         rootView.findViewById(R.id.class_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.class_ok).setOnClickListener(this);
@@ -248,7 +264,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
                 return;
             }
             if(mListener != null) {
-                mListener.onClassChosen(classId, selectedLevel);
+                mListener.onClassChosen(classId, level);
             }
             dismiss();
             return;
@@ -262,6 +278,9 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             }
             dismiss();
             return;
+        } else if(v instanceof TextView && v.getTag() != null && v.getTag().toString().startsWith("level")) {
+            int level = Integer.valueOf(v.getTag().toString().substring("level".length()));
+            updateChosenClass(null, null, level, getView());
         }
     }
 

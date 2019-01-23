@@ -279,7 +279,6 @@ public class Character extends DBEntity {
         if(classes == null || classes.size() == 0) {
             return null;
         }
-        int sizeModif = getRaceSize() == SIZE_SMALL ? 1 : 0;
         List<Integer> bab = new ArrayList<>();
         for(Pair<Class, Integer> cl : classes) {
             // find matching level (should be in order but ...)
@@ -290,7 +289,7 @@ public class Character extends DBEntity {
                     if(bonus != null) {
                         for(int i=0; i<bonus.length; i++) {
                             if(i>=bab.size()) {
-                                bab.add(bonus[i] + sizeModif);
+                                bab.add(bonus[i]);
                             } else {
                                 bab.set(i, bab.get(i) + bonus[i]);
                             }

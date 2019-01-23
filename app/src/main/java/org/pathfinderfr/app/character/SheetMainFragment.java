@@ -477,6 +477,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             tv.setText(race.getName());
         }
         // store changes
+        updateOtherStats(getView());
         characterDBUpdate();
     }
 

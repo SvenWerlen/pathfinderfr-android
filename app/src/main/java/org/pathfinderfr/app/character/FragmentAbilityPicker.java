@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.util.FragmentUtil;
 
 
 public class FragmentAbilityPicker extends DialogFragment implements View.OnClickListener {
@@ -101,15 +102,8 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
         TextView example = rootView.findViewById(R.id.ability_predefined_example);
         example.setVisibility(View.GONE);
         for(int i = VALUE_PREDEFINED_MIN; i<=VALUE_PREDEFINED_MAX; i++) {
-            TextView tv = new TextView(this.getActivity());
+            TextView tv = FragmentUtil.copyExampleTextFragment(example);
             tv.setText(String.valueOf(i));
-            tv.setLayoutParams(example.getLayoutParams());
-            tv.setBackground(example.getBackground());
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, example.getTextSize());
-            tv.setPadding(example.getPaddingLeft(),example.getPaddingTop(), example.getPaddingRight(), example.getPaddingBottom());
-            tv.setTypeface(null, Typeface.BOLD);
-            tv.setTextColor(example.getTextColors());
-            tv.setTextAlignment(example.getTextAlignment());
             tv.setTag("predefined" + i);
             tv.setOnClickListener(this);
             layout.addView(tv);
