@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
@@ -198,6 +199,31 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return list;
     }
+
+    public List<DBEntity> getAllEntitiesWithAllFields(DBEntityFactory factory, String... sources) {
+        ArrayList<DBEntity> list = new ArrayList<>();
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res;
+            if(sources.length > 0) {
+                res = db.rawQuery(factory.getQueryFetchAllWithAllFields(sources), null);
+            } else {
+                res = db.rawQuery(factory.getQueryFetchAllWithAllFields(), null);
+            }
+            Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                list.add(factory.generateEntity(res));
+                res.moveToNext();
+            }
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+        }
+
+        return list;
+    }
+
 
     public long getCountEntities(DBEntityFactory factory) {
         try {

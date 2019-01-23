@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,20 +18,36 @@ import org.pathfinderfr.app.util.SpellFilter;
 
 import java.util.List;
 
-public class CharacterSheetActivity extends AppCompatActivity implements SheetMainFragment.OnFragmentInteractionListener {
+public class CharacterSheetActivity extends AppCompatActivity {
+
+    private long characterId;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            // search for already created characters
+            characterId = 0;
+            List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
+            if(list != null && list.size() > 0) {
+                characterId = list.get(0).getId();
+            }
+
+            if(characterId == 0) {
+                return false;
+            }
+
             String baseText = getResources().getString(R.string.sheet_menu_activity) + " - ";
             switch (item.getItemId()) {
                 case R.id.sheet_home:
                     setTitle(baseText + getResources().getString(R.string.sheet_menu_main));
+                    showFragment(SheetMainFragment.newInstance(characterId));
                     return true;
                 case R.id.sheet_skills:
                     setTitle(baseText + getResources().getString(R.string.sheet_menu_skills));
+                    showFragment(SheetSkillFragment.newInstance(characterId));
                     return true;
                 case R.id.sheet_feats:
                     setTitle(baseText + getResources().getString(R.string.sheet_menu_feats));
@@ -42,6 +59,13 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
             return false;
         }
     };
+
+    private void showFragment(Fragment newFragment) {
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.sheet_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,23 +79,13 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // search for already created characters
-        long characterId = 0;
+        characterId = 0;
         List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
         if(list != null && list.size() > 0) {
             characterId = list.get(0).getId();
         }
 
-        Fragment newFragment = SheetMainFragment.newInstance(characterId);
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.sheet_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        showFragment(SheetMainFragment.newInstance(characterId));
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
 
 }

@@ -22,6 +22,16 @@ public class Skill extends DBEntity {
         this.ability = ability;
     }
 
+    public String getAbilityId() {
+        if(ability == null) {
+            return null;
+        } else if(ability.length() <= 3) {
+            return ability.toUpperCase();
+        } else {
+            return ability.substring(0,3).toUpperCase();
+        }
+    }
+
     public String getTraining() {
         return training;
     }

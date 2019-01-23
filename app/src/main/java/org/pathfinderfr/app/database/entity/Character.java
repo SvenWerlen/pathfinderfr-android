@@ -7,7 +7,10 @@ import org.pathfinderfr.app.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Character extends DBEntity {
 
@@ -26,10 +29,12 @@ public class Character extends DBEntity {
     int[] abilities;
     Race race;
     List<Pair<Class,Integer>> classes;
+    Map<Long,Integer> skills;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
         classes = new ArrayList<>();
+        skills = new HashMap<>();
     }
 
     @Override
@@ -153,6 +158,13 @@ public class Character extends DBEntity {
             }
         }
         return total;
+    }
+
+    /**
+     * @return character's level
+     */
+    public int getLevel() {
+        return getOtherClassesLevel(-1);
     }
 
     /**
@@ -355,4 +367,31 @@ public class Character extends DBEntity {
         return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif;
     }
 
+    /**
+     * @param skillId skill identifier
+     * @param rank ranks for that skill
+     * @return true if rank was changed, false if nothing changed
+     */
+    public boolean setSkillRank(long skillId, int rank) {
+        if(!skills.containsKey(skillId) && rank > 0) {
+            skills.put(skillId, rank);
+            return true;
+        } else if(skills.containsKey(skillId) && skills.get(skillId) != rank) {
+            skills.put(skillId, rank);
+            return true;
+        }
+        return false;
+    }
+
+    public int getSkillRank(long skillId) {
+        if(skills.containsKey(skillId)) {
+            return skills.get(skillId);
+        } else {
+            return 0;
+        }
+    }
+
+    public Set<Long> getSkills() {
+        return skills.keySet();
+    }
 }

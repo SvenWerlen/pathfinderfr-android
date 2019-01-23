@@ -71,9 +71,32 @@ public abstract class DBEntityFactory {
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll(String... sources) {
+        if(sources == null || sources.length == 0) {
+            return getQueryFetchAll();
+        }
         String sourceList = StringUtil.listToString( sources,',','\'');
         return String.format("SELECT %s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
                 COLUMN_ID, COLUMN_NAME, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
+    }
+
+    /**
+     * @return the query to fetch all entities
+     */
+    public String getQueryFetchAllWithAllFields() {
+        return String.format("SELECT * FROM %s ORDER BY %s COLLATE UNICODE",
+                getTableName(), COLUMN_NAME);
+    }
+
+    /**
+     * @return the query to fetch all entities
+     */
+    public String getQueryFetchAllWithAllFields(String... sources) {
+        if(sources == null || sources.length == 0) {
+            return getQueryFetchAllWithAllFields();
+        }
+        String sourceList = StringUtil.listToString( sources,',','\'');
+        return String.format("SELECT * FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
+                getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
     }
 
     /**

@@ -25,6 +25,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ABILITY_INT = "ab_int";
     private static final String COLUMN_ABILITY_WIS = "ab_wis";
     private static final String COLUMN_ABILITY_CHA = "ab_cha";
+    private static final String COLUMN_SKILLS      = "skills";
 
 
     private static CharacterFactory instance;
@@ -59,13 +60,15 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
-                        "%s integer, %s integer, %s integer" +
+                        "%s integer, %s integer, %s integer," +
+                        "%s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
-                COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA);
+                COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
+                COLUMN_SKILLS);
         return query;
     }
 
@@ -111,6 +114,18 @@ public class CharacterFactory extends DBEntityFactory {
             }
             Log.d(CharacterFactory.class.getSimpleName(), "Classes: " + value.toString());
             contentValues.put(CharacterFactory.COLUMN_CLASSES, value.toString());
+        }
+
+        // skills are stored using format <skill1Id>:<ranks>#<skill2Id>:<ranks>#...
+        // (assuming that skill ids won't change during data import)
+        if(c.getSkills().size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(Long skillId : c.getSkills()) {
+                value.append(skillId).append(':').append(c.getSkillRank(skillId)).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Skills: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_SKILLS, value.toString());
         }
 
         return contentValues;
@@ -208,6 +223,26 @@ public class CharacterFactory extends DBEntityFactory {
                 }
             }
         }
+
+        // fill skills
+        String skillsValue = extractValue(resource, CharacterFactory.COLUMN_SKILLS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Skills found: " + skillsValue);
+        if(skillsValue != null && skillsValue.length() > 0) {
+            String[] skills = skillsValue.split("#");
+            for(String skill : skills) {
+                String[] skillDetails = skill.split(":");
+                if (skillDetails != null && skillDetails.length == 2) {
+                    try {
+                        long skillId = Long.parseLong(skillDetails[0]);
+                        int ranks = Integer.parseInt(skillDetails[1]);
+                        c.setSkillRank(skillId, ranks);
+                    } catch (NumberFormatException nfe) {
+                        Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + skill + "' is invalid (NFE)!");
+                    }
+                }
+            }
+        }
+
         return c;
     }
 

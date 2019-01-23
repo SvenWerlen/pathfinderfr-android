@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp"
-        tools:context=".app.FilterSpellFragment">
+        android:padding="20dp">
 
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"

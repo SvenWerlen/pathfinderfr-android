@@ -181,6 +181,12 @@
     <string name="sheet_cmd">DMD</string>
     <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
 
+    <!-- Skills -->
+    <string name="sheet_skills_example_name">Compétence (exemple)</string>
+    <string name="sheet_skills_example_total">0</string>
+    <string name="sheet_skills_example_ability">DEX</string>
+    <string name="sheet_skills_example_ability_bonus">0</string>
+    <string name="sheet_skills_example_rank">0</string>
 
 </resources>
 
