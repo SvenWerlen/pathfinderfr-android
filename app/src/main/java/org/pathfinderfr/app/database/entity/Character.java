@@ -394,4 +394,13 @@ public class Character extends DBEntity {
     public Set<Long> getSkills() {
         return skills.keySet();
     }
+
+    public boolean isClassSkill(String skillName) {
+        for(Pair<Class, Integer> cl : classes) {
+            if(cl.first.getSkills().contains(skillName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

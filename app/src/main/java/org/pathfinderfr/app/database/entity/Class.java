@@ -1,18 +1,20 @@
 package org.pathfinderfr.app.database.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Class extends DBEntity {
 
     // class-specific
     private String alignment;
     private String hitDie;
-    private List<String> skills;
+    private Set<String> skills;
     private List<Level> levels;
 
     public Class() {
-        skills = new ArrayList<>();
+        skills = new HashSet<>();
         levels = new ArrayList<>();
     }
 
@@ -23,7 +25,7 @@ public class Class extends DBEntity {
     public String getAlignment() { return this.alignment; };
     public void setHitDie(String hitDie) { this.hitDie = hitDie; };
     public String getHitDie() { return this.hitDie; };
-    public List<String> getSkills() {
+    public Set<String> getSkills() {
         return skills;
     }
 

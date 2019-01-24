@@ -1,58 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="40dp">
+    android:orientation="vertical"
+    android:layout_marginBottom="60dp">
 
-    
     <TableLayout
-        android:id="@+id/sheet_skills_table"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:shrinkColumns="1">
 
         <TableRow
-            android:id="@+id/sheet_skills_row"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="start|center" />
 
             <TextView
-                android:id="@+id/sheet_skills_example_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="@string/sheet_skills_example_name" />
+                android:text="@string/sheet_skills_example_label_name"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/sheet_skills_example_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:textStyle="bold"
-                android:text="@string/sheet_skills_example_total"/>
+                android:layout_marginHorizontal="2dp"
+                android:text="@string/sheet_skills_example_label_total"
+                android:width="35dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/sheet_skills_example_ability"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="@string/sheet_skills_example_ability"/>
+                android:layout_marginHorizontal="2dp"
+                android:text="@string/sheet_skills_example_label_ability"
+                android:width="40dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/sheet_skills_example_ability_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="@string/sheet_skills_example_ability_bonus"/>
+                android:layout_marginHorizontal="2dp"
+                android:text="@string/sheet_skills_example_label_ability_bonus"
+                android:width="35dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_marginHorizontal="10dp"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="2dp"
+                android:text="@string/sheet_skills_example_label_rank"
+                android:width="35dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
         </TableRow>
 
     </TableLayout>
 
-</ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableLayout
+            android:id="@+id/sheet_skills_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:stretchColumns="1"
+            android:shrinkColumns="1">
+
+            <TableRow
+                android:id="@+id/sheet_skills_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/sheet_skills_example_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginHorizontal="2dp"
+                    app:srcCompat="@drawable/ic_unchecked" />
+
+                <TextView
+                    android:id="@+id/sheet_skills_example_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="2dp"
+                    android:text="@string/sheet_skills_example_name" />
+
+                <TextView
+                    android:id="@+id/sheet_skills_example_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_skills_example_total"
+                    android:width="35dp"
+                    android:textAlignment="center"/>
+
+                <TextView
+                    android:id="@+id/sheet_skills_example_ability"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:text="@string/sheet_skills_example_ability"
+                    android:width="40dp"
+                    android:textAlignment="center"/>
+
+                <TextView
+                    android:id="@+id/sheet_skills_example_ability_bonus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:text="@string/sheet_skills_example_ability_bonus"
+                    android:width="35dp"
+                    android:textAlignment="center"/>
+
+                <TextView
+                    android:id="@+id/sheet_skills_example_rank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:text="@string/sheet_skills_example_rank"
+                    android:width="35dp"
+                    android:textAlignment="center"/>
+
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+</LinearLayout>

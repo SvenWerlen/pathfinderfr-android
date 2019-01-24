@@ -182,11 +182,23 @@
     <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
 
     <!-- Skills -->
+    <string name="sheet_skills_example_label_name">Compétence</string>
+    <string name="sheet_skills_example_label_total">Total</string>
+    <string name="sheet_skills_example_label_ability">Carac</string>
+    <string name="sheet_skills_example_label_ability_bonus">Mod</string>
+    <string name="sheet_skills_example_label_rank">Rang</string>
     <string name="sheet_skills_example_name">Compétence (exemple)</string>
     <string name="sheet_skills_example_total">0</string>
     <string name="sheet_skills_example_ability">DEX</string>
     <string name="sheet_skills_example_ability_bonus">0</string>
     <string name="sheet_skills_example_rank">0</string>
+
+    <!-- Value rank picker -->
+    <string name="sheet_skills_rank_skillname">Nom de la compétence</string>
+    <string name="sheet_skills_rank_choose">Sélectionner le rang:</string>
+    <string name="sheet_skills_rank">Rang</string>
+    <string name="sheet_skills_rank_defaultvalue">Rang 0</string>
+    <string name="sheet_skills_rank_value">0</string>
 
 </resources>
 
