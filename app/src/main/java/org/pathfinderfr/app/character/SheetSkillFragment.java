@@ -174,7 +174,6 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             int total = abilityMod + rank + classSkillBonus;
 
             TableRow row = new TableRow(view.getContext());
-            row.setTag("ROW" + skill.getId());
             row.setMinimumHeight(height);
             row.setGravity(Gravity.CENTER_VERTICAL);
             skills.add(new Pair(row,skill));

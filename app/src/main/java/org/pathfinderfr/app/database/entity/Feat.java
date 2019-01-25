@@ -30,6 +30,10 @@ public class Feat extends DBEntity {
         this.category = category;
     }
 
+    public boolean isCombat() {
+        return category != null && category.toLowerCase().indexOf("combat") >= 0;
+    }
+
     public String getConditions() {
         return conditions;
     }

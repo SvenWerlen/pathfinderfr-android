@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.pathfinderfr.app.util.StringUtil;
+
 import java.util.Map;
 
 public class FeatFactory extends DBEntityFactory {
@@ -65,6 +67,23 @@ public class FeatFactory extends DBEntityFactory {
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_CATEGORY, COLUMN_CONDITIONS, COLUMN_ADVANTAGE, COLUMN_SPECIAL,  COLUMN_NORMAL);
         return query;
+    }
+
+    /**
+     * @return the query to fetch all entities (including fields required for filtering)
+     */
+    public String getQueryFetchAll() {
+        return String.format("SELECT %s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), COLUMN_NAME);
+    }
+
+    /**
+     * @return the query to fetch all entities (including fields required for filtering)
+     */
+    public String getQueryFetchAll(String... sources) {
+        String sourceList = StringUtil.listToString( sources,',','\'');
+        return String.format("SELECT %s,%s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
     }
 
     @Override

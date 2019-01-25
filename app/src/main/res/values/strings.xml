@@ -218,5 +218,9 @@
     <string name="sheet_skills_sort_bonus">Par bonus (décroissant)</string>
     <string name="sheet_skills_filter_apply">Appliquer</string>
 
+    <!-- Feats -->
+    <string name="sheet_feats_example_label_name">Dons</string>
+    <string name="sheet_feats_example_name">Don (exemple)</string>
+
 </resources>
 

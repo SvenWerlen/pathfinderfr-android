@@ -51,6 +51,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
                     return true;
                 case R.id.sheet_feats:
                     setTitle(baseText + getResources().getString(R.string.sheet_menu_feats));
+                    showFragment(SheetFeatFragment.newInstance(characterId));
                     return true;
                 case R.id.sheet_spells:
                     setTitle(baseText + getResources().getString(R.string.sheet_menu_spells));
