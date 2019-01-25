@@ -82,6 +82,23 @@ public class Character extends DBEntity {
     public int getCharismaModif() { return getAbilityModif(ABILITY_CHARISMA); }
     public void setCharisma(int value) { setAbilityValue(ABILITY_CHARISMA, value); }
 
+    /**
+     * @param abilityId ability identifier
+     * @return ability modifier
+     */
+    private int getAbilityModif(String abilityId) {
+        // TODO: make it language-independant
+        switch(abilityId) {
+            case "FOR": return getStrengthModif();
+            case "DEX": return getDexterityModif();
+            case "CON": return getConstitutionModif();
+            case "INT": return getIntelligenceModif();
+            case "SAG": return getWisdomModif();
+            case "CHA": return getCharismaModif();
+            default: return 0;
+        }
+    }
+
     public Race getRace() {
         return race;
     }
@@ -393,6 +410,23 @@ public class Character extends DBEntity {
 
     public Set<Long> getSkills() {
         return skills.keySet();
+    }
+
+    public int getSkillAbilityMod(Skill skill) {
+        if(skill == null) {
+            return 0;
+        }
+        return getAbilityModif(skill.getAbilityId());
+    }
+
+    public int getSkillTotalBonus(Skill skill) {
+        if(skill == null) {
+            return 0;
+        }
+        int rank = getSkillRank(skill.getId());
+        int abilityMod = getSkillAbilityMod(skill);
+        int classSkill = isClassSkill(skill.getName()) ? 3 : 0;
+        return rank + abilityMod + classSkill;
     }
 
     public boolean isClassSkill(String skillName) {

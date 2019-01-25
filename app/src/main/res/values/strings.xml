@@ -200,5 +200,19 @@
     <string name="sheet_skills_rank_defaultvalue">Rang 0</string>
     <string name="sheet_skills_rank_value">0</string>
 
+    <!-- Skill filters -->
+    <string name="sheet_skills_filters_title">Filtrer les compétences</string>
+    <string name="sheet_skills_filter_class">Compétences de classe</string>
+    <string name="sheet_skills_filter_class_all">Toutes</string>
+    <string name="sheet_skills_filter_class_only">De classe uniquement</string>
+    <string name="sheet_skills_filter_rank">Rang</string>
+    <string name="sheet_skills_filter_rank_all">Toutes</string>
+    <string name="sheet_skills_filter_rank_only">Rang > 0</string>
+    <string name="sheet_skills_sort_title">Trier les compétences</string>
+    <string name="sheet_skills_sort_types">Choisir:</string>
+    <string name="sheet_skills_sort_name">Par nom (A-Z)</string>
+    <string name="sheet_skills_sort_bonus">Par bonus (décroissant)</string>
+    <string name="sheet_skills_filter_apply">Appliquer</string>
+
 </resources>
 

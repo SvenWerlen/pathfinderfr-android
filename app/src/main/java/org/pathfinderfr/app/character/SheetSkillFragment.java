@@ -1,8 +1,11 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +28,8 @@ import android.widget.Toast;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.ItemDetailActivity;
+import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
@@ -41,18 +46,22 @@ import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
 /**
  * Skill tab on character sheet
  */
-public class SheetSkillFragment extends Fragment implements FragmentRankPicker.OnFragmentInteractionListener {
+public class SheetSkillFragment extends Fragment implements FragmentRankPicker.OnFragmentInteractionListener, FragmentSkillFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
 
     private Character character;
     private long characterId;
+
+    private List<Pair<TableRow,Skill>> skills;
 
     public SheetSkillFragment() {
         // Required empty public constructor
@@ -78,24 +87,29 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         }
     }
 
-    /**
-     * @param abilityId ability identifier
-     * @return ability modifier
-     */
-    private int getAbilityMod(String abilityId) {
-        if(character == null) {
-            return 0;
+
+    private void applyFilters() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean filterOnlyClass = prefs.getBoolean(FragmentSkillFilter.KEY_SKILLFILTER_CLASS, false);
+        boolean filterOnlyRank = prefs.getBoolean(FragmentSkillFilter.KEY_SKILLFILTER_RANK, false);
+        //final int sort = prefs.getInt(FragmentSkillFilter.KEY_SKILL_SORT, 0);
+
+        int rowId = 0;
+        for(Pair<TableRow,Skill> entry : skills) {
+            if(filterOnlyClass && !character.isClassSkill(entry.second.getName())) {
+                entry.first.setVisibility(View.GONE);
+                continue;
+            } else if (filterOnlyRank && character.getSkillRank(entry.second.getId()) == 0) {
+                entry.first.setVisibility(View.GONE);
+                continue;
+            }
+            entry.first.setVisibility(View.VISIBLE);
+            entry.first.setBackgroundColor(ContextCompat.getColor(getContext(),
+                    rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+            rowId++;
         }
-        // TODO: make it language-independant
-        switch(abilityId) {
-            case "FOR": return character.getStrengthModif();
-            case "DEX": return character.getDexterityModif();
-            case "CON": return character.getConstitutionModif();
-            case "INT": return character.getIntelligenceModif();
-            case "SAG": return character.getWisdomModif();
-            case "CHA": return character.getCharismaModif();
-            default: return 0;
-        }
+
+
     }
 
     @Override
@@ -132,20 +146,22 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
         // add all skills
         int rowId = 0;
+        skills = new ArrayList<>();
+
         DBHelper helper = DBHelper.getInstance(view.getContext());
         for(DBEntity entity : helper.getAllEntitiesWithAllFields(SkillFactory.getInstance())) {
             final Skill skill = (Skill)entity;
-            int abilityMod = getAbilityMod(skill.getAbilityId());
+            int abilityMod = character.getSkillAbilityMod(skill);
             int rank = character.getSkillRank(skill.getId());
             int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
             int total = abilityMod + rank + classSkillBonus;
 
             TableRow row = new TableRow(view.getContext());
+            row.setTag("ROW" + skill.getId());
             row.setMinimumHeight(height);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            if(rowId % 2 == 1) {
-                row.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorPrimaryAlternate));
-            }
+            skills.add(new Pair(row,skill));
+
             // icon
             ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
             if(character.isClassSkill(skill.getName())) {
@@ -159,6 +175,16 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             String name = skill.getName().replaceAll("Connaissances", "Conn.")
                     .replaceAll("exploration", "expl.");
             nameTv.setText(name);
+            nameTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = SheetSkillFragment.this.getContext();
+                    Intent intent = new Intent(context, ItemDetailActivity.class);
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, skill.getId());
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, skill.getFactory().getFactoryId());
+                    context.startActivity(intent);
+                }
+            });
             row.addView(nameTv);
             // total
             TextView totalTv = FragmentUtil.copyExampleTextFragment(exampleTotal);
@@ -212,6 +238,22 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             rowId++;
         }
 
+        view.findViewById(R.id.skills_table_header).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = SheetSkillFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = SheetSkillFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("skills-filter");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentSkillFilter.newInstance(SheetSkillFragment.this);
+                newFragment.show(ft, "skills-filter");
+            }
+        });
+
+        applyFilters();
+
         return view;
     }
 
@@ -225,7 +267,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             TextView totalTv = getView().findViewWithTag("SKILL-TOTAL-" + skillId);
             Skill skill = (Skill)DBHelper.getInstance(getContext()).fetchEntity(skillId, SkillFactory.getInstance());
             if(skill != null && rankTv != null && totalTv != null) {
-                int abilityMod = getAbilityMod(skill.getAbilityId());
+                int abilityMod = character.getSkillAbilityMod(skill);
                 rank = character.getSkillRank(skill.getId());
                 int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
                 int total = abilityMod + rank + classSkillBonus;
@@ -233,5 +275,10 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 totalTv.setText(String.valueOf(total));
             }
         }
+    }
+
+    @Override
+    public void onFilterApplied() {
+        applyFilters();
     }
 }
