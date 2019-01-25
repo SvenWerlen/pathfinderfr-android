@@ -21,9 +21,12 @@
             android:paddingBottom="5dp">
 
             <ImageView
+                android:id="@+id/sheet_skills_filters"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:layout_gravity="start|center" />
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="start|center"
+                app:srcCompat="@drawable/ic_filter" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -71,7 +74,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:text="@string/sheet_skills_example_label_rank"
-                android:width="35dp"
+                android:width="40dp"
                 android:textAlignment="center"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"/>
@@ -101,15 +104,14 @@
                     android:id="@+id/sheet_skills_example_icon"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="5dp"
                     app:srcCompat="@drawable/ic_unchecked" />
 
                 <TextView
                     android:id="@+id/sheet_skills_example_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="2dp"
                     android:text="@string/sheet_skills_example_name" />
 
                 <TextView

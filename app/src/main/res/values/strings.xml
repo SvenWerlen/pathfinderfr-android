@@ -182,7 +182,7 @@
     <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
 
     <!-- Skills -->
-    <string name="sheet_skills_example_label_name">Compétence</string>
+    <string name="sheet_skills_example_label_name">Compétences</string>
     <string name="sheet_skills_example_label_total">Total</string>
     <string name="sheet_skills_example_label_ability">Carac</string>
     <string name="sheet_skills_example_label_ability_bonus">Mod</string>
@@ -208,6 +208,10 @@
     <string name="sheet_skills_filter_rank">Rang</string>
     <string name="sheet_skills_filter_rank_all">Toutes</string>
     <string name="sheet_skills_filter_rank_only">Rang > 0</string>
+    <string name="sheet_skills_filter_favorite">Favoris</string>
+    <string name="sheet_skills_filter_favorite_all">Toutes</string>
+    <string name="sheet_skills_filter_favorite_only">Favorites uniquement</string>
+
     <string name="sheet_skills_sort_title">Trier les compétences</string>
     <string name="sheet_skills_sort_types">Choisir:</string>
     <string name="sheet_skills_sort_name">Par nom (A-Z)</string>

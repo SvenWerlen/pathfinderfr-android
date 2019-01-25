@@ -37,6 +37,7 @@ import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -48,7 +49,9 @@ import org.pathfinderfr.app.util.Pair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -88,11 +91,24 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
     }
 
 
-    private void applyFilters() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    private void applyFilters(View view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         boolean filterOnlyClass = prefs.getBoolean(FragmentSkillFilter.KEY_SKILLFILTER_CLASS, false);
         boolean filterOnlyRank = prefs.getBoolean(FragmentSkillFilter.KEY_SKILLFILTER_RANK, false);
+        boolean filterOnlyFav = prefs.getBoolean(FragmentSkillFilter.KEY_SKILLFILTER_FAV, false);
         //final int sort = prefs.getInt(FragmentSkillFilter.KEY_SKILL_SORT, 0);
+
+        boolean filtersApplied = filterOnlyClass || filterOnlyRank || filterOnlyFav;
+        ImageView iv = view.findViewById(R.id.sheet_skills_filters);
+        iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
+
+        Set<Long> favorites = new HashSet<>();
+        for(DBEntity e : DBHelper.getInstance(view.getContext()).getAllEntities(FavoriteFactory.getInstance())) {
+            if(e instanceof Skill) {
+                favorites.add(e.getId());
+            }
+        }
 
         int rowId = 0;
         for(Pair<TableRow,Skill> entry : skills) {
@@ -102,14 +118,15 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             } else if (filterOnlyRank && character.getSkillRank(entry.second.getId()) == 0) {
                 entry.first.setVisibility(View.GONE);
                 continue;
+            } else if (filterOnlyFav && !favorites.contains(entry.second.getId())) {
+                entry.first.setVisibility(View.GONE);
+                continue;
             }
             entry.first.setVisibility(View.VISIBLE);
             entry.first.setBackgroundColor(ContextCompat.getColor(getContext(),
                     rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
-
-
     }
 
     @Override
@@ -252,7 +269,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             }
         });
 
-        applyFilters();
+        applyFilters(view);
 
         return view;
     }
@@ -279,6 +296,6 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
     @Override
     public void onFilterApplied() {
-        applyFilters();
+        applyFilters(getView());
     }
 }
