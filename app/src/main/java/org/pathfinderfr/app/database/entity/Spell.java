@@ -3,11 +3,12 @@ package org.pathfinderfr.app.database.entity;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.text.Collator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Spell extends DBEntity {
+public class Spell extends DBEntity implements Comparable<Spell> {
 
     public static final String TEMPLATE_SPELL_LIST = "template.spell.list";
 
@@ -133,4 +134,8 @@ public class Spell extends DBEntity {
         this.area = area;
     }
 
+    @Override
+    public int compareTo(Spell o) {
+        return Collator.getInstance().compare(getName(),o.getName());
+    }
 }

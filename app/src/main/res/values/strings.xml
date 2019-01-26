@@ -118,6 +118,9 @@
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_spells">Sorts</string>
 
+    <string name="character_tab_failed">Le personnage n\'a pas encore été créé!</string>
+    <string name="character_tab_failed_class">Veuillez choisir une classe!</string>
+
     <!-- Character abilities -->
     <string name="sheet_label_char">Carac.</string>
     <string name="sheet_label_value">Valeur</string>
@@ -227,12 +230,12 @@
     <string name="sheet_skills_filter_empty">Aucune compétence ne répond à ces critères (filtres).</string>
 
     <!-- Feats -->
-    <string name="sheet_feats_empty_list">Le personnage ne possède aucun don. Vous pouvez en ajouter depuis la liste de tous les dons.</string>
+    <string name="sheet_feats_empty_list">Le personnage ne possède aucun don. Vous pouvez en ajouter depuis le catalogue des dons.</string>
     <string name="sheet_feats_filter_empty">Aucun don ne répond à ces critères (filtres).</string>
     <string name="sheet_feats_example_label_name">Dons</string>
     <string name="sheet_feats_example_name">Don (exemple)</string>
 
-    <!-- Skill filters -->
+    <!-- Feat filters -->
     <string name="sheet_feats_filters_title">Filtrer les dons</string>
     <string name="sheet_feats_filter_type">Type</string>
     <string name="sheet_feats_filter_type_all">Toutes</string>
@@ -244,6 +247,13 @@
 
     <string name="sheet_feats_filter_apply">Appliquer</string>
 
+    <!-- Spells -->
+    <string name="sheet_spells_empty_list">La classe du personnage ne donne accès à aucun sort.</string>
+    <string name="sheet_spells_filter_empty">Aucun sort ne répond à ces critères (filtres).</string>
+    <string name="sheet_spells_example_label_name">Sort</string>
+    <string name="sheet_spells_example_name">Sort (exemple)</string>
+    <string name="sheet_spells_example_level">Niveau (exemple)</string>
+    <string name="sheet_spells_example_school">École (exemple)</string>
 
 </resources>
 

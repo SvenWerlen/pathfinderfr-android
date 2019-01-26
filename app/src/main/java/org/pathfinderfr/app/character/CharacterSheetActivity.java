@@ -11,9 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.util.SpellFilter;
@@ -55,22 +57,38 @@ public class CharacterSheetActivity extends AppCompatActivity {
     };
 
     private boolean showTab() {
+        DBHelper helper = DBHelper.getInstance(getBaseContext());
+        Character character;
         long characterId = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
                 .getLong(PREF_SELECTED_CHARACTER_ID, 0L);
+        character = (Character)helper.fetchEntity(characterId, CharacterFactory.getInstance());
 
         // if no character created yet, search for existing characters
-        if(characterId == 0) {
+        if(character == null) {
             List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
             if (list != null && list.size() > 0) {
-                characterId = list.get(0).getId();
+                character = (Character)list.get(0);
+                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                        putLong(PREF_SELECTED_CHARACTER_ID, character.getId()).apply();
             }
-            // keep selected character in preferences
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                    putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
         }
 
-        if(characterId == 0) {
-            return false;
+        if(currentTab != TAB_HOME) {
+            if (character == null) {
+                View root = findViewById(R.id.sheet_container);
+                if (root != null) {
+                    Snackbar.make(root, getResources().getString(R.string.character_tab_failed),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                return false;
+            } else if (character.getClassesCount() == 0) {
+                View root = findViewById(R.id.sheet_container);
+                if (root != null) {
+                    Snackbar.make(root, getResources().getString(R.string.character_tab_failed_class),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                return false;
+            }
         }
 
         String baseText = getResources().getString(R.string.sheet_menu_activity) + " - ";
@@ -89,6 +107,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
                 return true;
             case TAB_SPELLS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_spells));
+                showFragment(SheetSpellFragment.newInstance(characterId));
                 return true;
         }
         return false;
@@ -128,6 +147,5 @@ public class CharacterSheetActivity extends AppCompatActivity {
         super.onResume();
         // refresh (in case some data changed)
         showTab();
-        System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
     }
 }

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -13,7 +14,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -343,6 +346,34 @@ public class SpellFilterTest {
         filter.addFilterLevel("2");
         assertTrue(filter.isFilterLevelEnabled("1"));
         assertTrue(filter.isFilterLevelEnabled("2"));
+    }
+
+
+    @Test
+    public void cleanClasses() {
+        assertEquals("Ens", SpellFilter.cleanClass("Ensorceleur 4"));
+        assertEquals("Ens", SpellFilter.cleanClass("ensorce 4"));
+        assertEquals("Ens", SpellFilter.cleanClass("ENSorceleur 4"));
+        assertEquals("Ens", SpellFilter.cleanClass("ENSorc"));
+        assertEquals(null, SpellFilter.cleanClass("123"));
+    }
+
+    @Test
+    public void cleanLevel() {
+        List<String> names = Arrays.asList("Ensorceleur", "Magicien");
+        Spell spell = new Spell();
+        spell.setLevel("Ensor 4");
+        assertEquals((Integer)4, (Integer)SpellFilter.getLevel(names,spell).second);
+        spell.setLevel("Magicien 2");
+        assertEquals((Integer)2, (Integer)SpellFilter.getLevel(names,spell).second);
+        spell.setLevel("barde 2");
+        assertEquals(null, SpellFilter.getLevel(names,spell));
+        spell.setLevel("barde/magi 2");
+        assertEquals((Integer)2, (Integer)SpellFilter.getLevel(names,spell).second);
+        spell.setLevel("ensorceleur 3, bard/magi 2");
+        assertEquals((Integer)2, (Integer)SpellFilter.getLevel(names,spell).second);
+        spell.setLevel("ensorceleur 3, bard/magi 5");
+        assertEquals((Integer)3, (Integer)SpellFilter.getLevel(names,spell).second);
     }
 
 }

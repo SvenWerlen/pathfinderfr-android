@@ -18,6 +18,15 @@ public class Class extends DBEntity {
         levels = new ArrayList<>();
     }
 
+    public String getShortName() {
+        String name = getName().toLowerCase();
+        if(name.length()>=3) {
+            return name.substring(0, 1).toUpperCase() + name.substring(1, 3);
+        } else {
+            return name.substring(0, 1).toUpperCase() + name.substring(1);
+        }
+    }
+
     public List<Level> getLevels() {
         return levels;
     }
