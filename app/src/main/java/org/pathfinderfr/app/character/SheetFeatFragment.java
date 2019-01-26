@@ -44,7 +44,7 @@ import java.util.Set;
 /**
  * Feat tab on character sheet
  */
-public class SheetFeatFragment extends Fragment {
+public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
 
@@ -80,18 +80,42 @@ public class SheetFeatFragment extends Fragment {
     private void applyFilters(View view) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
-        boolean filtersApplied = false;
+        int filterOnlyType = prefs.getInt(FragmentFeatFilter.KEY_FEATFILTER_TYPE, FragmentFeatFilter.FEATFILTER_TYPE_ALL);
+        boolean filterOnlyFav = prefs.getBoolean(FragmentFeatFilter.KEY_FEATFILTER_FAV, false);
+
+        boolean filtersApplied = (filterOnlyType != FragmentFeatFilter.FEATFILTER_TYPE_ALL) || filterOnlyFav;
         ImageView iv = view.findViewById(R.id.sheet_feats_filters);
         iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
 
+        Set<Long> favorites = new HashSet<>();
+        for(DBEntity e : DBHelper.getInstance(view.getContext()).getAllEntities(FavoriteFactory.getInstance())) {
+            if(e instanceof Feat) {
+                favorites.add(e.getId());
+            }
+        }
+
         int rowId = 0;
         for(Pair<TableRow,Feat> entry : feats) {
+            if(filterOnlyType == FragmentFeatFilter.FEATFILTER_TYPE_COMBAT && !entry.second.isCombat()) {
+                entry.first.setVisibility(View.GONE);
+                continue;
+            }
+            else if(filterOnlyType == FragmentFeatFilter.FEATFILTER_TYPE_NOCOMBAT && entry.second.isCombat()) {
+                entry.first.setVisibility(View.GONE);
+                continue;
+            }
+            else if (filterOnlyFav && !favorites.contains(entry.second.getId())) {
+                entry.first.setVisibility(View.GONE);
+                continue;
+            }
             entry.first.setVisibility(View.VISIBLE);
             entry.first.setBackgroundColor(ContextCompat.getColor(getContext(),
                     rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
+
+        view.findViewById(R.id.sheet_feats_filter_empty).setVisibility(feats.size() > 0 && rowId == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -122,9 +146,7 @@ public class SheetFeatFragment extends Fragment {
         int rowId = 0;
         feats = new ArrayList<>();
 
-        DBHelper helper = DBHelper.getInstance(view.getContext());
-        for(DBEntity entity : helper.getAllEntities(FeatFactory.getInstance(),PreferenceUtil.getSources(view.getContext()))) {
-            final Feat feat = (Feat)entity;
+        for(final Feat feat : character.getFeats()) {
 
             TableRow row = new TableRow(view.getContext());
             row.setMinimumHeight(height);
@@ -159,23 +181,31 @@ public class SheetFeatFragment extends Fragment {
             rowId++;
         }
 
-//        view.findViewById(R.id.skills_table_header).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FragmentTransaction ft = SheetFeatFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-//                Fragment prev = SheetFeatFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("skills-filter");
-//                if (prev != null) {
-//                    ft.remove(prev);
-//                }
-//                ft.addToBackStack(null);
-//                DialogFragment newFragment = FragmentSkillFilter.newInstance(SheetFeatFragment.this);
-//                newFragment.show(ft, "skills-filter");
-//            }
-//        });
+        view.findViewById(R.id.feats_table_header).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = SheetFeatFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = SheetFeatFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("feats-filter");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentFeatFilter.newInstance(SheetFeatFragment.this);
+                newFragment.show(ft, "feats-filter");
+            }
+        });
+
+        if(feats.size() > 0) {
+            view.findViewById(R.id.sheet_feats_empty_list).setVisibility(View.GONE);
+        }
 
         applyFilters(view);
 
         return view;
     }
 
+    @Override
+    public void onFilterApplied() {
+        applyFilters(getView());
+    }
 }

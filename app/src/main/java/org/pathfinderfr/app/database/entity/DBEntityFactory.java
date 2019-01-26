@@ -53,6 +53,14 @@ public abstract class DBEntityFactory {
     }
 
     /**
+     * @return the query to fetch multiple entities (search by ID)
+     */
+    public String getQueryFetchAllById(long[] ids) {
+        String idList = StringUtil.listToString(ids,',');
+        return String.format("SELECT * FROM %s where %s IN (%s)", getTableName(), COLUMN_ID, idList);
+    }
+
+    /**
      * @return the query to fetch one entity (search by name)
      */
     public String getQueryFetchByName(String name) {

@@ -5,8 +5,11 @@ import android.util.Log;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.Pair;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +33,13 @@ public class Character extends DBEntity {
     Race race;
     List<Pair<Class,Integer>> classes;
     Map<Long,Integer> skills;
+    List<Feat> feats;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
         classes = new ArrayList<>();
         skills = new HashMap<>();
+        feats = new ArrayList<>();
     }
 
     @Override
@@ -393,6 +398,8 @@ public class Character extends DBEntity {
         if(!skills.containsKey(skillId) && rank > 0) {
             skills.put(skillId, rank);
             return true;
+        } else if(skills.containsKey(skillId) && rank == 0) {
+            skills.remove(skillId);
         } else if(skills.containsKey(skillId) && skills.get(skillId) != rank) {
             skills.put(skillId, rank);
             return true;
@@ -434,6 +441,51 @@ public class Character extends DBEntity {
             if(cl.first.getSkills().contains(skillName)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * @return the list of feats (as a copy)
+     */
+    public List<Feat> getFeats() {
+        Feat[] itemArray = new Feat[feats.size()];
+        itemArray = feats.toArray(itemArray);
+        List<Feat> feats = Arrays.asList(itemArray);
+        final Collator collator = Collator.getInstance();
+        Collections.sort(feats, new Comparator<Feat>() {
+            @Override
+            public int compare(Feat f1, Feat f2) {
+                return collator.compare(f1.getName(), f2.getName());
+            }
+        });
+        return feats;
+    }
+
+    public boolean hasFeat(Feat feat) {
+        for(Feat f : feats) {
+            if(f.getId() == feat.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addFeat(Feat feat) {
+        feats.add(feat);
+    }
+
+    public boolean removeFeat(Feat feat) {
+        Feat found = null;
+        for(Feat f : feats) {
+            if(f.getId() == feat.getId()) {
+                found = f;
+                break;
+            }
+        }
+        if(found != null) {
+            feats.remove(found);
+            return true;
         }
         return false;
     }

@@ -14,12 +14,18 @@
 
     <string name="action_settings">Paramètres</string>
 
-    <!-- Strings related to favorites -->
+    <string name="itemdetails_quickaction">Actions:</string>
+
+    <!-- Strings related to favorites && addToCharacter -->
     <string name="generic_failed">Élément introuvable (opération échouée)!</string>
     <string name="favorite_added_success">Favori ajouté avec succès!</string>
     <string name="favorite_removed_success">Favori retiré avec succès!</string>
     <string name="favorite_added_failed">Échec de l\'ajout en tant que favori!</string>
     <string name="favorite_removed_failed">Échec de la suppression du favori!</string>
+    <string name="feat_added_success">Don ajouté au personnage avec succès!</string>
+    <string name="feat_removed_success">Don retiré du personnage avec succès!</string>
+    <string name="feat_added_failed">Échec de l\'ajout du don au personnage!</string>
+    <string name="feat_removed_failed">Échec du retrait du don du personnage!</string>
 
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
@@ -218,9 +224,26 @@
     <string name="sheet_skills_sort_bonus">Par bonus (décroissant)</string>
     <string name="sheet_skills_filter_apply">Appliquer</string>
 
+    <string name="sheet_skills_filter_empty">Aucune compétence ne répond à ces critères (filtres).</string>
+
     <!-- Feats -->
+    <string name="sheet_feats_empty_list">Le personnage ne possède aucun don. Vous pouvez en ajouter depuis la liste de tous les dons.</string>
+    <string name="sheet_feats_filter_empty">Aucun don ne répond à ces critères (filtres).</string>
     <string name="sheet_feats_example_label_name">Dons</string>
     <string name="sheet_feats_example_name">Don (exemple)</string>
+
+    <!-- Skill filters -->
+    <string name="sheet_feats_filters_title">Filtrer les dons</string>
+    <string name="sheet_feats_filter_type">Type</string>
+    <string name="sheet_feats_filter_type_all">Toutes</string>
+    <string name="sheet_feats_filter_type_combat_only">Combat</string>
+    <string name="sheet_feats_filter_type_no_combat">Excepté combat</string>
+    <string name="sheet_feats_filter_favorite">Favoris</string>
+    <string name="sheet_feats_filter_favorite_all">Toutes</string>
+    <string name="sheet_feats_filter_favorite_only">Favorites uniquement</string>
+
+    <string name="sheet_feats_filter_apply">Appliquer</string>
+
 
 </resources>
 

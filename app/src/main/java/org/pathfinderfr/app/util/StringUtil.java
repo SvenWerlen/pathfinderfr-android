@@ -72,6 +72,18 @@ public class StringUtil {
         return listToString(values, sep != null ? Character.toString(sep) : null);
     }
 
+    public static final String listToString(long[] values, String sep) {
+        String[] list = new String[values.length];
+        for(int i = 0; i<values.length; i++) {
+            list[i] = String.valueOf(values[i]);
+        }
+        return listToString(list, sep, null);
+    }
+
+    public static final String listToString(long[] values, Character sep) {
+        return listToString(values, sep != null ? Character.toString(sep) : null);
+    }
+
     public static final int[] stringListToIntList(String[] values) {
         int[] list = new int[values.length];
         for(int i = 0; i<values.length; i++) {

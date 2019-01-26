@@ -26,6 +26,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ABILITY_WIS = "ab_wis";
     private static final String COLUMN_ABILITY_CHA = "ab_cha";
     private static final String COLUMN_SKILLS      = "skills";
+    private static final String COLUMN_FEATS      = "feats";
 
 
     private static CharacterFactory instance;
@@ -61,14 +62,14 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text" +
+                        "%s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS);
+                COLUMN_SKILLS, COLUMN_FEATS);
         return query;
     }
 
@@ -114,6 +115,8 @@ public class CharacterFactory extends DBEntityFactory {
             }
             Log.d(CharacterFactory.class.getSimpleName(), "Classes: " + value.toString());
             contentValues.put(CharacterFactory.COLUMN_CLASSES, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_CLASSES, "");
         }
 
         // skills are stored using format <skill1Id>:<ranks>#<skill2Id>:<ranks>#...
@@ -126,7 +129,24 @@ public class CharacterFactory extends DBEntityFactory {
             value.deleteCharAt(value.length()-1);
             Log.d(CharacterFactory.class.getSimpleName(), "Skills: " + value.toString());
             contentValues.put(CharacterFactory.COLUMN_SKILLS, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_SKILLS, "");
         }
+
+        // feats are stored using format <feat1Id>#<feat2Id>...
+        // (assuming that feat ids won't change during data import)
+        if(c.getFeats().size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(Feat feat : c.getFeats()) {
+                value.append(feat.getId()).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Feats: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_FEATS, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_FEATS, "");
+        }
+
 
         return contentValues;
     }
@@ -240,6 +260,27 @@ public class CharacterFactory extends DBEntityFactory {
                         Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + skill + "' is invalid (NFE)!");
                     }
                 }
+            }
+        }
+
+        // fill feats
+        String featsValue = extractValue(resource, CharacterFactory.COLUMN_FEATS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Feats found: " + featsValue);
+        if(featsValue != null && featsValue.length() > 0) {
+            String[] feats = featsValue.split("#");
+            long[] featIds = new long[feats.length];
+            int idx = 0;
+            try {
+                for(int i = 0; i < feats.length; i++) {
+                    featIds[i] = Long.parseLong(feats[i]);
+                }
+                // retrieve all feats from DB
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, FeatFactory.getInstance());
+                for(DBEntity e : list) {
+                    c.addFeat((Feat)e);
+                }
+            } catch (NumberFormatException nfe) {
+                Log.e(CharacterFactory.class.getSimpleName(), "Stored feat '" + featsValue + "' is invalid (NFE)!");
             }
         }
 

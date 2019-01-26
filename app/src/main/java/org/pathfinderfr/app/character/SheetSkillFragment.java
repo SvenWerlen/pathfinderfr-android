@@ -127,6 +127,8 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                     rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
+
+        view.findViewById(R.id.sheet_skills_filter_empty).setVisibility(skills.size() > 0 && rowId == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -170,6 +171,14 @@ public class MainActivity extends AppCompatActivity
 
         long countSources = sources.length;
         long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
+
+        // search for already created characters
+        long characterId = 0;
+        List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
+        if(list != null && list.size() > 0) {
+            characterId = list.get(0).getId();
+        }
+
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
                 countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,

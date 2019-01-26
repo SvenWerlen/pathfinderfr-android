@@ -42,35 +42,4 @@
         android:breakStrategy="balanced"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <ImageButton
-        android:id="@+id/favoriteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/item_detail_container"
-        app:layout_anchorGravity="top|end"
-        android:background="@android:drawable/btn_star_big_off" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_moredetails"
-        app:layout_anchor="@+id/item_detail_container"
-        app:layout_anchorGravity="bottom|end" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabLinkExternal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
-        android:layout_margin="@dimen/fab_margin"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_link_external"
-        app:layout_anchor="@+id/item_detail_container"
-        app:layout_anchorGravity="bottom|start" />
-
 </android.support.design.widget.CoordinatorLayout>

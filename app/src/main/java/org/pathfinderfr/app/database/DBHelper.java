@@ -158,6 +158,27 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * @param ids IDs of the entities to be fetched
+     * @param factory factory corresponding to the element (skill, feet, spell, etc.)
+     * @return the entity as object (assuming that it will always be found)
+     */
+    public List<DBEntity> fetchAllEntitiesById(long[] ids, DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchAllById(ids), null );
+        // not found?
+        if(res.getCount()<1) {
+            return null;
+        }
+        res.moveToFirst();
+        List<DBEntity> list = new ArrayList<>();
+        while (res.isAfterLast() == false) {
+            list.add(factory.generateEntity(res));
+            res.moveToNext();
+        }
+        return list;
+    }
+
+    /**
      * @param name entity name to be searched
      * @param factory factory corresponding to the element (skill, feet, spell, etc.)
      * @return the entity as object (or null if not found)

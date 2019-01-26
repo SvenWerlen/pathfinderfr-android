@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -41,30 +42,6 @@ public class ItemDetailActivity extends AppCompatActivity {
     private boolean showDetails;
 
 
-    /**
-     * Updates the button icon (showMore, showLess) according to status
-     */
-    private void updateShowDetailsButtonIcon(boolean showDetails) {
-        FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
-        if (showDetails) {
-
-            moreDetails.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lessdetails));
-            findViewById(R.id.fabLinkExternal).setVisibility(View.VISIBLE);
-        } else {
-            moreDetails.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_moredetails));
-            findViewById(R.id.fabLinkExternal).setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Updates the button icon (showMore, showLess) according to status
-     */
-    private void updateFavoriteButtonIcon(boolean isFavorite) {
-        ImageButton favoriteButton = (ImageButton) findViewById(R.id.favoriteButton);
-        int drawableId = isFavorite ? android.R.drawable.star_big_on : android.R.drawable.star_big_off;
-        favoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), drawableId));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,111 +51,12 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         showDetails = preferences.getBoolean(PREF_SHOWDETAILS, true);
-        updateShowDetailsButtonIcon(showDetails);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        // Favorite button
-        ImageButton favorite = (ImageButton) findViewById(R.id.favoriteButton);
-        long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-        String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
-
-        boolean isFavorite = DBHelper.getInstance(getBaseContext()).isFavorite(factoryID, itemID);
-        updateFavoriteButtonIcon(isFavorite);
-
-
-        favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean success = false;
-                String message = getResources().getString(R.string.generic_failed);
-
-                long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-                String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
-                boolean isFavorite = DBHelper.getInstance(getBaseContext()).isFavorite(factoryID, itemID);
-                if (itemID > 0 && factoryID != null) {
-                    DBHelper dbhelper = DBHelper.getInstance(getBaseContext());
-                    DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
-                    if (entity != null && !isFavorite) {
-                        success = dbhelper.insertFavorite(entity);
-                        message = success ?
-                                getResources().getString(R.string.favorite_added_success) :
-                                getResources().getString(R.string.favorite_added_failed);
-                    } else if (entity != null && isFavorite) {
-                        success = dbhelper.deleteFavorite(entity);
-                        message = success ?
-                                getResources().getString(R.string.favorite_removed_success) :
-                                getResources().getString(R.string.favorite_removed_failed);
-                    }
-                }
-
-                if (success) {
-                    isFavorite = !isFavorite;
-                    updateFavoriteButtonIcon(isFavorite);
-                    // update list if currently viewing favorites
-
-                    String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
-                            getBaseContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
-
-                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
-                        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
-                                .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
-                    }
-                    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else {
-                    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-        });
-
-        // Open external link button
-        FloatingActionButton externalLink = (FloatingActionButton) findViewById(R.id.fabLinkExternal);
-        externalLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                long itemID = getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-                String factoryID = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
-                if (itemID > 0 && factoryID != null) {
-                    DBHelper dbhelper = DBHelper.getInstance(getBaseContext());
-                    DBEntity entity = dbhelper.fetchEntity(itemID, EntityFactories.getFactoryById(factoryID));
-                    if(entity != null) {
-                        String url = entity.getReference();
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(browserIntent);
-                    } else {
-                        String message = getResources().getString(R.string.generic_failed);
-                        Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    }
-                }
-            }
-        });
-
-        // More details button
-        FloatingActionButton moreDetails = (FloatingActionButton) findViewById(R.id.fabDetails);
-        moreDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                showDetails = !showDetails;
-                updateShowDetailsButtonIcon(showDetails);
-
-                // refresh fragment
-                Bundle arguments = new Bundle();
-                arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
-                arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
-                arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails);
-
-                Fragment frg = getSupportFragmentManager().findFragmentById(R.id.item_detail_container);
-                frg.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction().detach(frg).attach(frg).commit();
-            }
-        });
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity

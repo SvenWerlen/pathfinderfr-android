@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/sheet_feats_filters_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="@string/sheet_feats_filter_type" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/feats_filter_type_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_feats_filter_type_all"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/feats_filter_type_combat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_feats_filter_type_combat_only" />
+
+            <RadioButton
+                android:id="@+id/feats_filter_type_nocombat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_feats_filter_type_no_combat" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="@string/sheet_feats_filter_favorite" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/feats_filter_favorite_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_feats_filter_favorite_all"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/feats_filter_favorite_only"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_feats_filter_favorite_only" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/feats_filter_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/feats_filter_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/sheet_feats_filter_apply"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

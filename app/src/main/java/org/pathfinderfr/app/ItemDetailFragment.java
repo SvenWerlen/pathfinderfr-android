@@ -1,22 +1,35 @@
 package org.pathfinderfr.app;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.character.CharacterSheetActivity;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
+import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
@@ -47,6 +60,8 @@ public class ItemDetailFragment extends Fragment {
      * The item that this view is presenting
      */
     private DBEntity mItem;
+    private boolean isFavorite;
+    private Character character;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -63,10 +78,6 @@ public class ItemDetailFragment extends Fragment {
         templates = ConfigurationUtil.getInstance(getContext()).getProperties();
 
         if (getArguments().containsKey(ARG_ITEM_ID) && getArguments().containsKey(ARG_ITEM_FACTORY_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-
             DBHelper dbhelper = DBHelper.getInstance(getContext());
             long itemID = getArguments().getLong(ARG_ITEM_ID);
             String factoryID = getArguments().getString(ARG_ITEM_FACTORY_ID);;
@@ -84,10 +95,32 @@ public class ItemDetailFragment extends Fragment {
         }
     }
 
+    private void updateActionIcons(View view) {
+        int colorDisabled = view.getContext().getResources().getColor(R.color.colorDisabled);
+        int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
+
+        boolean isAddedToCharacter = false;
+        if(mItem != null && (mItem instanceof Feat) && (character != null)) {
+            isAddedToCharacter = character.hasFeat((Feat)mItem);
+        }
+        ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
+        addToCharacter.getBackground().setColorFilter(isAddedToCharacter ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+
+        ImageView addFavorite = (ImageView)view.findViewById(R.id.actionFavorite);
+        addFavorite.getBackground().setColorFilter(isFavorite ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_description, container, false);
+
+        final DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
+        long characterId = PreferenceManager.getDefaultSharedPreferences(rootView.getContext())
+                .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+        if(characterId != 0) {
+            character = (Character)dbHelper.fetchEntity(characterId,CharacterFactory.getInstance());
+        }
 
         // Show the content as text in a TextView.
         if (mItem != null) {
@@ -112,8 +145,110 @@ public class ItemDetailFragment extends Fragment {
                         templates.getProperty("template.spell.description"),text);
 
             }
-            textview = (TextView) rootView.findViewById(R.id.item_description);
+            textview = (TextView) rootView.findViewById(R.id.item_full_description);
+
+            isFavorite = dbHelper.isFavorite(mItem.getFactory().getFactoryId(), mItem.getId());
         }
+
+        ImageView externalLink = (ImageView)rootView.findViewById(R.id.actionExternalLink);
+        ImageView addToCharacter = (ImageView)rootView.findViewById(R.id.actionAddToCharacter);
+        ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
+        updateActionIcons(rootView);
+
+        if(character == null || mItem == null || !(mItem instanceof Feat) ) {
+            addToCharacter.setVisibility(View.GONE);
+        }
+
+        // Add to character
+        addToCharacter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mItem == null) {
+                    return;
+                }
+
+                boolean success = false;
+                String message = getResources().getString(R.string.generic_failed);
+
+                if(mItem instanceof Feat) {
+                    Feat feat = (Feat)mItem;
+                    if(character.hasFeat(feat)) {
+                        character.removeFeat(feat);
+                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = getResources().getString(R.string.feat_removed_success);
+                        } else {
+                            character.addFeat(feat); // rollback
+                            message = getResources().getString(R.string.feat_removed_failed);
+                        }
+                    } else {
+                        character.addFeat(feat);
+                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = getResources().getString(R.string.feat_added_success);
+                        } else {
+                            character.removeFeat(feat); // rollback
+                            message = getResources().getString(R.string.feat_added_failed);
+                        }
+                    }
+                }
+                updateActionIcons(getView());
+                Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        });
+
+        // Add to favorites
+        addFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean success = false;
+                String message = getResources().getString(R.string.generic_failed);
+
+                if (mItem != null) {
+                    if (!isFavorite) {
+                        success = dbHelper.insertFavorite(mItem);
+                        message = success ?
+                                getResources().getString(R.string.favorite_added_success) :
+                                getResources().getString(R.string.favorite_added_failed);
+                    } else {
+                        success = dbHelper.deleteFavorite(mItem);
+                        message = success ?
+                                getResources().getString(R.string.favorite_removed_success) :
+                                getResources().getString(R.string.favorite_removed_failed);
+                    }
+                }
+
+                if (success) {
+                    isFavorite = !isFavorite;
+                    updateActionIcons(getView());
+
+                    // update list if currently viewing favorites
+                    String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
+                            getView().getContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
+
+                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
+                        PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
+                                .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
+                    }
+                    Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        });
+
+        // Open external link button
+        externalLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mItem != null) {
+                    String url = mItem.getReference();
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                }
+            }
+        });
+
 
         return rootView;
     }
@@ -122,7 +257,6 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-
         textview.setText(Html.fromHtml(text));
     }
 }

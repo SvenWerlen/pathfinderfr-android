@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_description"
-    style="?android:attr/textAppearanceMedium"
-    android:autoLink="web"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp"
-    android:textIsSelectable="true"
-    tools:context=".app.ItemDetailFragment" />
+    android:orientation="vertical"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:gravity="center_vertical"
+        tools:context=".app.ItemDetailFragment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/itemdetails_quickaction"
+            tools:context=".app.ItemDetailFragment" />
+
+        <ImageButton
+            android:id="@+id/actionExternalLink"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_link_external" />
+
+        <ImageButton
+            android:id="@+id/actionAddToCharacter"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_item_icon_sheet" />
+
+        <ImageButton
+            android:id="@+id/actionFavorite"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_link_favorite" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_full_description"
+        style="?android:attr/textAppearanceMedium"
+        android:autoLink="web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textIsSelectable="true" />
+
+</LinearLayout>
