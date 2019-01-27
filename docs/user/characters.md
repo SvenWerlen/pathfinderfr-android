@@ -15,31 +15,31 @@ _NOTES: la liste des races et des classes est partielle (manuel des joueurs uniq
 
 ## Caractéristiques, race et classe
 
-![Profil à la création](01-character-profile_small.jpg)
-![Choisir une race](02-character-profile-chooserace_small.jpg)
-![Choisir une classe](03-character-profile-chooseclass_small.jpg)
-![Choisir une caractéristique](04-character-profile-chooseability_small.jpg)
-![Infobulle - classe d'armure](05-character-profile-tooltip-armorclass_small.jpg)
-![Infobulle - bonus de base à l'attaque](05-character-profile-tooltip-bab_small.jpg)
-![Infobulle - jet de sauvegarde](05-character-profile-tooltip-saving_small.jpg)
+![Profil à la création](../images/characters/01-character-profile_small.jpg)
+![Choisir une race](../images/characters/02-character-profile-chooserace_small.jpg)
+![Choisir une classe](../images/characters/03-character-profile-chooseclass_small.jpg)
+![Choisir une caractéristique](../images/characters/04-character-profile-chooseability_small.jpg)
+![Infobulle - classe d'armure](../images/characters/05-character-profile-tooltip-armorclass_small.jpg)
+![Infobulle - bonus de base à l'attaque](../images/characters/05-character-profile-tooltip-bab_small.jpg)
+![Infobulle - jet de sauvegarde](../images/characters/05-character-profile-tooltip-saving_small.jpg)
 
 ## Compétences
 
-![Liste des compétences](06-character-skills_small.jpg)
-![Filtrer les compétences](07-character-skills-filters_small.jpg)
-![Choisir un rang](08-character-skills-rank_small.jpg)
-![Infobulle - calcul du bonus de compétence](09-character-skills-tooltip_small.jpg)
+![Liste des compétences](../images/characters/06-character-skills_small.jpg)
+![Filtrer les compétences](../images/characters/07-character-skills-filters_small.jpg)
+![Choisir un rang](../images/characters/08-character-skills-rank_small.jpg)
+![Infobulle - calcul du bonus de compétence](../images/characters/09-character-skills-tooltip_small.jpg)
 
 ## Dons
 
-![Liste des dons vide](10-character-feats_small.jpg)
-![Ajouter un don au personnage](11-character-feats-add_small.jpg)
-![Liste des dons](12-character-feats-list_small.jpg)
-![Filtrer les dons](13-character-feats-filters_small.jpg)
+![Liste des dons vide](../images/characters/10-character-feats_small.jpg)
+![Ajouter un don au personnage](../images/characters/11-character-feats-add_small.jpg)
+![Liste des dons](../images/characters/12-character-feats-list_small.jpg)
+![Filtrer les dons](../images/characters/13-character-feats-filters_small.jpg)
 
 ## Sorts
 
-![Liste de sorts (par école et niveau)](14-character-spells_small.jpg)
-![Filtrer les sorts et gérer l'affichage](15-character-spells-filters_small.jpg)
-![Liste des sorts (par niveau uniquement)](16-character-spells-flat_small.jpg)
-![Sélectionner les favoris](17-character-spells-favorites_small.jpg)
+![Liste de sorts (par école et niveau)](../images/characters/14-character-spells_small.jpg)
+![Filtrer les sorts et gérer l'affichage](../images/characters/15-character-spells-filters_small.jpg)
+![Liste des sorts (par niveau uniquement)](../images/characters/16-character-spells-flat_small.jpg)
+![Sélectionner les favoris](../images/characters/17-character-spells-favorites_small.jpg)
