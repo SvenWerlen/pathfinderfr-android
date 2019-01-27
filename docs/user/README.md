@@ -26,9 +26,10 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
 
 * Cliquer sur une rubrique pour obtenir la liste des éléments correspondants
 * Cliquer sur un élément pour obtenir sa description
-  * Le bouton _plus/moins_ (en bas à droite) permet d'afficher les détails (attributs/métadonnées)
-  * Le bouton _étoile_ (en haut à droite) permet de mettre l'élément dans la liste des favoris
-  * Le bouton _lien_ (en bas à gauche), visible uniquement en mode "détails" ouvre un navigateur vers la fiche [pathfinder-fr.org](https://www.pathfinder-fr.org) correspondante.
+  * Les détails (métadonnées) sont affichés par défaut mais il est possible de les désactiver dans les préférence de l'application.
+  * Le bouton _lien_ (barre d'action) ouvre un navigateur vers la fiche [pathfinder-fr.org](https://www.pathfinder-fr.org) correspondante et permet d'ainsi accéder à toute l'information.
+  * Le bouton _étoile_ (barre d'action) permet d'ajouter ou retirer l'élément de vos favoris
+  
 
 ![Écran d'accueil](../images/01-welcome_small.jpg)
 ![Navigation latérale](../images/03-navigation_small.jpg)
@@ -63,5 +64,7 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
   
   L'application offre des configurations et paramètres selon les besoins de l'utilisateur.
   
+  * **Général | Afficher l'avertissement**: permet de désactiver l'avertissement (_disclaimer/copyright_) au bas de la page d'accueil.
   * **Général | Nom long dans les listes**: affiche un nom long dans les listes. Exemple: affiche le niveau du sort directement dans la liste. 
   * **Général | Détail des compétences, dons, sorts**: affiche le mode détaillé par défaut (voir ci-dessus). Évite de devoir cliquer systématiquement sur le bouton _plus_ pour voir les métadonnées.
+  * **Sources de données**: permet d'activer/désactiver les sources de données avec lesquelles vous jouez. Par exemple, désactiver "Art de la magie" permet de masquer tous les sorts qui proviennent de cette extension.
