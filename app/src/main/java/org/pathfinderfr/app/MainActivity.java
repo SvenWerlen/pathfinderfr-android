@@ -249,6 +249,9 @@ public class MainActivity extends AppCompatActivity
         if(countSpells == 0) {
             navigationView.getMenu().findItem(R.id.nav_spells).setVisible(false);
         }
+        if(countClasses == 0 || countRaces == 0) {
+            navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(false);
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
     }

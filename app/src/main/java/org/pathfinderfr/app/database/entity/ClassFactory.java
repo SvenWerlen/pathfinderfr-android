@@ -193,11 +193,11 @@ public class ClassFactory extends DBEntityFactory {
             for(Object t : list) {
                 Map<String,String> map = (Map<String,String>)t;
                 try {
-                    int lvl = Integer.parseInt(map.get(YAML_LEVEL_LVL));
-                    int fort = Integer.parseInt(map.get(YAML_LEVEL_FORT));
-                    int refl = Integer.parseInt(map.get(YAML_LEVEL_REFL));
-                    int will = Integer.parseInt(map.get(YAML_LEVEL_WILL));
-                    int[] bab = StringUtil.stringListToIntList(map.get(YAML_LEVEL_BAB).split("/"));
+                    int lvl = Integer.parseInt(map.get(YAML_LEVEL_LVL).replaceAll("\\+",""));
+                    int fort = Integer.parseInt(map.get(YAML_LEVEL_FORT).replaceAll("\\+",""));
+                    int refl = Integer.parseInt(map.get(YAML_LEVEL_REFL).replaceAll("\\+",""));
+                    int will = Integer.parseInt(map.get(YAML_LEVEL_WILL).replaceAll("\\+",""));
+                    int[] bab = StringUtil.stringListToIntList(map.get(YAML_LEVEL_BAB).replaceAll("\\+","").split("/"));
                     cl.getLevels().add(new Class.Level(lvl, bab, fort, refl, will));
                 } catch(NumberFormatException e) {
                     Log.w(ClassFactory.class.getSimpleName(), "Couldn't parse some numbers: " + map.values(), e);

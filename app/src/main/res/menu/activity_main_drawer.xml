@@ -8,15 +8,20 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_home"
             android:title="@string/navigation_item_home"
-            android:checked="true"/>
+            android:checked="true" />
         <item
             android:id="@+id/nav_sheet"
             android:icon="@drawable/ic_item_icon_sheet"
             android:title="@string/navigation_item_sheets"/>
         <item
             android:id="@+id/nav_favorites"
-            android:icon="@android:drawable/star_big_on"
+            android:icon="@drawable/ic_link_favorite"
             android:title="@string/navigation_item_favorites" />
+    </group>
+
+    <item android:title="@string/navigation_title_catalog">
+        <menu>
+            <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_skills"
             android:icon="@drawable/ic_item_icon_skill"
@@ -31,6 +36,8 @@
             android:title="@string/navigation_item_spells" />
 
     </group>
+    </menu>
+    </item>
 
     <item android:title="@string/navigation_title_advanced">
         <menu>

@@ -43,6 +43,7 @@
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_spells">Sorts</string>
+    <string name="navigation_title_catalog">Catalogue</string>
     <string name="navigation_title_advanced">Options avancées</string>
     <string name="navigation_refresh_data">Mettre à jour la bibliothèque</string>
 
