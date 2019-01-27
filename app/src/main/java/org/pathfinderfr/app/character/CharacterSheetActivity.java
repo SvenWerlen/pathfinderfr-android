@@ -69,9 +69,11 @@ public class CharacterSheetActivity extends AppCompatActivity {
         if(character == null) {
             List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
             if (list != null && list.size() > 0) {
-                character = (Character)list.get(0);
+                // reload with all data
+                character = (Character)helper.fetchEntity(((Character)list.get(0)).getId(), CharacterFactory.getInstance());
+                characterId = character.getId();
                 PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                        putLong(PREF_SELECTED_CHARACTER_ID, character.getId()).apply();
+                        putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
             }
         }
 
