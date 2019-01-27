@@ -3,6 +3,11 @@
 This page describes how to use the application. Since the application is targeting the french community,
 the documentation is only available in french.
 
+## Références rapides
+
+* Ci-dessous: gestion des données, catalogue (compétences, dons, sorts) et options
+* [Personnages](characters.md): création et gestion d'une feuille de personnage
+
 ## Pré-requis: importer les données
 
 La première étape consiste à importer les données dans l'application. Les données seront téléchargées
