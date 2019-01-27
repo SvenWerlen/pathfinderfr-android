@@ -65,6 +65,15 @@ public class SpellTable {
             return list;
         }
 
+        public List<Spell> getSpells() {
+            List<Spell> spells = new ArrayList<>();
+            for(SpellSchool school: schools.values()) {
+                spells.addAll(school.spells);
+            }
+            Collections.sort(spells);
+            return spells;
+        }
+
         public void addSpell(Spell spell) {
             String schoolName = SpellFilter.cleanSchool(spell.getSchool());
             // ignore if spell with invalid school (should never happen)

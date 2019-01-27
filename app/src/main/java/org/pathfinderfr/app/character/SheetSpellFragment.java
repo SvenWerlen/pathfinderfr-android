@@ -3,6 +3,7 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +28,7 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -51,7 +53,7 @@ import java.util.Set;
 /**
  * spell tab on character sheet
  */
-public class SheetSpellFragment extends Fragment {
+public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
 
@@ -84,11 +86,6 @@ public class SheetSpellFragment extends Fragment {
         }
     }
 
-    private void applyFilters(View view) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-        
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,6 +105,7 @@ public class SheetSpellFragment extends Fragment {
         TextView exampleLevel = view.findViewById(R.id.sheet_spells_example_level);
         TextView exampleSchool = view.findViewById(R.id.sheet_spells_example_school);
         TextView exampleName = view.findViewById(R.id.sheet_spells_example_name);
+        ImageView exampleFav = view.findViewById(R.id.sheet_spells_example_fav);
         view.findViewById(R.id.sheet_spells_row).setVisibility(View.GONE);
         view.findViewById(R.id.sheet_spells_row_level).setVisibility(View.GONE);
         view.findViewById(R.id.sheet_spells_row_school).setVisibility(View.GONE);
@@ -127,13 +125,37 @@ public class SheetSpellFragment extends Fragment {
         String templateLevel = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spells.level");
         String templateSpell = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spell");
 
+        // filters / preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        boolean filterOnlyFav = prefs.getBoolean(FragmentSpellFilter.KEY_SPELLFILTER_FAV, false);
+        int filterMode = prefs.getInt(FragmentSpellFilter.KEY_SPELLFILTER_MODE, FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL);
+
+        Set<Long> favorites = null;
+        favorites = new HashSet<>();
+        for(DBEntity e : DBHelper.getInstance(view.getContext()).getAllEntities(FavoriteFactory.getInstance())) {
+            if(e instanceof Spell) {
+                favorites.add(e.getId());
+                System.out.println("Favorite: " + e.getId());
+            }
+        }
+
+        boolean filtersApplied = filterOnlyFav || filterMode != FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL;
+        ImageView iv = view.findViewById(R.id.sheet_spells_filters);
+        iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
 
         SpellTable sTable = new SpellTable(classNames);
-        DBHelper dbHelper = DBHelper.getInstance(view.getContext());
+        final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
         List<DBEntity> spells = dbHelper.getAllEntities(SpellFactory.getInstance(), PreferenceUtil.getSources(view.getContext()));
         for(DBEntity entity : spells) {
-            sTable.addSpell((Spell)entity);
+            // only add if favorite (or filtering disabled)
+            if(!filterOnlyFav || favorites.contains(entity.getId())) {
+                sTable.addSpell((Spell) entity);
+            }
         }
+
+        final int colorDisabled = view.getContext().getResources().getColor(R.color.colorDisabled);
+        final int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
 
         int rowId = 0;
         for(SpellTable.SpellLevel level : sTable.getLevels()) {
@@ -147,27 +169,110 @@ public class SheetSpellFragment extends Fragment {
             rowLevel.addView(levelTv);
             table.addView(rowLevel);
 
-            for(SpellTable.SpellSchool school: level.getSchools()) {
-                TableRow rowSchool = new TableRow(view.getContext());
-                TextView schoolTv = FragmentUtil.copyExampleTextFragment(exampleSchool);
-                schoolTv.setText(school.getSchoolName());
-                rowSchool.addView(schoolTv);
-                table.addView(rowSchool);
+            // LEVEL
+            // SCHOOL
+            //   SPELL
+            if(filterMode == FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL) {
+                for (SpellTable.SpellSchool school : level.getSchools()) {
+                    TableRow rowSchool = new TableRow(view.getContext());
+                    TextView schoolTv = FragmentUtil.copyExampleTextFragment(exampleSchool);
+                    schoolTv.setText(school.getSchoolName());
+                    rowSchool.addView(schoolTv);
+                    table.addView(rowSchool);
 
-                for(final Spell spell: school.getSpells()) {
+                    for (final Spell spell : school.getSpells()) {
+                        // spell
+                        TableRow rowSpell = new TableRow(view.getContext());
+                        rowSpell.setMinimumHeight(height);
+                        rowSpell.setGravity(Gravity.CENTER_VERTICAL);
+                        rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
+                                rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+                        TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
+                        if (classNames.size() > 1) {
+                            Pair<String, Integer> infos = SpellFilter.getLevel(classNames, spell);
+                            spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
+                        } else {
+                            spellTv.setText(spell.getName());
+                        }
+                        rowSpell.addView(spellTv);
+                        // favorite icon
+                        final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
+                        spellFavTv.setImageResource(R.drawable.ic_link_favorite);
+                        if (filterOnlyFav) {
+                            spellFavTv.setVisibility(View.INVISIBLE);
+                        } else {
+                            boolean isFav = favorites.contains(spell.getId());
+                            spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                            spellFavTv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spell.getId());
+                                    if(isFav) {
+                                        dbHelper.deleteFavorite(spell);
+                                    } else {
+                                        dbHelper.insertFavorite(spell);
+                                    }
+                                    spellFavTv.setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                                }
+                            });
+                        }
+                        rowSpell.addView(spellFavTv);
+                        table.addView(rowSpell);
+                        rowId++;
+
+                        spellTv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Context context = SheetSpellFragment.this.getContext();
+                                Intent intent = new Intent(context, ItemDetailActivity.class);
+                                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, spell.getId());
+                                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, spell.getFactory().getFactoryId());
+                                context.startActivity(intent);
+                            }
+                        });
+                    }
+                }
+            }
+            // LEVEL
+            //   SPELL
+            else {
+                for (final Spell spell : level.getSpells()) {
+                    // spell
                     TableRow rowSpell = new TableRow(view.getContext());
                     rowSpell.setMinimumHeight(height);
                     rowSpell.setGravity(Gravity.CENTER_VERTICAL);
-                    //rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
-                    //        rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+                    rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
+                            rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
                     TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                    if(classNames.size()>1) {
+                    if (classNames.size() > 1) {
                         Pair<String, Integer> infos = SpellFilter.getLevel(classNames, spell);
                         spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
                     } else {
                         spellTv.setText(spell.getName());
                     }
                     rowSpell.addView(spellTv);
+                    // favorite icon
+                    final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
+                    spellFavTv.setImageResource(R.drawable.ic_link_favorite);
+                    if (filterOnlyFav) {
+                        spellFavTv.setVisibility(View.INVISIBLE);
+                    } else {
+                        boolean isFav = favorites.contains(spell.getId());
+                        spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                        spellFavTv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spell.getId());
+                                if(isFav) {
+                                    dbHelper.deleteFavorite(spell);
+                                } else {
+                                    dbHelper.insertFavorite(spell);
+                                }
+                                spellFavTv.setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                            }
+                        });
+                    }
+                    rowSpell.addView(spellFavTv);
                     table.addView(rowSpell);
                     rowId++;
 
@@ -188,31 +293,27 @@ public class SheetSpellFragment extends Fragment {
         view.findViewById(R.id.spells_table_header).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                FragmentTransaction ft = SheetSpellFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-//                Fragment prev = SheetSpellFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("spells-filter");
-//                if (prev != null) {
-//                    ft.remove(prev);
-//                }
-//                ft.addToBackStack(null);
-//                DialogFragment newFragment = FragmentspellFilter.newInstance(SheetSpellFragment.this);
-//                newFragment.show(ft, "spells-filter");
+                FragmentTransaction ft = SheetSpellFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = SheetSpellFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("spells-filter");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentSpellFilter.newInstance(SheetSpellFragment.this);
+                newFragment.show(ft, "spells-filter");
             }
         });
 
-        if(rowId > 0) {
-            view.findViewById(R.id.sheet_spells_empty_list).setVisibility(View.GONE);
-        }
-
-        applyFilters(view);
+        view.findViewById(R.id.sheet_spells_empty_list).setVisibility(rowId == 0 && !filtersApplied ? View.VISIBLE : View.GONE);
+        view.findViewById(R.id.sheet_spells_filter_empty).setVisibility(rowId == 0 && filtersApplied ? View.VISIBLE : View.GONE);
 
         return view;
     }
 
-//    @Override
-//    public void onFilterApplied() {
-//        applyFilters(getView());
-//    }
-
-
+    @Override
+    public void onFilterApplied() {
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sheet_container,
+                SheetSpellFragment.newInstance(characterId)).commit();
+    }
 
 }

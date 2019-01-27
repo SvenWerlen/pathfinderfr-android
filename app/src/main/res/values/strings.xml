@@ -255,5 +255,16 @@
     <string name="sheet_spells_example_level">Niveau (exemple)</string>
     <string name="sheet_spells_example_school">École (exemple)</string>
 
+    <!-- Spell filters -->
+    <string name="sheet_spells_filters_title">Filtrer les sorts</string>
+    <string name="sheet_spells_filter_favorite">Favoris</string>
+    <string name="sheet_spells_filter_favorite_all">Tous</string>
+    <string name="sheet_spells_filter_favorite_only">Favoris uniquement</string>
+    <string name="sheet_spells_mode_title">Mode d\'affichage</string>
+    <string name="sheet_spells_mode_schools">Par niveau et école</string>
+    <string name="sheet_spells_mode_level">Par niveau</string>
+
+    <string name="sheet_spells_filter_apply">Appliquer</string>
+
 </resources>
 

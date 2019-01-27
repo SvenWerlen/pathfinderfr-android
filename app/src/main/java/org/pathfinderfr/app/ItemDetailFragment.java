@@ -224,7 +224,7 @@ public class ItemDetailFragment extends Fragment {
                     String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
                             getView().getContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
 
-                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
+                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId) || CharacterFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
                         PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
                                 .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
                     }

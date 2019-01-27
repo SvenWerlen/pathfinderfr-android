@@ -26,7 +26,6 @@ public class FragmentUtil {
     public static ImageView copyExampleImageFragment(ImageView fragment) {
         ImageView iv = new ImageView(fragment.getContext());
         iv.setLayoutParams(fragment.getLayoutParams());
-        iv.setBackground(fragment.getBackground());
         iv.setPadding(fragment.getPaddingLeft(),fragment.getPaddingTop(), fragment.getPaddingRight(), fragment.getPaddingBottom());
         iv.setTag(fragment.getTag());
         iv.setImageDrawable(fragment.getDrawable());

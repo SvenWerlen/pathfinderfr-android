@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -140,12 +141,21 @@ public class CharacterSheetActivity extends AppCompatActivity {
         // keep selected character in preferences
         PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
                 putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
+
+        showTab();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // refresh (in case some data changed)
-        showTab();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean reloadRequired = prefs.getBoolean(MainActivity.KEY_RELOAD_REQUIRED, false);
+        if(reloadRequired) {
+            prefs.edit().putBoolean(MainActivity.KEY_RELOAD_REQUIRED, false).apply();
+            showTab();
+        }
+
     }
 }

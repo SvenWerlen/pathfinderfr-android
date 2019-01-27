@@ -2,6 +2,8 @@ package org.pathfinderfr.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -191,6 +193,16 @@ public class MainActivity extends AppCompatActivity
         }
         welcomeText += props.getProperty("template.welcome.userdoc");
 
+        // version
+        PackageManager manager = getBaseContext().getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(getBaseContext().getPackageName(), 0);
+            welcomeText += String.format(props.getProperty("template.welcome.version"),info.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            welcomeText += String.format(props.getProperty("template.welcome.version"),"??");
+        }
+
         textview.setText(Html.fromHtml(welcomeText));
 
         // Disclaimer / copyright
@@ -360,8 +372,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sheet) {
             Intent intent = new Intent(this, CharacterSheetActivity.class);
             startActivity(intent);
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
-                    .putString(KEY_CUR_FACTORY,null).apply();
+            factoryId = CharacterFactory.FACTORY_ID;
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                    putString(KEY_CUR_FACTORY,factoryId).apply();
         } else if (id == R.id.nav_skills) {
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             factoryId = SkillFactory.FACTORY_ID;
