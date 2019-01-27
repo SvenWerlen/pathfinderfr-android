@@ -349,18 +349,7 @@ public class Character extends DBEntity {
      * @return base attack bonus (BAB) based on attached classes (and levels), as string
      */
     public String getBaseAttackBonusAsString() {
-        int[] bab = getBaseAttackBonus();
-        if(bab == null) {
-            return null;
-        }
-        StringBuffer buf = new StringBuffer();
-        for(int val : bab) {
-            buf.append('+').append(val).append('/');
-        }
-        if(bab.length>0) {
-            buf.deleteCharAt(buf.length()-1);
-        }
-        return buf.toString();
+        return CharacterUtil.getBaseAttackBonusAsString(getBaseAttackBonus());
     }
 
     /**

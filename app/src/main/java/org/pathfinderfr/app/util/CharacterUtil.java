@@ -8,4 +8,18 @@ public class CharacterUtil {
         abilityValue = Math.max(1, abilityValue);
         return (int)Math.floor((abilityValue - 10) / 2.0);
     }
+
+    public static String getBaseAttackBonusAsString(int[] bab) {
+        if(bab == null) {
+            return null;
+        }
+        StringBuffer buf = new StringBuffer();
+        for(int val : bab) {
+            buf.append('+').append(val).append('/');
+        }
+        if(bab.length>0) {
+            buf.deleteCharAt(buf.length()-1);
+        }
+        return buf.toString();
+    }
 }

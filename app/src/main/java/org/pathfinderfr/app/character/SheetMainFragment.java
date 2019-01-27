@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,6 +28,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.CharacterUtil;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -132,46 +134,228 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_classpicker).setVisibility(View.GONE);
 
+        final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
+
+        // ABILITIES
+        final String abTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.title");
+        final String abTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.content");
+
+        View.OnClickListener abTooltipListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                act.showTooltip(abTooltipTitle, abTooltipContent);
+            }
+        };
+        view.findViewById(R.id.ability_str_modif).setOnClickListener(abTooltipListener);
+        view.findViewById(R.id.ability_dex_modif).setOnClickListener(abTooltipListener);
+        view.findViewById(R.id.ability_con_modif).setOnClickListener(abTooltipListener);
+        view.findViewById(R.id.ability_int_modif).setOnClickListener(abTooltipListener);
+        view.findViewById(R.id.ability_wis_modif).setOnClickListener(abTooltipListener);
+        view.findViewById(R.id.ability_cha_modif).setOnClickListener(abTooltipListener);
+
+        // INITIATIVE
+        final String iniTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.initiative.title");
+        final String iniTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.initiative.content");
+
         view.findViewById(R.id.other_ini).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_initiative));}
         });
+        view.findViewById(R.id.initiative_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                act.showTooltip(iniTooltipTitle, String.format(iniTooltipContent,
+                        character.getDexterityModif(),
+                        0,
+                        character.getInitiative()));
+            }
+        });
+
+        // ARMOR CLASS
+        final String acTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.ac.title");
+        final String acTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.ac.content");
+
         view.findViewById(R.id.other_ac).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_armorclass));}
         });
+        view.findViewById(R.id.armorclass_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                act.showTooltip(acTooltipTitle,String.format(acTooltipContent,
+                        0,0, // armor & shield
+                        character.getDexterityModif(), // dex modif
+                        character.getRaceSize() == Character.SIZE_SMALL ? 1 : 0, // size
+                        0,0,0, // natural, parade, others
+                        character.getArmorClass()));
+            }
+        });
+
+        // MAGIC RESISTANCE
+        final String magicTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.magic.title");
+        final String magicTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.magic.content");
+
         view.findViewById(R.id.other_mag).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_magicresistance));}
         });
+        view.findViewById(R.id.magicresistance_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                act.showTooltip(magicTooltipTitle,String.format(magicTooltipContent));
+            }
+        });
+
+        // BASE ATTACK BONUS
+        final String babTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.title");
+        final String babTooltipEntry = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.entry");
+        final String babTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.content");
 
         view.findViewById(R.id.combat_bab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_baseattackbonus));}
         });
+        view.findViewById(R.id.base_attack_bonus_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                    }
+                }
+                act.showTooltip(babTooltipTitle,String.format(babTooltipContent,text,character.getBaseAttackBonusAsString()));
+            }
+        });
+
+        // COMBAT MANEUVER BONUS
+        final String cmbTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmb.title");
+        final String cmbTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmb.content");
+
         view.findViewById(R.id.combat_cmb).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_combat_man_bonus));}
         });
+        view.findViewById(R.id.combat_cmb_total).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int[] bab = character.getBaseAttackBonus();
+                int bonus = bab == null || bab.length == 0 ? 0 : bab[0];
+                act.showTooltip(cmbTooltipTitle,String.format(cmbTooltipContent,
+                        bonus,
+                        character.getStrengthModif(),
+                        character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
+                        0, // other
+                        character.getCombatManeuverBonus()));
+            }
+        });
+
+        // COMBAT MANEUVER DEFENSE
+        final String cmdTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmd.title");
+        final String cmdTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmd.content");
+
         view.findViewById(R.id.combat_cmd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_combat_man_defense));}
         });
+        view.findViewById(R.id.combat_cmd_total).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int[] bab = character.getBaseAttackBonus();
+                int bonus = bab == null || bab.length == 0 ? 0 : bab[0];
+                act.showTooltip(cmdTooltipTitle,String.format(cmdTooltipContent,
+                        bonus,
+                        character.getStrengthModif(),
+                        character.getDexterityModif(),
+                        character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
+                        0, // other
+                        character.getCombatManeuverDefense()));
+            }
+        });
+
+        // SAVING THROWS
+        final String savTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.sav.title");
+        final String savTooltipEntry = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.sav.entry");
+        final String savTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.sav.content");
 
         view.findViewById(R.id.savingthrows_for).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_savingthrows_fortitude));}
         });
+        view.findViewById(R.id.savingthrows_fortitude_total).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getFortitudeBonus()));
+                    }
+                }
+                act.showTooltip(
+                        String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_fortitude)),
+                        String.format(savTooltipContent,
+                                text,
+                                getResources().getString(R.string.sheet_ability_constitution), character.getConstitutionModif(),
+                                0, 0, // magic & others
+                                character.getSavingThrowsFortitudeTotal()));
+            }
+        });
+
         view.findViewById(R.id.savingthrows_ref).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_savingthrows_reflex));}
         });
+        view.findViewById(R.id.savingthrows_reflex_total).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getReflexBonus()));
+                    }
+                }
+                act.showTooltip(
+                        String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_reflex)),
+                        String.format(savTooltipContent,
+                                text,
+                                getResources().getString(R.string.sheet_ability_dexterity), character.getDexterityModif(),
+                                0, 0, // magic & others
+                                character.getSavingThrowsReflexesTotal()));
+            }
+        });
+
         view.findViewById(R.id.savingthrows_wil).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_savingthrows_will));}
         });
+        view.findViewById(R.id.savingthrows_will_total).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getWillBonus()));
+                    }
+                }
+                act.showTooltip(
+                        String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_will)),
+                        String.format(savTooltipContent,
+                                text,
+                                getResources().getString(R.string.sheet_ability_wisdom), character.getWisdomModif(),
+                                0, 0, // magic & others
+                                character.getSavingThrowsWillTotal()));
+            }
+        });
 
-        // update abilityes
+        // update abilities
         ((TextView)view.findViewById(R.id.ability_str_value)).setText(String.valueOf(character.getStrength()));
         ((TextView)view.findViewById(R.id.ability_dex_value)).setText(String.valueOf(character.getDexterity()));
         ((TextView)view.findViewById(R.id.ability_con_value)).setText(String.valueOf(character.getConstitution()));

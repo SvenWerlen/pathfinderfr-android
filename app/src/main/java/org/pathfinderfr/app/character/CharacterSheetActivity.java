@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -119,6 +120,17 @@ public class CharacterSheetActivity extends AppCompatActivity {
         transaction.replace(R.id.sheet_container, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void showTooltip(String title, String text) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("tooltip");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        DialogFragment newFragment = FragmentToolTip.newInstance(title, text);
+        newFragment.show(ft, "tooltip");
     }
 
     @Override

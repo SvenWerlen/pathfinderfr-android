@@ -267,5 +267,10 @@
 
     <string name="sheet_spells_filter_apply">Appliquer</string>
 
+    <!-- Tooltips -->
+    <string name="sheet_tooltip_info">À propos de:</string>
+    <string name="sheet_tooltip_close">Fermer</string>
+
+
 </resources>
 

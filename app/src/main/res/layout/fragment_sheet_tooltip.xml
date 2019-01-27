@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HACK to force fill the screen (minHeight, minWidth) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:minWidth="1000dp"
+    android:padding="20dp"
+    >
+
+    <TextView
+        android:id="@+id/sheet_tooltip_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/sheet_tooltip_info" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <WebView
+            android:id="@+id/sheet_tooltip_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/tooltip_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sheet_tooltip_close"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center"
+        android:layout_margin="10dp" />
+
+</LinearLayout>

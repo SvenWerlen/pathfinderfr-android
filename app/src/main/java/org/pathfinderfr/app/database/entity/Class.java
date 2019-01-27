@@ -1,5 +1,7 @@
 package org.pathfinderfr.app.database.entity;
 
+import org.pathfinderfr.app.util.CharacterUtil;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +40,14 @@ public class Class extends DBEntity {
         return skills;
     }
 
+    public Level getLevel(int lvl) {
+        for(Level l : levels) {
+            if(l.getLvl() == lvl) {
+                return l;
+            }
+        }
+        return null;
+    }
 
     @Override
     public DBEntityFactory getFactory() {
@@ -63,6 +73,7 @@ public class Class extends DBEntity {
         public void setId(int id) { this.id = id; }
         public void setLvl(int lvl) { this.id = lvl; }
         public int[] getBaseAttackBonus() { return bab; }
+        public String getBaseAttackBonusAsString() { return CharacterUtil.getBaseAttackBonusAsString(bab); }
         public void setBaseAttackBonus(int[] bab) { this.bab = bab; }
         public int getReflexBonus() { return reflex; }
         public void setReflexBonus(int bonus) { this.reflex = bonus; }
