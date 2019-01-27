@@ -10,11 +10,13 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.StringUtil;
@@ -25,7 +27,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     private static DBHelper instance;
 
@@ -70,6 +72,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(SpellFactory.getInstance().getQueryUpgradeV2());
             oldVersion = 2;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 2");
+        }
+        // version 3 introduced new entities (races, classes and characters)
+        if(oldVersion == 2) {
+            db.execSQL(RaceFactory.getInstance().getQueryCreateTable());
+            db.execSQL(ClassFactory.getInstance().getQueryCreateTable());
+            db.execSQL(CharacterFactory.getInstance().getQueryCreateTable());
         }
     }
 
