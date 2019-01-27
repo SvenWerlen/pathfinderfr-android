@@ -43,6 +43,7 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.CharacterUtil;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -167,6 +168,10 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         int rowId = 0;
         skills = new ArrayList<>();
 
+        final String skillTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.title");
+        final String skillTooltipClassSkill = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.content.classskill");
+        final String savTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.content");
+
         DBHelper helper = DBHelper.getInstance(view.getContext());
         for(DBEntity entity : helper.getAllEntitiesWithAllFields(SkillFactory.getInstance())) {
             final Skill skill = (Skill)entity;
@@ -211,6 +216,27 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             totalTv.setTag("SKILL-TOTAL-" + skill.getId());
             totalTv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             row.addView(totalTv);
+            totalTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int abilityMod = character.getSkillAbilityMod(skill);
+                    int rank = character.getSkillRank(skill.getId());
+                    int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
+                    int total = abilityMod + rank + classSkillBonus;
+                    String classSkillText = "";
+                    if(character.isClassSkill(skill.getName()) && rank > 0) {
+                        classSkillText = String.format(skillTooltipClassSkill);
+                    }
+                    ((CharacterSheetActivity)getActivity()).showTooltip(
+                            String.format(skillTooltipTitle,skill.getName()),
+                            String.format(savTooltipContent,
+                                    rank,
+                                    classSkillText,
+                                    skill.getAbility(), abilityMod,
+                                    0, // other
+                                    total ));
+                }
+            });
             // ability
             TextView abilityTv = FragmentUtil.copyExampleTextFragment(exampleAbility);
             abilityTv.setText(skill.getAbilityId());
