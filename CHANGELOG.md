@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+### Added
+- Character sheet with: abilities, skills, feats, spells
+- Ability, race and class pickers
+- Skills, feats and spells filters
+- Data management: races and classes
+### Changed
+- Actions on detail page now as small button on top of the page
+- Feats can be added to current character
+
+## [1.3.0] - 2019-01-16
 ### Added
 - Support back to SDK 19 (Kitkat - Android 4.4)
 ### Fixed
