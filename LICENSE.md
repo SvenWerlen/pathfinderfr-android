@@ -11,7 +11,7 @@ See also:
  - http://paizo.com/communityuse
  - http://www.black-book-editions.fr/texte.php?id=6
 
-## Icons from https://game-icons.net and https://www.iconfinder.com
+## Icons from https://game-icons.net
 
 List of icons used in the application:
 * Skills ([sword-spade.svg](https://game-icons.net/lorc/originals/sword-spade.html)): icon made by Lorc, http://lorcblog.blogspot.com
@@ -19,10 +19,17 @@ List of icons used in the application:
 * Spells ([heptagram.svg](https://game-icons.net/delapouite/originals/heptagram.html)): icon made by Delapouite, http://delapouite.com
 * Favorites ([round-star.svg](https://game-icons.net/delapouite/originals/round-star.html)): icon made by Delapouite, http://delapouite.com
 * Characters ([id-card.svg](https://game-icons.net/delapouite/originals/id-card.html)): icon made by Delapouite, http://delapouite.com
-* Filters ([iconfinder_filter_383135.svg](https://www.iconfinder.com/icons/383135/filter_icon): icon made by DesignRevision (GlyphPack), https://www.iconfinder.com/DesignRevision
 * Combat skills ([crossed-swords.svg](https://game-icons.net/lorc/originals/crossed-swords.html)): icon made by Lorc, http://lorcblog.blogspot.com
+
+Icons provided under the Creative Commons 3.0 BY or CC0.
+
+## Icons from https://www.iconfinder.com
+
+* Filters ([iconfinder_filter_383135.svg](https://www.iconfinder.com/icons/383135/filter_icon): icon made by DesignRevision (GlyphPack), https://www.iconfinder.com/DesignRevision
 * Unchecked box ([iconfinder_check-box-outline-blank_326558.svg](https://www.iconfinder.com/icons/326558/blank_box_check_icon): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
 * Unchecked box ([iconfinder_check-box-outline_326561.svg](https://www.iconfinder.com/icons/326561/box_check_icon): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
+
+Icons provided as Free for commercial use. 
  
 ## Source code & Copying
 
