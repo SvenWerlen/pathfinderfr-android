@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- ...
+
+## [2.0.0] - 2019-01-27
+### Added
 - Character sheet with: abilities, skills, feats, spells
 - Ability, race and class pickers
 - Skills, feats and spells filters
