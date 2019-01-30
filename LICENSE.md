@@ -25,9 +25,9 @@ Icons provided under the Creative Commons 3.0 BY or CC0.
 
 ## Icons from https://www.iconfinder.com
 
-* Filters ([iconfinder_filter_383135.svg](https://www.iconfinder.com/icons/383135/filter_icon): icon made by DesignRevision (GlyphPack), https://www.iconfinder.com/DesignRevision
-* Unchecked box ([iconfinder_check-box-outline-blank_326558.svg](https://www.iconfinder.com/icons/326558/blank_box_check_icon): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
-* Unchecked box ([iconfinder_check-box-outline_326561.svg](https://www.iconfinder.com/icons/326561/box_check_icon): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
+* Filters ([iconfinder_filter_383135.svg](https://www.iconfinder.com/icons/383135/filter_icon)): icon made by DesignRevision (GlyphPack), https://www.iconfinder.com/DesignRevision
+* Unchecked box ([iconfinder_check-box-outline-blank_326558.svg](https://www.iconfinder.com/icons/326558/blank_box_check_icon)): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
+* Unchecked box ([iconfinder_check-box-outline_326561.svg](https://www.iconfinder.com/icons/326561/box_check_icon)): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
 
 Icons provided as Free for commercial use. 
  
