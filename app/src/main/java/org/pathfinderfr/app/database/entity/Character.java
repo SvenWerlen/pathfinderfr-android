@@ -123,6 +123,10 @@ public class Character extends DBEntity {
         return classes.size();
     }
 
+    public int getModifsCount() {
+        return 0;
+    }
+
     public void addOrSetClass(Class cl, int level) {
         // check that this class is not already in
         for(int i=0; i<classes.size(); i++) {

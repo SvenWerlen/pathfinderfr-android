@@ -40,7 +40,7 @@ import java.util.List;
  * Skill tab on character sheet
  */
 public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
-        OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener {
+        OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener, FragmentModifPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
 
@@ -376,6 +376,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         }
 
         updateClassPickers(view);
+        updateModifsPickers(view);
         return view;
     }
 
@@ -408,6 +409,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         }
         // update stats
         updateOtherStats(view);
+    }
+
+    private void updateModifsPickers(View view) {
+        TextView reference = view.findViewById(R.id.sheet_main_modifpicker);
+        reference.setOnClickListener(listener);
     }
 
 
@@ -460,6 +466,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         combatManDefenseTotal.setText(String.valueOf(character.getCombatManeuverDefense()));
         combatManDefenseBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManDefenseAbility.setText(String.valueOf(character.getStrengthModif()+character.getDexterityModif()));
+    }
+
+    @Override
+    public void onModif() {
+
     }
 
 
@@ -542,7 +553,22 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putInt(FragmentClassPicker.ARG_CLASS_MAX_LVL, maxLevel);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "class-picker");
+            } else if(v instanceof TextView && "modif".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("modif-picker");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
+
+                Bundle arguments = new Bundle();
+                Long raceId = parent.character.getRace() == null ? 0L : parent.character.getRace().getId();
+                arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, "race-picker");
             }
+
         }
     }
 

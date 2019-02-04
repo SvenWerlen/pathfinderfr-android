@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HACK to force fill the screen (minHeight, minWidth) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:minHeight="1000dp"
+    android:minWidth="1000dp"
+    android:padding="10dp">
+
+    <ScrollView
+        android:id="@+id/choose_race_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:text="@string/sheet_modifs_title" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:textStyle="italic"
+                android:textSize="12sp"
+                android:text="@string/sheet_modifs_description" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_modifs_bonus" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:gravity="left">
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/sheet_modifs_spinner"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight = "1"
+                        android:spinnerMode="dialog"
+                        android:prompt="@string/sheet_modifs_pick">
+
+                    </android.support.v7.widget.AppCompatSpinner>
+
+                    <EditText
+                        android:id="@+id/sheet_modifs_value"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight = "0"
+                        android:padding="4dp"
+                        android:background="@drawable/text_box"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:inputType="numberSigned"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:gravity="end"/>
+
+                    <ImageView
+                        android:id="@+id/sheet_modifs_add"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_weight = "0"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_gravity="start|center"
+                        app:srcCompat="@drawable/ic_item_icon_add" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/sheet_modifs_bonuses"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="left">
+
+                    <LinearLayout
+                        android:id="@+id/sheet_modifs_bonus_layout_example"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="left">
+
+                        <TextView
+                            android:id="@+id/sheet_modifs_bonus_example"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="30dp"
+                            android:text="@string/sheet_modifs_bonus_example" />
+
+                        <ImageView
+                            android:id="@+id/sheet_modifs_remove"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_gravity="start|center"
+                            app:srcCompat="@drawable/ic_item_icon_remove" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_modifs_icon" />
+
+                <com.wefika.flowlayout.FlowLayout
+                    android:id="@+id/sheet_modifs_layout_icons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="left">
+
+                    <ImageView
+                        android:id="@+id/sheet_modifs_example_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/modif_angry_eyes" />
+
+                </com.wefika.flowlayout.FlowLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/modifs_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/modifs_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/sheet_modifs_save"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -127,6 +127,7 @@
     <string name="sheet_label_value">Valeur</string>
     <string name="sheet_label_modif">Modif.</string>
 
+    <string name="sheet_ability_all">Toutes les caractéristiques</string>
     <string name="sheet_ability_str">FOR</string>
     <string name="sheet_ability_strength">Force</string>
     <string name="sheet_ability_dex">DEX</string>
@@ -150,7 +151,7 @@
     <!-- Character race -->
     <string name="sheet_race">Race:</string>
     <string name="sheet_race_value">Aucune</string>
-    <string name="sheet_click_to_choose">Cliquer pour choisir</string>
+    <string name="sheet_click_to_choose">Choisir</string>
     <string name="sheet_race_example_name">Nom de la race</string>
     <string name="sheet_race_example_details">Détails de la race</string>
 
@@ -158,9 +159,25 @@
     <string name="sheet_classes">Classe(s):</string>
     <string name="sheet_class_example_name">Nom de la classe</string>
     <string name="sheet_class_example_details">Détails de la classe</string>
-    <string name="sheet_click_to_add">Cliquer pour ajouter</string>
+    <string name="sheet_click_to_add">Ajouter</string>
     <string name="sheet_class_select">Sélectionner le niveau:</string>
     <string name="sheet_class_level_value">1</string>
+
+    <!-- Character modifications -->
+    <string name="sheet_modifs">Modif(s):</string>
+    <string name="sheet_modifs_title">Modification:</string>
+    <string name="sheet_modifs_description">Une modification peut représenter un état temporaire lié à une condition (ex: rage), un objet (ex: pendentif), un sort (ex: force du taureau), un don (ex: science de l\'initiative), etc.</string>
+    <string name="sheet_modifs_bonus">Bonus / malus:</string>
+    <string name="sheet_modifs_invalidchoice">Choix invalide!</string>
+    <string name="sheet_modifs_choose">Choisir dans la liste...</string>
+    <string name="sheet_modifs_abilities">-- Caractéristiques --</string>
+    <string name="sheet_modifs_saves">-- Jets de sauvegarde --</string>
+    <string name="sheet_modifs_combat">-- Combat --</string>
+    <string name="sheet_modifs_pick">Sélectionner</string>
+    <string name="sheet_modifs_save">Enregistrer</string>
+    <string name="sheet_modifs_icon">Icône:</string>
+    <string name="sheet_modifs_value">0</string>
+    <string name="sheet_modifs_bonus_example">+2 Force</string>
 
     <!-- Other stats -->
     <string name="sheet_label_other">Autres</string>
@@ -176,12 +193,13 @@
     <string name="sheet_savingthrows_bonusbase">Base</string>
     <string name="sheet_savingthrows_ability">Carac</string>
     <string name="sheet_other_valuee">0</string>
+    <string name="sheet_savingthrows_all">Tous les jets de sauvegarde</string>
     <string name="sheet_savingthrows_for">VIG</string>
-    <string name="sheet_savingthrows_fortitude">Jet de sauvegarde: vigueur</string>
+    <string name="sheet_savingthrows_fortitude">Vigueur</string>
     <string name="sheet_savingthrows_ref">REF</string>
-    <string name="sheet_savingthrows_reflex">Jet de sauvegarde: réflexes</string>
+    <string name="sheet_savingthrows_reflex">Réflexes</string>
     <string name="sheet_savingthrows_wil">VOL</string>
-    <string name="sheet_savingthrows_will">Jet de sauvegarde: volonté</string>
+    <string name="sheet_savingthrows_will">Volonté</string>
 
     <string name="sheet_combat">Combat</string>
     <string name="sheet_bab">BBA</string>

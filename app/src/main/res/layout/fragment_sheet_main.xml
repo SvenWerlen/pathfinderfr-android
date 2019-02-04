@@ -59,6 +59,30 @@
         </com.wefika.flowlayout.FlowLayout>
 
         <com.wefika.flowlayout.FlowLayout
+            android:id="@+id/sheet_main_modifs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="start|top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/sheet_modifs" />
+
+            <TextView
+                android:id="@+id/sheet_main_modifpicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:tag="modif"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/sheet_click_to_add" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
+        <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
