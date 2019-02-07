@@ -27,6 +27,23 @@ public class Character extends DBEntity {
     public static final int SIZE_SMALL = -1;
     public static final int SIZE_MEDIUM = 0;
 
+    public static final int MODIF_ABILITY_ALL = 1;
+    public static final int MODIF_ABILITY_STR = 2;
+    public static final int MODIF_ABILITY_DEX = 3;
+    public static final int MODIF_ABILITY_CON = 4;
+    public static final int MODIF_ABILITY_INT = 5;
+    public static final int MODIF_ABILITY_WIS = 6;
+    public static final int MODIF_ABILITY_CHA = 7;
+
+    public static final int MODIF_SAVES_ALL = 11;
+    public static final int MODIF_SAVES_REF = 12;
+    public static final int MODIF_SAVES_FOR = 13;
+    public static final int MODIF_SAVES_WIL = 14;
+
+    public static final int MODIF_COMBAT_INI = 21;
+    public static final int MODIF_COMBAT_AC = 22;
+    public static final int MODIF_COMBAT_MAG = 23;
+
 
     // character-specific
     int[] abilities;
@@ -34,12 +51,41 @@ public class Character extends DBEntity {
     List<Pair<Class,Integer>> classes;
     Map<Long,Integer> skills;
     List<Feat> feats;
+    List<CharacterModif> modifs;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
         classes = new ArrayList<>();
         skills = new HashMap<>();
         feats = new ArrayList<>();
+        modifs = new ArrayList<>();
+    }
+
+    // Helper to keep modifs
+    public static class CharacterModif {
+        private String source;
+        private List<Pair<Integer,Integer>> modifs;
+        private String icon;
+        private boolean enabled;
+        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon) {
+            this(source, modifs, icon, false);
+        }
+        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, boolean enabled) {
+            this.source = source;
+            this.modifs = modifs;
+            this.icon = icon;
+            this.enabled = enabled;
+        }
+        public String getSource() { return source; }
+        public void setSource(String source) { this.source = source; }
+        public int getModifCount() { return modifs == null ? 0 : modifs.size(); }
+        public void setModifs(List<Pair<Integer,Integer>> modifs) { this.modifs = modifs; }
+        public Pair<Integer,Integer> getModif(int index) { return index < 0 || index >= modifs.size() ? null : modifs.get(index); }
+        public String getIcon() { return icon; }
+        public void setIcon(String icon) { this.icon = icon; }
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled;}
+        public boolean isValid() { return source != null && source.length() > 0 && modifs != null && modifs.size() > 0 && icon != null && icon.length() > 0; }
     }
 
     @Override
@@ -47,25 +93,33 @@ public class Character extends DBEntity {
         return CharacterFactory.getInstance();
     }
 
-    public int getAbilityValue(int ability) {
-        if(ability <0  && ability > abilities.length) {
+    public int getAbilityValue(int ability, boolean withModif) {
+        if(ability <0  || ability >= abilities.length) {
             return 0;
         }
-        return abilities[ability];
+        if(!withModif) {
+            return abilities[ability];
+        }
+        // check if modif is applied
+        int bonus = 0;
+        bonus += getAdditionalBonus(MODIF_ABILITY_ALL);
+        bonus += getAdditionalBonus(ability+2); // MODIF_ABILITY = ABILITY_ID + 2 (see above)
+        return abilities[ability] + bonus;
+    }
+
+    public int getAbilityValue(int ability) {
+        return getAbilityValue(ability, true);
     }
 
     public void setAbilityValue(int ability, int value) {
-        if(ability <0  && ability > abilities.length) {
+        if(ability <0  || ability >= abilities.length) {
             return;
         }
         abilities[ability] = value;
     }
 
     public int getAbilityModif(int ability) {
-        if(ability <0  && ability > abilities.length) {
-            return 0;
-        }
-        return CharacterUtil.getAbilityBonus(abilities[ability]);
+        return CharacterUtil.getAbilityBonus(getAbilityValue(ability));
     }
 
     public int getStrength() { return getAbilityValue(ABILITY_STRENGH); }
@@ -123,9 +177,6 @@ public class Character extends DBEntity {
         return classes.size();
     }
 
-    public int getModifsCount() {
-        return 0;
-    }
 
     public void addOrSetClass(Class cl, int level) {
         // check that this class is not already in
@@ -224,16 +275,20 @@ public class Character extends DBEntity {
         return SIZE_MEDIUM;
     }
 
-    public int getInitiative() { return getDexterityModif(); }
+    public int getInitiative() { return getDexterityModif() + getAdditionalBonus(MODIF_COMBAT_INI); }
     public int getArmorClass() {
         int sizeModif = getRaceSize() == SIZE_SMALL ? 1 : 0;
-        return 10 + getDexterityModif() + sizeModif;
+        int bonus = getAdditionalBonus(MODIF_COMBAT_AC);
+        return 10 + getDexterityModif() + sizeModif + bonus;
     }
-    public int getMagicResistance() { return 0; }
+    public int getMagicResistance() {
+        int bonus = getAdditionalBonus(MODIF_COMBAT_MAG);
+        return bonus;
+    }
 
-    public int getSavingThrowsReflexesTotal() { return getDexterityModif() + getSavingThrowsReflexes(); }
-    public int getSavingThrowsFortitudeTotal() { return getConstitutionModif() + getSavingThrowsFortitude(); }
-    public int getSavingThrowsWillTotal() { return getWisdomModif() + getSavingThrowsWill(); }
+    public int getSavingThrowsReflexesTotal() { return getDexterityModif() + getSavingThrowsReflexes() + getSavingThrowsBonus(MODIF_SAVES_REF); }
+    public int getSavingThrowsFortitudeTotal() { return getConstitutionModif() + getSavingThrowsFortitude() + getSavingThrowsBonus(MODIF_SAVES_FOR); }
+    public int getSavingThrowsWillTotal() { return getWisdomModif() + getSavingThrowsWill() + getSavingThrowsBonus(MODIF_SAVES_WIL); }
 
     /**
      * @return saving throws based on attached classes (and levels)
@@ -308,6 +363,36 @@ public class Character extends DBEntity {
             }
         }
         return total;
+    }
+
+    /**
+     * @param bonusId bonusId for corresponding SavingThrows
+     * @return bonus to be applied on savingthrows
+     */
+    public int getSavingThrowsBonus(int bonusId) {
+        // check if modif is applied
+        int bonus = 0;
+        bonus += getAdditionalBonus(MODIF_SAVES_ALL);
+        bonus += getAdditionalBonus(bonusId);
+        return bonus;
+    }
+
+    /**
+     * @param bonusId bonusId for corresponding SavingThrows
+     * @return bonus to be applied
+     */
+    public int getAdditionalBonus(int bonusId) {
+        // check if modif is applied
+        int bonus = 0;
+        List<CharacterModif> modifs = getModifsForId(MODIF_SAVES_ALL);
+        modifs.addAll(getModifsForId(bonusId));
+        // getModifsForId always returns 1 modification (matching the one being searched)
+        for(CharacterModif mod : modifs) {
+            if(mod.isEnabled()) {
+                bonus += mod.getModif(0).second;
+            }
+        }
+        return bonus;
     }
 
     /**
@@ -481,5 +566,47 @@ public class Character extends DBEntity {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return the list of modifs (as a copy)
+     */
+    public List<CharacterModif> getModifs() {
+        CharacterModif[] itemArray = new CharacterModif[modifs.size()];
+        itemArray = modifs.toArray(itemArray);
+        List<CharacterModif> modifs = Arrays.asList(itemArray);
+        return modifs;
+    }
+
+    public List<CharacterModif> getModifsForId(Integer id) {
+        List<CharacterModif> result = new ArrayList<>();
+        for(CharacterModif el : modifs) {
+            for(Pair<Integer,Integer> m: el.modifs) {
+                if(m.first == id) {
+                    result.add(new CharacterModif(el.source, Arrays.asList(m), el.getIcon(), el.isEnabled()));
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    public int getModifsCount() {
+        return modifs.size();
+    }
+
+    public void addModif(CharacterModif modif) {
+        modifs.add(modif);
+    }
+
+    public void deleteModif(CharacterModif modif) {
+        modifs.remove(modif);
+    }
+
+    public CharacterModif getModif(int idx) {
+        if(idx < 0 || idx >= modifs.size()) {
+            return null;
+        }
+        return modifs.get(idx);
     }
 }

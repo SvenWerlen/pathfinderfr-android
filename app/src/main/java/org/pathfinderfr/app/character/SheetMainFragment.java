@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
     private Character character;
     private List<TextView> classPickers;
-    View.OnClickListener listener;
+    private List<ImageView> modifPickers;
+    ProfileListener listener;
 
     private long characterId;
 
@@ -55,6 +57,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     public SheetMainFragment() {
         // Required empty public constructor
         classPickers = new ArrayList<>();
+        modifPickers = new ArrayList<>();
     }
 
     /**
@@ -355,20 +358,6 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
         });
 
-        // update abilities
-        ((TextView)view.findViewById(R.id.ability_str_value)).setText(String.valueOf(character.getStrength()));
-        ((TextView)view.findViewById(R.id.ability_dex_value)).setText(String.valueOf(character.getDexterity()));
-        ((TextView)view.findViewById(R.id.ability_con_value)).setText(String.valueOf(character.getConstitution()));
-        ((TextView)view.findViewById(R.id.ability_int_value)).setText(String.valueOf(character.getIntelligence()));
-        ((TextView)view.findViewById(R.id.ability_wis_value)).setText(String.valueOf(character.getWisdom()));
-        ((TextView)view.findViewById(R.id.ability_cha_value)).setText(String.valueOf(character.getCharisma()));
-        ((TextView)view.findViewById(R.id.ability_str_modif)).setText(String.valueOf(character.getStrengthModif()));
-        ((TextView)view.findViewById(R.id.ability_dex_modif)).setText(String.valueOf(character.getDexterityModif()));
-        ((TextView)view.findViewById(R.id.ability_con_modif)).setText(String.valueOf(character.getConstitutionModif()));
-        ((TextView)view.findViewById(R.id.ability_int_modif)).setText(String.valueOf(character.getIntelligenceModif()));
-        ((TextView)view.findViewById(R.id.ability_wis_modif)).setText(String.valueOf(character.getWisdomModif()));
-        ((TextView)view.findViewById(R.id.ability_cha_modif)).setText(String.valueOf(character.getCharismaModif()));
-
         // update race
         TextView raceTv = view.findViewById(R.id.sheet_main_racepicker);
         if(character.getRace() != null) {
@@ -377,6 +366,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         updateClassPickers(view);
         updateModifsPickers(view);
+
+        view.findViewById(R.id.sheet_main_modifs_example_icon).setVisibility(View.GONE);
+        view.findViewById(R.id.sheet_main_modifpicker).setOnClickListener(listener);
+
         return view;
     }
 
@@ -408,16 +401,61 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             idx++;
         }
         // update stats
-        updateOtherStats(view);
+        updateSheet(view);
     }
 
     private void updateModifsPickers(View view) {
-        TextView reference = view.findViewById(R.id.sheet_main_modifpicker);
-        reference.setOnClickListener(listener);
+        ImageView reference = view.findViewById(R.id.sheet_main_modifs_example_icon);
+        FlowLayout layout = view.findViewById(R.id.sheet_main_modifslayout);
+        // make sure #pickers > #icons
+        int toCreate = character.getModifsCount() - modifPickers.size();
+        for(int i = 0; i <= toCreate; i++) {
+            ImageView newPicker = FragmentUtil.copyExampleImageFragment(reference);
+            newPicker.setOnClickListener(listener);
+            newPicker.setOnLongClickListener(listener);
+            modifPickers.add(newPicker);
+            layout.addView(newPicker);
+        }
+        // configure #pickers
+        final int colorDisabled = view.getContext().getResources().getColor(R.color.colorBlack);
+        final int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
+        int idx = 0;
+        for(ImageView iv : modifPickers) {
+            Character.CharacterModif modif = character.getModif(idx);
+            if(modif != null) {
+                final int resourceId = view.getResources().getIdentifier(modif.getIcon(), "drawable",
+                        view.getContext().getPackageName());
+                if(resourceId > 0) {
+                    iv.setTag(modif);
+                    iv.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
+                    iv.setImageResource(resourceId);
+                    iv.setVisibility(View.VISIBLE);
+                }
+            } else {
+                iv.setVisibility(View.GONE);
+            }
+            idx++;
+        }
+        // update stats
+        updateSheet(view);
     }
 
 
-    private void updateOtherStats(View view) {
+    private void updateSheet(View view) {
+        // update abilities
+        ((TextView)view.findViewById(R.id.ability_str_value)).setText(String.valueOf(character.getStrength()));
+        ((TextView)view.findViewById(R.id.ability_dex_value)).setText(String.valueOf(character.getDexterity()));
+        ((TextView)view.findViewById(R.id.ability_con_value)).setText(String.valueOf(character.getConstitution()));
+        ((TextView)view.findViewById(R.id.ability_int_value)).setText(String.valueOf(character.getIntelligence()));
+        ((TextView)view.findViewById(R.id.ability_wis_value)).setText(String.valueOf(character.getWisdom()));
+        ((TextView)view.findViewById(R.id.ability_cha_value)).setText(String.valueOf(character.getCharisma()));
+        ((TextView)view.findViewById(R.id.ability_str_modif)).setText(String.valueOf(character.getStrengthModif()));
+        ((TextView)view.findViewById(R.id.ability_dex_modif)).setText(String.valueOf(character.getDexterityModif()));
+        ((TextView)view.findViewById(R.id.ability_con_modif)).setText(String.valueOf(character.getConstitutionModif()));
+        ((TextView)view.findViewById(R.id.ability_int_modif)).setText(String.valueOf(character.getIntelligenceModif()));
+        ((TextView)view.findViewById(R.id.ability_wis_modif)).setText(String.valueOf(character.getWisdomModif()));
+        ((TextView)view.findViewById(R.id.ability_cha_modif)).setText(String.valueOf(character.getCharismaModif()));
+
         TextView initiative = view.findViewById(R.id.initiative_value);
         TextView armorClass = view.findViewById(R.id.armorclass_value);
         TextView magicResis = view.findViewById(R.id.magicresistance_value);
@@ -468,13 +506,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         combatManDefenseAbility.setText(String.valueOf(character.getStrengthModif()+character.getDexterityModif()));
     }
 
-    @Override
-    public void onModif() {
 
-    }
-
-
-    private static class ProfileListener implements View.OnClickListener {
+    private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener {
 
         SheetMainFragment parent;
 
@@ -485,9 +518,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         @Override
         public void onClick(View v) {
 
-            if (v instanceof TextView && "ability".equals(v.getTag())) {
+            if (v instanceof TextView && v.getTag() != null && v.getTag().toString().startsWith("ability")) {
                 TextView tv = (TextView) v;
-                int value = ( tv.getText() != null ? Integer.valueOf(tv.getText().toString()) : 10);
+                int abilityId = Integer.parseInt(v.getTag().toString().substring("ability".length()));
+                int value = parent.character.getAbilityValue(abilityId, false);
 
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("ability-picker");
@@ -563,12 +597,47 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
 
                 Bundle arguments = new Bundle();
-                Long raceId = parent.character.getRace() == null ? 0L : parent.character.getRace().getId();
-                arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "race-picker");
+                newFragment.show(ft, "modif-picker");
+            } else if(v instanceof ImageView) {
+                ImageView icon = (ImageView)v;
+                Character.CharacterModif modif = (Character.CharacterModif)v.getTag();
+                if(modif != null) {
+                    // toggle modification
+                    modif.setEnabled(!modif.isEnabled());
+                    final int colorDisabled = parent.getContext().getResources().getColor(R.color.colorBlack);
+                    final int colorEnabled = parent.getContext().getResources().getColor(R.color.colorPrimaryDark);
+                    if(icon.getDrawable() != null) {
+                        icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
+                    }
+                    parent.updateSheet(parent.getView());
+                }
             }
+        }
 
+        @Override
+        public boolean onLongClick(View v) {
+            if(v instanceof ImageView) {
+                ImageView icon = (ImageView)v;
+                Character.CharacterModif modif = (Character.CharacterModif)v.getTag();
+                if(modif != null) {
+                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("modif-picker");
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentModifPicker.newInstance(parent, modif);
+
+                    Bundle arguments = new Bundle();
+                    Long raceId = parent.character.getRace() == null ? 0L : parent.character.getRace().getId();
+                    arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, "modif-picker");
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -597,37 +666,27 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
             switch(abilityId) {
                 case R.id.ability_str_value:
-                    tv = getView().findViewById(R.id.ability_str_modif);
                     character.setStrength(abilityValue);
                     break;
                 case R.id.ability_dex_value:
-                    tv = getView().findViewById(R.id.ability_dex_modif);
                     character.setDexterity(abilityValue);
                     break;
                 case R.id.ability_con_value:
-                    tv = getView().findViewById(R.id.ability_con_modif);
                     character.setConstitution(abilityValue);
                     break;
                 case R.id.ability_int_value:
-                    tv = getView().findViewById(R.id.ability_int_modif);
                     character.setIntelligence(abilityValue);
                     break;
                 case R.id.ability_wis_value:
-                    tv = getView().findViewById(R.id.ability_wis_modif);
                     character.setWisdom(abilityValue);
                     break;
                 case R.id.ability_cha_value:
-                    tv = getView().findViewById(R.id.ability_cha_modif);
                     character.setCharisma(abilityValue);
                     break;
             }
 
-            if(tv != null) {
-                tv.setText(String.valueOf(CharacterUtil.getAbilityBonus(abilityValue)));
-            }
-
             // update stats
-            updateOtherStats(getView());
+            updateSheet(getView());
             // store changes
             characterDBUpdate();
         }
@@ -641,8 +700,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if(race != null) {
             tv.setText(race.getName());
         }
+        // update stats
+        updateSheet(getView());
         // store changes
-        updateOtherStats(getView());
         characterDBUpdate();
     }
 
@@ -664,6 +724,33 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             character.addOrSetClass(cl, level);
             updateClassPickers(getView());
         }
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onAddModif(Character.CharacterModif modif) {
+        if(modif != null && modif.isValid()) {
+            character.addModif(modif);
+            updateModifsPickers(getView());
+        }
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onDeleteModif(Character.CharacterModif modif) {
+        if(modif != null) {
+            character.deleteModif(modif);
+            updateModifsPickers(getView());
+        }
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onModifUpdated() {
+        updateModifsPickers(getView());
         // store changes
         characterDBUpdate();
     }

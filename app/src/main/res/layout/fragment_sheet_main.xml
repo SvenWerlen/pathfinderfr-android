@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="40dp">
@@ -59,7 +59,6 @@
         </com.wefika.flowlayout.FlowLayout>
 
         <com.wefika.flowlayout.FlowLayout
-            android:id="@+id/sheet_main_modifs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -68,8 +67,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
                 android:textStyle="bold"
                 android:text="@string/sheet_modifs" />
+
+            <com.wefika.flowlayout.FlowLayout
+                android:id="@+id/sheet_main_modifslayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="start|top">
+
+                <ImageView
+                    android:id="@+id/sheet_main_modifs_example_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    app:srcCompat="@drawable/modif_angry_eyes" />
+
+            </com.wefika.flowlayout.FlowLayout>
 
             <TextView
                 android:id="@+id/sheet_main_modifpicker"
@@ -155,7 +173,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability0"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />
@@ -200,7 +218,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability1"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />
@@ -245,7 +263,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability2"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />
@@ -290,7 +308,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability3"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />
@@ -335,7 +353,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability4"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />
@@ -380,7 +398,7 @@
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
                     android:padding="4dp"
-                    android:tag="ability"
+                    android:tag="ability5"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/sheet_ability_value" />

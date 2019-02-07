@@ -168,7 +168,11 @@
     <string name="sheet_modifs_title">Modification:</string>
     <string name="sheet_modifs_description">Une modification peut représenter un état temporaire lié à une condition (ex: rage), un objet (ex: pendentif), un sort (ex: force du taureau), un don (ex: science de l\'initiative), etc.</string>
     <string name="sheet_modifs_bonus">Bonus / malus:</string>
-    <string name="sheet_modifs_invalidchoice">Choix invalide!</string>
+    <string name="sheet_modifs_error_invalidchoice">Choix invalide!</string>
+    <string name="sheet_modifs_error_invalidmodif">Bonus / malus doit être numérique et différent de 0</string>
+    <string name="sheet_modifs_error_nosource">Veuillez saisir la source!</string>
+    <string name="sheet_modifs_error_nobonus">Veuillez ajouter au minimum 1 bonus ou malus!</string>
+    <string name="sheet_modifs_error_noicon">Veuillez choisir une icône!</string>
     <string name="sheet_modifs_choose">Choisir dans la liste...</string>
     <string name="sheet_modifs_abilities">-- Caractéristiques --</string>
     <string name="sheet_modifs_saves">-- Jets de sauvegarde --</string>
@@ -176,6 +180,7 @@
     <string name="sheet_modifs_pick">Sélectionner</string>
     <string name="sheet_modifs_save">Enregistrer</string>
     <string name="sheet_modifs_icon">Icône:</string>
+    <string name="sheet_modifs_source">Source:</string>
     <string name="sheet_modifs_value">0</string>
     <string name="sheet_modifs_bonus_example">+2 Force</string>
 

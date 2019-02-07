@@ -36,6 +36,34 @@
                 android:textSize="12sp"
                 android:text="@string/sheet_modifs_description" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_modifs_source" />
+
+                <EditText
+                    android:id="@+id/sheet_modifs_source"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:singleLine="true"
+                    android:maxLength="20"
+                    android:inputType="text"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:textColor="@color/colorBlack" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,6 +76,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
+                    android:layout_marginTop="10dp"
                     android:text="@string/sheet_modifs_bonus" />
 
                 <LinearLayout
@@ -80,7 +109,7 @@
                         android:textAlignment="center"
                         android:textColor="@color/colorBlack"
                         android:inputType="numberSigned"
-                        android:textSize="16dp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:gravity="end"/>
 
@@ -165,6 +194,7 @@
                 </com.wefika.flowlayout.FlowLayout>
 
             </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>
@@ -174,6 +204,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center">
+
+        <Button
+            android:id="@+id/modifs_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
 
         <Button
             android:id="@+id/modifs_cancel"

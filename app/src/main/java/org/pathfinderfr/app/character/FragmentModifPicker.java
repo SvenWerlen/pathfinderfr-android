@@ -1,20 +1,17 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.InputFilter;
-import android.util.Log;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,38 +23,24 @@ import com.wefika.flowlayout.FlowLayout;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
+import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.StringWithTag;
+import org.pathfinderfr.app.database.entity.Character;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class FragmentModifPicker extends DialogFragment implements View.OnClickListener {
 
     private FragmentModifPicker.OnFragmentInteractionListener mListener;
 
-    private static final int MODIF_ABILITY_ALL = 1;
-    private static final int MODIF_ABILITY_STR = 2;
-    private static final int MODIF_ABILITY_DEX = 3;
-    private static final int MODIF_ABILITY_CON = 4;
-    private static final int MODIF_ABILITY_INT = 5;
-    private static final int MODIF_ABILITY_WIS = 6;
-    private static final int MODIF_ABILITY_CHA = 7;
-
-    private static final int MODIF_SAVES_ALL = 11;
-    private static final int MODIF_SAVES_REF = 12;
-    private static final int MODIF_SAVES_FOR = 13;
-    private static final int MODIF_SAVES_WIL = 14;
-
-    private static final int MODIF_COMBAT_INI = 21;
-    private static final int MODIF_COMBAT_AC = 22;
-    private static final int MODIF_COMBAT_MAG = 23;
-
     private Integer selectedModif;
     private ImageView selectedIcon;
 
-    private Map<Integer, String> modifsTexts;
+    private List<LinearLayout> modifs;
 
+    private Character.CharacterModif initial;
 
     private static final String[] icons = new String[] {
             "modif_terror",
@@ -81,20 +64,20 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     
     private String getModifText(int modifId) {
         switch(modifId) {
-            case MODIF_ABILITY_ALL: return getResources().getString(R.string.sheet_modifs_abilities);
-            case MODIF_ABILITY_STR: return getResources().getString(R.string.sheet_ability_strength);
-            case MODIF_ABILITY_DEX: return getResources().getString(R.string.sheet_ability_dexterity);
-            case MODIF_ABILITY_CON: return getResources().getString(R.string.sheet_ability_constitution);
-            case MODIF_ABILITY_INT: return getResources().getString(R.string.sheet_ability_intelligence);
-            case MODIF_ABILITY_WIS: return getResources().getString(R.string.sheet_ability_wisdom);
-            case MODIF_ABILITY_CHA: return getResources().getString(R.string.sheet_ability_charisma);
-            case MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_modifs_saves);
-            case MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_reflex);
-            case MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_fortitude);
-            case MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_will);
-            case MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
-            case MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass);
-            case MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
+            case Character.MODIF_ABILITY_ALL: return getResources().getString(R.string.sheet_ability_all);
+            case Character.MODIF_ABILITY_STR: return getResources().getString(R.string.sheet_ability_strength);
+            case Character.MODIF_ABILITY_DEX: return getResources().getString(R.string.sheet_ability_dexterity);
+            case Character.MODIF_ABILITY_CON: return getResources().getString(R.string.sheet_ability_constitution);
+            case Character.MODIF_ABILITY_INT: return getResources().getString(R.string.sheet_ability_intelligence);
+            case Character.MODIF_ABILITY_WIS: return getResources().getString(R.string.sheet_ability_wisdom);
+            case Character.MODIF_ABILITY_CHA: return getResources().getString(R.string.sheet_ability_charisma);
+            case Character.MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_savingthrows_all);
+            case Character.MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_reflex);
+            case Character.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_fortitude);
+            case Character.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_will);
+            case Character.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
+            case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass);
+            case Character.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
             default: return null;
         }
     }
@@ -109,11 +92,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public FragmentModifPicker() {
         // Required empty public constructor
+        modifs = new ArrayList<>();
     }
 
     public void setListener(OnFragmentInteractionListener listener) {
         mListener = listener;
     }
+    public void setInitial(Character.CharacterModif modif) { initial = modif; }
 
     /**
      * Use this factory method to create a new instance of
@@ -124,6 +109,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     public static FragmentModifPicker newInstance(OnFragmentInteractionListener listener) {
         FragmentModifPicker fragment = new FragmentModifPicker();
         fragment.setListener(listener);
+        return fragment;
+    }
+
+    public static FragmentModifPicker newInstance(OnFragmentInteractionListener listener, Character.CharacterModif modif) {
+        FragmentModifPicker fragment = new FragmentModifPicker();
+        fragment.setListener(listener);
+        fragment.setInitial(modif);
         return fragment;
     }
 
@@ -151,24 +143,24 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // Abilities
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_choose), 0));
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_abilities), 0));
-        list.add(getStringWithTag(MODIF_ABILITY_STR));
-        list.add(getStringWithTag(MODIF_ABILITY_DEX));
-        list.add(getStringWithTag(MODIF_ABILITY_CON));
-        list.add(getStringWithTag(MODIF_ABILITY_INT));
-        list.add(getStringWithTag(MODIF_ABILITY_WIS));
-        list.add(getStringWithTag(MODIF_ABILITY_CHA));
-        list.add(getStringWithTag(MODIF_ABILITY_ALL));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_STR));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_DEX));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_CON));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_INT));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_WIS));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_CHA));
+        list.add(getStringWithTag(Character.MODIF_ABILITY_ALL));
         // Saves
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_saves), 0));
-        list.add(getStringWithTag(MODIF_SAVES_REF));
-        list.add(getStringWithTag(MODIF_SAVES_FOR));
-        list.add(getStringWithTag(MODIF_SAVES_WIL));
-        list.add(getStringWithTag(MODIF_SAVES_ALL));
+        list.add(getStringWithTag(Character.MODIF_SAVES_REF));
+        list.add(getStringWithTag(Character.MODIF_SAVES_FOR));
+        list.add(getStringWithTag(Character.MODIF_SAVES_WIL));
+        list.add(getStringWithTag(Character.MODIF_SAVES_ALL));
         // Combat
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_combat), 0));
-        list.add(getStringWithTag(MODIF_COMBAT_INI));
-        list.add(getStringWithTag(MODIF_COMBAT_AC));
-        list.add(getStringWithTag(MODIF_COMBAT_MAG));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_INI));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
 
         ArrayAdapter<StringWithTag> dataAdapter = new ArrayAdapter<StringWithTag>(this.getContext(),
                 android.R.layout.simple_spinner_item, list);
@@ -179,8 +171,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
                 selectedModif = (Integer)s.getTag();
-                bonus.setText("");
-                bonus.requestFocus();
+                if(selectedModif!=0) {
+                    bonus.requestFocus();
+                }
             }
 
             @Override
@@ -197,9 +190,18 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                     rootView.getContext().getPackageName());
             if(resourceId > 0) {
                 ImageView iv = FragmentUtil.copyExampleImageFragment(exampleIcon);
+                iv.setTag(icon);
                 iv.setBackgroundColor(rootView.getResources().getColor(R.color.colorBlack));
                 iv.setImageResource(resourceId);
                 iv.setOnClickListener(this);
+
+                if(initial != null && icon.equals(initial.getIcon())) {
+                    selectedIcon = iv;
+                    if(selectedIcon.getDrawable() != null) {
+                        selectedIcon.setBackgroundColor(rootView.getContext().getResources().getColor(R.color.colorPrimaryDark));
+                    }
+                }
+
                 layout.addView(iv);
             }
         }
@@ -208,6 +210,36 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
         rootView.findViewById(R.id.modifs_ok).setOnClickListener(this);
         rootView.findViewById(R.id.modifs_cancel).setOnClickListener(this);
+        rootView.findViewById(R.id.modifs_delete).setOnClickListener(this);
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    if (source.charAt(i) == '|' || source.charAt(i) == '#' || source.charAt(i) == ':') {
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        EditText source = rootView.findViewById(R.id.sheet_modifs_source);
+        source.setFilters(new InputFilter[] { filter });
+
+        // initialize form if required
+        if(initial != null) {
+            source.setText(initial.getSource());
+            // icon has already been highlighted
+            for(int i = 0; i<initial.getModifCount(); i++) {
+                Pair<Integer,Integer> modif = initial.getModif(i);
+                addBonusLine(rootView, modif.first, modif.second);
+            }
+        } else {
+            rootView.findViewById(R.id.modifs_delete).setVisibility(View.GONE);
+        }
+
+        source.requestFocus();
 
         return rootView;
     }
@@ -223,6 +255,30 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         mListener = null;
     }
 
+    private void addBonusLine(View view, int modifId, int bonus) {
+        final TextView bonusTextExample = view.findViewById(R.id.sheet_modifs_bonus_example);
+        final ImageView bonusRemoveExample = view.findViewById(R.id.sheet_modifs_remove);
+        final String bonusTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.modif");
+
+        TextView bonusText = FragmentUtil.copyExampleTextFragment(bonusTextExample);
+        bonusText.setText(String.format(bonusTemplate, getModifText(modifId), bonus));
+        ImageView bonusRemove = FragmentUtil.copyExampleImageFragment(bonusRemoveExample);
+        final LinearLayout layout = new LinearLayout(getContext());
+        layout.setTag(new Pair<Integer,Integer>(modifId, bonus));
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        layout.addView(bonusText);
+        layout.addView(bonusRemove);
+        bonusRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout.setVisibility(View.GONE);
+            }
+        });
+        ((LinearLayout)view.findViewById(R.id.sheet_modifs_bonuses)).addView(layout);
+        modifs.add(layout);
+    }
+
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.modifs_cancel) {
@@ -230,41 +286,90 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             return;
         }
         else if(v.getId() == R.id.modifs_ok) {
-//            if(mListener != null) {
-//                mListener.onRanksSelected(skillId, rank);
-//            }
-            dismiss();
-            return;
-        }
-        else if(v.getId() == R.id.sheet_modifs_add) {
-            if(selectedModif == null || selectedModif == 0) {
-                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_modifs_invalidchoice), Toast.LENGTH_SHORT);
+            // check that all values have been properly filled
+            String text = ((EditText)getView().findViewById(R.id.sheet_modifs_source)).getText().toString();
+            String error = null;
+            if(text.length() == 0) {
+                error = getView().getResources().getString(R.string.sheet_modifs_error_nosource);
+            }
+            List<Pair<Integer,Integer>> bonusList = new ArrayList<>();
+            for(LinearLayout layout : modifs) {
+                if(layout.getVisibility() == View.VISIBLE) {
+                    bonusList.add((Pair<Integer, Integer>)layout.getTag());
+                }
+            }
+            if(error == null && bonusList.size() == 0) {
+                error = getView().getResources().getString(R.string.sheet_modifs_error_nobonus);
+            }
+            if(error == null && selectedIcon == null) {
+                error = getView().getResources().getString(R.string.sheet_modifs_error_noicon);
+            }
+
+            if(error != null) {
+                Toast t = Toast.makeText(v.getContext(), error, Toast.LENGTH_SHORT);
                 int[] xy = new int[2];
                 v.getLocationOnScreen(xy);
                 t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
                 t.show();
                 return;
             }
-            final TextView bonusTextExample = getView().findViewById(R.id.sheet_modifs_bonus_example);
-            final ImageView bonusRemoveExample = getView().findViewById(R.id.sheet_modifs_remove);
-            final String bonusTemplate = ConfigurationUtil.getInstance(getView().getContext()).getProperties().getProperty("template.modif");
-
-            int bonus = Integer.parseInt(((EditText)getView().findViewById(R.id.sheet_modifs_value)).getText().toString());
-            TextView bonusText = FragmentUtil.copyExampleTextFragment(bonusTextExample);
-            bonusText.setText(String.format(bonusTemplate, getModifText(selectedModif), bonus));
-            ImageView bonusRemove = FragmentUtil.copyExampleImageFragment(bonusRemoveExample);
-            final LinearLayout layout = new LinearLayout(getContext());
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            layout.addView(bonusText);
-            layout.addView(bonusRemove);
-            bonusRemove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    layout.setVisibility(View.GONE);
+            if(mListener != null) {
+                if(initial != null) {
+                    initial.setSource(text);
+                    initial.setModifs(bonusList);
+                    initial.setIcon(selectedIcon.getTag().toString());
+                    mListener.onModifUpdated();
+                } else {
+                    mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
                 }
-            });
-            ((LinearLayout)getView().findViewById(R.id.sheet_modifs_bonuses)).addView(layout);
+            }
+            dismiss();
+            return;
+        }
+        else if(v.getId() == R.id.modifs_delete) {
+            if(initial!=null) {
+                mListener.onDeleteModif(initial);
+            }
+            dismiss();
+            return;
+        }
+        else if(v.getId() == R.id.sheet_modifs_add) {
+            if(selectedModif == null || selectedModif == 0) {
+                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_modifs_error_invalidchoice), Toast.LENGTH_SHORT);
+                int[] xy = new int[2];
+                v.getLocationOnScreen(xy);
+                t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
+                t.show();
+                return;
+            }
+            int bonus;
+            try {
+                bonus = Integer.parseInt(((EditText) getView().findViewById(R.id.sheet_modifs_value)).getText().toString());
+            } catch(NumberFormatException e) {
+                bonus = 0;
+            }
+            if(bonus == 0) {
+                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_modifs_error_invalidmodif), Toast.LENGTH_SHORT);
+                int[] xy = new int[2];
+                v.getLocationOnScreen(xy);
+                t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
+                t.show();
+                return;
+            }
+
+            // check if already in list and remove if it is the case
+            for(LinearLayout tv : modifs) {
+                Pair<Integer, Integer> mod = (Pair<Integer, Integer>)tv.getTag();
+                if(mod.first == selectedModif) {
+                    tv.setVisibility(View.GONE);
+                }
+            }
+
+            addBonusLine(getView(), selectedModif, bonus);
+
+            // clear selection
+            ((AppCompatSpinner)getView().findViewById(R.id.sheet_modifs_spinner)).setSelection(0);
+            ((EditText)getView().findViewById(R.id.sheet_modifs_value)).setText("");
         }
         else if(v instanceof ImageView) {
             final int colorDisabled = getContext().getResources().getColor(R.color.colorBlack);
@@ -282,7 +387,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     }
 
     public interface OnFragmentInteractionListener {
-        void onModif();
+        void onAddModif(Character.CharacterModif modif);
+        void onDeleteModif(Character.CharacterModif modif);
+        void onModifUpdated();
     }
 }
 

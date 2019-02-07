@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,8 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ABILITY_WIS = "ab_wis";
     private static final String COLUMN_ABILITY_CHA = "ab_cha";
     private static final String COLUMN_SKILLS      = "skills";
-    private static final String COLUMN_FEATS      = "feats";
+    private static final String COLUMN_FEATS       = "feats";
+    private static final String COLUMN_MODIFS      = "modifs";
 
 
     private static CharacterFactory instance;
@@ -62,17 +65,23 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text, %s text" +
+                        "%s text, %s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS);
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_MODIFS);
         return query;
     }
 
+    /**
+     * @return SQL statement for upgrading DB from v3 to v4
+     */
+    public String getQueryUpgradeV4() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_MODIFS);
+    }
 
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
@@ -86,12 +95,12 @@ public class CharacterFactory extends DBEntityFactory {
         contentValues.put(CharacterFactory.COLUMN_REFERENCE, c.getReference()); // there is no reference
         contentValues.put(CharacterFactory.COLUMN_SOURCE, c.getSource());       // there is no source
 
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_STR, c.getStrength());
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_DEX, c.getDexterity());
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_CON, c.getConstitution());
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_INT, c.getIntelligence());
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_WIS, c.getWisdom());
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getCharisma());
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_STR, c.getAbilityValue(Character.ABILITY_STRENGH, false));
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_DEX, c.getAbilityValue(Character.ABILITY_DEXTERITY, false));
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_CON, c.getAbilityValue(Character.ABILITY_CONSTITUTION, false));
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_INT, c.getAbilityValue(Character.ABILITY_INTELLIGENCE, false));
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_WIS, c.getAbilityValue(Character.ABILITY_WISDOM, false));
+        contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getAbilityValue(Character.ABILITY_CHARISMA, false));
 
         // race is stored using format <raceId>:<raceName>
         // (class names must be kept for to be able to migrate data if IDs changes during import)
@@ -147,6 +156,26 @@ public class CharacterFactory extends DBEntityFactory {
             contentValues.put(CharacterFactory.COLUMN_FEATS, "");
         }
 
+        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
+        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
+        // (assuming that modif ids won't change during data import)
+        if(c.getModifsCount() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(Character.CharacterModif modif : c.getModifs()) {
+                value.append(modif.getSource()).append(':');
+                for(int i = 0; i<modif.getModifCount(); i++) {
+                    value.append(modif.getModif(i).first).append('|');
+                    value.append(modif.getModif(i).second).append(',');
+                }
+                value.deleteCharAt(value.length()-1).append(':');
+                value.append(modif.getIcon()).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
+        }
 
         return contentValues;
     }
@@ -269,7 +298,6 @@ public class CharacterFactory extends DBEntityFactory {
         if(featsValue != null && featsValue.length() > 0) {
             String[] feats = featsValue.split("#");
             long[] featIds = new long[feats.length];
-            int idx = 0;
             try {
                 for(int i = 0; i < feats.length; i++) {
                     featIds[i] = Long.parseLong(feats[i]);
@@ -284,6 +312,38 @@ public class CharacterFactory extends DBEntityFactory {
             }
         }
 
+        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
+        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
+        // (assuming that modif ids won't change during data import)
+        // fill modifs
+        String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
+        if(modifsValue != null && modifsValue.length() > 0) {
+            for(String modif : modifsValue.split("#")) {
+                String[] modElements = modif.split(":");
+                if(modElements != null && modElements.length == 3) {
+                    String source = modElements[0];
+                    String icon = modElements[2];
+                    List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
+                    for (String bonusVal : modElements[1].split(",")) {
+                        String[] bonusElements = bonusVal.split("\\|");
+                        if (bonusElements != null && bonusElements.length == 2) {
+                            try {
+                                Integer bonusIdx = Integer.parseInt(bonusElements[0]);
+                                Integer bonusValue = Integer.parseInt(bonusElements[1]);
+                                bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
+                            } catch (NumberFormatException nfe) {
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
+                            }
+                        }
+                    }
+                    Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon);
+                    if (toAdd.isValid()) {
+                        c.addModif(toAdd);
+                    }
+                }
+            }
+        }
         return c;
     }
 
