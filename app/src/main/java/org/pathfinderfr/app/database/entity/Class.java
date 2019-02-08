@@ -73,7 +73,7 @@ public class Class extends DBEntity {
         public void setId(int id) { this.id = id; }
         public void setLvl(int lvl) { this.id = lvl; }
         public int[] getBaseAttackBonus() { return bab; }
-        public String getBaseAttackBonusAsString() { return CharacterUtil.getBaseAttackBonusAsString(bab); }
+        public String getBaseAttackBonusAsString() { return CharacterUtil.getAttackBonusAsString(bab); }
         public void setBaseAttackBonus(int[] bab) { this.bab = bab; }
         public int getReflexBonus() { return reflex; }
         public void setReflexBonus(int bonus) { this.reflex = bonus; }

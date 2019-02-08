@@ -9,12 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:gravity="start|top">
 
             <TextView
@@ -103,7 +104,7 @@
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:gravity="start|top">
 
         <TableLayout
@@ -482,7 +483,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
 
@@ -493,7 +494,7 @@
                 <TextView
                     android:id="@+id/other_ac"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:text="@string/sheet_ac"
                     android:layout_margin="2dp"
@@ -510,12 +511,11 @@
                     android:background="@drawable/text_box"
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="2dp"
-
-                    android:padding="4dp"
+                    android:padding="3dp"
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value_multiple" />
 
             </TableRow>
 
@@ -548,7 +548,73 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee">
+                    android:text="@string/sheet_other_value">
+                </TextView>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/other_hp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_hp"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/hitpoint_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="@string/sheet_other_value">
+                </TextView>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/other_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_sp"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/speed_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="@string/sheet_other_value">
                 </TextView>
 
             </TableRow>
@@ -639,7 +705,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_reflex"
@@ -652,7 +718,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_reflex_ability"
@@ -665,7 +731,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
 
@@ -697,7 +763,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_fortitude"
@@ -710,7 +776,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_fortitude_ability"
@@ -723,7 +789,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
 
@@ -755,7 +821,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_will"
@@ -768,7 +834,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/savingthrows_will_ability"
@@ -781,7 +847,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
         </TableLayout>
@@ -870,7 +936,73 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/combat_attack_melee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_att_mel"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/attack_melee_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_span="3"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_value" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/combat_attack_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sheet_att_dist"
+                    android:layout_margin="2dp"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/attack_distance_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/text_box"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_span="3"
+                    android:padding="4dp"
+                    android:tag="ability"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
 
@@ -902,7 +1034,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/combat_cmb_bab"
@@ -915,7 +1047,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/combat_cmb_ability"
@@ -928,7 +1060,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
 
@@ -961,7 +1093,7 @@
                     android:tag="ability"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/combat_cmd_bab"
@@ -974,7 +1106,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
                 <TextView
                     android:id="@+id/combat_cmd_ability"
@@ -987,7 +1119,7 @@
                     android:padding="4dp"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
-                    android:text="@string/sheet_other_valuee" />
+                    android:text="@string/sheet_other_value" />
 
             </TableRow>
         </TableLayout>

@@ -171,6 +171,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         final String skillTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.title");
         final String skillTooltipClassSkill = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.content.classskill");
         final String savTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.content");
+        final String tooltipModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.modif.entry");
 
         DBHelper helper = DBHelper.getInstance(view.getContext());
         for(DBEntity entity : helper.getAllEntitiesWithAllFields(SkillFactory.getInstance())) {
@@ -178,7 +179,8 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             int abilityMod = character.getSkillAbilityMod(skill);
             int rank = character.getSkillRank(skill.getId());
             int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
-            int total = abilityMod + rank + classSkillBonus;
+            int addBonus = character.getAdditionalBonus(Character.MODIF_SKILL + (int)skill.getId());
+            int total = abilityMod + rank + classSkillBonus + addBonus;
 
             TableRow row = new TableRow(view.getContext());
             row.setMinimumHeight(height);
@@ -232,8 +234,8 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                             String.format(savTooltipContent,
                                     rank,
                                     classSkillText,
-                                    skill.getAbility(), abilityMod,
-                                    0, // other
+                                    skill.getAbility().toLowerCase(), abilityMod,
+                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL + (int)skill.getId(), tooltipModif), // other
                                     total ));
                 }
             });
@@ -311,12 +313,8 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             TextView totalTv = getView().findViewWithTag("SKILL-TOTAL-" + skillId);
             Skill skill = (Skill)DBHelper.getInstance(getContext()).fetchEntity(skillId, SkillFactory.getInstance());
             if(skill != null && rankTv != null && totalTv != null) {
-                int abilityMod = character.getSkillAbilityMod(skill);
-                rank = character.getSkillRank(skill.getId());
-                int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
-                int total = abilityMod + rank + classSkillBonus;
-                rankTv.setText(String.valueOf(rank));
-                totalTv.setText(String.valueOf(total));
+                rankTv.setText(String.valueOf(character.getSkillRank(skill.getId())));
+                totalTv.setText(String.valueOf(character.getSkillTotalBonus(skill)));
             }
         }
     }

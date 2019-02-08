@@ -183,6 +183,7 @@
     <string name="sheet_modifs_source">Source:</string>
     <string name="sheet_modifs_value">0</string>
     <string name="sheet_modifs_bonus_example">+2 Force</string>
+    <string name="sheet_modifs_skills">-- Compétences --</string>
 
     <!-- Other stats -->
     <string name="sheet_label_other">Autres</string>
@@ -192,12 +193,17 @@
     <string name="sheet_armorclass">Classe d\'armure</string>
     <string name="sheet_mag">MAG</string>
     <string name="sheet_magicresistance">Résistance magie</string>
+    <string name="sheet_hp">PV</string>
+    <string name="sheet_hitpoints">Points de vie</string>
+    <string name="sheet_sp">VD</string>
+    <string name="sheet_speed">Vitesse de déplacement</string>
     <string name="sheet_saving">Sauv.</string>
     <string name="sheet_savingthrows">Jets de sauvegarde</string>
     <string name="sheet_savingthrows_total">Total</string>
     <string name="sheet_savingthrows_bonusbase">Base</string>
     <string name="sheet_savingthrows_ability">Carac</string>
-    <string name="sheet_other_valuee">0</string>
+    <string name="sheet_other_value">0</string>
+    <string name="sheet_other_value_multiple">0\n0\n0</string>
     <string name="sheet_savingthrows_all">Tous les jets de sauvegarde</string>
     <string name="sheet_savingthrows_for">VIG</string>
     <string name="sheet_savingthrows_fortitude">Vigueur</string>
@@ -213,6 +219,12 @@
     <string name="sheet_combat_man_bonus">Bonus de manoeuvre offensive</string>
     <string name="sheet_cmd">DMD</string>
     <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
+    <string name="sheet_attack">BBA</string>
+    <string name="sheet_att_mel">CàC</string>
+    <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
+    <string name="sheet_att_dist">Dist</string>
+    <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
+
 
     <!-- Skills -->
     <string name="sheet_skills_example_label_name">Compétences</string>

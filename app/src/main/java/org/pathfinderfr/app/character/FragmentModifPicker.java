@@ -21,9 +21,14 @@ import android.widget.Toast;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringWithTag;
 import org.pathfinderfr.app.database.entity.Character;
 
@@ -78,7 +83,20 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
             case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass);
             case Character.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
-            default: return null;
+            case Character.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
+            case Character.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
+            case Character.MODIF_COMBAT_ATT_MELEE: return getResources().getString(R.string.sheet_attack_melee);
+            case Character.MODIF_COMBAT_ATT_RANGED: return getResources().getString(R.string.sheet_attack_distance);
+            case Character.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
+            case Character.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
+            default:
+                if(modifId > Character.MODIF_SKILL) {
+                    DBEntity entity = DBHelper.getInstance(getContext()).fetchEntity(modifId - Character.MODIF_SKILL, SkillFactory.getInstance());
+                    if(entity != null) {
+                        return entity.getName();
+                    }
+                }
+                return "??";
         }
     }
     
@@ -161,6 +179,19 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Character.MODIF_COMBAT_INI));
         list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
         list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_SPEED));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_MELEE));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_RANGED));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_CMB));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_CMD));
+        // Skills
+        list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_skills), 0));
+        List<DBEntity> skills = DBHelper.getInstance(rootView.getContext()).getAllEntities(SkillFactory.getInstance(),
+                PreferenceUtil.getSources(rootView.getContext()));
+        for(DBEntity skill : skills) {
+            list.add(new StringWithTag(skill.getName(), Character.MODIF_SKILL + (int)skill.getId()));
+        }
 
         ArrayAdapter<StringWithTag> dataAdapter = new ArrayAdapter<StringWithTag>(this.getContext(),
                 android.R.layout.simple_spinner_item, list);

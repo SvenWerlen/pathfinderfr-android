@@ -88,6 +88,24 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         t.show();
     }
 
+    /**
+     * Generates a string (tables rows) for each individual other bonus
+     * @param character character object
+     * @param modifId modif identifier
+     * @param tooltipTemplate template for a row entry
+     * @return
+     */
+    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate) {
+        List<Character.CharacterModif> modifs = character.getModifsForId(modifId);
+        StringBuffer buf = new StringBuffer();
+        for(Character.CharacterModif modif: modifs) {
+            if(modif.isEnabled()) {
+                buf.append(String.format(tooltipTemplate, modif.getSource(), modif.getModif(0).second));
+            }
+        }
+        return buf.toString();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -158,6 +176,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         // INITIATIVE
         final String iniTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.initiative.title");
+        final String tooltipModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.modif.entry");
         final String iniTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.initiative.content");
 
         view.findViewById(R.id.other_ini).setOnClickListener(new View.OnClickListener() {
@@ -169,7 +188,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 act.showTooltip(iniTooltipTitle, String.format(iniTooltipContent,
                         character.getDexterityModif(),
-                        0,
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_INI, tooltipModif),
                         character.getInitiative()));
             }
         });
@@ -186,10 +205,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             @Override
             public void onClick(View v) {
                 act.showTooltip(acTooltipTitle,String.format(acTooltipContent,
-                        0,0, // armor & shield
                         character.getDexterityModif(), // dex modif
                         character.getRaceSize() == Character.SIZE_SMALL ? 1 : 0, // size
-                        0,0,0, // natural, parade, others
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_AC, tooltipModif), // others
                         character.getArmorClass()));
             }
         });
@@ -205,9 +223,25 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.magicresistance_value).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                act.showTooltip(magicTooltipTitle,String.format(magicTooltipContent));
+                act.showTooltip(magicTooltipTitle,String.format(
+                        magicTooltipContent,
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_MAG, tooltipModif),
+                        character.getMagicResistance()));
             }
         });
+
+        // HIT POINTS
+        view.findViewById(R.id.other_hp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_hitpoints));}
+        });
+
+        // Speed
+        view.findViewById(R.id.other_speed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_speed));}
+        });
+
 
         // BASE ATTACK BONUS
         final String babTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.title");
@@ -229,7 +263,63 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
                     }
                 }
-                act.showTooltip(babTooltipTitle,String.format(babTooltipContent,text,character.getBaseAttackBonusAsString()));
+                act.showTooltip(babTooltipTitle,String.format(
+                        babTooltipContent,
+                        text,
+                        "", // other
+                        character.getBaseAttackBonusAsString()));
+            }
+        });
+
+        // ATTACK BONUS (MELEE & RANGED)
+        final String tooltipBabModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.babmodif.entry");
+        final String meleeTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.attmelee.content");
+        final String rangedTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.attranged.content");
+        view.findViewById(R.id.combat_attack_melee).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_attack_melee));}
+        });
+        view.findViewById(R.id.attack_melee_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                    }
+                }
+                act.showTooltip(babTooltipTitle,String.format(
+                        meleeTooltipContent,
+                        text,
+                        character.getStrengthModif(),
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_MELEE, tooltipBabModif), // other
+                        character.getAttackBonusMeleeAsString()));
+            }
+        });
+
+        view.findViewById(R.id.combat_attack_distance).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_attack_distance));}
+        });
+        view.findViewById(R.id.attack_distance_value).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer text = new StringBuffer();
+                for(int i=0; i<character.getClassesCount(); i++) {
+                    Pair<Class,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    if(lvl != null) {
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                    }
+                }
+                act.showTooltip(babTooltipTitle,String.format(
+                        rangedTooltipContent,
+                        text,
+                        character.getDexterityModif(),
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_RANGED, tooltipBabModif), // other
+                        character.getAttackBonusRangeAsString()));
             }
         });
 
@@ -250,7 +340,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         bonus,
                         character.getStrengthModif(),
                         character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
-                        0, // other
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_CMB, tooltipModif), // other
                         character.getCombatManeuverBonus()));
             }
         });
@@ -273,7 +363,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         character.getStrengthModif(),
                         character.getDexterityModif(),
                         character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
-                        0, // other
+                        generateOtherBonusText(character, Character.MODIF_COMBAT_CMD, tooltipModif), // other
                         character.getCombatManeuverDefense()));
             }
         });
@@ -302,8 +392,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_fortitude)),
                         String.format(savTooltipContent,
                                 text,
-                                getResources().getString(R.string.sheet_ability_constitution), character.getConstitutionModif(),
-                                0, 0, // magic & others
+                                getResources().getString(R.string.sheet_ability_constitution).toLowerCase(), character.getConstitutionModif(),
+                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Character.MODIF_SAVES_FOR, tooltipModif), // other
                                 character.getSavingThrowsFortitudeTotal()));
             }
         });
@@ -327,8 +418,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_reflex)),
                         String.format(savTooltipContent,
                                 text,
-                                getResources().getString(R.string.sheet_ability_dexterity), character.getDexterityModif(),
-                                0, 0, // magic & others
+                                getResources().getString(R.string.sheet_ability_dexterity).toLowerCase(), character.getDexterityModif(),
+                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Character.MODIF_SAVES_REF, tooltipModif), // other
                                 character.getSavingThrowsReflexesTotal()));
             }
         });
@@ -352,8 +444,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipTitle,getResources().getString(R.string.sheet_savingthrows_will)),
                         String.format(savTooltipContent,
                                 text,
-                                getResources().getString(R.string.sheet_ability_wisdom), character.getWisdomModif(),
-                                0, 0, // magic & others
+                                getResources().getString(R.string.sheet_ability_wisdom).toLowerCase(), character.getWisdomModif(),
+                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Character.MODIF_SAVES_WIL, tooltipModif), // other
                                 character.getSavingThrowsWillTotal()));
             }
         });
@@ -456,6 +549,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)view.findViewById(R.id.ability_wis_modif)).setText(String.valueOf(character.getWisdomModif()));
         ((TextView)view.findViewById(R.id.ability_cha_modif)).setText(String.valueOf(character.getCharismaModif()));
 
+        ((TextView)view.findViewById(R.id.hitpoint_value)).setText(String.valueOf(character.getHitpoints()));
+        ((TextView)view.findViewById(R.id.speed_value)).setText(String.valueOf(character.getSpeed()));
+
         TextView initiative = view.findViewById(R.id.initiative_value);
         TextView armorClass = view.findViewById(R.id.armorclass_value);
         TextView magicResis = view.findViewById(R.id.magicresistance_value);
@@ -473,6 +569,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         TextView savingWillAbility = view.findViewById(R.id.savingthrows_will_ability);
 
         TextView baseAttackBonus = view.findViewById(R.id.base_attack_bonus_value);
+        TextView attackMeleeBonus = view.findViewById(R.id.attack_melee_value);
+        TextView attackDistanceBonus = view.findViewById(R.id.attack_distance_value);
         TextView combatManBonusTotal = view.findViewById(R.id.combat_cmb_total);
         TextView combatManBonusBab = view.findViewById(R.id.combat_cmb_bab);
         TextView combatManBonusAbility = view.findViewById(R.id.combat_cmb_ability);
@@ -498,6 +596,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         int[] bab = character.getBaseAttackBonus();
         baseAttackBonus.setText(character.getBaseAttackBonusAsString());
+        attackMeleeBonus.setText(character.getAttackBonusMeleeAsString());
+        attackDistanceBonus.setText(character.getAttackBonusRangeAsString());
         combatManBonusTotal.setText(String.valueOf(character.getCombatManeuverBonus()));
         combatManBonusBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManBonusAbility.setText(String.valueOf(character.getStrengthModif()));

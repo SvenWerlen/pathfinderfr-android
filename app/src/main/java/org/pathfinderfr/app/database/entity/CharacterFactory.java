@@ -30,6 +30,8 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_SKILLS      = "skills";
     private static final String COLUMN_FEATS       = "feats";
     private static final String COLUMN_MODIFS      = "modifs";
+    private static final String COLUMN_HITPOINTS   = "hitpoints";
+    private static final String COLUMN_SPEED       = "speed";
 
 
     private static CharacterFactory instance;
@@ -65,14 +67,16 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text, %s text, %s text" +
+                        "%s text, %s text, %s text," +
+                        "%s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_MODIFS);
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_MODIFS,
+                COLUMN_HITPOINTS, COLUMN_SPEED);
         return query;
     }
 
@@ -81,6 +85,20 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV4() {
         return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_MODIFS);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v4 to v5
+     */
+    public String getQueryUpgradeV5() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_HITPOINTS);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v5 to v6
+     */
+    public String getQueryUpgradeV6() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED);
     }
 
     @Override
@@ -101,6 +119,9 @@ public class CharacterFactory extends DBEntityFactory {
         contentValues.put(CharacterFactory.COLUMN_ABILITY_INT, c.getAbilityValue(Character.ABILITY_INTELLIGENCE, false));
         contentValues.put(CharacterFactory.COLUMN_ABILITY_WIS, c.getAbilityValue(Character.ABILITY_WISDOM, false));
         contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getAbilityValue(Character.ABILITY_CHARISMA, false));
+
+        contentValues.put(CharacterFactory.COLUMN_HITPOINTS, c.getHitpoints());
+        contentValues.put(CharacterFactory.COLUMN_SPEED, c.getSpeed());
 
         // race is stored using format <raceId>:<raceName>
         // (class names must be kept for to be able to migrate data if IDs changes during import)
@@ -212,6 +233,9 @@ public class CharacterFactory extends DBEntityFactory {
         c.setIntelligence(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_INT));
         c.setWisdom(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_WIS));
         c.setCharisma(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
+
+        c.setHitpoints(extractValueInt(resource, CharacterFactory.COLUMN_HITPOINTS));
+        c.setSpeed(extractValueInt(resource, CharacterFactory.COLUMN_SPEED));
 
         // fill race
         String raceValue = extractValue(resource, CharacterFactory.COLUMN_RACE);
@@ -357,4 +381,5 @@ public class CharacterFactory extends DBEntityFactory {
         throw new UnsupportedOperationException("This class doesn't implement that method!");
     }
 }
+
 

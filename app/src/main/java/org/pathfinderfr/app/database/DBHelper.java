@@ -27,7 +27,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 6;
 
     private static DBHelper instance;
 
@@ -78,12 +78,26 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(RaceFactory.getInstance().getQueryCreateTable());
             db.execSQL(ClassFactory.getInstance().getQueryCreateTable());
             db.execSQL(CharacterFactory.getInstance().getQueryCreateTable());
+            oldVersion = 3;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 3");
         }
         // version 4 introduced new column on character for modifs
         if(oldVersion == 3) {
             db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV4());
+            oldVersion = 4;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 4");
+        }
+        // version 5 introduced new column on character for hitpoints
+        if(oldVersion == 4) {
+            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV5());
+            oldVersion = 5;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 5");
+        }
+        // version 6 introduced new column on character for speed
+        if(oldVersion == 5) {
+            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV6());
+            oldVersion = 6;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 6");
         }
     }
 

@@ -43,7 +43,15 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_INI = 21;
     public static final int MODIF_COMBAT_AC = 22;
     public static final int MODIF_COMBAT_MAG = 23;
+    public static final int MODIF_COMBAT_HP = 24;
+    public static final int MODIF_COMBAT_SPEED = 25;
 
+    public static final int MODIF_COMBAT_ATT_MELEE = 31;
+    public static final int MODIF_COMBAT_ATT_RANGED = 32;
+    public static final int MODIF_COMBAT_CMB = 33;
+    public static final int MODIF_COMBAT_CMD = 34;
+
+    public static final int MODIF_SKILL = 200;
 
     // character-specific
     int[] abilities;
@@ -52,6 +60,8 @@ public class Character extends DBEntity {
     Map<Long,Integer> skills;
     List<Feat> feats;
     List<CharacterModif> modifs;
+    int hitpoints;
+    int speed;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
@@ -156,6 +166,22 @@ public class Character extends DBEntity {
             case "CHA": return getCharismaModif();
             default: return 0;
         }
+    }
+
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
+    public void setHitpoints(int hitpoints) {
+        this.hitpoints = hitpoints;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public Race getRace() {
@@ -384,8 +410,7 @@ public class Character extends DBEntity {
     public int getAdditionalBonus(int bonusId) {
         // check if modif is applied
         int bonus = 0;
-        List<CharacterModif> modifs = getModifsForId(MODIF_SAVES_ALL);
-        modifs.addAll(getModifsForId(bonusId));
+        List<CharacterModif> modifs = getModifsForId(bonusId);
         // getModifsForId always returns 1 modification (matching the one being searched)
         for(CharacterModif mod : modifs) {
             if(mod.isEnabled()) {
@@ -396,9 +421,10 @@ public class Character extends DBEntity {
     }
 
     /**
-     * @return base attack bonus (BAB) based on attached classes (and levels)
+     * @param addBonus additional bonus
+     * @return attack bonus (BAB) based on attached classes (and levels)
      */
-    public int[] getBaseAttackBonus() {
+    public int[] getAttackBonus(int addBonus) {
         if(classes == null || classes.size() == 0) {
             return null;
         }
@@ -412,7 +438,7 @@ public class Character extends DBEntity {
                     if(bonus != null) {
                         for(int i=0; i<bonus.length; i++) {
                             if(i>=bab.size()) {
-                                bab.add(bonus[i]);
+                                bab.add(bonus[i] + addBonus);
                             } else {
                                 bab.set(i, bab.get(i) + bonus[i]);
                             }
@@ -435,10 +461,33 @@ public class Character extends DBEntity {
     }
 
     /**
+     * @return base attack bonus (BAB) based on attached classes (and levels)
+     */
+    public int[] getBaseAttackBonus() {
+        return getAttackBonus(0);
+    }
+
+    /**
      * @return base attack bonus (BAB) based on attached classes (and levels), as string
      */
     public String getBaseAttackBonusAsString() {
-        return CharacterUtil.getBaseAttackBonusAsString(getBaseAttackBonus());
+        return CharacterUtil.getAttackBonusAsString(getBaseAttackBonus());
+    }
+
+    /**
+     * @return attack bonus (melee), as string
+     */
+    public String getAttackBonusMeleeAsString() {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE);
+        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
+    }
+
+    /**
+     * @return attack bonus (range), as string
+     */
+    public String getAttackBonusRangeAsString() {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED);
+        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
     }
 
     /**
@@ -451,7 +500,8 @@ public class Character extends DBEntity {
             bonus += bab[0];
         }
         int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
-        return bonus + getStrengthModif() + sizeModif;
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_CMB);
+        return bonus + getStrengthModif() + sizeModif + addBonus;
     }
 
     /**
@@ -464,7 +514,8 @@ public class Character extends DBEntity {
             bonus += bab[0];
         }
         int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
-        return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif;
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_CMD);
+        return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif + addBonus;
     }
 
     /**
@@ -511,7 +562,8 @@ public class Character extends DBEntity {
         int rank = getSkillRank(skill.getId());
         int abilityMod = getSkillAbilityMod(skill);
         int classSkill = isClassSkill(skill.getName()) ? 3 : 0;
-        return rank + abilityMod + classSkill;
+        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
+        return rank + abilityMod + classSkill + bonus;
     }
 
     public boolean isClassSkill(String skillName) {

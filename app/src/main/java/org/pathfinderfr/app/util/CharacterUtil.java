@@ -9,7 +9,7 @@ public class CharacterUtil {
         return (int)Math.floor((abilityValue - 10) / 2.0);
     }
 
-    public static String getBaseAttackBonusAsString(int[] bab) {
+    public static String getAttackBonusAsString(int[] bab) {
         if(bab == null) {
             return null;
         }
