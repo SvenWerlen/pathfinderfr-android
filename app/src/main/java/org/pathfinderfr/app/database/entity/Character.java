@@ -624,9 +624,6 @@ public class Character extends DBEntity {
      * @return the list of modifs (as a copy)
      */
     public List<CharacterModif> getModifs() {
-        CharacterModif[] itemArray = new CharacterModif[modifs.size()];
-        itemArray = modifs.toArray(itemArray);
-        List<CharacterModif> modifs = Arrays.asList(itemArray);
         return modifs;
     }
 
@@ -634,7 +631,7 @@ public class Character extends DBEntity {
         List<CharacterModif> result = new ArrayList<>();
         for(CharacterModif el : modifs) {
             for(Pair<Integer,Integer> m: el.modifs) {
-                if(m.first == id) {
+                if(m.first.longValue() == id.longValue()) {
                     result.add(new CharacterModif(el.source, Arrays.asList(m), el.getIcon(), el.isEnabled()));
                     break;
                 }

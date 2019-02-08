@@ -3,6 +3,7 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -106,20 +107,50 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         return buf.toString();
     }
 
+    /**
+     * Initializes the character modifs based on preferences (setEnable(true))
+     *
+     * @param context current context (for finding preferences)
+     * @param character character object
+     */
+    public static void initializeCharacterModifsStates(Context context, Character character) {
+        // initialize character modifs states
+        String modifStates = PreferenceManager.getDefaultSharedPreferences(context).getString(
+                CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), null);
+
+        if(modifStates != null) {
+            Log.d(SheetMainFragment.class.getSimpleName(), "Modif states = " + modifStates);
+            if (modifStates.length() == character.getModifsCount()) {
+                int idx = 0;
+                for(Character.CharacterModif modif : character.getModifs()) {
+                    if(modifStates.charAt(idx) == '1') {
+                        modif.setEnabled(true);
+                    }
+                    idx++;
+                }
+            } else {
+                Log.w(SheetMainFragment.class.getSimpleName(), "Something went wrong. Préférences don't match modif's count.");
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_sheet_main, container, false);
+        listener = new ProfileListener(this);
+
         // fetch character
         if(characterId > 0) {
             character = (Character)DBHelper.getInstance(getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
         }
         if(character == null) {
             character = new Character();
+        } else {
+            initializeCharacterModifsStates(view.getContext(), character);
         }
-
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_sheet_main, container, false);
-        listener = new ProfileListener(this);
 
         view.findViewById(R.id.ability_str).setOnClickListener(new View.OnClickListener() {
            @Override
@@ -236,7 +267,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_hitpoints));}
         });
 
-        // Speed
+        // SPEED
         view.findViewById(R.id.other_speed).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_speed));}
@@ -607,6 +638,20 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
 
+    /**
+     * Persists current modification states into preferences
+     * Stores as '01001' where each character represents a modif (1 is enabled, 0 disabled)
+     */
+    private void modifStatesIntoPreferences() {
+        StringBuffer buf = new StringBuffer();
+        for(Character.CharacterModif modif : character.getModifs()) {
+            buf.append(modif.isEnabled() ? '1' : '0');
+        }
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().
+                putString(CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), buf.toString()).apply();
+    }
+
+
     private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener {
 
         SheetMainFragment parent;
@@ -699,7 +744,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "modif-picker");
-            } else if(v instanceof ImageView) {
+            }
+            // MODIFICATION ENABLED/DISABLED
+            else if(v instanceof ImageView) {
                 ImageView icon = (ImageView)v;
                 Character.CharacterModif modif = (Character.CharacterModif)v.getTag();
                 if(modif != null) {
@@ -711,6 +758,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
                     }
                     parent.updateSheet(parent.getView());
+
+                    // save into preferences
+                    parent.modifStatesIntoPreferences();
                 }
             }
         }
@@ -833,9 +883,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if(modif != null && modif.isValid()) {
             character.addModif(modif);
             updateModifsPickers(getView());
+            modifStatesIntoPreferences();
+            // store changes
+            characterDBUpdate();
         }
-        // store changes
-        characterDBUpdate();
     }
 
     @Override
@@ -843,9 +894,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if(modif != null) {
             character.deleteModif(modif);
             updateModifsPickers(getView());
+            modifStatesIntoPreferences();
+            // store changes
+            characterDBUpdate();
         }
-        // store changes
-        characterDBUpdate();
     }
 
     @Override

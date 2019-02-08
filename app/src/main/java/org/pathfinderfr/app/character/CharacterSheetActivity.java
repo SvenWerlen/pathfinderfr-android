@@ -27,6 +27,7 @@ import java.util.List;
 public class CharacterSheetActivity extends AppCompatActivity {
 
     public static final String PREF_SELECTED_CHARACTER_ID = "pref_characterId";
+    public static final String PREF_CHARACTER_MODIF_STATES = "pref_characterModifStates";
 
     private static final int TAB_HOME = 0;
     private static final int TAB_SKILLS = 1;

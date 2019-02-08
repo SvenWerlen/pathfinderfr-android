@@ -135,16 +135,19 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_sheet_skills, container, false);
+
         // fetch character
         if(characterId > 0) {
             character = (Character)DBHelper.getInstance(getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
         }
         if(character == null) {
             character = new Character();
+        } else {
+            SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
         }
-
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_sheet_skills, container, false);
 
         // References
         TableLayout table = view.findViewById(R.id.sheet_skills_table);
@@ -223,8 +226,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 public void onClick(View v) {
                     int abilityMod = character.getSkillAbilityMod(skill);
                     int rank = character.getSkillRank(skill.getId());
-                    int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
-                    int total = abilityMod + rank + classSkillBonus;
+                    int total = character.getSkillTotalBonus(skill);
                     String classSkillText = "";
                     if(character.isClassSkill(skill.getName()) && rank > 0) {
                         classSkillText = String.format(skillTooltipClassSkill);
