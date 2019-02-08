@@ -68,14 +68,18 @@ public class SpellFilter {
     }
 
     /**
-     * @return the list of unique schools ordered by name
+     * @return the class and minimum level for given classes and spell
+     * Ex: if classes = {Barde, Magicien} and spell is available for "Bar 2, Mag 1", the result will be Mag 1
      */
     public static Pair<String,Integer> getLevel(List<String> classes, Spell spell) {
         List<Pair<String,Integer>> levels = cleanClasses(spell.getLevel());
 
         Set<String> classNames = new HashSet<>();
         for(String name : classes) {
-            classNames.add(cleanClass(name));
+            // TODO: ugly fix for Barbare != Barde (Bar)
+            if(!"Barbare".equalsIgnoreCase(name)) {
+                classNames.add(cleanClass(name));
+            }
         }
 
         // find lowest level for given classes
