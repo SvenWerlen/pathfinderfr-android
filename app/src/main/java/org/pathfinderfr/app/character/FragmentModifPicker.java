@@ -111,7 +111,18 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             "modif_bat",
             "modif_owl",
             "modif_raven",
-
+            // spells
+            "modif_spell_book",
+            "modif_music_spell",
+            "modif_magic_palm",
+            "modif_magic_swirl",
+            "modif_beams_aura",
+            "modif_embrassed_energy",
+            "modif_aura",
+            "modif_magic_shield",
+            "modif_invisible",
+            "modif_healing",
+            "modif_screaming",
     };
     
     private String getModifText(int modifId) {
