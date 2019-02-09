@@ -42,7 +42,8 @@ import java.util.List;
  * Skill tab on character sheet
  */
 public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
-        OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener, FragmentModifPicker.OnFragmentInteractionListener {
+        OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
+        FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener, FragmentSpeedPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
 
@@ -266,13 +267,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_hitpoints));}
         });
+        view.findViewById(R.id.hitpoint_value).setOnClickListener(listener);
 
         // SPEED
         view.findViewById(R.id.other_speed).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_speed));}
         });
-
+        view.findViewById(R.id.speed_value).setOnClickListener(listener);
 
         // BASE ATTACK BONUS
         final String babTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.title");
@@ -651,7 +653,6 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 putString(CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), buf.toString()).apply();
     }
 
-
     private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener {
 
         SheetMainFragment parent;
@@ -681,7 +682,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putInt(FragmentAbilityPicker.ARG_ABILITY_VALUE, value);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "ability-picker");
-            } else if(v instanceof TextView && "race".equals(v.getTag())) {
+                return;
+            }
+            else if(v instanceof TextView && "race".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("race-picker");
                 if (prev != null) {
@@ -695,7 +698,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "race-picker");
-            } else if(v instanceof TextView && "class".equals(v.getTag())) {
+                return;
+            }
+            else if(v instanceof TextView && "class".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("class-picker");
                 if (prev != null) {
@@ -732,7 +737,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putInt(FragmentClassPicker.ARG_CLASS_MAX_LVL, maxLevel);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "class-picker");
-            } else if(v instanceof TextView && "modif".equals(v.getTag())) {
+                return;
+            }
+            else if(v instanceof TextView && "modif".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("modif-picker");
                 if (prev != null) {
@@ -744,6 +751,35 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, "modif-picker");
+                return;
+            }
+            else if(v instanceof TextView && "hitpoints".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("hitpoints-picker");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentHitPointsPicker.newInstance(parent, parent.character.getHitpoints());
+
+                Bundle arguments = new Bundle();
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, "hitpoints-picker");
+                return;
+            }
+            else if(v instanceof TextView && "speed".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("speed-picker");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentSpeedPicker.newInstance(parent, parent.character.getSpeed());
+
+                Bundle arguments = new Bundle();
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, "speed-picker");
+                return;
             }
             // MODIFICATION ENABLED/DISABLED
             else if(v instanceof ImageView) {
@@ -762,6 +798,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     // save into preferences
                     parent.modifStatesIntoPreferences();
                 }
+                return;
             }
         }
 
@@ -906,4 +943,21 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         // store changes
         characterDBUpdate();
     }
+
+    @Override
+    public void onSaveHP(int value) {
+        character.setHitpoints(value);
+        ((TextView)getView().findViewById(R.id.hitpoint_value)).setText(String.valueOf(value));
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onSaveSpeed(int value) {
+        character.setSpeed(value);
+        ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(value));
+        // store changes
+        characterDBUpdate();
+    }
+
 }
