@@ -1,5 +1,6 @@
 package org.pathfinderfr.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -92,12 +94,12 @@ public class MainActivity extends AppCompatActivity
 
         dbhelper = DBHelper.getInstance(getBaseContext());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // search button appears only for item-list view
-        ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton searchButton = findViewById(R.id.searchButton);
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 findViewById(R.id.searchButton).setVisibility(View.GONE);
@@ -106,11 +108,14 @@ public class MainActivity extends AppCompatActivity
                 EditText input = (EditText) findViewById(R.id.searchinput);
                 input.setVisibility(View.VISIBLE);
                 input.requestFocus();
+                ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(input, 0);
             }
-        });
+        };
+        // enable search when user clicks on search button or toolbar
+        searchButton.setOnClickListener(listener);
+        toolbar.setOnClickListener(listener);
 
-        // search input appears when user clicks on search button
-        EditText searchInput = (EditText) findViewById(R.id.searchinput);
+        EditText searchInput = findViewById(R.id.searchinput);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -124,11 +129,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         ImageButton closeSearchButton = (ImageButton) findViewById(R.id.closeSearchButton);
         closeSearchButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(),0);
                 // Clear search input and close and make search visible again
                 findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
                 findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
@@ -354,6 +361,8 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(),0);
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -452,6 +461,8 @@ public class MainActivity extends AppCompatActivity
 
 
     void showDialog() {
+        ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(),0);
+
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.

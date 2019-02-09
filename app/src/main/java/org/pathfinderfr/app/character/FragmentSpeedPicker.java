@@ -43,8 +43,7 @@ public class FragmentSpeedPicker extends DialogFragment implements View.OnClickL
         edit.setText(String.valueOf(speed));
         edit.setSelection(0, edit.getText().toString().length());
 
-        InputMethodManager inputMethodManager = (InputMethodManager) rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         rootView.findViewById(R.id.speed_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.speed_ok).setOnClickListener(this);
@@ -55,8 +54,7 @@ public class FragmentSpeedPicker extends DialogFragment implements View.OnClickL
     @Override
     public void onClick(View v) {
 
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getView().getWindowToken(), 0);
 
         if (v.getId() == R.id.speed_cancel) {
             dismiss();
@@ -64,14 +62,14 @@ public class FragmentSpeedPicker extends DialogFragment implements View.OnClickL
         }
         else if(v.getId() == R.id.speed_ok) {
             EditText edit = getView().findViewById(R.id.sheet_speed_value);
-            int hp = 0;
+            int speed = 0;
             try {
-                hp = Integer.parseInt(edit.getText().toString());
-                hp = Math.max(0, hp);             // min
-                hp = Math.min(MAX_SPEED, hp); // max
+                speed = Integer.parseInt(edit.getText().toString());
+                speed = Math.max(0, speed);             // min
+                speed = Math.min(MAX_SPEED, speed); // max
             } catch (NumberFormatException e) {}
-            if(mListener != null) {
-                mListener.onSaveSpeed(hp);
+            if(mListener != null && speed != this.speed) {
+                mListener.onSaveSpeed(speed);
             }
             dismiss();
             return;

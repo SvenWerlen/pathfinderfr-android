@@ -49,8 +49,7 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
         edit.setText(String.valueOf(hitpoints));
         edit.setSelection(0, edit.getText().toString().length());
 
-        InputMethodManager inputMethodManager = (InputMethodManager) rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         rootView.findViewById(R.id.hitpoints_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.hitpoints_ok).setOnClickListener(this);
@@ -61,8 +60,7 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
     @Override
     public void onClick(View v) {
 
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getView().getWindowToken(), 0);
 
         if (v.getId() == R.id.hitpoints_cancel) {
             dismiss();
@@ -76,7 +74,7 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
                 hp = Math.max(0, hp);             // min
                 hp = Math.min(MAX_HITPOINTS, hp); // max
             } catch (NumberFormatException e) {}
-            if(mListener != null) {
+            if(mListener != null && hp != hitpoints) {
                 mListener.onSaveHP(hp);
             }
             dismiss();

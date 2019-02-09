@@ -119,15 +119,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     }
     public void setInitial(Character.CharacterModif modif) { initial = modif; }
 
-    public void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    public void closeKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -164,16 +155,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         View rootView = inflater.inflate(R.layout.fragment_sheet_modifpicker, container, false);
         final EditText bonus = rootView.findViewById(R.id.sheet_modifs_value);
         bonus.setFilters(new InputFilter[]{new InputFilter.LengthFilter(2)});
-        bonus.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    showKeyboard();
-                } else {
-                    closeKeyboard();
-                }
-            }
-        });
 
         final ImageView addButton = rootView.findViewById(R.id.sheet_modifs_add);
         addButton.setOnClickListener(this);
@@ -226,7 +207,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 selectedModif = (Integer)s.getTag();
                 if(selectedModif!=0) {
                     bonus.requestFocus();
-                    showKeyboard();
+                    ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(bonus, 0);
                 }
             }
 
@@ -280,16 +261,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
         EditText source = rootView.findViewById(R.id.sheet_modifs_source);
         source.setFilters(new InputFilter[] { filter });
-        source.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    showKeyboard();
-                } else {
-                    closeKeyboard();
-                }
-            }
-        });
 
         // initialize form if required
         if(initial != null) {
@@ -304,6 +275,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         }
 
         source.requestFocus();
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         return rootView;
     }
@@ -345,6 +317,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getView().getWindowToken(),0);
+
         if(v.getId() == R.id.modifs_cancel) {
             dismiss();
             return;
