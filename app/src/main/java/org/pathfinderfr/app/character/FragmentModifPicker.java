@@ -66,6 +66,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             // weapons (others)
             "modif_bo",
             "modif_wizard_staff",
+            "modif_orb_wand",
+            "modif_lunar_wand",
             "modif_whip",
             "modif_scythe",
             // weapons (exotic)
@@ -90,6 +92,12 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             "modif_breastplate",
             "modif_gloves",
             "modif_visored_helm",
+            // jewellery
+            "modif_ring",
+            "modif_diamond_ring",
+            "modif_emerald_necklace",
+            "modif_necklace",
+            "modif_jeweled_chalice",
             // others
             "modif_terror",
             "modif_sleepy",
@@ -123,7 +131,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             "modif_invisible",
             "modif_healing",
             "modif_screaming",
-    };
+            // potions
+            "modif_standing_potion",
+            "modif_square_bottle",
+            "modif_potion_ball",
+            "modif_brandy_bottle",
+            "modif_heart_bottle",
+};
     
     private String getModifText(int modifId) {
         switch(modifId) {
