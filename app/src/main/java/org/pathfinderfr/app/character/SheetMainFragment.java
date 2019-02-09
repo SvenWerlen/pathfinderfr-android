@@ -774,7 +774,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
-                DialogFragment newFragment = FragmentSpeedPicker.newInstance(parent, parent.character.getSpeed());
+                DialogFragment newFragment = FragmentSpeedPicker.newInstance(parent, parent.character.getBaseSpeed());
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);

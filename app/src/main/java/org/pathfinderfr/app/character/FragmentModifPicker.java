@@ -182,7 +182,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Character.MODIF_COMBAT_INI));
         list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
         list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
+        //list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
         list.add(getStringWithTag(Character.MODIF_COMBAT_SPEED));
         list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_MELEE));
         list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_RANGED));
@@ -275,7 +275,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         }
 
         source.requestFocus();
-        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        if(initial==null) {
+            ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
 
         return rootView;
     }

@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity
         };
         // enable search when user clicks on search button or toolbar
         searchButton.setOnClickListener(listener);
-        toolbar.setOnClickListener(listener);
 
         EditText searchInput = findViewById(R.id.searchinput);
         searchInput.addTextChangedListener(new TextWatcher() {
@@ -378,6 +377,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
                     .putString(KEY_CUR_FACTORY,null).apply();
+            factoryId = null;
         } else if (id == R.id.nav_favorites) {
             newEntities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
             factoryId = FavoriteFactory.FACTORY_ID;

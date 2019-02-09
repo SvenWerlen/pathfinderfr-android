@@ -34,7 +34,6 @@
                 android:layout_gravity="center_vertical|end"
                 android:background="@android:drawable/ic_menu_search"
                 android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:visibility="gone" />
 
             <ImageButton

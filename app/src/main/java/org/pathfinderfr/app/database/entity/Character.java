@@ -43,7 +43,7 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_INI = 21;
     public static final int MODIF_COMBAT_AC = 22;
     public static final int MODIF_COMBAT_MAG = 23;
-    public static final int MODIF_COMBAT_HP = 24;
+    public static final int MODIF_COMBAT_HP = 24; // not supported
     public static final int MODIF_COMBAT_SPEED = 25;
 
     public static final int MODIF_COMBAT_ATT_MELEE = 31;
@@ -177,6 +177,11 @@ public class Character extends DBEntity {
     }
 
     public int getSpeed() {
+        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        return speed + bonus;
+    }
+
+    public int getBaseSpeed() {
         return speed;
     }
 
