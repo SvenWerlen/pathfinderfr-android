@@ -549,7 +549,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         for(ImageView iv : modifPickers) {
             Character.CharacterModif modif = character.getModif(idx);
             if(modif != null) {
-                final int resourceId = view.getResources().getIdentifier(modif.getIcon(), "drawable",
+                final int resourceId = view.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable",
                         view.getContext().getPackageName());
                 if(resourceId > 0) {
                     iv.setTag(modif);

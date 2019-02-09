@@ -49,6 +49,37 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     private Character.CharacterModif initial;
 
     private static final String[] icons = new String[] {
+            // weapons (swords)
+            "modif_plain_dagger",
+            "modif_bowie_knife",
+            "modif_stiletto",
+            "modif_two_handed_sword",
+            "modif_katana",
+            "modif_sai",
+            // weapons (axes)
+            "modif_battered_axe",
+            "modif_sharp_axe",
+            // weapons (maces and similar)
+            "modif_wood_club",
+            "modif_flanged_mace",
+            "modif_flail",
+            // weapons (others)
+            "modif_bo",
+            "modif_wizard_staff",
+            "modif_whip",
+            "modif_scythe",
+            // weapons (exotic)
+            "modif_nunchaku",
+            // weapons (range)
+            "modif_daggers",
+            "modif_hatchets",
+            "modif_shuriken",
+            "modif_hunting_bolas",
+            "modif_high_shot",
+            "modif_broadhead_arrow",
+            "modif_stone_spear",
+            "modif_crossbow",
+            // others
             "modif_terror",
             "modif_sleepy",
             "modif_archer",
@@ -58,14 +89,12 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             "modif_bowman",
             "modif_angry_eyes",
             "modif_enrage",
-            "modif_battered_axe",
-            "modif_broadhead_arrow",
             "modif_slicing_arrow",
             "modif_slingshot",
             "modif_knockout",
             "modif_mighty_force",
             "modif_sword_brandish",
-            "modif_crossbow",
+
     };
     
     private String getModifText(int modifId) {
@@ -225,12 +254,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                     rootView.getContext().getPackageName());
             if(resourceId > 0) {
                 ImageView iv = FragmentUtil.copyExampleImageFragment(exampleIcon);
-                iv.setTag(icon);
+                String iconName = icon.substring("modif_".length());
+                iv.setTag(iconName);
                 iv.setBackgroundColor(rootView.getResources().getColor(R.color.colorBlack));
                 iv.setImageResource(resourceId);
                 iv.setOnClickListener(this);
 
-                if(initial != null && icon.equals(initial.getIcon())) {
+                if(initial != null && iconName.equals(initial.getIcon())) {
                     selectedIcon = iv;
                     if(selectedIcon.getDrawable() != null) {
                         selectedIcon.setBackgroundColor(rootView.getContext().getResources().getColor(R.color.colorPrimaryDark));
