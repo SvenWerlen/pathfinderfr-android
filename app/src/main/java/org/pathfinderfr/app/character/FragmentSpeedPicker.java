@@ -26,10 +26,13 @@ public class FragmentSpeedPicker extends DialogFragment implements View.OnClickL
         speed = Math.max(0, speed);             // min
         speed = Math.min(MAX_SPEED, speed); // max
         fragment.speed = speed;
-        fragment.mListener = listener;
+        fragment.setListener(listener);
         return fragment;
     }
 
+    public void setListener(FragmentSpeedPicker.OnFragmentInteractionListener listener) {
+        mListener = listener;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

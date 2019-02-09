@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.text.HtmlCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +29,17 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
     }
 
     public static FragmentHitPointsPicker newInstance(FragmentHitPointsPicker.OnFragmentInteractionListener listener, int hitpoints) {
+
         FragmentHitPointsPicker fragment = new FragmentHitPointsPicker();
         hitpoints = Math.max(0, hitpoints);             // min
         hitpoints = Math.min(MAX_HITPOINTS, hitpoints); // max
         fragment.hitpoints = hitpoints;
-        fragment.mListener = listener;
+        fragment.setListener(listener);
         return fragment;
+    }
+
+    public void setListener(FragmentHitPointsPicker.OnFragmentInteractionListener listener) {
+        mListener = listener;
     }
 
 

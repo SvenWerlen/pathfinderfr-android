@@ -2,6 +2,7 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
@@ -42,7 +43,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
 
     private FragmentClassPicker.OnFragmentInteractionListener mListener;
 
-    private Long classId;    // selected Class
+    private long classId;    // selected Class
     private int level;       // selected Level
     private long[] excluded; // excluded classes (already chosen!)
     private int maxLevel;    // max level (could be less < 20 if other classes selected)
@@ -92,6 +93,12 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             maxLevel = getArguments().getInt(ARG_CLASS_MAX_LVL);
         } else {
             maxLevel = 20;
+        }
+
+        // restore values that were selected
+        if(savedInstanceState != null) {
+            classId = savedInstanceState.getLong(ARG_CLASS_ID, classId);
+            level = savedInstanceState.getInt(ARG_CLASS_LVL, level);
         }
 
         Log.i(FragmentClassPicker.class.getSimpleName(), String.format("ClassPicker with %d exclusions and %d max level.",
@@ -188,7 +195,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
                 continue;
             }
             // skip non-selected classes (if any)
-            if(classId != null && cl.getId() != classId) {
+            if(classId > 0 && cl.getId() != classId) {
                 continue;
             }
 
@@ -207,7 +214,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             layout.addView(classDescr);
 
             // selected if matching
-            if(this.classId != null && classId == this.classId) {
+            if(this.classId > 0 && classId == this.classId) {
                 updateChosenClass(className, classDescr, level, rootView);
             }
 
@@ -287,6 +294,14 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
     public interface OnFragmentInteractionListener {
         void onClassDeleted(long classId);
         void onClassChosen(long classId, int level);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // store currently selected values
+        outState.putLong(ARG_CLASS_ID, classId);
+        outState.putInt(ARG_CLASS_LVL, level);
     }
 }
 

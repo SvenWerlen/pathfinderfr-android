@@ -2,6 +2,7 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class FragmentRacePicker extends DialogFragment implements View.OnClickListener {
 
-    public static final String ARG_RACE_ID = "race_id";
+    public static final String ARG_RACE_ID = "argRaceId";
 
 
     private FragmentRacePicker.OnFragmentInteractionListener mListener;
@@ -89,6 +90,11 @@ public class FragmentRacePicker extends DialogFragment implements View.OnClickLi
 
         if (getArguments() != null && getArguments().containsKey(ARG_RACE_ID)) {
             raceId = getArguments().getLong(ARG_RACE_ID);
+        }
+
+        // restore value that was selected
+        if(savedInstanceState != null) {
+            raceId = savedInstanceState.getLong(ARG_RACE_ID, raceId);
         }
     }
 
@@ -182,6 +188,13 @@ public class FragmentRacePicker extends DialogFragment implements View.OnClickLi
 
     public interface OnFragmentInteractionListener {
         void onRaceChosen(long raceId);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // store currently selected value
+        outState.putLong(ARG_RACE_ID, raceId);
     }
 }
 

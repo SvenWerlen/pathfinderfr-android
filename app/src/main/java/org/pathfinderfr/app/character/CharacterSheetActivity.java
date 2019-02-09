@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -26,8 +27,11 @@ import java.util.List;
 
 public class CharacterSheetActivity extends AppCompatActivity {
 
-    public static final String PREF_SELECTED_CHARACTER_ID = "pref_characterId";
-    public static final String PREF_CHARACTER_MODIF_STATES = "pref_characterModifStates";
+    public static final String PREF_SELECTED_CHARACTER_ID   = "pref_characterId";
+    public static final String PREF_SELECTED_TAB            = "pref_selectedTab";
+    public static final String PREF_CHARACTER_MODIF_STATES  = "pref_characterModifStates";
+
+    private static final String DIALOG_TOOLTIP = "dial_tooltip";
 
     private static final int TAB_HOME = 0;
     private static final int TAB_SKILLS = 1;
@@ -55,6 +59,8 @@ public class CharacterSheetActivity extends AppCompatActivity {
                     currentTab = TAB_SPELLS;
                     break;
             }
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                    putInt(PREF_SELECTED_TAB, currentTab).apply();
             return showTab();
         }
     };
@@ -127,13 +133,17 @@ public class CharacterSheetActivity extends AppCompatActivity {
 
     public void showTooltip(String title, String text) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("tooltip");
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TOOLTIP);
         if (prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        DialogFragment newFragment = FragmentToolTip.newInstance(title, text);
-        newFragment.show(ft, "tooltip");
+        DialogFragment newFragment = FragmentToolTip.newInstance();
+        Bundle arguments = new Bundle();
+        arguments.putString(FragmentToolTip.ARG_TOOLTIP_TITLE, title);
+        arguments.putString(FragmentToolTip.ARG_TOOLTIP_TEXT, text);
+        newFragment.setArguments(arguments);
+        newFragment.show(ft, DIALOG_TOOLTIP);
     }
 
     @Override
@@ -152,12 +162,27 @@ public class CharacterSheetActivity extends AppCompatActivity {
         List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
         if(list != null && list.size() > 0) {
             characterId = list.get(0).getId();
-        }
-        // keep selected character in preferences
-        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
 
-        showTab();
+            // keep selected character in preferences
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                    putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
+        }
+
+        currentTab = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
+                .getInt(PREF_SELECTED_TAB, TAB_HOME);
+
+        // no state to be restored
+        if(savedInstanceState != null) {
+            Log.i(CharacterSheetActivity.class.getSimpleName(), "onCreate with savedInstaceState!");
+        } else {
+            // initialize tab based on preferences
+            switch(currentTab) {
+                case TAB_SKILLS: navigation.setSelectedItemId(R.id.sheet_skills); break;
+                case TAB_FEATS: navigation.setSelectedItemId(R.id.sheet_feats); break;
+                case TAB_SPELLS: navigation.setSelectedItemId(R.id.sheet_spells); break;
+                default: navigation.setSelectedItemId(R.id.sheet_home);
+            }
+        }
     }
 
     @Override

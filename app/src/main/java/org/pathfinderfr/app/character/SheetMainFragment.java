@@ -45,16 +45,23 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener, FragmentSpeedPicker.OnFragmentInteractionListener {
 
-    private static final String ARG_CHARACTER_ID = "character_id";
+    private static final String ARG_CHARACTER_ID    = "character_id";
+    private static final String DIALOG_PICK_ABILITY = "ability-picker";
+    private static final String DIALOG_PICK_RACE    = "race-picker";
+    private static final String DIALOG_PICK_CLASS   = "class-picker";
+    private static final String DIALOG_PICK_HP      = "hitpoint-picker";
+    private static final String DIALOG_PICK_SPEED   = "speed-picker";
+    private static final String DIALOG_PICK_MODIFS  = "modifs-picker";
 
     private Character character;
     private List<TextView> classPickers;
     private List<ImageView> modifPickers;
-    ProfileListener listener;
 
     private long characterId;
-
+ProfileListener listener;
     private OnFragmentInteractionListener mListener;
+
+
 
     public SheetMainFragment() {
         // Required empty public constructor
@@ -496,6 +503,40 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.sheet_main_modifs_example_icon).setVisibility(View.GONE);
         view.findViewById(R.id.sheet_main_modifpicker).setOnClickListener(listener);
 
+        // reset listeners for opened dialogs
+        if (savedInstanceState != null) {
+            FragmentRacePicker fragRace = (FragmentRacePicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_RACE);
+            if (fragRace != null) {
+                fragRace.setListener(this);
+            }
+            FragmentClassPicker fragClass = (FragmentClassPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_CLASS);
+            if (fragClass != null) {
+                fragClass.setListener(this);
+            }
+            FragmentModifPicker fragModifs = (FragmentModifPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_MODIFS);
+            if (fragModifs != null) {
+                fragModifs.setListener(this);
+            }
+            FragmentAbilityPicker fragAbility = (FragmentAbilityPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_ABILITY);
+            if (fragAbility != null) {
+                fragAbility.setListener(this);
+            }
+            FragmentHitPointsPicker fragHP = (FragmentHitPointsPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_HP);
+            if (fragHP != null) {
+                fragHP.setListener(this);
+            }
+            FragmentSpeedPicker fragSpeed = (FragmentSpeedPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_SPEED);
+            if (fragSpeed != null) {
+                fragSpeed.setListener(this);
+            }
+        }
+
         return view;
     }
 
@@ -552,7 +593,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 final int resourceId = view.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable",
                         view.getContext().getPackageName());
                 if(resourceId > 0) {
-                    iv.setTag(modif);
+                    iv.setTag(idx);
                     iv.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
                     iv.setImageResource(resourceId);
                     iv.setVisibility(View.VISIBLE);
@@ -670,7 +711,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 int value = parent.character.getAbilityValue(abilityId, false);
 
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("ability-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_ABILITY);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -681,12 +722,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putInt(FragmentAbilityPicker.ARG_ABILITY_ID, tv.getId());
                 arguments.putInt(FragmentAbilityPicker.ARG_ABILITY_VALUE, value);
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "ability-picker");
+                newFragment.show(ft, DIALOG_PICK_ABILITY);
                 return;
             }
             else if(v instanceof TextView && "race".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("race-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_RACE);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -697,12 +738,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 Long raceId = parent.character.getRace() == null ? 0L : parent.character.getRace().getId();
                 arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "race-picker");
+                newFragment.show(ft, DIALOG_PICK_RACE);
                 return;
             }
             else if(v instanceof TextView && "class".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("class-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_CLASS);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -736,12 +777,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putLongArray(FragmentClassPicker.ARG_CLASS_EXCL, excluded);
                 arguments.putInt(FragmentClassPicker.ARG_CLASS_MAX_LVL, maxLevel);
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "class-picker");
+                newFragment.show(ft, DIALOG_PICK_CLASS);
                 return;
             }
             else if(v instanceof TextView && "modif".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("modif-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_MODIFS);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -750,12 +791,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "modif-picker");
+                newFragment.show(ft, DIALOG_PICK_MODIFS);
                 return;
             }
             else if(v instanceof TextView && "hitpoints".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("hitpoints-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_HP);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -764,12 +805,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "hitpoints-picker");
+                newFragment.show(ft, DIALOG_PICK_HP);
                 return;
             }
             else if(v instanceof TextView && "speed".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("speed-picker");
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_SPEED);
                 if (prev != null) {
                     ft.remove(prev);
                 }
@@ -778,7 +819,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
-                newFragment.show(ft, "speed-picker");
+                newFragment.show(ft, DIALOG_PICK_SPEED);
                 return;
             }
             // MODIFICATION ENABLED/DISABLED
@@ -806,21 +847,31 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         public boolean onLongClick(View v) {
             if(v instanceof ImageView) {
                 ImageView icon = (ImageView)v;
-                Character.CharacterModif modif = (Character.CharacterModif)v.getTag();
+                Character.CharacterModif modif = parent.character.getModif((Integer)v.getTag());
                 if(modif != null) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag("modif-picker");
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_MODIFS);
                     if (prev != null) {
                         ft.remove(prev);
                     }
                     ft.addToBackStack(null);
-                    DialogFragment newFragment = FragmentModifPicker.newInstance(parent, modif);
+                    DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
 
                     Bundle arguments = new Bundle();
-                    Long raceId = parent.character.getRace() == null ? 0L : parent.character.getRace().getId();
-                    arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
+                    arguments.putInt(FragmentModifPicker.ARG_MODIF_IDX, (Integer)v.getTag());
+                    arguments.putString(FragmentModifPicker.ARG_MODIF_SOURCE, modif.getSource());
+                    ArrayList<Integer> modifIds = new ArrayList<>();
+                    ArrayList<Integer> modifVals = new ArrayList<>();
+                    for(int i = 0; i<modif.getModifCount(); i++) {
+                        modifIds.add(modif.getModif(i).first);
+                        modifVals.add(modif.getModif(i).second);
+                    }
+                    arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
+                    arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
+                    arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
+
                     newFragment.setArguments(arguments);
-                    newFragment.show(ft, "modif-picker");
+                    newFragment.show(ft, DIALOG_PICK_MODIFS);
                     return true;
                 }
             }
@@ -927,7 +978,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onDeleteModif(Character.CharacterModif modif) {
+    public void onDeleteModif(int modifIdx) {
+        Character.CharacterModif modif = character.getModif(modifIdx);
         if(modif != null) {
             character.deleteModif(modif);
             updateModifsPickers(getView());
@@ -938,10 +990,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onModifUpdated() {
-        updateModifsPickers(getView());
-        // store changes
-        characterDBUpdate();
+    public void onModifUpdated(int modifIdx, Character.CharacterModif newModif) {
+        Character.CharacterModif modif = character.getModif(modifIdx);
+        if(modif != null) {
+            modif.update(newModif);
+            updateModifsPickers(getView());
+            // store changes
+            characterDBUpdate();
+        }
     }
 
     @Override

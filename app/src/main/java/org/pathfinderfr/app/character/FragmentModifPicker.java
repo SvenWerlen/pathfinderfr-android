@@ -2,6 +2,7 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.InputFilter;
@@ -35,18 +36,24 @@ import org.pathfinderfr.app.database.entity.Character;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FragmentModifPicker extends DialogFragment implements View.OnClickListener {
 
-    private FragmentModifPicker.OnFragmentInteractionListener mListener;
+    public static final String ARG_MODIF_IDX    = "arg_modifIdx";
+    public static final String ARG_MODIF_SOURCE = "arg_modifSource";
+    public static final String ARG_MODIF_IDS    = "arg_modifIds";
+    public static final String ARG_MODIF_VALS   = "arg_modifVals";
+    public static final String ARG_MODIF_ICON   = "arg_modifIcon";
 
+    private FragmentModifPicker.OnFragmentInteractionListener mListener;
     private Integer selectedModif;
     private ImageView selectedIcon;
 
     private List<LinearLayout> modifs;
-
     private Character.CharacterModif initial;
+    private int modifIdx;
 
     private static final String[] icons = new String[] {
             // weapons (swords)
@@ -203,16 +210,39 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         return fragment;
     }
 
-    public static FragmentModifPicker newInstance(OnFragmentInteractionListener listener, Character.CharacterModif modif) {
-        FragmentModifPicker fragment = new FragmentModifPicker();
-        fragment.setListener(listener);
-        fragment.setInitial(modif);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // initialize from params
+        if(getArguments().containsKey(ARG_MODIF_IDX)) {
+            String source = getArguments().getString(ARG_MODIF_SOURCE);
+            List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
+            List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
+            List<Pair<Integer,Integer>> modifs = new ArrayList<>();
+            String icon = getArguments().getString(ARG_MODIF_ICON);
+            for(int i = 0; i<modifIds.size();i++) {
+                modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
+            }
+            if(modifIds != null && modifVals != null) {
+                initial = new Character.CharacterModif(source, modifs, icon);
+            }
+        }
+
+        // restore values that were selected
+        if(savedInstanceState != null) {
+            String source = savedInstanceState.getString(ARG_MODIF_SOURCE);
+            List<Integer> modifIds = savedInstanceState.getIntegerArrayList(ARG_MODIF_IDS);
+            List<Integer> modifVals = savedInstanceState.getIntegerArrayList(ARG_MODIF_VALS);
+            List<Pair<Integer,Integer>> modifs = new ArrayList<>();
+            String icon = savedInstanceState.getString(ARG_MODIF_ICON);
+            for(int i = 0; i<modifIds.size();i++) {
+                modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
+            }
+            if(modifIds != null && modifVals != null) {
+                initial = new Character.CharacterModif(source, modifs, icon);
+            }
+        }
     }
 
 
@@ -426,11 +456,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 return;
             }
             if(mListener != null) {
-                if(initial != null) {
-                    initial.setSource(text);
-                    initial.setModifs(bonusList);
-                    initial.setIcon(selectedIcon.getTag().toString());
-                    mListener.onModifUpdated();
+                if(getArguments() == null && getArguments().containsKey(ARG_MODIF_IDX)) {
+                    mListener.onModifUpdated(getArguments().getInt(ARG_MODIF_IDX),
+                            new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
                 } else {
                     mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
                 }
@@ -439,8 +467,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             return;
         }
         else if(v.getId() == R.id.modifs_delete) {
-            if(initial!=null) {
-                mListener.onDeleteModif(initial);
+            if(getArguments() == null && getArguments().containsKey(ARG_MODIF_IDX)) {
+                mListener.onDeleteModif(getArguments().getInt(ARG_MODIF_IDX));
             }
             dismiss();
             return;
@@ -500,8 +528,33 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public interface OnFragmentInteractionListener {
         void onAddModif(Character.CharacterModif modif);
-        void onDeleteModif(Character.CharacterModif modif);
-        void onModifUpdated();
+        void onDeleteModif(int modifIdx);
+        void onModifUpdated(int modifIdx, Character.CharacterModif modif);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // store already typed source
+        String text = ((EditText)getView().findViewById(R.id.sheet_modifs_source)).getText().toString();
+        outState.putString(ARG_MODIF_SOURCE, text);
+        // store already added modifs
+        List<Pair<Integer,Integer>> bonusList = new ArrayList<>();
+        ArrayList<Integer> modifsId = new ArrayList<>();
+        ArrayList<Integer> modifsVal = new ArrayList<>();
+        for(LinearLayout layout : modifs) {
+            if(layout.getVisibility() == View.VISIBLE) {
+                modifsId.add(((Pair<Integer, Integer>)layout.getTag()).first);
+                modifsVal.add(((Pair<Integer, Integer>)layout.getTag()).second);
+            }
+        }
+        // conversion to array
+        outState.putIntegerArrayList(ARG_MODIF_IDS, modifsId);
+        outState.putIntegerArrayList(ARG_MODIF_VALS, modifsVal);
+        // store icon selection
+        if(selectedIcon != null) {
+            outState.putString(ARG_MODIF_ICON, selectedIcon.getTag().toString());
+        }
     }
 }
 

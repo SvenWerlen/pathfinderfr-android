@@ -3,6 +3,7 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
@@ -122,6 +123,11 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
         rootView.findViewById(R.id.ability_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.ability_ok).setOnClickListener(this);
 
+        // restore value that was selected
+        if(savedInstanceState != null) {
+            abilityValue = savedInstanceState.getInt(ARG_ABILITY_VALUE, abilityValue);
+        }
+
         // initialize
         updateChosenValue(rootView, abilityValue);
 
@@ -158,6 +164,13 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
 
     public interface OnFragmentInteractionListener {
         void onAbilityValueChosen(int abilityId, int abilityValue);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // store currently selected value
+        outState.putInt(ARG_ABILITY_VALUE, abilityValue);
     }
 }
 

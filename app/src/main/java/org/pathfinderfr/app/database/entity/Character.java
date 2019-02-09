@@ -96,6 +96,11 @@ public class Character extends DBEntity {
         public boolean isEnabled() { return enabled; }
         public void setEnabled(boolean enabled) { this.enabled = enabled;}
         public boolean isValid() { return source != null && source.length() > 0 && modifs != null && modifs.size() > 0 && icon != null && icon.length() > 0; }
+        public void update(CharacterModif modif) {
+            source = modif.source;
+            modifs = modif.modifs;
+            icon = modif.icon;
+        }
     }
 
     @Override
