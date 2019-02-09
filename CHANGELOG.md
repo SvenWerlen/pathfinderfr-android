@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- ...
+- Modifications for characters: abilities, skills, combat values, etc.
+### Changed
+- Automatically show soft keyboard when search gets focus
+### Fixed
+- Bug with Bard spells being displayed for Barbarian
+- Bug with search button which requires to click twice to work
 
 ## [2.0.0] - 2019-01-27
 ### Added
