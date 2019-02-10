@@ -968,7 +968,6 @@ ProfileListener listener;
 
     @Override
     public void onAddModif(Character.CharacterModif modif) {
-        Log.i(SheetMainFragment.class.getSimpleName(), "onAddModif");
         if(modif != null && modif.isValid()) {
             character.addModif(modif);
             updateModifsPickers(getView());
@@ -980,7 +979,6 @@ ProfileListener listener;
 
     @Override
     public void onDeleteModif(int modifIdx) {
-        Log.i(SheetMainFragment.class.getSimpleName(), "onDeleteModif");
         Character.CharacterModif modif = character.getModif(modifIdx);
         if(modif != null) {
             character.deleteModif(modif);
@@ -993,7 +991,6 @@ ProfileListener listener;
 
     @Override
     public void onModifUpdated(int modifIdx, Character.CharacterModif newModif) {
-        Log.i(SheetMainFragment.class.getSimpleName(), "onModifUpdated");
         Character.CharacterModif modif = character.getModif(modifIdx);
         if(modif != null) {
             modif.update(newModif);

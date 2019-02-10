@@ -3,53 +3,37 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
-import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
-import org.pathfinderfr.app.database.entity.Class;
-import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
-import org.pathfinderfr.app.database.entity.Race;
-import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
-import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +45,7 @@ import java.util.Set;
 public class SheetSkillFragment extends Fragment implements FragmentRankPicker.OnFragmentInteractionListener, FragmentSkillFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
+    private static final String DIALOG_SKILL_FILTER = "skill-filter";
 
     private Character character;
     private long characterId;
@@ -290,17 +275,26 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = SheetSkillFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = SheetSkillFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("skills-filter");
+                Fragment prev = SheetSkillFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_SKILL_FILTER);
                 if (prev != null) {
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
                 DialogFragment newFragment = FragmentSkillFilter.newInstance(SheetSkillFragment.this);
-                newFragment.show(ft, "skills-filter");
+                newFragment.show(ft, DIALOG_SKILL_FILTER);
             }
         });
 
         applyFilters(view);
+
+        // reset listeners for opened dialogs
+        if (savedInstanceState != null) {
+            FragmentSkillFilter fragSkillFilter = (FragmentSkillFilter) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_SKILL_FILTER);
+            if (fragSkillFilter != null) {
+                fragSkillFilter.setListener(this);
+            }
+        }
 
         return view;
     }

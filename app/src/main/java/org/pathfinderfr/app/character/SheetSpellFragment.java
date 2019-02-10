@@ -56,6 +56,7 @@ import java.util.Set;
 public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
+    private static final String DIALOG_SPELL_FILTER = "spells-filter";
 
     private Character character;
     private long characterId;
@@ -294,18 +295,27 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = SheetSpellFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = SheetSpellFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("spells-filter");
+                Fragment prev = SheetSpellFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_SPELL_FILTER);
                 if (prev != null) {
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
                 DialogFragment newFragment = FragmentSpellFilter.newInstance(SheetSpellFragment.this);
-                newFragment.show(ft, "spells-filter");
+                newFragment.show(ft, DIALOG_SPELL_FILTER);
             }
         });
 
         view.findViewById(R.id.sheet_spells_empty_list).setVisibility(rowId == 0 && !filtersApplied ? View.VISIBLE : View.GONE);
         view.findViewById(R.id.sheet_spells_filter_empty).setVisibility(rowId == 0 && filtersApplied ? View.VISIBLE : View.GONE);
+
+        // reset listeners for opened dialogs
+        if (savedInstanceState != null) {
+            FragmentSpellFilter fragSpellFilter = (FragmentSpellFilter) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_SPELL_FILTER);
+            if (fragSpellFilter != null) {
+                fragSpellFilter.setListener(this);
+            }
+        }
 
         return view;
     }

@@ -47,6 +47,7 @@ import java.util.Set;
 public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
+    private static final String DIALOG_FEAT_FILTER = "feats-filter";
 
     private Character character;
     private long characterId;
@@ -185,13 +186,13 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = SheetFeatFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = SheetFeatFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag("feats-filter");
+                Fragment prev = SheetFeatFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_FEAT_FILTER);
                 if (prev != null) {
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
                 DialogFragment newFragment = FragmentFeatFilter.newInstance(SheetFeatFragment.this);
-                newFragment.show(ft, "feats-filter");
+                newFragment.show(ft, DIALOG_FEAT_FILTER);
             }
         });
 
@@ -200,6 +201,15 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
         }
 
         applyFilters(view);
+
+        // reset listeners for opened dialogs
+        if (savedInstanceState != null) {
+            FragmentFeatFilter fragFeatFilter = (FragmentFeatFilter) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_FEAT_FILTER);
+            if (fragFeatFilter != null) {
+                fragFeatFilter.setListener(this);
+            }
+        }
 
         return view;
     }
