@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.character.FragmentAbilityPicker;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity
     public static final String KEY_RELOAD_REQUIRED = "refresh_required";
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
+
+    public static final String DIALOG_SPELL_FILTER = "spells-filter";
+    public static final String KEY_SEARCH_VISIBLE = "search-visible";
 
     DBHelper dbhelper;
 
@@ -260,6 +264,33 @@ public class MainActivity extends AppCompatActivity
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        // reset list after screen rotation
+        if(savedInstanceState != null) {
+            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+
+            if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
+            } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
+            } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
+            } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
+            }
+
+            FilterSpellFragment fragSpellFilter = (FilterSpellFragment)getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_SPELL_FILTER);
+            if (fragSpellFilter != null) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                List<Spell> spellList = (List<Spell>)(List<?>)listFull;
+                fragSpellFilter.setFilter(new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
+            }
+
+            if(savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte)0) == 1) {
+                searchButton.performClick();
+            }
+        }
     }
 
     /**
@@ -463,11 +494,8 @@ public class MainActivity extends AppCompatActivity
     void showDialog() {
         ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(),0);
 
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("filter");
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_SPELL_FILTER);
         if (prev != null) {
             ft.remove(prev);
         }
@@ -482,7 +510,7 @@ public class MainActivity extends AppCompatActivity
             List<Spell> spellList = (List<Spell>)(List<?>)listFull;
             DialogFragment newFragment = FilterSpellFragment.newInstance(
                     new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
-            newFragment.show(ft, "dialog");
+            newFragment.show(ft, DIALOG_SPELL_FILTER);
         }
 
     }
@@ -493,5 +521,13 @@ public class MainActivity extends AppCompatActivity
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
         generateFilteredList();
         applyFiltersAndSearch();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(findViewById(R.id.closeSearchButton).getVisibility() == View.VISIBLE) {
+            outState.putByte(KEY_SEARCH_VISIBLE, (byte)1);
+        }
     }
 }
