@@ -189,6 +189,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public FragmentModifPicker() {
         // Required empty public constructor
+        modifIdx = -1;
         modifs = new ArrayList<>();
     }
 
@@ -216,6 +217,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
         // initialize from params
         if(getArguments().containsKey(ARG_MODIF_IDX)) {
+            modifIdx = getArguments().getInt(ARG_MODIF_IDX);
             String source = getArguments().getString(ARG_MODIF_SOURCE);
             List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
@@ -456,8 +458,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 return;
             }
             if(mListener != null) {
-                if(getArguments() == null && getArguments().containsKey(ARG_MODIF_IDX)) {
-                    mListener.onModifUpdated(getArguments().getInt(ARG_MODIF_IDX),
+                if(modifIdx >= 0) {
+                    mListener.onModifUpdated(modifIdx,
                             new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
                 } else {
                     mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
@@ -467,8 +469,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             return;
         }
         else if(v.getId() == R.id.modifs_delete) {
-            if(getArguments() == null && getArguments().containsKey(ARG_MODIF_IDX)) {
-                mListener.onDeleteModif(getArguments().getInt(ARG_MODIF_IDX));
+            if(modifIdx>=0) {
+                mListener.onDeleteModif(modifIdx);
             }
             dismiss();
             return;
