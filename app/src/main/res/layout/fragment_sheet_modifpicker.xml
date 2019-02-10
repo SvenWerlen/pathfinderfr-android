@@ -193,6 +193,16 @@
 
                 </com.wefika.flowlayout.FlowLayout>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:text="@string/sheet_modifs_about_icons" />
+
             </LinearLayout>
 
         </LinearLayout>
