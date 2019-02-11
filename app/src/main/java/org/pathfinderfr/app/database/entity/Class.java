@@ -39,6 +39,12 @@ public class Class extends DBEntity {
     public Set<String> getSkills() {
         return skills;
     }
+    public int getMaxLevel() {
+        if(levels.size()>0) {
+            return levels.get(levels.size() - 1).getLvl();
+        }
+        return 0;
+    }
 
     public Level getLevel(int lvl) {
         for(Level l : levels) {

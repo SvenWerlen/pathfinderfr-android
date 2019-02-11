@@ -24,15 +24,14 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
+    private static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master";
+
     private static final String[] SOURCES = new String[]{
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/competences.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/dons.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/spells.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/races.yml",
-            "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master/data/classes.yml"};
-
-
-
+            "/data/competences.yml",
+            "/data/dons.yml",
+            "/data/spells.yml",
+            "/data/races.yml",
+            "/data/classes.yml"};
 
     private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts", "Races", "Classes"};
     private LoadDataTask loadTaskInProgress;
@@ -59,14 +58,13 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
                     boolean deleteOrpheans = ((CheckBox)findViewById(R.id.loaddataDeleteOrpheans)).isChecked();
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCES[0], SkillFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCES[1], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCES[2], SpellFactory.getInstance());
-                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCES[3], RaceFactory.getInstance());
-                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCES[4], ClassFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], SkillFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], RaceFactory.getInstance());
+                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
                     loadTaskInProgress.execute(source0,source1,source2,source3,source4);
-                    //loadTaskInProgress.execute(source3, source4);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

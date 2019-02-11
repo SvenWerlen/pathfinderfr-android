@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
                 countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
-                countRaces, countRacesFiltered, countClasses, countClassesFiltered,
+                countRacesFiltered, countRaces, countClassesFiltered, countClasses,
                 countFavorites, countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");

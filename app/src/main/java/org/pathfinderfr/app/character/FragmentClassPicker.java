@@ -30,6 +30,7 @@ import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,9 +53,11 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
     private TextView selectedDescr; // TextView (description) currently selected
     private TextView selectedLevel; // TextView (level) currently selected
 
+    private List<TextView> levels;
 
     public FragmentClassPicker() {
         // Required empty public constructor
+        levels = new ArrayList<>();
     }
 
     public void setListener(OnFragmentInteractionListener listener) {
@@ -130,6 +133,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         selectedDescr = descr == null ? selectedDescr : descr;
         selectedDescr.setVisibility(View.VISIBLE);
         classId = (Long)selectedName.getTag();
+        Class selectedClass = (Class)DBHelper.getInstance(getContext()).fetchEntity(classId, ClassFactory.getInstance());
         this.level = level;
 
         if(selectedLevel != null) {
@@ -137,6 +141,18 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             selectedLevel.setBackground(example.getBackground());
             selectedLevel.setTextColor(example.getTextColors());
             selectedLevel = null;
+        }
+
+        int lvl = 1;
+        int maxClassLvl = (selectedClass == null ? maxLevel : selectedClass.getMaxLevel());
+        System.out.println("MAXLEVEL = " + maxClassLvl);
+        for(TextView tv : levels) {
+            if(lvl <= maxClassLvl) {
+                tv.setVisibility(View.VISIBLE);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
+            lvl++;
         }
 
         TextView predefined = rootView.findViewWithTag("level" + this.level);
@@ -183,6 +199,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             tv.setTag("level" + i);
             tv.setOnClickListener(this);
             levelSelector.addView(tv);
+            levels.add(tv);
         }
 
         List<DBEntity> entities =
