@@ -11,7 +11,7 @@ public class CharacterUtil {
 
     public static String getAttackBonusAsString(int[] bab) {
         if(bab == null) {
-            return null;
+            return "";
         }
         StringBuffer buf = new StringBuffer();
         for(int val : bab) {
