@@ -72,7 +72,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
                 .getLong(PREF_SELECTED_CHARACTER_ID, 0L);
         character = (Character)helper.fetchEntity(characterId, CharacterFactory.getInstance());
 
-        // if no character created yet, search for existing characters
+        // if characterId not found? Try to find first character in list
         if(character == null) {
             List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
             if (list != null && list.size() > 0) {
@@ -82,17 +82,16 @@ public class CharacterSheetActivity extends AppCompatActivity {
                 PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
                         putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
             }
+            // something must be wrong
+            else {
+                Snackbar.make(findViewById(R.id.sheet_container), getResources().getString(R.string.character_tab_nocharacter),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                return false;
+            }
         }
 
         if(currentTab != TAB_HOME) {
-            if (character == null) {
-                View root = findViewById(R.id.sheet_container);
-                if (root != null) {
-                    Snackbar.make(root, getResources().getString(R.string.character_tab_failed),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-                return false;
-            } else if (character.getClassesCount() == 0) {
+            if (character.getClassesCount() == 0) {
                 View root = findViewById(R.id.sheet_container);
                 if (root != null) {
                     Snackbar.make(root, getResources().getString(R.string.character_tab_failed_class),
@@ -162,11 +161,14 @@ public class CharacterSheetActivity extends AppCompatActivity {
         List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
         if(list != null && list.size() > 0) {
             characterId = list.get(0).getId();
-
-            // keep selected character in preferences
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                    putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
+        } else {
+            Character character = new Character();
+            characterId = DBHelper.getInstance(getBaseContext()).insertEntity(character);
         }
+
+        // keep selected character in preferences
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
 
         currentTab = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
                 .getInt(PREF_SELECTED_TAB, TAB_HOME);

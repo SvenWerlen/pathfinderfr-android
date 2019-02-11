@@ -58,7 +58,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     private List<ImageView> modifPickers;
 
     private long characterId;
-ProfileListener listener;
+    ProfileListener listener;
     private OnFragmentInteractionListener mListener;
 
 
@@ -70,10 +70,13 @@ ProfileListener listener;
     }
 
     /**
-     * @param characterId character id to display or 0 if new character
+     * @param characterId character id to display (should never be <=0)
      * @return A new instance of fragment SheetMainFragment.
      */
     public static SheetMainFragment newInstance(long characterId) {
+        if(characterId<=0) {
+            throw new IllegalArgumentException("Invalid characterId " + characterId);
+        }
         SheetMainFragment fragment = new SheetMainFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_CHARACTER_ID, characterId);
@@ -155,7 +158,7 @@ ProfileListener listener;
             character = (Character)DBHelper.getInstance(getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
         }
         if(character == null) {
-            character = new Character();
+            throw new IllegalStateException("Something is wrong! Invalid character.");
         } else {
             initializeCharacterModifsStates(view.getContext(), character);
         }

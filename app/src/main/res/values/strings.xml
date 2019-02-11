@@ -119,7 +119,7 @@
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_spells">Sorts</string>
 
-    <string name="character_tab_failed">Le personnage n\'a pas encore été créé!</string>
+    <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
     <string name="character_tab_failed_class">Veuillez choisir une classe!</string>
 
     <!-- Character abilities -->
