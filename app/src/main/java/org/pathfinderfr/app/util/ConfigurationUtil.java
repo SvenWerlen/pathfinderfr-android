@@ -57,7 +57,7 @@ public class ConfigurationUtil {
     }
 
 
-    public String[] getSources() {
+    public String[] getAvailableSources() {
         return sources;
     }
 

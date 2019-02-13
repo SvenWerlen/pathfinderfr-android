@@ -58,18 +58,13 @@ public class FavoriteFactory extends DBEntityFactory {
 
     /**
      * Replaces default implementation in order to add column "factoryid" and "entityid" and change default ordering
+     * No support for sources
      */
     @Override
-    public String getQueryFetchAll() {
+    public String getQueryFetchAll(String... sources) {
         return String.format("SELECT %s,%s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
                 COLUMN_ID, COLUMN_NAME, COLUMN_FACTORY_ID, COLUMN_ENTITY_ID, getTableName(),
                 COLUMN_FACTORY_ID + "," + COLUMN_NAME);
-    }
-
-    @Override
-    public String getQueryFetchAll(String... sources) {
-        // Favorites have no sources
-        return getQueryFetchAll();
     }
 
     public String getQueryFetchByIds(String factoryId, long id) {

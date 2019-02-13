@@ -17,15 +17,11 @@ import java.util.regex.Pattern;
 
 public class SpellFilter {
 
-    public List<Spell> spells;
-
     private HashSet<String> filterSchool;
-    private HashSet<String> filterClass;
-    private HashSet<String> filterLevel;
+    private HashSet<Long> filterClass;
+    private HashSet<Long> filterLevel;
 
-
-    public SpellFilter(List<Spell> spells, String preferences) {
-        this.spells = spells;
+    public SpellFilter(String preferences) {
         filterSchool = new HashSet<>();
         filterClass = new HashSet<>();
         filterLevel = new HashSet<>();
@@ -40,176 +36,21 @@ public class SpellFilter {
                     filterSchool.addAll(Arrays.asList(prefs[0].split(",")));
                 }
                 if(prefs[1].length()>0) {
-                    filterClass.addAll(Arrays.asList(prefs[1].split(",")));
-                }
-                if(prefs[2].length()>0) {
-                    filterLevel.addAll(Arrays.asList(prefs[2].split(",")));
-                }
-            }
-        }
-    }
-
-    /**
-     * This function cleans the "school" data to avoid duplicates
-     * @param school original value (from import)
-     * @return clean value
-     */
-    public static String cleanSchool(String school) {
-        // only take first word
-        Pattern pattern = Pattern.compile("([A-zÀ-ú]+).*");
-        Matcher matcher = pattern.matcher(school.toLowerCase());
-        if (matcher.find())
-        {
-            String clean = matcher.group(1);
-            // capitalize first letter only
-            return clean.substring(0, 1).toUpperCase() + clean.substring(1);
-        }
-        return null;
-    }
-
-    /**
-     * @return the class and minimum level for given classes and spell
-     * Ex: if classes = {Barde, Magicien} and spell is available for "Bar 2, Mag 1", the result will be Mag 1
-     */
-    public static Pair<String,Integer> getLevel(List<String> classes, Spell spell) {
-        List<Pair<String,Integer>> levels = cleanClasses(spell.getLevel());
-
-        Set<String> classNames = new HashSet<>();
-        for(String name : classes) {
-            // TODO: ugly fix for Barbare != Barde (Bar)
-            if(!"Barbare".equalsIgnoreCase(name)) {
-                classNames.add(cleanClass(name));
-            }
-        }
-
-        // find lowest level for given classes
-        Pair<String, Integer> min = null;
-        for(Pair<String,Integer> pair : levels) {
-            if(classNames.contains(pair.first) && (min == null || min.second > pair.second)) {
-                min = pair;
-            }
-        }
-
-        return min;
-    }
-
-    /**
-     * @return the list of unique schools ordered by name
-     */
-    public List<String> getSchools() {
-        Set<String> schools = new HashSet<String>();
-        for( Spell s: spells) {
-            if(s.getSchool() == null) {
-                Log.w(SpellFilter.class.getSimpleName(), "Missing school: " + s);
-                continue;
-            }
-            String clean = cleanSchool(s.getSchool());
-            if(clean != null) {
-                schools.add(clean);
-            }
-        }
-        List<String> uniqSchools = new ArrayList<>();
-        uniqSchools.addAll(schools);
-        Collator collator = Collator.getInstance();
-        Collections.sort(uniqSchools,collator);
-        return uniqSchools;
-    }
-
-    /**
-     * Returns a clean text representation of the class (3 chars)
-     * @param cl class name
-     * @return clean class (3 chars, first capitalized)
-     */
-    public static String cleanClass(String cl) {
-        Pattern pattern = Pattern.compile("([A-zÀ-ú]+)");
-        Matcher matcher = pattern.matcher(cl.toLowerCase());
-        if (matcher.find())
-        {
-            String cleanClass = matcher.group(1);
-            if(cleanClass.length() > 3) {
-                cleanClass = cleanClass.substring(0,3);
-            }
-            // capitalize first letter only
-            cleanClass = cleanClass.substring(0, 1).toUpperCase() + cleanClass.substring(1);
-            return cleanClass;
-        }
-        return null;
-    }
-
-    /**
-     * This function cleans the "class" data to avoid duplicates
-     *
-     * Examples:
-     *   Alch 3,  Conj 3, Ens/Mag 3, Magus 3, Sor 3
-     *   ensorceleur/magicien 3, sorcière 3
-     *
-     * @param cl (class) original value (from import)
-     * @return clean value (list of <class,level>)
-     */
-    private static List<Pair<String,Integer>> cleanClasses(String cl) {
-        List<String> classes = new ArrayList<>();
-        // Split by comma ',' and eventually by slash '/'
-        String[] regex = cl.split(",");
-        for(String s : regex) {
-            s = s.toLowerCase().trim();
-            if(s.indexOf('/') > 0) {
-                // extract level
-                String level = s.substring(s.length()-2);
-                for(String el: s.split("/")) {
-                    if(el.endsWith(level)) {
-                        classes.add(el);
-                    } else {
-                        classes.add(el + level);
+                    for(String cl : Arrays.asList(prefs[1].split(","))) {
+                        try {
+                            filterClass.add(Long.valueOf(cl));
+                        } catch(NumberFormatException e) {}
                     }
                 }
-            } else {
-                classes.add(s);
-            }
-        }
-        // clean data by removing level and spaces, and reduce to 3-letters acronym
-        List<Pair<String,Integer>> clean = new ArrayList<>();
-        for(String c: classes) {
-            Pattern pattern = Pattern.compile("([A-zÀ-ú]+).*([0-9])");
-            Matcher matcher = pattern.matcher(c.toLowerCase());
-            if (matcher.find())
-            {
-                String cleanClass = matcher.group(1);
-                Integer cleanLevel = Integer.parseInt(matcher.group(2));
-                if(cleanClass.length() > 3) {
-                    cleanClass = cleanClass.substring(0,3);
-                }
-                // capitalize first letter only
-                cleanClass = cleanClass.substring(0, 1).toUpperCase() + cleanClass.substring(1);
-
-                clean.add(new Pair<String,Integer>(cleanClass,cleanLevel));
-            }
-        }
-
-        return clean;
-    }
-
-    /**
-     * @return the list of unique classes ordered by name
-     */
-    public List<String> getClasses() {
-        Set<String> classes = new HashSet<String>();
-        for( Spell s: spells) {
-            if(s.getLevel() == null) {
-                Log.w(SpellFilter.class.getSimpleName(), "Missing level: " + s);
-                continue;
-            }
-            List<Pair<String,Integer>> clean = cleanClasses(s.getLevel());
-            if(clean != null) {
-                for(Pair<String,Integer> p : clean) {
-                    classes.add(p.first);
+                if(prefs[2].length()>0) {
+                    for(String lvl : Arrays.asList(prefs[2].split(","))) {
+                        try {
+                            filterLevel.add(Long.valueOf(lvl));
+                        } catch(NumberFormatException e) {}
+                    }
                 }
             }
         }
-        List<String> uniqClass = new ArrayList<>();
-        uniqClass.addAll(classes);
-        Collator collator = Collator.getInstance();
-        Collections.sort(uniqClass,collator);
-        return uniqClass;
     }
 
     public void clearFilters() {
@@ -222,12 +63,16 @@ public class SpellFilter {
         filterSchool.add(school.toLowerCase());
     }
 
-    public void addFilterClass(String cl) {
-        filterClass.add(cl.toLowerCase());
+    public void addFilterClass(Long classId) {
+        filterClass.add(classId);
     }
 
-    public void addFilterLevel(String level) {
-        filterLevel.add(level.toLowerCase());
+    public void addFilterLevel(Long level) {
+        filterLevel.add(level);
+    }
+
+    public boolean hasAnyFilter() {
+        return hasFilterSchool() || hasFilterClass() || hasFilterLevel();
     }
 
     /**
@@ -243,83 +88,35 @@ public class SpellFilter {
     }
 
     /**
-     * @param cl spell class
+     * @param classId spell classId
      * @return true if filter is enabled for given class. false if disabled or "All" selected
      */
-    public boolean isFilterClassEnabled(String cl) {
-        return filterClass.contains(cl.toLowerCase());
+    public boolean isFilterClassEnabled(Long classId) {
+        return filterClass.contains(classId);
     }
 
     public boolean hasFilterClass() {
         return !filterClass.isEmpty();
     }
 
+    public Long[] getFilterClass() {
+        return filterClass.toArray(new Long[0]);
+    }
+
     /**
      * @param level spell level
      * @return true if filter is enabled for given level. false if disabled or "All" selected
      */
-    public boolean isFilterLevelEnabled(String level) {
-        return filterLevel.contains(level.toLowerCase());
+    public boolean isFilterLevelEnabled(Long level) {
+        return filterLevel.contains(level);
     }
 
     public boolean hasFilterLevel() {
         return !filterLevel.isEmpty();
     }
 
-    public List<Spell> getFilteredList() {
-        List<Spell> filtered = new ArrayList<>();
-
-        for(Spell s: spells) {
-            boolean ok = true;
-            if(ok && !filterSchool.isEmpty()) {
-                boolean found = false;
-                for(String f: filterSchool) {
-                    if(s.getSchool().toLowerCase().indexOf(f) >= 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                ok = ok && found;
-            }
-            // special case: class & level combined together
-            if(ok && !filterClass.isEmpty() && !filterLevel.isEmpty()) {
-                List<Pair<String, Integer>> classes = cleanClasses(s.getLevel());
-                boolean found = false;
-                for(Pair<String, Integer> c: classes) {
-                    if(filterClass.contains(c.first.toLowerCase()) && filterLevel.contains(String.valueOf(c.second))) {
-                        found = true;
-                        break;
-                    }
-                }
-                ok = ok && found;
-            }
-            // filter only on class
-            if(ok && !filterClass.isEmpty() && filterLevel.isEmpty()) {
-                boolean found = false;
-                for(String f: filterClass) {
-                    if(s.getLevel().toLowerCase().indexOf(f) >= 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                ok = ok && found;
-            }
-            // filter only on level
-            if(ok && filterClass.isEmpty() && !filterLevel.isEmpty()) {
-                boolean found = false;
-                for(String f: filterLevel) {
-                    if(s.getLevel().indexOf(f) >= 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                ok = ok && found;
-            }
-            if(ok) {
-                filtered.add(s);
-            }
-        }
-        return filtered;
+    public Long[] getFilterLevel() {
+        return filterLevel.toArray(new Long[0]);
     }
 
     /**
@@ -335,15 +132,15 @@ public class SpellFilter {
         }
         buf.append(':');
         if(!filterClass.isEmpty()) {
-            for (String s : filterClass) {
-                buf.append(s).append(',');
+            for (Long cl : filterClass) {
+                buf.append(cl).append(',');
             }
             buf.deleteCharAt(buf.length() - 1);
         }
         buf.append(':');
         if(!filterLevel.isEmpty()) {
-            for (String s : filterLevel) {
-                buf.append(s).append(',');
+            for (Long lvl : filterLevel) {
+                buf.append(lvl).append(',');
             }
             buf.deleteCharAt(buf.length() - 1);
         }

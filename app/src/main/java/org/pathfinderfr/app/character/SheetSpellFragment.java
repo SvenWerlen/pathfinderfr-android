@@ -37,6 +37,7 @@ import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellTable;
+import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.text.Collator;
@@ -145,19 +146,22 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
 
-        SpellTable sTable = new SpellTable(classNames);
+        SpellTable sTable = new SpellTable(classNamesShort);
         final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
         List<DBEntity> spells = dbHelper.getAllEntities(SpellFactory.getInstance(), PreferenceUtil.getSources(view.getContext()));
+        long time = System.currentTimeMillis();
         for(DBEntity entity : spells) {
             // only add if favorite (or filtering disabled)
             if(!filterOnlyFav || favorites.contains(entity.getId())) {
                 sTable.addSpell((Spell) entity);
             }
         }
+        System.out.println("TIME1 = " + (System.currentTimeMillis()-time));
 
         final int colorDisabled = view.getContext().getResources().getColor(R.color.colorDisabled);
         final int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
 
+        time = System.currentTimeMillis();
         int rowId = 0;
         for(SpellTable.SpellLevel level : sTable.getLevels()) {
             TableRow rowLevel = new TableRow(view.getContext());
@@ -189,8 +193,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                         rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
                                 rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
                         TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                        if (classNames.size() > 1) {
-                            Pair<String, Integer> infos = SpellFilter.getLevel(classNames, spell);
+                        if (classNamesShort.size() > 1) {
+                            Pair<String, Integer> infos = SpellUtil.getLevel(classNamesShort, spell, false);
                             spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
                         } else {
                             spellTv.setText(spell.getName());
@@ -245,8 +249,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                     rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
                             rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
                     TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                    if (classNames.size() > 1) {
-                        Pair<String, Integer> infos = SpellFilter.getLevel(classNames, spell);
+                    if (classNamesShort.size() > 1) {
+                        Pair<String, Integer> infos = SpellUtil.getLevel(classNamesShort, spell, false);
                         spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
                     } else {
                         spellTv.setText(spell.getName());
@@ -290,6 +294,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                 }
             }
         }
+
+        System.out.println("TIME2 = " + (System.currentTimeMillis()-time));
 
         view.findViewById(R.id.spells_table_header).setOnClickListener(new View.OnClickListener() {
             @Override

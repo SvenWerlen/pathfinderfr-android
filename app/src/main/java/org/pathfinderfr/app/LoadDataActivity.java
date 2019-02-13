@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.LoadDataTask;
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
@@ -143,6 +144,8 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
 
         final String buttonText = getResources().getString(R.string.loaddata_start);
         final int progress = 100;
+
+        DBHelper.getInstance(getApplicationContext()).fillSpellClassLevel();
 
         runOnUiThread(new Runnable() {
             @Override

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
@@ -18,16 +19,27 @@ import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.database.entity.Spell;
+import org.pathfinderfr.app.database.entity.SpellClassLevel;
+import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
 
     private static DBHelper instance;
 
@@ -61,6 +73,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             db.execSQL(f.getQueryCreateTable());
         }
+        // special tables
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", SpellClassLevelFactory.TABLENAME));
+        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
+        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
     }
 
     @Override
@@ -98,6 +114,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV6());
             oldVersion = 6;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 6");
+        }
+        // version 7 introduced new table for spell filtering optimization
+        if(oldVersion == 6) {
+            db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
+            db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 7");
         }
     }
 
@@ -226,16 +248,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
-        Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters",sources.length));
+        Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters", (sources == null ? 0 : sources.length)));
 
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor res;
-            if(sources.length > 0) {
-                res = db.rawQuery(factory.getQueryFetchAll(sources), null);
-            } else {
-                res = db.rawQuery(factory.getQueryFetchAll(), null);
-            }
+            res = db.rawQuery(factory.getQueryFetchAll(sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
@@ -255,11 +273,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor res;
-            if(sources.length > 0) {
-                res = db.rawQuery(factory.getQueryFetchAllWithAllFields(sources), null);
-            } else {
-                res = db.rawQuery(factory.getQueryFetchAllWithAllFields(), null);
-            }
+            res = db.rawQuery(factory.getQueryFetchAllWithAllFields(sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
@@ -314,7 +328,7 @@ public class DBHelper extends SQLiteOpenHelper {
             res.moveToFirst();
             int count = res.getInt(res.getColumnIndex("total"));
              **/
-            if(sources.length == 0 || count == 0) {
+            if(sources == null || sources.length == 0 || count == 0) {
                 if(count == 0) {
                     Log.i(DBHelper.class.getSimpleName(), String.format("No column %s found in table %s",
                             factory.getColumnSource(), factory.getTableName()));
@@ -334,6 +348,94 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void fillSpellClassLevel() {
+        List<DBEntity> spells = getAllEntities(SpellFactory.getInstance());
+        List<DBEntity> classes = getAllEntities(ClassFactory.getInstance());
+        // Map of <classShortName,classId>
+        Map<String,Long> classMap = new HashMap<>();
+        for(DBEntity cl : classes) {
+            classMap.put(((Class)cl).getShortName(),cl.getId());
+        }
 
+        SQLiteDatabase db = this.getWritableDatabase();
+        for(DBEntity spell : spells) {
+            List<Pair<String,Integer>> classLevels = SpellUtil.cleanClasses(((Spell)spell).getLevel());
+            for(Pair<String,Integer> clLvl: classLevels) {
+                // find matching class
+                if(classMap.containsKey(clLvl.first)) {
+                    SpellClassLevel entity = new SpellClassLevel();
+                    entity.setSpellId(spell.getId());
+                    entity.setClassId(classMap.get(clLvl.first));
+                    entity.setLevel(clLvl.second);
+                    ContentValues contentValues = SpellClassLevelFactory.getInstance().generateContentValues(entity);
+                    db.insert(SpellClassLevelFactory.TABLENAME, null, contentValues);
+                }
+                // something is wrong
+                else {
+                    Log.w(DBHelper.class.getSimpleName(), "Couldn't find class matching: " + clLvl.first);
+                }
+            }
+        }
+    }
+
+    public Set<Long> getClassesWithSpells() {
+        Set<Long> list = new HashSet<>();
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res = db.rawQuery(SpellClassLevelFactory.getInstance().getQueryClassesWithSpells(), null);
+            Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                list.add(res.getLong(0));
+                res.moveToNext();
+            }
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public Set<String> getSpellSchools() {
+        List<String> list = new ArrayList<>();
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res = db.rawQuery(SpellFactory.getInstance().getQuerySchools(), null);
+            Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                list.add(res.getString(0));
+                res.moveToNext();
+            }
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+        }
+
+        Collections.sort(list);
+        Set<String> result = new HashSet<>();
+        result.addAll(list);
+        return result;
+    }
+
+    public List<Spell> getSpells(SpellFilter filter, String... sources) {
+        ArrayList<Spell> list = new ArrayList<>();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res = db.rawQuery(SpellFactory.getInstance().getQueryFetchAll(filter, sources), null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                Spell spell = (Spell) SpellFactory.getInstance().generateEntity(res);
+                if(!filter.hasFilterSchool() || filter.isFilterSchoolEnabled(spell.getSchool())) {
+                    list.add(spell);
+                }
+                res.moveToNext();
+            }
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+        }
+        return list;
+    }
 }
 

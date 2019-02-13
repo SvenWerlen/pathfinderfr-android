@@ -21,6 +21,10 @@ public class Class extends DBEntity {
     }
 
     public String getShortName() {
+        // @TODO replace ugly fix for Barbare
+        if("Barbare".equals(name)) {
+            return "Brb";
+        }
         String name = getName().toLowerCase();
         if(name.length()>=3) {
             return name.substring(0, 1).toUpperCase() + name.substring(1, 3);

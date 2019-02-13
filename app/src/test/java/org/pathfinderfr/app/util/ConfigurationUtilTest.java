@@ -43,6 +43,6 @@ public class ConfigurationUtilTest {
         assertNotNull(cfg.getProperties());
         // cannot load data because of Android implementation (couldn't find a way to load assets)
         assertTrue(cfg.getProperties().isEmpty());
-        assertEquals(0, cfg.getSources().length);
+        assertEquals(0, cfg.getAvailableSources().length);
     }
 }

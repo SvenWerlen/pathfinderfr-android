@@ -32,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.character.FragmentAbilityPicker;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
@@ -73,12 +72,11 @@ public class MainActivity extends AppCompatActivity
 
     DBHelper dbhelper;
 
-    // list that is displayed
+    long totalCount;
+    // list that is being displayed
     List<DBEntity> listCur = new ArrayList<>();
-    // complete list (from database)
+    // list from database (including filters)
     List<DBEntity> listFull = new ArrayList<>();
-    // filtered list
-    List<DBEntity> listFiltered = null;
     // search criteria
     String search = null;
 
@@ -128,7 +126,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable s) {
                 search = s.toString().toLowerCase();
-                applyFiltersAndSearch();
+                applySearch();
             }
         });
 
@@ -146,10 +144,9 @@ public class MainActivity extends AppCompatActivity
                 searchInput.setText("");
                 searchInput.setVisibility(View.GONE);
                 search = null;
-                applyFiltersAndSearch();
+                applySearch();
             }
         });
-
 
         // filter button
         FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
@@ -160,12 +157,58 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // navigation
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        updateWelcomeAndNavigation();
+
+        // Disclaimer / copyright
+        boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
+        findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_copyright).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
+            }
+        });
+
+        // reset list after screen rotation
+        if(savedInstanceState != null) {
+            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+            if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
+            } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
+            } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
+            } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
+            }
+
+            FilterSpellFragment fragSpellFilter = (FilterSpellFragment)getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_SPELL_FILTER);
+            if (fragSpellFilter != null) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
+            }
+
+            if(savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte)0) == 1) {
+                searchButton.performClick();
+            }
+        }
+    }
+
+    private void updateWelcomeAndNavigation() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
 
         String[] sources = PreferenceUtil.getSources(getBaseContext());
-        if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
+        if(sources.length == ConfigurationUtil.getInstance().getAvailableSources().length) {
             sources = new String[0];
         }
 
@@ -182,14 +225,7 @@ public class MainActivity extends AppCompatActivity
         long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
 
         long countSources = sources.length;
-        long countSourcesTotal = ConfigurationUtil.getInstance().getSources().length;
-
-        // search for already created characters
-        long characterId = 0;
-        List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
-        if(list != null && list.size() > 0) {
-            characterId = list.get(0).getId();
-        }
+        long countSourcesTotal = ConfigurationUtil.getInstance().getAvailableSources().length;
 
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
@@ -215,17 +251,6 @@ public class MainActivity extends AppCompatActivity
 
         textview.setText(Html.fromHtml(welcomeText));
 
-        // Disclaimer / copyright
-        boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
-        findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
-        findViewById(R.id.welcome_copyright).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
-            }
-        });
-
         // Navigation
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -247,58 +272,19 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, mTwoPane));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if(countFavorites == 0) {
-            navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
-        }
-        if(countSkills == 0) {
-            navigationView.getMenu().findItem(R.id.nav_skills).setVisible(false);
-        }
-        if(countFeats == 0) {
-            navigationView.getMenu().findItem(R.id.nav_feats).setVisible(false);
-        }
-        if(countSpells == 0) {
-            navigationView.getMenu().findItem(R.id.nav_spells).setVisible(false);
-        }
-        if(countClasses == 0 || countRaces == 0) {
-            navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(false);
-        }
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // reset list after screen rotation
-        if(savedInstanceState != null) {
-            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
-
-            if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
-            } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
-            } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
-            } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
-            }
-
-            FilterSpellFragment fragSpellFilter = (FilterSpellFragment)getSupportFragmentManager()
-                    .findFragmentByTag(DIALOG_SPELL_FILTER);
-            if (fragSpellFilter != null) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                List<Spell> spellList = (List<Spell>)(List<?>)listFull;
-                fragSpellFilter.setFilter(new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
-            }
-
-            if(savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte)0) == 1) {
-                searchButton.performClick();
-            }
-        }
+        navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
+        navigationView.getMenu().findItem(R.id.nav_skills).setVisible(countSkills > 0);
+        navigationView.getMenu().findItem(R.id.nav_feats).setVisible(countFeats > 0);
+        navigationView.getMenu().findItem(R.id.nav_spells).setVisible(countSpells > 0);
+        navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(countClasses > 0 && countRaces > 0);
     }
 
     /**
      * This function applies filter and search, then refreshes recycler view
      */
-    private void applyFiltersAndSearch() {
+    private void applySearch() {
         // pick filtered list or whole list
-        List<DBEntity> list = (listFiltered == null ? listFull : listFiltered);
+        List<DBEntity> list = listFull;
 
         listCur.clear();
         for (DBEntity el : list) {
@@ -320,38 +306,15 @@ public class MainActivity extends AppCompatActivity
             // Change menu title by factory (ie. type) name
             Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
             String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
-            if (listFiltered == null) {
+            if (listCur.size() == totalCount) {
                 title += String.format(" (%d)", listFull.size());
             } else {
-                title += String.format(" (%d/%d)", listCur.size(), listFull.size());
+                title += String.format(" (%d/%d)", listCur.size(), totalCount);
             }
             if (toolBar != null && title != null) {
                 toolBar.setTitle(title);
             }
         }
-    }
-
-    /**
-     * Applies the filters on list and updates the listFiltered variable
-     */
-    private void generateFilteredList() {
-        String factoryId = PreferenceManager.getDefaultSharedPreferences(
-                getBaseContext()).getString(KEY_CUR_FACTORY, null);
-
-        if(SpellFactory.FACTORY_ID.equals(factoryId)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            List<Spell> spells = (List<Spell>)(List<?>)listFull;
-            SpellFilter filter = new SpellFilter(spells,prefs.getString(KEY_SPELL_FILTERS, null));
-            listFiltered = (List<DBEntity>)(List<?>)filter.getFilteredList();
-            if(listFiltered.size() == listFull.size()) {
-                listFiltered = null;
-            }
-        }
-
-        // change icon if filter applied
-        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
-        int filterButtonId = listFiltered == null ? R.drawable.ic_filter : R.drawable.ic_filtered;
-        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
     @Override
@@ -402,15 +365,16 @@ public class MainActivity extends AppCompatActivity
         String[] sources = PreferenceUtil.getSources(getBaseContext());
         Log.i(MainActivity.class.getSimpleName(), "Sources enabled: " + StringUtil.listToString(sources, ','));
 
+        boolean filterActive = false;
+
         List<DBEntity> newEntities = null;
         if (id == R.id.nav_home && factoryId != null) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
                     .putString(KEY_CUR_FACTORY,null).apply();
             factoryId = null;
         } else if (id == R.id.nav_favorites) {
             newEntities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
+            totalCount = newEntities.size();
             factoryId = FavoriteFactory.FACTORY_ID;
         } else if (id == R.id.nav_sheet) {
             Intent intent = new Intent(this, CharacterSheetActivity.class);
@@ -420,19 +384,21 @@ public class MainActivity extends AppCompatActivity
                     putString(KEY_CUR_FACTORY,factoryId).apply();
         } else if (id == R.id.nav_skills) {
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
+            totalCount = newEntities.size();
             factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
-            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
-                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance());
-            } else {
-                newEntities = dbhelper.getAllEntities(FeatFactory.getInstance(), sources);
-            }
+            newEntities = dbhelper.getAllEntities(FeatFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+            totalCount = newEntities.size();
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
-            if(sources.length == ConfigurationUtil.getInstance().getSources().length) {
-                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance());
-            } else {
-                newEntities = dbhelper.getAllEntities(SpellFactory.getInstance(), sources);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SpellFilter filter = new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null));
+            filterActive = filter.hasAnyFilter();
+            newEntities = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter, sources);
+            totalCount = newEntities.size();
+            if(filterActive) {
+                totalCount = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
             }
             factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
@@ -440,7 +406,15 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
-        if (newEntities != null) {
+        if (factoryId == null) {
+            // reset activity
+            findViewById(R.id.welcomeScroller).setVisibility(View.VISIBLE);
+            findViewById(R.id.welcome_copyright).setVisibility(View.VISIBLE);
+            findViewById(R.id.closeSearchButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.searchButton).setVisibility(View.GONE);
+            findViewById(R.id.filterButton).setVisibility(View.GONE);
+        }
+        else if (newEntities != null) {
             boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
@@ -459,10 +433,13 @@ public class MainActivity extends AppCompatActivity
             // Update view
             listFull.clear();
             listFull.addAll(newEntities);
-            listFiltered = null;
             search = null;
-            generateFilteredList();
-            applyFiltersAndSearch();
+            applySearch();
+
+            // change icon if filter applied
+            FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+            int filterButtonId = filterActive  ? R.drawable.ic_filtered : R.drawable.ic_filter;
+            filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -478,13 +455,15 @@ public class MainActivity extends AppCompatActivity
         boolean reloadRequired = prefs.getBoolean(MainActivity.KEY_RELOAD_REQUIRED, false);
         String factory = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
+        updateWelcomeAndNavigation();
+
         if(reloadRequired) {
             if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
                 List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
                 listFull.clear();
                 listFull.addAll(entities);
-                generateFilteredList();
-                applyFiltersAndSearch();
+                totalCount = listFull.size();
+                applySearch();
             }
             prefs.edit().putBoolean(MainActivity.KEY_RELOAD_REQUIRED, false).apply();
         }
@@ -509,7 +488,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             List<Spell> spellList = (List<Spell>)(List<?>)listFull;
             DialogFragment newFragment = FilterSpellFragment.newInstance(
-                    new SpellFilter(spellList, prefs.getString(KEY_SPELL_FILTERS, null)));
+                    new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
             newFragment.show(ft, DIALOG_SPELL_FILTER);
         }
 
@@ -518,9 +497,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onApplyFilter(SpellFilter filter) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
-        generateFilteredList();
-        applyFiltersAndSearch();
+        listFull = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter, sources);
+        applySearch();
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = filter.hasAnyFilter() ? R.drawable.ic_filtered : R.drawable.ic_filter;
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
     @Override

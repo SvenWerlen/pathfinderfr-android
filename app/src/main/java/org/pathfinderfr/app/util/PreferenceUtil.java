@@ -12,7 +12,7 @@ public class PreferenceUtil {
     public static String[] getSources(Context ctx) {
         List<String> list = new ArrayList<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        for(String source: ConfigurationUtil.getInstance().getSources()) {
+        for(String source: ConfigurationUtil.getInstance().getAvailableSources()) {
             if(preferences.getBoolean("source_" + source, true)) {
                 list.add(source.toUpperCase());
             }

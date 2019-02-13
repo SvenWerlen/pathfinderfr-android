@@ -12,10 +12,17 @@ import android.widget.CheckBox;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -93,8 +100,13 @@ public class FilterSpellFragment extends DialogFragment implements View.OnClickL
         checkLevel.setOnClickListener(this);
 
         if(filter != null) {
+            DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
+            String[] sources = PreferenceUtil.getSources(rootView.getContext());
+            List<DBEntity> classes = dbHelper.getAllEntities(ClassFactory.getInstance(), sources);
+            Set<Long> classIds = dbHelper.getClassesWithSpells();
+
             checkSchool.setChecked(!filter.hasFilterSchool());
-            for( String s: filter.getSchools()) {
+            for( String s: dbHelper.getSpellSchools()) {
                 CheckBox cb = new CheckBox(getActivity());
                 cb.setText(s);
                 cb.setTag(TAG_SCHOOL);
@@ -107,27 +119,30 @@ public class FilterSpellFragment extends DialogFragment implements View.OnClickL
             }
 
             checkClass.setChecked(!filter.hasFilterClass());
-            for( String cl: filter.getClasses()) {
-                CheckBox cb = new CheckBox(getActivity());
-                cb.setText(cl);
-                cb.setTag(TAG_CLASS);
-                cb.setLayoutParams(params);
-                cb.setOnClickListener(this);
-                cb.setEnabled(filter.hasFilterClass());
-                cb.setChecked(filter.isFilterClassEnabled(cl));
-                layoutClass.addView(cb);
-                cbClass.add(cb);
+            for( DBEntity cl: classes) {
+                if(classIds.contains(cl.getId())) {
+                    CheckBox cb = new CheckBox(getActivity());
+                    Long classId = ((Class) cl).getId();
+                    cb.setText(((Class) cl).getShortName());
+                    cb.setTag(new Pair<Integer, Long>(TAG_CLASS,cl.getId()));
+                    cb.setLayoutParams(params);
+                    cb.setOnClickListener(this);
+                    cb.setEnabled(filter.hasFilterClass());
+                    cb.setChecked(filter.isFilterClassEnabled(classId));
+                    layoutClass.addView(cb);
+                    cbClass.add(cb);
+                }
             }
 
             checkLevel.setChecked(!filter.hasFilterLevel());
-            for(int l=0; l<10; l++) {
+            for(long l=0; l<10; l++) {
                 CheckBox cb = new CheckBox(getActivity());
                 cb.setText(String.valueOf(l));
-                cb.setTag(TAG_LEVEL);
+                cb.setTag(new Pair<Integer, Long>(TAG_LEVEL,l));
                 cb.setLayoutParams(params);
                 cb.setOnClickListener(this);
                 cb.setEnabled(filter.hasFilterLevel());
-                cb.setChecked(filter.isFilterLevelEnabled(String.valueOf(l)));
+                cb.setChecked(filter.isFilterLevelEnabled(l));
                 layoutLevel.addView(cb);
                 cbLevel.add(cb);
             }
@@ -167,12 +182,12 @@ public class FilterSpellFragment extends DialogFragment implements View.OnClickL
                 }
                 for(CheckBox c : cbClass) {
                     if(c.isChecked()) {
-                        filter.addFilterClass(c.getText().toString());
+                        filter.addFilterClass(((Pair<Integer, Long>)c.getTag()).second);
                     }
                 }
                 for(CheckBox c : cbLevel) {
                     if(c.isChecked()) {
-                        filter.addFilterLevel(c.getText().toString());
+                        filter.addFilterLevel(((Pair<Integer, Long>)c.getTag()).second);
                     }
                 }
                 dismiss();
@@ -213,13 +228,13 @@ public class FilterSpellFragment extends DialogFragment implements View.OnClickL
                 c.setEnabled(!status);
             }
         }
-        else if(cb.getTag() == TAG_SCHOOL) {
+        else if(cb.getTag() instanceof Integer && cb.getTag() == TAG_SCHOOL) {
             ((CheckBox)getView().findViewById(R.id.schoolAll)).setChecked(false);
         }
-        else if(cb.getTag() == TAG_CLASS) {
+        else if(cb.getTag() instanceof Pair && ((Pair<Integer,Long>)cb.getTag()).first == TAG_CLASS) {
             ((CheckBox)getView().findViewById(R.id.classAll)).setChecked(false);
         }
-        else if(cb.getTag() == TAG_LEVEL) {
+        else if(cb.getTag() instanceof Pair && ((Pair<Integer,Long>)cb.getTag()).first == TAG_LEVEL) {
             ((CheckBox)getView().findViewById(R.id.levelAll)).setChecked(false);
         }
 

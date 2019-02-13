@@ -4,8 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.Map;
@@ -100,6 +103,37 @@ public class SpellFactory extends DBEntityFactory {
                 COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
     }
 
+    public String getQuerySchools() {
+        return String.format("SELECT DISTINCT %s FROM %s",
+                COLUMN_SCHOOL, TABLENAME);
+    }
+
+    public String getQueryFetchAll(SpellFilter filter, String... sources) {
+        StringBuffer bufFilter = new StringBuffer();
+        if(sources.length > 0) {
+            String sourceList = StringUtil.listToString( sources,',','\'');
+            bufFilter.append(String.format("%s IN (%s)", COLUMN_SOURCE, sourceList));
+        }
+        if(filter.hasFilterClass()) {
+            String classFilter = StringUtil.listToString(filter.getFilterClass(), ',');
+            bufFilter.append(bufFilter.length() > 0 ? " AND " : "");
+            bufFilter.append(String.format("%s IN (%s)", SpellClassLevelFactory.COLUMN_CLASSID, classFilter));
+        }
+        if(filter.hasFilterLevel()) {
+            String lvlFilter = StringUtil.listToString(filter.getFilterLevel(), ',');
+            bufFilter.append(bufFilter.length() > 0 ? " AND " : "");
+            bufFilter.append(String.format("%s.%s IN (%s)", SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_LEVEL, lvlFilter));
+        }
+
+        String sql = String.format("SELECT DISTINCT %s.%s,%s,%s,%s.%s FROM %s INNER JOIN %s ON %s.%s=%s.%s %s ORDER BY %s COLLATE UNICODE",
+                TABLENAME, COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, TABLENAME, COLUMN_LEVEL, // fields
+                TABLENAME, SpellClassLevelFactory.TABLENAME, TABLENAME, COLUMN_ID, SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_SPELLID, // from inner join
+                bufFilter.length() > 0 ? "WHERE " + bufFilter.toString() : "", // filter
+                COLUMN_NAME); // order by
+        Log.i(SpellFactory.class.getSimpleName(), "SQL = " + sql);
+        return sql;
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Spell)) {
@@ -157,7 +191,7 @@ public class SpellFactory extends DBEntityFactory {
         Spell spell = new Spell();
         spell.setName((String)attributes.get(YAML_NAME));
         spell.setDescription((String)attributes.get(YAML_DESC));
-        spell.setSchool((String)attributes.get(YAML_SCHOOL));
+        spell.setSchool(SpellUtil.cleanSchool((String)attributes.get(YAML_SCHOOL)));
         spell.setReference((String)attributes.get(YAML_REFERENCE));
         spell.setSource((String)attributes.get(YAML_SOURCE));
         spell.setLevel((String)attributes.get(YAML_LEVEL));

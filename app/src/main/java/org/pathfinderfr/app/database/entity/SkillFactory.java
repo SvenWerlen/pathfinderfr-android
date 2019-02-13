@@ -65,8 +65,15 @@ public class SkillFactory extends DBEntityFactory {
     @Override
     public String getQueryFetchAll(String... sources) {
         // Skills have no sources
-        return getQueryFetchAll();
+        return super.getQueryFetchAll();
     }
+
+    @Override
+    public String getQueryFetchAllWithAllFields(String... sources) {
+        // Skills have no sources
+        return super.getQueryFetchAllWithAllFields();
+    }
+
 
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
