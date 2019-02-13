@@ -137,7 +137,6 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         for(DBEntity e : DBHelper.getInstance(view.getContext()).getAllEntities(FavoriteFactory.getInstance())) {
             if(e instanceof Spell) {
                 favorites.add(e.getId());
-                System.out.println("Favorite: " + e.getId());
             }
         }
 
@@ -146,11 +145,17 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
 
+        SpellFilter filter = new SpellFilter(null);
+        for(int i=0; i<character.getClassesCount(); i++) {
+            filter.addFilterClass(character.getClass(i).first.getId());
+        }
+
         SpellTable sTable = new SpellTable(classNamesShort);
         final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
-        List<DBEntity> spells = dbHelper.getAllEntities(SpellFactory.getInstance(), PreferenceUtil.getSources(view.getContext()));
+
         long time = System.currentTimeMillis();
-        for(DBEntity entity : spells) {
+        List<Spell> spells = dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext()));
+        for(Spell entity : spells) {
             // only add if favorite (or filtering disabled)
             if(!filterOnlyFav || favorites.contains(entity.getId())) {
                 sTable.addSpell((Spell) entity);

@@ -36,18 +36,6 @@ public class SpellTable {
     }
 
     public void addSpell(Spell spell) {
-        // check if spell exists for given classes
-        boolean found = false;
-        for(String cl : classNames) {
-            if(spell.getLevel().indexOf(cl) >= 0) {
-                found = true;
-                break;
-            }
-        }
-        if(!found) {
-            return;
-        }
-
         Pair<String, Integer> level = SpellUtil.getLevel(classNames,spell,false);
         // ignore if spell doesn't below to classes
         if(level != null) {
