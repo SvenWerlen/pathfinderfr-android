@@ -461,5 +461,21 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return list;
     }
+
+    /**
+     * @return true if spell indexes have been generated
+     */
+    public boolean hasSpellIndexes() {
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = String.format("SELECT COUNT(*) as total FROM spellclasslevel");
+            Cursor res = db.rawQuery(query, null);
+            res.moveToFirst();
+            return res.getLong(res.getColumnIndex("total")) > 0;
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+            return false;
+        }
+    }
 }
 

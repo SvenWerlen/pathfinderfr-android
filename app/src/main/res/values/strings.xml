@@ -309,6 +309,7 @@
     <!-- Spells -->
     <string name="sheet_spells_empty_list">La classe du personnage ne donne accès à aucun sort.</string>
     <string name="sheet_spells_filter_empty">Aucun sort ne répond à ces critères (filtres).</string>
+    <string name="sheet_spells_indexes_empty">La dernière mise à jour apporte des améliorations de performance. Veuillez recharger les données pour indexer les sorts.</string>
     <string name="sheet_spells_example_label_name">Sort</string>
     <string name="sheet_spells_example_name">Sort (exemple)</string>
     <string name="sheet_spells_example_level">Niveau (exemple)</string>
@@ -329,6 +330,8 @@
     <string name="sheet_tooltip_info">À propos de:</string>
     <string name="sheet_tooltip_close">Fermer</string>
 
+    <!-- Warnings -->
+    <string name="warning_missing_indexes">Veuillez recharger les données pour profiter des indexes.</string>
 
 </resources>
 

@@ -224,7 +224,6 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             Class.Level lvl = classLvl.first.getLevel(classLvl.second);
             if(lvl != null && lvl.getMaxSpellLvl() > 0) {
                 filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
-                System.out.println("MAX SPELL LEVEL = " + lvl.getMaxSpellLvl());
                 spellClasses.add(classLvl);
                 spells.addAll(dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext())));
             }
@@ -333,8 +332,12 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             }
         });
 
-        view.findViewById(R.id.sheet_spells_empty_list).setVisibility(rowId == 0 && !filtersApplied ? View.VISIBLE : View.GONE);
-        view.findViewById(R.id.sheet_spells_filter_empty).setVisibility(rowId == 0 && filtersApplied ? View.VISIBLE : View.GONE);
+        if(!dbHelper.hasSpellIndexes()) {
+            view.findViewById(R.id.sheet_spells_indexes_empty).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.sheet_spells_empty_list).setVisibility(rowId == 0 && !filtersApplied ? View.VISIBLE : View.GONE);
+            view.findViewById(R.id.sheet_spells_filter_empty).setVisibility(rowId == 0 && filtersApplied ? View.VISIBLE : View.GONE);
+        }
 
         // reset listeners for opened dialogs
         if (savedInstanceState != null) {

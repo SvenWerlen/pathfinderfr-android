@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -163,6 +164,15 @@ public class MainActivity extends AppCompatActivity
 
         updateWelcomeAndNavigation();
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        recyclerView = (RecyclerView) findViewById(R.id.item_list);
+        recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, false));
+
+
         // Disclaimer / copyright
         boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
         findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
@@ -254,26 +264,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         textview.setText(Html.fromHtml(welcomeText));
-
-        // Navigation
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        if (findViewById(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-            mTwoPane = false; // TODO: enable when two-pane mode will be fixed
-        }
-
-        recyclerView = (RecyclerView) findViewById(R.id.item_list);
-        recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, mTwoPane));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
@@ -396,6 +386,12 @@ public class MainActivity extends AppCompatActivity
             totalCount = newEntities.size();
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
+            // check that spell indexes are available!
+            if(!dbhelper.hasSpellIndexes()) {
+                Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.warning_missing_indexes),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                return false;
+            }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             SpellFilter filter = new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null));
             filterActive = filter.hasAnyFilter();
@@ -413,6 +409,7 @@ public class MainActivity extends AppCompatActivity
         if (factoryId == null) {
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.VISIBLE);
+            findViewById(R.id.item_list).setVisibility(View.GONE);
             boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
             findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
@@ -427,6 +424,7 @@ public class MainActivity extends AppCompatActivity
             boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
+            findViewById(R.id.item_list).setVisibility(View.VISIBLE);
             findViewById(R.id.welcome_copyright).setVisibility(View.GONE);
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
