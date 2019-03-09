@@ -2,6 +2,7 @@ package org.pathfinderfr.app.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class StringUtil {
 

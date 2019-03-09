@@ -73,10 +73,12 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             db.execSQL(f.getQueryCreateTable());
         }
-        // special tables
-        db.execSQL(String.format("DROP TABLE IF EXISTS %s", SpellClassLevelFactory.TABLENAME));
-        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
-        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+    }
+
+    public void clear(DBEntityFactory factory) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", factory.getTableName()));
+        db.execSQL(factory.getQueryCreateTable());
     }
 
     @Override
@@ -349,6 +351,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void fillSpellClassLevel() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // clear table
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", SpellClassLevelFactory.TABLENAME));
+        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
+        db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+
         List<DBEntity> spells = getAllEntities(SpellFactory.getInstance());
         List<DBEntity> classes = getAllEntities(ClassFactory.getInstance());
         // Map of <classShortName,classId>
@@ -357,7 +365,6 @@ public class DBHelper extends SQLiteOpenHelper {
             classMap.put(((Class)cl).getShortName(),cl.getId());
         }
 
-        SQLiteDatabase db = this.getWritableDatabase();
         for(DBEntity spell : spells) {
             List<Pair<String,Integer>> classLevels = SpellUtil.cleanClasses(((Spell)spell).getLevel());
             for(Pair<String,Integer> clLvl: classLevels) {
@@ -369,6 +376,23 @@ public class DBHelper extends SQLiteOpenHelper {
                     entity.setLevel(clLvl.second);
                     ContentValues contentValues = SpellClassLevelFactory.getInstance().generateContentValues(entity);
                     db.insert(SpellClassLevelFactory.TABLENAME, null, contentValues);
+
+                    // TODO: ugly hack for Arc (same as Ens/Mag) and "PrêC" and "Ora" (same as Prê)
+                    if("Prê".equals(clLvl.first) && classMap.containsKey("Prc")) {
+                        entity.setClassId(classMap.get("Prc"));
+                        contentValues = SpellClassLevelFactory.getInstance().generateContentValues(entity);
+                        db.insert(SpellClassLevelFactory.TABLENAME, null, contentValues);
+                    }
+                    if("Prê".equals(clLvl.first) && classMap.containsKey("Ora")) {
+                        entity.setClassId(classMap.get("Ora"));
+                        contentValues = SpellClassLevelFactory.getInstance().generateContentValues(entity);
+                        db.insert(SpellClassLevelFactory.TABLENAME, null, contentValues);
+                    }
+                    if("Ens".equals(clLvl.first) && classMap.containsKey("Arc")) {
+                        entity.setClassId(classMap.get("Arc"));
+                        contentValues = SpellClassLevelFactory.getInstance().generateContentValues(entity);
+                        db.insert(SpellClassLevelFactory.TABLENAME, null, contentValues);
+                    }
                 }
                 // something is wrong
                 else {

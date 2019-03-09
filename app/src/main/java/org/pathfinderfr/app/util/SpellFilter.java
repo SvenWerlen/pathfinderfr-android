@@ -20,11 +20,13 @@ public class SpellFilter {
     private HashSet<String> filterSchool;
     private HashSet<Long> filterClass;
     private HashSet<Long> filterLevel;
+    private int filterMaxLevel;
 
     public SpellFilter(String preferences) {
         filterSchool = new HashSet<>();
         filterClass = new HashSet<>();
         filterLevel = new HashSet<>();
+        filterMaxLevel = 9;
 
         Log.d(SpellFilter.class.getSimpleName(), "Preferences: " + preferences );
 
@@ -57,6 +59,15 @@ public class SpellFilter {
        filterSchool.clear();
        filterClass.clear();
        filterLevel.clear();
+       filterMaxLevel = 9;
+    }
+
+    public void setFilterMaxLevel(int filterMaxLevel) {
+        this.filterMaxLevel = filterMaxLevel;
+    }
+
+    public int getFilterMaxLevel() {
+        return filterMaxLevel;
     }
 
     public void addFilterSchool(String school) {

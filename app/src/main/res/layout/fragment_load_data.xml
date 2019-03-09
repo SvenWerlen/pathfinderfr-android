@@ -56,6 +56,14 @@
             android:visibility="gone"
             />
 
+        <TextView
+            android:id="@+id/optimizeMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWarning"
+            android:text="@string/loaddata_optimisation"
+            android:visibility="gone"/>
+
         <ScrollView android:id="@+id/textAreaScroller"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

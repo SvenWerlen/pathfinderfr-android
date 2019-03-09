@@ -54,6 +54,10 @@
         déjà des données, celles-ci seront remplacées et les favoris seront ajustés pour pointer
         vers les bonnes données ou supprimés (si la case ci-dessous est cochée).
     </string>
+    <string name="loaddata_optimisation">Indexation des sorts en cours. Le processus
+        peut prendre plusieurs minutes en fonction de la performance de votre appareil. Ne peut être
+        arrêté. Veuillez patienter svp...
+    </string>
     <string name="loaddata_deletefavorite">Supprimer les favoris orphelins</string>
     <string name="loaddata_start">Démarrer</string>
     <string name="loaddata_stop">Arrêter</string>

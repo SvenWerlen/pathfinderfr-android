@@ -25,7 +25,7 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    private static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master";
+    private static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/ClassSpellLvl";
 
     private static final String[] SOURCES = new String[]{
             "/data/competences.yml",
@@ -66,6 +66,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
                     loadTaskInProgress.execute(source0,source1,source2,source3,source4);
+                    //loadTaskInProgress.execute();
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);
@@ -124,7 +125,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             text += "<br/>" + favoriteMigrationText(progresses);
         }
 
-        final int progress = totalProgress / progresses.length;
+        final int progress = progresses.length == 0 ? 100 : totalProgress / progresses.length;
         final String message = text;
 
         runOnUiThread(new Runnable() {
@@ -137,15 +138,25 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     }
 
     @Override
+    public void onOptimisation() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.optimizeMessage).setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
     public void onProgressCompleted(Integer... counts) {
+        findViewById(R.id.optimizeMessage).setVisibility(View.GONE);
+
         // change status
         loadTaskInProgress = null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final String buttonText = getResources().getString(R.string.loaddata_start);
         final int progress = 100;
-
-        DBHelper.getInstance(getApplicationContext()).fillSpellClassLevel();
 
         runOnUiThread(new Runnable() {
             @Override

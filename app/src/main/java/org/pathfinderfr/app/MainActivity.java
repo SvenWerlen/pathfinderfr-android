@@ -185,17 +185,21 @@ public class MainActivity extends AppCompatActivity
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
             } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
+            } else {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
             }
 
-            FilterSpellFragment fragSpellFilter = (FilterSpellFragment)getSupportFragmentManager()
-                    .findFragmentByTag(DIALOG_SPELL_FILTER);
-            if (fragSpellFilter != null) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
-            }
+            if(factoryId != null) {
+                FilterSpellFragment fragSpellFilter = (FilterSpellFragment) getSupportFragmentManager()
+                        .findFragmentByTag(DIALOG_SPELL_FILTER);
+                if (fragSpellFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
+                }
 
-            if(savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte)0) == 1) {
-                searchButton.performClick();
+                if (savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte) 0) == 1) {
+                    searchButton.performClick();
+                }
             }
         }
     }
@@ -224,7 +228,7 @@ public class MainActivity extends AppCompatActivity
         long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
         long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
 
-        long countSources = sources.length;
+        long countSources = sources.length == 0 ? ConfigurationUtil.getInstance().getAvailableSources().length : sources.length;
         long countSourcesTotal = ConfigurationUtil.getInstance().getAvailableSources().length;
 
 
@@ -409,10 +413,15 @@ public class MainActivity extends AppCompatActivity
         if (factoryId == null) {
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.VISIBLE);
-            findViewById(R.id.welcome_copyright).setVisibility(View.VISIBLE);
-            findViewById(R.id.closeSearchButton).setVisibility(View.VISIBLE);
+            boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
+            findViewById(R.id.welcome_copyright).setVisibility(showDisclaimer ? View.VISIBLE : View.GONE);
+            findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.GONE);
             findViewById(R.id.filterButton).setVisibility(View.GONE);
+            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+            if (toolBar != null) {
+                toolBar.setTitle(getResources().getString(R.string.title_activity_main));
+            }
         }
         else if (newEntities != null) {
             boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);

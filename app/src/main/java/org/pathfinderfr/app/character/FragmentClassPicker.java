@@ -203,7 +203,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         }
 
         List<DBEntity> entities =
-                DBHelper.getInstance(rootView.getContext()).getAllEntities(ClassFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
+                DBHelper.getInstance(rootView.getContext()).getAllEntitiesWithAllFields(ClassFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
 
         for(DBEntity e : entities) {
             Class cl = (Class)e;

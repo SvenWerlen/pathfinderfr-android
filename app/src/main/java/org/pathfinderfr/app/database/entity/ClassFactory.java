@@ -35,6 +35,7 @@ public class ClassFactory extends DBEntityFactory {
     private static final String YAML_LEVEL_FORT    = "Vigueur";
     private static final String YAML_LEVEL_REFL    = "Réflexes";
     private static final String YAML_LEVEL_WILL    = "Volonté";
+    private static final String YAML_LEVEL_SP_MAX  = "SortMax";
 
     private static ClassFactory instance;
 
@@ -74,23 +75,6 @@ public class ClassFactory extends DBEntityFactory {
         return query;
     }
 
-    /**
-     * @return the query to fetch all entities (including fields required for picker)
-     */
-    public String getQueryFetchAll() {
-        return String.format("SELECT * FROM %s ORDER BY %s COLLATE UNICODE",
-                getTableName(), COLUMN_NAME);
-    }
-
-    /**
-     * @return the query to fetch all entities (including fields required for filtering)
-     */
-    public String getQueryFetchAll(String... sources) {
-        String sourceList = StringUtil.listToString( sources,',','\'');
-        return String.format("SELECT * FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
-                getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
-    }
-
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Class)) {
@@ -113,6 +97,7 @@ public class ClassFactory extends DBEntityFactory {
             buf.append(lvl.getFortitudeBonus()).append('|');
             buf.append(lvl.getReflexBonus()).append('|');
             buf.append(lvl.getWillBonus()).append('|');
+            buf.append(lvl.getMaxSpellLvl());
             buf.append('#');
         }
         if(buf.length() > 0) {
@@ -160,7 +145,12 @@ public class ClassFactory extends DBEntityFactory {
                     int refl = Integer.parseInt(props[3]);
                     int will = Integer.parseInt(props[4]);
                     int[] bab = StringUtil.stringListToIntList(props[1].split(":"));
-                    cl.getLevels().add(new Class.Level(lvl, bab, fort, refl, will));
+                    int maxSpellLvl = 9;
+                    // max spell level has been introduced in 2.2.0. Might not be in database
+                    if(props.length >= 6) {
+                        maxSpellLvl = Integer.parseInt(props[5]);
+                    }
+                    cl.getLevels().add(new Class.Level(lvl, bab, fort, refl, will, maxSpellLvl));
                 } catch(NumberFormatException e) {
                     Log.w(ClassFactory.class.getSimpleName(), "Couldn't parse some numbers: " +level, e);
                 }
@@ -198,7 +188,8 @@ public class ClassFactory extends DBEntityFactory {
                     int refl = Integer.parseInt(map.get(YAML_LEVEL_REFL).replaceAll("\\+",""));
                     int will = Integer.parseInt(map.get(YAML_LEVEL_WILL).replaceAll("\\+",""));
                     int[] bab = StringUtil.stringListToIntList(map.get(YAML_LEVEL_BAB).replaceAll("\\+","").split("/"));
-                    cl.getLevels().add(new Class.Level(lvl, bab, fort, refl, will));
+                    int maxSpellLvl = Integer.parseInt(map.get(YAML_LEVEL_SP_MAX));
+                    cl.getLevels().add(new Class.Level(lvl, bab, fort, refl, will, maxSpellLvl));
                 } catch(NumberFormatException e) {
                     Log.w(ClassFactory.class.getSimpleName(), "Couldn't parse some numbers: " + map.values(), e);
                 }

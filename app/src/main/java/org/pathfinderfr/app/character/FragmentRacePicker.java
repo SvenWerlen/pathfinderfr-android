@@ -111,7 +111,7 @@ public class FragmentRacePicker extends DialogFragment implements View.OnClickLi
         exampleDescr.setVisibility(View.GONE);
 
         List<DBEntity> entities =
-                DBHelper.getInstance(rootView.getContext()).getAllEntities(RaceFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
+                DBHelper.getInstance(rootView.getContext()).getAllEntitiesWithAllFields(RaceFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
 
         for(DBEntity e : entities) {
             final TextView raceName = FragmentUtil.copyExampleTextFragment(exampleName);

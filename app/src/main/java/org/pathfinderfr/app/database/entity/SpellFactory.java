@@ -89,18 +89,15 @@ public class SpellFactory extends DBEntityFactory {
     /**
      * @return the query to fetch all entities (including fields required for filtering)
      */
-    public String getQueryFetchAll() {
-        return String.format("SELECT %s,%s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), COLUMN_NAME);
-    }
-
-    /**
-     * @return the query to fetch all entities (including fields required for filtering)
-     */
+    @Override
     public String getQueryFetchAll(String... sources) {
-        String sourceList = StringUtil.listToString( sources,',','\'');
-        return String.format("SELECT %s,%s,%s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
+        String filters = "";
+        if(sources != null && sources.length > 0) {
+            String sourceList = StringUtil.listToString(sources, ',', '\'');
+            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
+        }
+        return String.format("SELECT %s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, COLUMN_LEVEL, getTableName(), filters, COLUMN_NAME);
     }
 
     public String getQuerySchools() {
@@ -123,6 +120,10 @@ public class SpellFactory extends DBEntityFactory {
             String lvlFilter = StringUtil.listToString(filter.getFilterLevel(), ',');
             bufFilter.append(bufFilter.length() > 0 ? " AND " : "");
             bufFilter.append(String.format("%s.%s IN (%s)", SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_LEVEL, lvlFilter));
+        }
+        else if(filter.getFilterMaxLevel() < 9) {
+            bufFilter.append(bufFilter.length() > 0 ? " AND " : "");
+            bufFilter.append(String.format("%s.%s <= %d", SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_LEVEL, filter.getFilterMaxLevel()));
         }
 
         String sql = String.format("SELECT DISTINCT %s.%s,%s,%s,%s.%s FROM %s INNER JOIN %s ON %s.%s=%s.%s %s ORDER BY %s COLLATE UNICODE",

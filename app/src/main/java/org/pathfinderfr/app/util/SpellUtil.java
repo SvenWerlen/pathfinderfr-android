@@ -1,5 +1,6 @@
 package org.pathfinderfr.app.util;
 
+import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.Spell;
 
 import java.util.ArrayList;
@@ -30,34 +31,29 @@ public class SpellUtil {
     }
 
     /**
-     * @return the class and minimum level for given classes and spell
-     * Ex: if classes = {Bar, Mag} and spell is available for "Bar 2, Mag 1", the result will be Mag 1
+     * @return the classes and level for which the spell is available
+     * Ex: if classes = {Bar, Mag} and spell is available for "Bar 2, Mag 1", the result will be {(Mag,1),(Bar,2)}
      */
-    public static Pair<String,Integer> getLevel(List<String> classes, Spell spell, boolean clean) {
+    public static List<Pair<String,Integer>> getLevel(List<Pair<Class,Integer>> classes, Spell spell) {
         List<Pair<String,Integer>> levels = cleanClasses(spell.getLevel());
-
-        Set<String> classNames = new HashSet<>();
-        if(clean) {
-            for (String name : classes) {
-                classNames.add(cleanClass(name));
-            }
-        } else {
-            classNames.addAll(classes);
-        }
+        List<Pair<String,Integer>> matches = new ArrayList<>();
 
         // find lowest level for given classes
-        Pair<String, Integer> min = null;
         for(Pair<String,Integer> pair : levels) {
-            if(classNames.contains(pair.first) && (min == null || min.second > pair.second)) {
-                min = pair;
+            for(Pair<Class,Integer> cl : classes) {
+                // matching class
+                if(cl.first.getShortName().equals(pair.first)) {
+                    // matching level
+                    Class.Level level = cl.first.getLevel(cl.second);
+                    if(level != null && level.getMaxSpellLvl() >= pair.second) {
+                        matches.add(pair);
+                    }
+                    break;
+                }
             }
         }
 
-        return min;
-    }
-
-    public static Pair<String,Integer> getLevel(List<String> classes, Spell spell) {
-        return getLevel(classes, spell, true);
+        return matches;
     }
 
 

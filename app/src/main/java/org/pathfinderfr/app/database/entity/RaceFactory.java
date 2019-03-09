@@ -60,23 +60,6 @@ public class RaceFactory extends DBEntityFactory {
         return query;
     }
 
-    /**
-     * @return the query to fetch all entities (including fields required for picker)
-     */
-    public String getQueryFetchAll() {
-        return String.format("SELECT %s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_TRAITS, getTableName(), COLUMN_NAME);
-    }
-
-    /**
-     * @return the query to fetch all entities (including fields required for filtering)
-     */
-    public String getQueryFetchAll(String... sources) {
-        String sourceList = StringUtil.listToString( sources,',','\'');
-        return String.format("SELECT %s,%s,%s FROM %s WHERE %s IN (%s) ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_TRAITS, getTableName(), COLUMN_SOURCE, sourceList, COLUMN_NAME);
-    }
-
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Race)) {

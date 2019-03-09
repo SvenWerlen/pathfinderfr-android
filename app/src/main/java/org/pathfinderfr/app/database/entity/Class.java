@@ -21,9 +21,11 @@ public class Class extends DBEntity {
     }
 
     public String getShortName() {
-        // @TODO replace ugly fix for Barbare
+        // @TODO replace ugly fix for Barbare and Prêtre Combattant
         if("Barbare".equals(name)) {
             return "Brb";
+        } else if("Prêtre combattant".equals(name)) {
+            return "Prc";
         }
         String name = getName().toLowerCase();
         if(name.length()>=3) {
@@ -73,10 +75,12 @@ public class Class extends DBEntity {
         private int fortitude;
         private int reflex;
         private int will;
-        public Level(int lvl, int[] bab, int fortitude, int reflex, int will) {
+        private int maxSpellLvl;
+        public Level(int lvl, int[] bab, int fortitude, int reflex, int will, int maxSpellLvl) {
             this.id = lvl;
             this.bab = bab;
             this.fortitude = fortitude; this.reflex = reflex; this.will = will;
+            this.maxSpellLvl = maxSpellLvl;
         }
         public int getId() { return id; }
         public int getLvl() { return id; }
@@ -91,5 +95,7 @@ public class Class extends DBEntity {
         public void setFortitudeBonus(int bonus) { this.fortitude = bonus; }
         public int getWillBonus() { return will; }
         public void setWillBonus(int bonus) { this.will = bonus; }
+        public int getMaxSpellLvl() { return maxSpellLvl; }
+        public void setMaxSpellLvl(int value) { this.maxSpellLvl = value; }
     }
 }

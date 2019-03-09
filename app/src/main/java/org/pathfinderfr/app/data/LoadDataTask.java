@@ -28,6 +28,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
     public static interface IDataUI {
         public void onProgressUpdate(UpdateStatus... progress);
         public void onProgressCompleted(Integer... counts);
+        public void onOptimisation();
     };
 
     public static class UpdateStatus {
@@ -72,7 +73,6 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
     @Override
     protected List<Integer> doInBackground(Pair<String,DBEntityFactory>... sources) {
         DBHelper dbHelper = DBHelper.getInstance(null);
-        dbHelper.clear();
 
         UpdateStatus progresses[] = new UpdateStatus[sources.length];
         Integer[] count = new Integer[sources.length];
@@ -86,6 +86,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
             String address = source.first;
             DBEntityFactory factory = source.second;
+            dbHelper.clear(factory);
 
             // ==============================================
             // First part : load data from GitHub repository
@@ -186,6 +187,13 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
             idx++;
         }
+
+        // ==============================================
+        // Third part : migrate favorites
+        // ==============================================
+        caller.onOptimisation();
+        dbHelper.fillSpellClassLevel();
+
 
         if(isCancelled()) {
             caller.onProgressUpdate(progresses);

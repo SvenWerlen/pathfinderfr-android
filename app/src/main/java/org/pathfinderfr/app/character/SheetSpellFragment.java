@@ -26,6 +26,7 @@ import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
@@ -54,7 +55,7 @@ import java.util.Set;
 /**
  * spell tab on character sheet
  */
-public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.OnFragmentInteractionListener {
+public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.OnFragmentInteractionListener, View.OnClickListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
     private static final String DIALOG_SPELL_FILTER = "spells-filter";
@@ -88,6 +89,80 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         }
     }
 
+    /**
+     * Generates a table rows for given spells
+     *
+     * @param spells list of spells to be rendered
+     * @param spellClasses character's classes that have spells
+     * @param favorites list of favorites
+     * @param ctx context for rendering
+     * @param curLevel level to be considered
+     * @param height row height
+     * @param filterOnlyFav is favorite filter enabled?
+     * @param colorEnabled color for favorite (when enabled)
+     * @param colorDisabled color for favorite (when disabled)
+     * @param exampleName example for spell name
+     * @param exampleFav example for favorite icon
+     * @param templateSpell template for spell name (text)
+     * @param favListener listener when favorite is clicked
+     * @param detailsListener listener when details is clicked
+     */
+    private static int generateTableRows(
+            List<SpellTable.SpellAndClass> spells,
+            List<Pair<Class,Integer>> spellClasses,
+            Set<Long> favorites,
+            Context ctx,
+            int startIdx,
+            int curLevel,
+            int height,
+            boolean filterOnlyFav,
+            int colorEnabled,
+            int colorDisabled,
+            TableLayout table,
+            TextView exampleName,
+            ImageView exampleFav,
+            String templateSpell,
+            View.OnClickListener favListener,
+            View.OnClickListener detailsListener) {
+
+        int rowId = startIdx;
+        for (final SpellTable.SpellAndClass spell : spells) {
+            int backgroundColor = ContextCompat.getColor(ctx, rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite);
+            // spell
+            TableRow rowSpell = new TableRow(ctx);
+            rowSpell.setMinimumHeight(height);
+            rowSpell.setGravity(Gravity.CENTER_VERTICAL);
+            rowSpell.setBackgroundColor(backgroundColor);
+            TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
+            if (spellClasses.size() > 1) {
+                spellTv.setText(String.format(templateSpell,
+                        spell.getSpell().getName(),
+                        StringUtil.listToString(spell.getClasses().toArray(new String[0]), '/')));
+            } else {
+                spellTv.setText(spell.getSpell().getName());
+            }
+            rowSpell.addView(spellTv);
+            // favorite icon
+            final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
+            spellFavTv.setImageResource(R.drawable.ic_link_favorite);
+            spellFavTv.setTag(spell.getSpell().getId());
+            if (filterOnlyFav) {
+                spellFavTv.setVisibility(View.INVISIBLE);
+            } else {
+                boolean isFav = favorites.contains(spell.getSpell().getId());
+                spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                spellFavTv.setOnClickListener(favListener);
+                spellTv.setTag(spell.getSpell().getId());
+            }
+            rowSpell.addView(spellFavTv);
+            spellTv.setOnClickListener(detailsListener);
+            spellTv.setTag(spell.getSpell().getId());
+            table.addView(rowSpell);
+            rowId++;
+        }
+        return rowId;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,7 +177,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sheet_spells, container, false);
 
-        // References
+        // references
         TableLayout table = view.findViewById(R.id.sheet_spells_table);
         TextView exampleLevel = view.findViewById(R.id.sheet_spells_example_level);
         TextView exampleSchool = view.findViewById(R.id.sheet_spells_example_school);
@@ -115,14 +190,6 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         // determine size
         int height = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 25, view.getResources().getDisplayMetrics());
-
-        // extract class names
-        List<String> classNames = new ArrayList<>();
-        List<String> classNamesShort = new ArrayList<>();
-        for(int i =0; i<character.getClassesCount(); i++) {
-            classNames.add(character.getClass(i).first.getName());
-            classNamesShort.add(character.getClass(i).first.getShortName());
-        }
 
         String templateLevel = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spells.level");
         String templateSpell = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spell");
@@ -140,41 +207,61 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             }
         }
 
+        // check if filters have been applied
         boolean filtersApplied = filterOnlyFav || filterMode != FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL;
         ImageView iv = view.findViewById(R.id.sheet_spells_filters);
         iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
 
-        SpellFilter filter = new SpellFilter(null);
+        // fetch spells
+        final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
+        List<Spell> spells = new ArrayList<>();
+        List<Pair<Class,Integer>> spellClasses = new ArrayList<>();
         for(int i=0; i<character.getClassesCount(); i++) {
-            filter.addFilterClass(character.getClass(i).first.getId());
+            SpellFilter filter = new SpellFilter(null);
+            Pair<Class,Integer> classLvl = character.getClass(i);
+            filter.addFilterClass(classLvl.first.getId());
+            Class.Level lvl = classLvl.first.getLevel(classLvl.second);
+            if(lvl != null && lvl.getMaxSpellLvl() > 0) {
+                filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
+                System.out.println("MAX SPELL LEVEL = " + lvl.getMaxSpellLvl());
+                spellClasses.add(classLvl);
+                spells.addAll(dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext())));
+            }
         }
 
-        SpellTable sTable = new SpellTable(classNamesShort);
-        final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
-
-        long time = System.currentTimeMillis();
-        List<Spell> spells = dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext()));
+        SpellTable sTable = new SpellTable(spellClasses);
         for(Spell entity : spells) {
             // only add if favorite (or filtering disabled)
             if(!filterOnlyFav || favorites.contains(entity.getId())) {
                 sTable.addSpell((Spell) entity);
             }
         }
-        System.out.println("TIME1 = " + (System.currentTimeMillis()-time));
 
         final int colorDisabled = view.getContext().getResources().getColor(R.color.colorDisabled);
         final int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
 
-        time = System.currentTimeMillis();
         int rowId = 0;
         for(SpellTable.SpellLevel level : sTable.getLevels()) {
             TableRow rowLevel = new TableRow(view.getContext());
             TextView levelTv = FragmentUtil.copyExampleTextFragment(exampleLevel);
-            if(classNames.size() > 1) {
-                levelTv.setText(String.format(templateLevel, StringUtil.listToString(classNamesShort.toArray(new String[0]), '/'), level.getLevel()));
-            } else {
-                levelTv.setText(String.format(templateLevel, classNames.get(0), level.getLevel()));
+            // list of classes that can have spell at that level
+            List<Class> classForThatLevel = new ArrayList<>();
+            for(Pair<Class,Integer> pair : spellClasses) {
+                if(pair.second >= level.getLevel()) {
+                    classForThatLevel.add(pair.first);
+                }
+            }
+
+            if(classForThatLevel.size() > 1) {
+                StringBuffer buf = new StringBuffer();
+                for(Pair<Class, Integer> pair : spellClasses) {
+                    buf.append(pair.first.getShortName()).append("/");
+                }
+                buf.deleteCharAt(buf.length()-1);
+                levelTv.setText(String.format(templateLevel, buf.toString(), level.getLevel()));
+            } else if(classForThatLevel.size() == 1) {
+                levelTv.setText(String.format(templateLevel, classForThatLevel.get(0).getShortName(), level.getLevel()));
             }
             rowLevel.addView(levelTv);
             table.addView(rowLevel);
@@ -190,117 +277,47 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                     rowSchool.addView(schoolTv);
                     table.addView(rowSchool);
 
-                    for (final Spell spell : school.getSpells()) {
-                        // spell
-                        TableRow rowSpell = new TableRow(view.getContext());
-                        rowSpell.setMinimumHeight(height);
-                        rowSpell.setGravity(Gravity.CENTER_VERTICAL);
-                        rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
-                                rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
-                        TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                        if (classNamesShort.size() > 1) {
-                            Pair<String, Integer> infos = SpellUtil.getLevel(classNamesShort, spell, false);
-                            spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
-                        } else {
-                            spellTv.setText(spell.getName());
-                        }
-                        rowSpell.addView(spellTv);
-                        // favorite icon
-                        final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
-                        spellFavTv.setImageResource(R.drawable.ic_link_favorite);
-                        if (filterOnlyFav) {
-                            spellFavTv.setVisibility(View.INVISIBLE);
-                        } else {
-                            boolean isFav = favorites.contains(spell.getId());
-                            spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
-                            spellFavTv.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spell.getId());
-                                    if(isFav) {
-                                        dbHelper.deleteFavorite(spell);
-                                    } else {
-                                        dbHelper.insertFavorite(spell);
-                                    }
-                                    spellFavTv.setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
-                                }
-                            });
-                        }
-                        rowSpell.addView(spellFavTv);
-                        table.addView(rowSpell);
-                        rowId++;
-
-                        spellTv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Context context = SheetSpellFragment.this.getContext();
-                                Intent intent = new Intent(context, ItemDetailActivity.class);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, spell.getId());
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, spell.getFactory().getFactoryId());
-                                context.startActivity(intent);
-                            }
-                        });
-                    }
+                    rowId = generateTableRows(
+                            school.getSpells(),
+                            spellClasses,
+                            favorites,
+                            view.getContext(),
+                            rowId,
+                            level.getLevel(),
+                            height,
+                            filterOnlyFav,
+                            colorEnabled,
+                            colorDisabled,
+                            table,
+                            exampleName,
+                            exampleFav,
+                            templateSpell,
+                            this,
+                            this);
                 }
             }
             // LEVEL
             //   SPELL
             else {
-                for (final Spell spell : level.getSpells()) {
-                    // spell
-                    TableRow rowSpell = new TableRow(view.getContext());
-                    rowSpell.setMinimumHeight(height);
-                    rowSpell.setGravity(Gravity.CENTER_VERTICAL);
-                    rowSpell.setBackgroundColor(ContextCompat.getColor(getContext(),
-                            rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
-                    TextView spellTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                    if (classNamesShort.size() > 1) {
-                        Pair<String, Integer> infos = SpellUtil.getLevel(classNamesShort, spell, false);
-                        spellTv.setText(String.format(templateSpell, spell.getName(), infos.first));
-                    } else {
-                        spellTv.setText(spell.getName());
-                    }
-                    rowSpell.addView(spellTv);
-                    // favorite icon
-                    final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
-                    spellFavTv.setImageResource(R.drawable.ic_link_favorite);
-                    if (filterOnlyFav) {
-                        spellFavTv.setVisibility(View.INVISIBLE);
-                    } else {
-                        boolean isFav = favorites.contains(spell.getId());
-                        spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
-                        spellFavTv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spell.getId());
-                                if(isFav) {
-                                    dbHelper.deleteFavorite(spell);
-                                } else {
-                                    dbHelper.insertFavorite(spell);
-                                }
-                                spellFavTv.setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
-                            }
-                        });
-                    }
-                    rowSpell.addView(spellFavTv);
-                    table.addView(rowSpell);
-                    rowId++;
-
-                    spellTv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Context context = SheetSpellFragment.this.getContext();
-                            Intent intent = new Intent(context, ItemDetailActivity.class);
-                            intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, spell.getId());
-                            intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, spell.getFactory().getFactoryId());
-                            context.startActivity(intent);
-                        }
-                    });
-                }
+                rowId = generateTableRows(
+                        level.getSpells(),
+                        spellClasses,
+                        favorites,
+                        view.getContext(),
+                        rowId,
+                        level.getLevel(),
+                        height,
+                        filterOnlyFav,
+                        colorEnabled,
+                        colorDisabled,
+                        table,
+                        exampleName,
+                        exampleFav,
+                        templateSpell,
+                        this,
+                        this);
             }
         }
-
-        System.out.println("TIME2 = " + (System.currentTimeMillis()-time));
 
         view.findViewById(R.id.spells_table_header).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,4 +354,32 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                 SheetSpellFragment.newInstance(characterId)).commit();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v instanceof TextView && v.getTag() != null) {
+            long spellId = (Long)v.getTag();
+            if(spellId > 0) {
+                Intent intent = new Intent(getContext(), ItemDetailActivity.class);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, spellId);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, SpellFactory.FACTORY_ID);
+                getContext().startActivity(intent);
+            }
+        } else if(v instanceof ImageView && v.getTag() != null) {
+            final int colorDisabled = getContext().getResources().getColor(R.color.colorDisabled);
+            final int colorEnabled = getContext().getResources().getColor(R.color.colorPrimaryDark);
+
+            long spellId = (Long) v.getTag();
+            if (spellId > 0) {
+                DBHelper dbHelper = DBHelper.getInstance(getContext());
+                boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spellId);
+                DBEntity entity = (Spell) dbHelper.fetchEntity(spellId, SpellFactory.getInstance());
+                if (isFav && entity != null) {
+                    dbHelper.deleteFavorite(entity);
+                } else if (entity != null) {
+                    dbHelper.insertFavorite(entity);
+                }
+                ((ImageView) v).setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+    }
 }
