@@ -247,7 +247,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             // list of classes that can have spell at that level
             List<Class> classForThatLevel = new ArrayList<>();
             for(Pair<Class,Integer> pair : spellClasses) {
-                if(pair.second >= level.getLevel()) {
+                Class.Level lvl = pair.first.getLevel(pair.second);
+                if(level.getLevel() == 0 || (lvl != null && level.getLevel() <= lvl.getMaxSpellLvl())) {
                     classForThatLevel.add(pair.first);
                 }
             }
