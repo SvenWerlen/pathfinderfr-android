@@ -117,7 +117,11 @@ public class SpellUtil {
             {
                 String cleanClass = matcher.group(1);
                 Integer cleanLevel = Integer.parseInt(matcher.group(2));
-                if(cleanClass.length() > 3) {
+                // TODO: dirty fix for Magus (!= Magicien)
+                if(cleanClass.equalsIgnoreCase("magus")) {
+                    cleanClass = "mgs";
+                }
+                else if(cleanClass.length() > 3) {
                     cleanClass = cleanClass.substring(0,3);
                 }
                 // capitalize first letter only

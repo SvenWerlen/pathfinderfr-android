@@ -20,5 +20,20 @@ public class SpellUtilTest {
         assertEquals((Integer)1, val.get(1).second);
         assertEquals("Prê", val.get(2).first);
         assertEquals((Integer)1, val.get(2).second);
+
+        val = SpellUtil.cleanClasses("Alch 1,  Conj 2, Ens/Mag 3, Magus 4, Sor 5");
+        assertEquals(6, val.size());
+        assertEquals("Alc", val.get(0).first);
+        assertEquals((Integer)1, val.get(0).second);
+        assertEquals("Con", val.get(1).first);
+        assertEquals((Integer)2, val.get(1).second);
+        assertEquals("Ens", val.get(2).first);
+        assertEquals((Integer)3, val.get(2).second);
+        assertEquals("Mag", val.get(3).first);
+        assertEquals((Integer)3, val.get(3).second);
+        assertEquals("Mgs", val.get(4).first);
+        assertEquals((Integer)4, val.get(4).second);
+        assertEquals("Sor", val.get(5).first);
+        assertEquals((Integer)5, val.get(5).second);
     }
 }

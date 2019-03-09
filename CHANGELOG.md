@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Only spells available based on class level are displayed
 ### Fixed
 - Home screen statistics not updated
+- Bug with Magicien vs Magus and similar
 
 ## [2.1.0] - 2019-02-10
 ### Added

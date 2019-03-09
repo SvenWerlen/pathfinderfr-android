@@ -21,11 +21,25 @@ public class Class extends DBEntity {
     }
 
     public String getShortName() {
-        // @TODO replace ugly fix for Barbare and Prêtre Combattant
+        // @TODO replace ugly fix for Barbare vs Barde
         if("Barbare".equals(name)) {
             return "Brb";
-        } else if("Prêtre combattant".equals(name)) {
+        }
+        // @TODO replace ugly fix for Prêtre vs Prêtre Combattant
+        else if("Prêtre combattant".equals(name)) {
             return "Prc";
+        }
+        // @TODO replace ugly fix for Arcaniste vs Archer mage
+        else if("Archer mage".equals(name)) {
+            return "ArM";
+        }
+        // @TODO replace ugly fix for Chamane vs Champion occultiste
+        else if("Champion occultiste".equals(name)) {
+            return "Chp";
+        }
+        // @TODO replace ugly fix for Magicien vs Magus
+        else if("Magus".equals(name)) {
+            return "Mgs";
         }
         String name = getName().toLowerCase();
         if(name.length()>=3) {
