@@ -201,22 +201,6 @@ public class CharacterFactory extends DBEntityFactory {
         return contentValues;
     }
 
-    private static String extractValue(@NonNull final Cursor resource, String columnName) {
-        if(resource.getColumnIndex(columnName)>=0) {
-            return resource.getString(resource.getColumnIndex(columnName));
-        } else {
-            return null;
-        }
-    }
-
-    private static int extractValueInt(@NonNull final Cursor resource, String columnName) {
-        if(resource.getColumnIndex(columnName)>=0) {
-            return resource.getInt(resource.getColumnIndex(columnName));
-        } else {
-            return -1;
-        }
-    }
-
     @Override
     public DBEntity generateEntity(@NonNull Cursor resource) {
         Character c = new Character();
@@ -227,15 +211,15 @@ public class CharacterFactory extends DBEntityFactory {
         c.setReference(extractValue(resource, CharacterFactory.COLUMN_REFERENCE));
         c.setSource(extractValue(resource, CharacterFactory.COLUMN_SOURCE));
 
-        c.setStrength(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_STR));
-        c.setDexterity(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_DEX));
-        c.setConstitution(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_CON));
-        c.setIntelligence(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_INT));
-        c.setWisdom(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_WIS));
-        c.setCharisma(extractValueInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
+        c.setStrength(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_STR));
+        c.setDexterity(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_DEX));
+        c.setConstitution(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CON));
+        c.setIntelligence(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_INT));
+        c.setWisdom(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_WIS));
+        c.setCharisma(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
 
-        c.setHitpoints(extractValueInt(resource, CharacterFactory.COLUMN_HITPOINTS));
-        c.setSpeed(extractValueInt(resource, CharacterFactory.COLUMN_SPEED));
+        c.setHitpoints(extractValueAsInt(resource, CharacterFactory.COLUMN_HITPOINTS));
+        c.setSpeed(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED));
 
         // fill race
         String raceValue = extractValue(resource, CharacterFactory.COLUMN_RACE);

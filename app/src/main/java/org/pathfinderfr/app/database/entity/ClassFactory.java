@@ -107,13 +107,6 @@ public class ClassFactory extends DBEntityFactory {
         return contentValues;
     }
 
-    private static String extractValue(@NonNull final Cursor resource, String columnName) {
-        if(resource.getColumnIndex(columnName)>=0) {
-            return resource.getString(resource.getColumnIndex(columnName));
-        } else {
-            return null;
-        }
-    }
 
     @Override
     public DBEntity generateEntity(@NonNull Cursor resource) {
@@ -197,21 +190,7 @@ public class ClassFactory extends DBEntityFactory {
         }
         return cl.isValid() ? cl : null;
     }
-
-    /**
-     * Utility function that returns the template with regex replaced
-     * @param template template (@see assets/templates.properties)
-     * @param propKey name of the property
-     * @param propValue value of the property
-     * @return "" if value is null
-     */
-    private static String generateItemDetail(String template, String propKey, String propValue) {
-        if(propValue != null) {
-            return String.format(template, propKey, propValue);
-        } else {
-            return "";
-        }
-    }
+    
 
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {

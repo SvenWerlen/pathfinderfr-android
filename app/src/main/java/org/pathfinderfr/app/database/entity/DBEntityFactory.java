@@ -131,6 +131,46 @@ public abstract class DBEntityFactory {
     public abstract String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem);
 
 
+
+    protected static String extractValue(@NonNull final Cursor resource, String columnName) {
+        if(resource.getColumnIndex(columnName)>=0) {
+            return resource.getString(resource.getColumnIndex(columnName));
+        } else {
+            return null;
+        }
+    }
+
+    protected static int extractValueAsInt(@NonNull final Cursor resource, String columnName) {
+        if(resource.getColumnIndex(columnName)>=0) {
+            return resource.getInt(resource.getColumnIndex(columnName));
+        } else {
+            return -1;
+        }
+    }
+
+    protected static boolean extractValueAsBoolean(@NonNull final Cursor resource, String columnName) {
+        if(resource.getColumnIndex(columnName)>=0) {
+            return resource.getInt(resource.getColumnIndex(columnName)) == 1 ? true : false;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Utility function that returns the template with regex replaced
+     * @param template template (@see assets/templates.properties)
+     * @param propKey name of the property
+     * @param propValue value of the property
+     * @return "" if value is null
+     */
+    protected static String generateItemDetail(String template, String propKey, String propValue) {
+        if(propValue != null) {
+            return String.format(template, propKey, propValue);
+        } else {
+            return "";
+        }
+    }
+
     /**
      * @param key key to identify the text in properties
      * @return translated text from properties
