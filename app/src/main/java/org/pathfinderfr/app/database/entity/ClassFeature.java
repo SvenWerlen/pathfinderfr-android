@@ -1,8 +1,8 @@
 package org.pathfinderfr.app.database.entity;
 
-public class Ability extends DBEntity {
+public class ClassFeature extends DBEntity {
 
-    // ability-specific
+    // classfeature-specific
     private String conditions;
     private String class_;
     private boolean auto;
@@ -11,7 +11,7 @@ public class Ability extends DBEntity {
 
     @Override
     public DBEntityFactory getFactory() {
-        return AbilityFactory.getInstance();
+        return ClassFeatureFactory.getInstance();
     }
 
     public boolean isAuto() { return auto; }

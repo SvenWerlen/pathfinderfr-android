@@ -8,21 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.Ability;
-import org.pathfinderfr.app.database.entity.AbilityFactory;
+import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.util.AbilityFilter;
+import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.SpellFilter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,7 +46,7 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
     private List<CheckBox> cbClass;
     private List<CheckBox> cbMaxLevel;
 
-    private AbilityFilter filter;
+    private ClassFeatureFilter filter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,7 +65,7 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
         return fragment;
     }
 
-    public void setFilter(AbilityFilter filter) {
+    public void setFilter(ClassFeatureFilter filter) {
         this.filter = filter;
     }
 
@@ -96,12 +94,12 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
 
         DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
         String[] sources = PreferenceUtil.getSources(rootView.getContext());
-        List<DBEntity> abilities = dbHelper.getAllEntities(AbilityFactory.getInstance(), sources);
+        List<DBEntity> abilities = dbHelper.getAllEntities(ClassFeatureFactory.getInstance(), sources);
         List<DBEntity> classes = dbHelper.getAllEntities(ClassFactory.getInstance(), sources);
 
         Set<String> clNames = new HashSet<>();
         for(DBEntity a : abilities) {
-            clNames.add(((Ability)a).getClass_());
+            clNames.add(((ClassFeature)a).getClass_());
         }
 
         if(filter != null) {
@@ -218,6 +216,6 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onApplyFilter(AbilityFilter filter);
+        void onApplyFilter(ClassFeatureFilter filter);
     }
 }

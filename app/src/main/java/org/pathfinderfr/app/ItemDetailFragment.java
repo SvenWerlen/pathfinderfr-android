@@ -2,17 +2,13 @@ package org.pathfinderfr.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,16 +20,15 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
-import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -100,8 +95,13 @@ public class ItemDetailFragment extends Fragment {
         int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
 
         boolean isAddedToCharacter = false;
-        if(mItem != null && (mItem instanceof Feat) && (character != null)) {
-            isAddedToCharacter = character.hasFeat((Feat)mItem);
+        if(mItem != null && (character != null)) {
+            if(mItem instanceof Feat) {
+                isAddedToCharacter = character.hasFeat((Feat) mItem);
+            }
+            else if(mItem instanceof ClassFeature) {
+                isAddedToCharacter = character.hasClassFeature((ClassFeature) mItem);
+            }
         }
         ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
         addToCharacter.getBackground().setColorFilter(isAddedToCharacter ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
@@ -155,7 +155,7 @@ public class ItemDetailFragment extends Fragment {
         ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
         updateActionIcons(rootView);
 
-        if(character == null || mItem == null || !(mItem instanceof Feat) ) {
+        if(character == null || mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature) ) {
             addToCharacter.setVisibility(View.GONE);
         }
 
@@ -187,6 +187,27 @@ public class ItemDetailFragment extends Fragment {
                         } else {
                             character.removeFeat(feat); // rollback
                             message = getResources().getString(R.string.feat_added_failed);
+                        }
+                    }
+                } else if (mItem instanceof ClassFeature) {
+                    ClassFeature classFeature = (ClassFeature)mItem;
+                    if(classFeature.isAuto()) {
+                        message = getResources().getString(R.string.ability_auto);
+                    } else if(character.hasClassFeature(classFeature)) {
+                        character.removeClassFeature(classFeature);
+                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = getResources().getString(R.string.ability_removed_success);
+                        } else {
+                            character.addClassFeature(classFeature); // rollback
+                            message = getResources().getString(R.string.ability_removed_failed);
+                        }
+                    } else {
+                        character.addClassFeature(classFeature);
+                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = getResources().getString(R.string.ability_added_success);
+                        } else {
+                            character.removeClassFeature(classFeature); // rollback
+                            message = getResources().getString(R.string.ability_added_failed);
                         }
                     }
                 }

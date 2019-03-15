@@ -34,19 +34,17 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.Ability;
-import org.pathfinderfr.app.database.entity.AbilityFactory;
+import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
-import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
-import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
-import org.pathfinderfr.app.util.AbilityFilter;
+import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
@@ -200,7 +198,7 @@ public class MainActivity extends AppCompatActivity
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
             } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
-            } else if(AbilityFactory.FACTORY_ID.equals(factoryId)) {
+            } else if(ClassFeatureFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_abilities));
             } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
@@ -220,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                     FilterAbilityFragment fragAbilityFilter = (FilterAbilityFragment)fragment;
                     if (fragAbilityFilter != null) {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                        fragAbilityFilter.setFilter(new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+                        fragAbilityFilter.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
                     }
                 }
 
@@ -246,13 +244,13 @@ public class MainActivity extends AppCompatActivity
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
-        long countAbilities = dbhelper.getCountEntities(AbilityFactory.getInstance());
+        long countAbilities = dbhelper.getCountEntities(ClassFeatureFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countRaces = dbhelper.getCountEntities(RaceFactory.getInstance());
         long countClasses = dbhelper.getCountEntities(ClassFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
-        long countAbilitiesFiltered = dbhelper.getCountEntities(AbilityFactory.getInstance(), sources);
+        long countAbilitiesFiltered = dbhelper.getCountEntities(ClassFeatureFactory.getInstance(), sources);
         long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
         long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
         long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
@@ -407,13 +405,13 @@ public class MainActivity extends AppCompatActivity
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_abilities) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            AbilityFilter filter = new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null));
+            ClassFeatureFilter filter = new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null));
             filterActive = filter.hasAnyFilter();
             filterAbilities(filter);
             newEntities = new ArrayList<>(listFull);
-            totalCount = dbhelper.getCountEntities(AbilityFactory.getInstance(),
+            totalCount = dbhelper.getCountEntities(ClassFeatureFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
-            factoryId = AbilityFactory.FACTORY_ID;
+            factoryId = ClassFeatureFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
             // check that spell indexes are available!
             if(!dbhelper.hasSpellIndexes()) {
@@ -450,7 +448,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else if (newEntities != null) {
-            boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId) || AbilityFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
+            boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId) || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.item_list).setVisibility(View.VISIBLE);
@@ -525,10 +523,10 @@ public class MainActivity extends AppCompatActivity
             DialogFragment newFragment = FilterSpellFragment.newInstance(
                     new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
-        } else if(AbilityFactory.FACTORY_ID.equals(factory)) {
+        } else if(ClassFeatureFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             FilterAbilityFragment newFragment = FilterAbilityFragment.newInstance();
-            newFragment.setFilter(new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+            newFragment.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
         }
 
@@ -549,9 +547,9 @@ public class MainActivity extends AppCompatActivity
         filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
-    private void filterAbilities(AbilityFilter filter) {
+    private void filterAbilities(ClassFeatureFilter filter) {
         String[] sources = PreferenceUtil.getSources(getBaseContext());
-        List<DBEntity> abilities = dbhelper.getAllEntities(AbilityFactory.getInstance(),
+        List<DBEntity> abilities = dbhelper.getAllEntities(ClassFeatureFactory.getInstance(),
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
         List<DBEntity> classes = null;
         Set<String> clNames = new HashSet<>();
@@ -567,7 +565,7 @@ public class MainActivity extends AppCompatActivity
 
         listFull = new ArrayList<>();
         for(DBEntity e : abilities) {
-            Ability a = (Ability)e;
+            ClassFeature a = (ClassFeature)e;
             // check level max && class
             if(a.getLevel() <= filter.getFilterMaxLevel() && (classes == null || clNames.contains(a.getClass_()))) {
                 listFull.add(e);
@@ -576,7 +574,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onApplyFilter(AbilityFilter filter) {
+    public void onApplyFilter(ClassFeatureFilter filter) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String[] sources = PreferenceUtil.getSources(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_ABILITY_FILTERS, filter.generatePreferences()).apply();

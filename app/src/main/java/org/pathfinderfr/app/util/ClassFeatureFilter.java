@@ -5,16 +5,16 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class AbilityFilter {
+public class ClassFeatureFilter {
 
     private HashSet<Long> filterClass;
     private int filterMaxLevel;
 
-    public AbilityFilter(String preferences) {
+    public ClassFeatureFilter(String preferences) {
         filterClass = new HashSet<>();
         filterMaxLevel = 20;
 
-        Log.d(AbilityFilter.class.getSimpleName(), "Preferences: " + preferences );
+        Log.d(ClassFeatureFilter.class.getSimpleName(), "Preferences: " + preferences );
 
         // load preferences
         if(preferences != null) {

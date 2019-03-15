@@ -4,9 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.util.ConfigurationUtil;
-
 import java.util.Map;
 
 public class FavoriteFactory extends DBEntityFactory {
@@ -101,8 +98,8 @@ public class FavoriteFactory extends DBEntityFactory {
             entity = new Skill();
         } else if(FeatFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
             entity = new Feat();
-        } else if(AbilityFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
-            entity = new Ability();
+        } else if(ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new ClassFeature();
         } else if(SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
             entity = new Spell();
         } else {

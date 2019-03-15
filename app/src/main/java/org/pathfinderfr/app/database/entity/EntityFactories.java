@@ -1,13 +1,11 @@
 package org.pathfinderfr.app.database.entity;
 
-import java.util.List;
-
 public class EntityFactories {
 
     public static final DBEntityFactory[] FACTORIES = new DBEntityFactory[] {
             SkillFactory.getInstance(),
             FeatFactory.getInstance(),
-            AbilityFactory.getInstance(),
+            ClassFeatureFactory.getInstance(),
             SpellFactory.getInstance(),
             FavoriteFactory.getInstance(),
             RaceFactory.getInstance(),

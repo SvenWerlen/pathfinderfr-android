@@ -59,6 +59,7 @@ public class Character extends DBEntity {
     List<Pair<Class,Integer>> classes;
     Map<Long,Integer> skills;
     List<Feat> feats;
+    List<ClassFeature> features;
     List<CharacterModif> modifs;
     int hitpoints;
     int speed;
@@ -68,6 +69,7 @@ public class Character extends DBEntity {
         classes = new ArrayList<>();
         skills = new HashMap<>();
         feats = new ArrayList<>();
+        features = new ArrayList<>();
         modifs = new ArrayList<>();
     }
 
@@ -625,6 +627,51 @@ public class Character extends DBEntity {
         }
         if(found != null) {
             feats.remove(found);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the list of abilities (as a copy)
+     */
+    public List<ClassFeature> getClassFeatures() {
+        ClassFeature[] itemArray = new ClassFeature[features.size()];
+        itemArray = features.toArray(itemArray);
+        List<ClassFeature> features = Arrays.asList(itemArray);
+        final Collator collator = Collator.getInstance();
+        Collections.sort(features, new Comparator<ClassFeature>() {
+            @Override
+            public int compare(ClassFeature a1, ClassFeature a2) {
+                return collator.compare(a1.getName(), a2.getName());
+            }
+        });
+        return features;
+    }
+
+    public boolean hasClassFeature(ClassFeature feature) {
+        for(ClassFeature a : features) {
+            if(a.getId() == feature.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addClassFeature(ClassFeature feature) {
+        features.add(feature);
+    }
+
+    public boolean removeClassFeature(ClassFeature feature) {
+        ClassFeature found = null;
+        for(ClassFeature a : features) {
+            if(a.getId() == feature.getId()) {
+                found = a;
+                break;
+            }
+        }
+        if(found != null) {
+            features.remove(found);
             return true;
         }
         return false;

@@ -14,8 +14,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.LoadDataTask;
-import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.AbilityFactory;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
@@ -63,7 +62,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
 
                     Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], SkillFactory.getInstance());
                     Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], AbilityFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], ClassFeatureFactory.getInstance());
                     Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], SpellFactory.getInstance());
                     Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], RaceFactory.getInstance());
                     Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], ClassFactory.getInstance());
