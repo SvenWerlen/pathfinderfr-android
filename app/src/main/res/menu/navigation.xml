@@ -17,9 +17,9 @@
         android:title="@string/sheet_menu_feats" />
 
     <item
-        android:id="@+id/sheet_abilities"
-        android:icon="@drawable/ic_item_icon_ability"
-        android:title="@string/sheet_menu_abilities" />
+        android:id="@+id/sheet_classfeatures"
+        android:icon="@drawable/ic_item_icon_classfeature"
+        android:title="@string/sheet_menu_classfeatures" />
 
     <item
         android:id="@+id/sheet_spells"

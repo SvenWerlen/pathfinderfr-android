@@ -1,7 +1,6 @@
 package org.pathfinderfr.app.character;
 
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -21,7 +20,6 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.util.SpellFilter;
 
 import java.util.List;
 
@@ -36,7 +34,8 @@ public class CharacterSheetActivity extends AppCompatActivity {
     private static final int TAB_HOME = 0;
     private static final int TAB_SKILLS = 1;
     private static final int TAB_FEATS = 2;
-    private static final int TAB_SPELLS = 3;
+    private static final int TAB_CLASSFEATURES = 3;
+    private static final int TAB_SPELLS = 4;
 
     private int currentTab;
 
@@ -54,6 +53,9 @@ public class CharacterSheetActivity extends AppCompatActivity {
                     break;
                 case R.id.sheet_feats:
                     currentTab = TAB_FEATS;
+                    break;
+                case R.id.sheet_classfeatures:
+                    currentTab = TAB_CLASSFEATURES;
                     break;
                 case R.id.sheet_spells:
                     currentTab = TAB_SPELLS;
@@ -114,6 +116,10 @@ public class CharacterSheetActivity extends AppCompatActivity {
             case TAB_FEATS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_feats));
                 showFragment(SheetFeatFragment.newInstance(characterId));
+                return true;
+            case TAB_CLASSFEATURES:
+                setTitle(baseText + getResources().getString(R.string.sheet_menu_classfeatures));
+                showFragment(SheetClassFeatureFragment.newInstance(characterId));
                 return true;
             case TAB_SPELLS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_spells));
@@ -181,6 +187,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
             switch(currentTab) {
                 case TAB_SKILLS: navigation.setSelectedItemId(R.id.sheet_skills); break;
                 case TAB_FEATS: navigation.setSelectedItemId(R.id.sheet_feats); break;
+                case TAB_CLASSFEATURES: navigation.setSelectedItemId(R.id.sheet_classfeatures); break;
                 case TAB_SPELLS: navigation.setSelectedItemId(R.id.sheet_spells); break;
                 default: navigation.setSelectedItemId(R.id.sheet_home);
             }

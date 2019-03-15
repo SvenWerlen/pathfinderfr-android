@@ -32,7 +32,7 @@
             android:title="@string/navigation_item_feats" />
         <item
             android:id="@+id/nav_abilities"
-            android:icon="@drawable/ic_item_icon_ability"
+            android:icon="@drawable/ic_item_icon_classfeature"
             android:title="@string/navigation_item_abilities" />
         <item
             android:id="@+id/nav_spells"

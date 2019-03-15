@@ -90,7 +90,7 @@ public class ItemListRecyclerViewAdapter
         if(entity instanceof Feat) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
         } else if(entity instanceof ClassFeature) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_ability));
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_classfeature));
         } else if(entity instanceof Skill) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {

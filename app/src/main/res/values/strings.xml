@@ -132,7 +132,7 @@
     <string name="sheet_menu_main">Profil</string>
     <string name="sheet_menu_skills">Compétences</string>
     <string name="sheet_menu_feats">Dons</string>
-    <string name="sheet_menu_abilities">Aptitudes</string>
+    <string name="sheet_menu_classfeatures">Aptitudes</string>
     <string name="sheet_menu_spells">Sorts</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
@@ -305,6 +305,12 @@
     <string name="sheet_feats_filter_empty">Aucun don ne répond à ces critères (filtres).</string>
     <string name="sheet_feats_example_label_name">Dons</string>
     <string name="sheet_feats_example_name">Don (exemple)</string>
+
+    <!-- Class features -->
+    <string name="sheet_classfeatures_empty_list">Le personnage ne possède aucune aptitude. Vous pouvez en ajouter depuis le catalogue des aptitudes.</string>
+    <string name="sheet_classfeatures_filter_empty">Aucun aptitude ne répond à ces critères (filtres).</string>
+    <string name="sheet_classfeatures_example_label_name">Aptitudes</string>
+    <string name="sheet_classfeatures_example_name">Aptitude (exemple)</string>
 
     <!-- Feat filters -->
     <string name="sheet_feats_filters_title">Filtrer les dons</string>
