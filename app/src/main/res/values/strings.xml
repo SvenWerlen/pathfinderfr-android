@@ -103,6 +103,11 @@
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
 
+    <!-- Ability filters -->
+    <string name="abilityfilter_all">Tous</string>
+    <string name="abilityfilter_class">Classe:</string>
+    <string name="abilityfilter_maxlevel">Niveau maximum:</string>
+
     <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
     <string name="source_mj">Manuel des joueurs</string>
     <string name="source_mjra">Manuel des joueurs - règles avancées</string>

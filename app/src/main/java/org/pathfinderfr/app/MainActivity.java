@@ -34,8 +34,10 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Ability;
 import org.pathfinderfr.app.database.entity.AbilityFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -44,6 +46,7 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.AbilityFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
@@ -51,11 +54,13 @@ import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener, FilterAbilityFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
@@ -68,8 +73,9 @@ public class MainActivity extends AppCompatActivity
     public static final String KEY_RELOAD_REQUIRED = "refresh_required";
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
+    public static final String KEY_ABILITY_FILTERS = "filter_abilities";
 
-    public static final String DIALOG_SPELL_FILTER = "spells-filter";
+    public static final String DIALOG_FILTER = "dialog-filter";
     public static final String KEY_SEARCH_VISIBLE = "search-visible";
 
     DBHelper dbhelper;
@@ -194,6 +200,8 @@ public class MainActivity extends AppCompatActivity
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
             } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
+            } else if(AbilityFactory.FACTORY_ID.equals(factoryId)) {
+                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_abilities));
             } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
                 onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
             } else {
@@ -201,11 +209,19 @@ public class MainActivity extends AppCompatActivity
             }
 
             if(factoryId != null) {
-                FilterSpellFragment fragSpellFilter = (FilterSpellFragment) getSupportFragmentManager()
-                        .findFragmentByTag(DIALOG_SPELL_FILTER);
-                if (fragSpellFilter != null) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                    fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
+                DialogFragment fragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(DIALOG_FILTER);
+                if(fragment instanceof FilterSpellFragment) {
+                    FilterSpellFragment fragSpellFilter = (FilterSpellFragment)fragment;
+                    if (fragSpellFilter != null) {
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                        fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
+                    }
+                } else if(fragment instanceof FilterAbilityFragment) {
+                    FilterAbilityFragment fragAbilityFilter = (FilterAbilityFragment)fragment;
+                    if (fragAbilityFilter != null) {
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                        fragAbilityFilter.setFilter(new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+                    }
                 }
 
                 if (savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte) 0) == 1) {
@@ -390,9 +406,13 @@ public class MainActivity extends AppCompatActivity
             totalCount = newEntities.size();
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_abilities) {
-            newEntities = dbhelper.getAllEntities(AbilityFactory.getInstance(),
-                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
-            totalCount = newEntities.size();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            AbilityFilter filter = new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null));
+            filterActive = filter.hasAnyFilter();
+            filterAbilities(filter);
+            newEntities = new ArrayList<>(listFull);
+            totalCount = dbhelper.getCountEntities(AbilityFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
             factoryId = AbilityFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
             // check that spell indexes are available!
@@ -430,7 +450,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else if (newEntities != null) {
-            boolean filterEnabled = SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId);
+            boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId) || AbilityFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.item_list).setVisibility(View.VISIBLE);
@@ -490,7 +510,7 @@ public class MainActivity extends AppCompatActivity
         ((InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(),0);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_SPELL_FILTER);
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_FILTER);
         if (prev != null) {
             ft.remove(prev);
         }
@@ -502,10 +522,14 @@ public class MainActivity extends AppCompatActivity
 
         if(SpellFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            List<Spell> spellList = (List<Spell>)(List<?>)listFull;
             DialogFragment newFragment = FilterSpellFragment.newInstance(
                     new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
-            newFragment.show(ft, DIALOG_SPELL_FILTER);
+            newFragment.show(ft, DIALOG_FILTER);
+        } else if(AbilityFactory.FACTORY_ID.equals(factory)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            FilterAbilityFragment newFragment = FilterAbilityFragment.newInstance();
+            newFragment.setFilter(new AbilityFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+            newFragment.show(ft, DIALOG_FILTER);
         }
 
     }
@@ -515,7 +539,48 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String[] sources = PreferenceUtil.getSources(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
-        listFull = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter, sources);
+        listFull = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter,
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+        applySearch();
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = filter.hasAnyFilter() ? R.drawable.ic_filtered : R.drawable.ic_filter;
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
+    }
+
+    private void filterAbilities(AbilityFilter filter) {
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
+        List<DBEntity> abilities = dbhelper.getAllEntities(AbilityFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+        List<DBEntity> classes = null;
+        Set<String> clNames = new HashSet<>();
+        if(filter.hasFilterClass()) {
+            classes = dbhelper.getAllEntities(ClassFactory.getInstance(), sources);
+            // get names of all filtered classes
+            for(DBEntity c : classes) {
+                if(filter.isFilterClassEnabled(c.getId())) {
+                    clNames.add(c.getName());
+                }
+            }
+        }
+
+        listFull = new ArrayList<>();
+        for(DBEntity e : abilities) {
+            Ability a = (Ability)e;
+            // check level max && class
+            if(a.getLevel() <= filter.getFilterMaxLevel() && (classes == null || clNames.contains(a.getClass_()))) {
+                listFull.add(e);
+            }
+        }
+    }
+
+    @Override
+    public void onApplyFilter(AbilityFilter filter) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
+        prefs.edit().putString(MainActivity.KEY_ABILITY_FILTERS, filter.generatePreferences()).apply();
+        filterAbilities(filter);
         applySearch();
 
         // change icon if filter applied
