@@ -38,7 +38,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
 
     private static DBHelper instance;
 
@@ -128,6 +128,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(ClassFeatureFactory.getInstance().getQueryCreateTable());
             oldVersion = 8;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 8");
+        }
+        // version 9 introduced new column on character for class features
+        if(oldVersion == 8) {
+            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV9());
+            oldVersion = 9;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 9");
         }
     }
 

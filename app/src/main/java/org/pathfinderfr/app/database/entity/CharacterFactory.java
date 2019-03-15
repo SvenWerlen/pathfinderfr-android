@@ -29,6 +29,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ABILITY_CHA = "ab_cha";
     private static final String COLUMN_SKILLS      = "skills";
     private static final String COLUMN_FEATS       = "feats";
+    private static final String COLUMN_CLFEATURES  = "clfeatures";
     private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
     private static final String COLUMN_SPEED       = "speed";
@@ -67,7 +68,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text," +
                         "%s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
@@ -75,7 +76,7 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_MODIFS,
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_MODIFS,
                 COLUMN_HITPOINTS, COLUMN_SPEED);
         return query;
     }
@@ -99,6 +100,13 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV6() {
         return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v5 to v6
+     */
+    public String getQueryUpgradeV9() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_CLFEATURES);
     }
 
     @Override
@@ -175,6 +183,20 @@ public class CharacterFactory extends DBEntityFactory {
             contentValues.put(CharacterFactory.COLUMN_FEATS, value.toString());
         } else {
             contentValues.put(CharacterFactory.COLUMN_FEATS, "");
+        }
+
+        // class features are stored using format <feat1Id>#<feat2Id>...
+        // (assuming that class features ids won't change during data import)
+        if(c.getClassFeatures().size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(ClassFeature feat : c.getClassFeatures()) {
+                value.append(feat.getId()).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Class features: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_CLFEATURES, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_CLFEATURES, "");
         }
 
         // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
@@ -317,6 +339,26 @@ public class CharacterFactory extends DBEntityFactory {
                 }
             } catch (NumberFormatException nfe) {
                 Log.e(CharacterFactory.class.getSimpleName(), "Stored feat '" + featsValue + "' is invalid (NFE)!");
+            }
+        }
+
+        // fill class features
+        String featuresValue = extractValue(resource, CharacterFactory.COLUMN_CLFEATURES);
+        Log.d(CharacterFactory.class.getSimpleName(), "Class features found: " + featuresValue);
+        if(featuresValue != null && featuresValue.length() > 0) {
+            String[] feats = featuresValue.split("#");
+            long[] featIds = new long[feats.length];
+            try {
+                for(int i = 0; i < feats.length; i++) {
+                    featIds[i] = Long.parseLong(feats[i]);
+                }
+                // retrieve all class features from DB
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, ClassFeatureFactory.getInstance());
+                for(DBEntity e : list) {
+                    c.addClassFeature((ClassFeature) e);
+                }
+            } catch (NumberFormatException nfe) {
+                Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
             }
         }
 
