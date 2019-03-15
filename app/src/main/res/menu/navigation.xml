@@ -17,6 +17,11 @@
         android:title="@string/sheet_menu_feats" />
 
     <item
+        android:id="@+id/sheet_abilities"
+        android:icon="@drawable/ic_item_icon_ability"
+        android:title="@string/sheet_menu_abilities" />
+
+    <item
         android:id="@+id/sheet_spells"
         android:icon="@drawable/ic_item_icon_spell"
         android:title="@string/sheet_menu_spells" />

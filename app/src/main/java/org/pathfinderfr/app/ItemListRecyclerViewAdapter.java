@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.entity.Ability;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
@@ -88,6 +89,8 @@ public class ItemListRecyclerViewAdapter
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.itemIcon);
         if(entity instanceof Feat) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
+        } else if(entity instanceof Ability) {
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_ability));
         } else if(entity instanceof Skill) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {

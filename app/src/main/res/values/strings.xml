@@ -42,6 +42,7 @@
     <string name="navigation_item_sheets">Personnages</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
+    <string name="navigation_item_abilities">Aptitudes</string>
     <string name="navigation_item_spells">Sorts</string>
     <string name="navigation_title_catalog">Catalogue</string>
     <string name="navigation_title_advanced">Options avancées</string>
@@ -121,6 +122,7 @@
     <string name="sheet_menu_main">Profil</string>
     <string name="sheet_menu_skills">Compétences</string>
     <string name="sheet_menu_feats">Dons</string>
+    <string name="sheet_menu_abilities">Aptitudes</string>
     <string name="sheet_menu_spells">Sorts</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>

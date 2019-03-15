@@ -11,6 +11,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.SpellFactory;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -77,6 +78,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         UpdateStatus progresses[] = new UpdateStatus[sources.length];
         Integer[] count = new Integer[sources.length];
 
+        boolean reIndexingRequired = false;
 
         int idx = 0;
         for(Pair<String,DBEntityFactory> source: sources) {
@@ -87,6 +89,10 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
             String address = source.first;
             DBEntityFactory factory = source.second;
             dbHelper.clear(factory);
+
+            if(factory == SpellFactory.getInstance()) {
+                reIndexingRequired = true;
+            }
 
             // ==============================================
             // First part : load data from GitHub repository
@@ -191,9 +197,10 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         // ==============================================
         // Third part : migrate favorites
         // ==============================================
-        caller.onOptimisation();
-        dbHelper.fillSpellClassLevel();
-
+        if(reIndexingRequired) {
+            caller.onOptimisation();
+            dbHelper.fillSpellClassLevel();
+        }
 
         if(isCancelled()) {
             caller.onProgressUpdate(progresses);

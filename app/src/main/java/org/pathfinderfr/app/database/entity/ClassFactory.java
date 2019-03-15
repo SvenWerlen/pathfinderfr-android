@@ -190,7 +190,7 @@ public class ClassFactory extends DBEntityFactory {
         }
         return cl.isValid() ? cl : null;
     }
-    
+
 
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {

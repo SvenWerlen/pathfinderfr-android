@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.AbilityFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
@@ -229,11 +230,13 @@ public class MainActivity extends AppCompatActivity
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
+        long countAbilities = dbhelper.getCountEntities(AbilityFactory.getInstance());
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countRaces = dbhelper.getCountEntities(RaceFactory.getInstance());
         long countClasses = dbhelper.getCountEntities(ClassFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
+        long countAbilitiesFiltered = dbhelper.getCountEntities(AbilityFactory.getInstance(), sources);
         long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
         long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
         long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
@@ -243,10 +246,10 @@ public class MainActivity extends AppCompatActivity
 
 
         String welcomeText = String.format(props.getProperty("template.welcome"),
-                countSkills, countFeatsFiltered, countFeats, countSpellsFiltered, countSpells,
+                countSkills, countFeatsFiltered, countFeats, countAbilitiesFiltered, countAbilities, countSpellsFiltered, countSpells,
                 countRacesFiltered, countRaces, countClassesFiltered, countClasses,
                 countFavorites, countSources, countSourcesTotal);
-        if (countSkills == 0 && countFeats == 0 && countSpells == 0) {
+        if (countSkills == 0 && countFeats == 0 && countAbilities == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
         } else {
             welcomeText += props.getProperty("template.welcome.second");
@@ -269,6 +272,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
         navigationView.getMenu().findItem(R.id.nav_skills).setVisible(countSkills > 0);
         navigationView.getMenu().findItem(R.id.nav_feats).setVisible(countFeats > 0);
+        navigationView.getMenu().findItem(R.id.nav_abilities).setVisible(countAbilities > 0);
         navigationView.getMenu().findItem(R.id.nav_spells).setVisible(countSpells > 0);
         navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(countClasses > 0 && countRaces > 0);
     }
@@ -385,6 +389,11 @@ public class MainActivity extends AppCompatActivity
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
             totalCount = newEntities.size();
             factoryId = FeatFactory.FACTORY_ID;
+        } else if (id == R.id.nav_abilities) {
+            newEntities = dbhelper.getAllEntities(AbilityFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+            totalCount = newEntities.size();
+            factoryId = AbilityFactory.FACTORY_ID;
         } else if (id == R.id.nav_spells) {
             // check that spell indexes are available!
             if(!dbhelper.hasSpellIndexes()) {

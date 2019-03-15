@@ -7,6 +7,7 @@ public class EntityFactories {
     public static final DBEntityFactory[] FACTORIES = new DBEntityFactory[] {
             SkillFactory.getInstance(),
             FeatFactory.getInstance(),
+            AbilityFactory.getInstance(),
             SpellFactory.getInstance(),
             FavoriteFactory.getInstance(),
             RaceFactory.getInstance(),

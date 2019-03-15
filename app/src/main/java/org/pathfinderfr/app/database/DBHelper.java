@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.AbilityFactory;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
@@ -39,7 +40,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
 
     private static DBHelper instance;
 
@@ -121,7 +122,14 @@ public class DBHelper extends SQLiteOpenHelper {
         if(oldVersion == 6) {
             db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
             db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+            oldVersion = 7;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 7");
+        }
+        // version 8 introduced new entities (abilities)
+        if(oldVersion == 7) {
+            db.execSQL(AbilityFactory.getInstance().getQueryCreateTable());
+            oldVersion = 8;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 8");
         }
     }
 
