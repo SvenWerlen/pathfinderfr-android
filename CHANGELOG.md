@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Class features (inventory, load data, sheet, ...)
+### Fixed
+- Invalid message displayed on spell list for non-caster when different order is selected
 
 ## [2.2.0] - 2019-03-09
 ### Changed
