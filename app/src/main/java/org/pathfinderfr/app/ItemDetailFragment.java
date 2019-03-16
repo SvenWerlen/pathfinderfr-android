@@ -176,6 +176,7 @@ public class ItemDetailFragment extends Fragment {
                         character.removeFeat(feat);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                             message = getResources().getString(R.string.feat_removed_success);
+                            success = true;
                         } else {
                             character.addFeat(feat); // rollback
                             message = getResources().getString(R.string.feat_removed_failed);
@@ -184,6 +185,7 @@ public class ItemDetailFragment extends Fragment {
                         character.addFeat(feat);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                             message = getResources().getString(R.string.feat_added_success);
+                            success = true;
                         } else {
                             character.removeFeat(feat); // rollback
                             message = getResources().getString(R.string.feat_added_failed);
@@ -197,6 +199,7 @@ public class ItemDetailFragment extends Fragment {
                         character.removeClassFeature(classFeature);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                             message = getResources().getString(R.string.ability_removed_success);
+                            success = true;
                         } else {
                             character.addClassFeature(classFeature); // rollback
                             message = getResources().getString(R.string.ability_removed_failed);
@@ -205,10 +208,20 @@ public class ItemDetailFragment extends Fragment {
                         character.addClassFeature(classFeature);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                             message = getResources().getString(R.string.ability_added_success);
+                            success = true;
                         } else {
                             character.removeClassFeature(classFeature); // rollback
                             message = getResources().getString(R.string.ability_added_failed);
                         }
+                    }
+                }
+                // update list if currently viewing character
+                if(success) {
+                    String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
+                            getView().getContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
+                    if (CharacterFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
+                        PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
+                                .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
                     }
                 }
                 updateActionIcons(getView());
