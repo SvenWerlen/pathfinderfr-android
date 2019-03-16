@@ -359,21 +359,21 @@ public class CharacterFactory extends DBEntityFactory {
             feats = featuresValue.split("#");
         }
         Set<Long> featIds = new HashSet<>();
-        Map<String,Integer> classes = new HashMap<>();
+        Map<Long,Integer> classes = new HashMap<>();
         try {
             for(int i = 0; i < feats.length; i++) {
                 featIds.add(Long.parseLong(feats[i]));
             }
             for(int i = 0; i < c.getClassesCount(); i++) {
                 Pair<Class,Integer> level = c.getClass(i);
-                classes.put(level.first.getName(), level.second);
+                classes.put(level.first.getId(), level.second);
             }
             // retrieve all class features from DB
             List<DBEntity> list = DBHelper.getInstance(null).getAllEntities(ClassFeatureFactory.getInstance());
             for(DBEntity e : list) {
                 ClassFeature cFeat = (ClassFeature) e;
                 // add all automatic class features matching level
-                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_()) && cFeat.getLevel() <= classes.get(cFeat.getClass_())) {
+                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_().getId()) && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
                     c.addClassFeature((ClassFeature) e);
                 }
                 // add all added class features (even if not matching class)

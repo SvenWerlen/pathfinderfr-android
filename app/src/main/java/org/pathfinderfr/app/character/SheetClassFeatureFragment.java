@@ -127,6 +127,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         ImageView exampleIcon = view.findViewById(R.id.sheet_classfeatures_example_icon);
         TextView exampleName = view.findViewById(R.id.sheet_classfeatures_example_name);
         view.findViewById(R.id.sheet_classfeatures_row).setVisibility(View.GONE);
+        TextView messageAdd = view.findViewById(R.id.sheet_classfeatures_add);
 
         // determine size
         int height = (int) TypedValue.applyDimension(
@@ -153,7 +154,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             // name
             TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
             String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
-            nameTv.setText(String.format(template, classfeature.getLevel(), classfeature.getNameLong()));
+            nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameLong()));
             // highlight if invalid level or class
             if(!character.isValidClassFeature(classfeature)) {
                 nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
@@ -190,8 +191,11 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             }
         });
 
-        if(features.size() > 0) {
+        if(rowId > 0) {
+            // hide message for empty list
             view.findViewById(R.id.sheet_classfeatures_empty_list).setVisibility(View.GONE);
+        } else {
+            messageAdd.setVisibility(View.GONE);
         }
 
         applyFilters(view);

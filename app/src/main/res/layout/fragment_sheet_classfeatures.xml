@@ -56,6 +56,14 @@
         android:text="@string/sheet_feats_filter_empty"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/sheet_classfeatures_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:padding="5dp"
+        android:text="@string/sheet_classfeatures_add" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

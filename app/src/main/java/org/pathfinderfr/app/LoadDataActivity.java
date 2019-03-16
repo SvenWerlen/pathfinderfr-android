@@ -30,7 +30,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     private static final String[] SOURCES = new String[]{
             "/data/competences.yml",
             "/data/dons.yml",
-            "/data/abilities.yml",
+            "/data/classfeatures.yml",
             "/data/spells.yml",
             "/data/races.yml",
             "/data/classes.yml"};

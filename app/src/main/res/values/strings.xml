@@ -109,9 +109,9 @@
     <string name="delete">Supprimer</string>
 
     <!-- ClassFeature filters -->
-    <string name="abilityfilter_all">Tous</string>
-    <string name="abilityfilter_class">Classe:</string>
-    <string name="abilityfilter_maxlevel">Niveau maximum:</string>
+    <string name="classfeatures_filter_all">Tous</string>
+    <string name="classfeatures_class">Classe:</string>
+    <string name="classfeatures_maxlevel">Niveau maximum:</string>
 
     <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
     <string name="source_mj">Manuel des joueurs</string>
@@ -311,6 +311,7 @@
     <string name="sheet_classfeatures_filter_empty">Aucun aptitude ne répond à ces critères (filtres).</string>
     <string name="sheet_classfeatures_example_label_name">Aptitudes</string>
     <string name="sheet_classfeatures_example_name">Aptitude (exemple)</string>
+    <string name="sheet_classfeatures_add">Vous pouvez ajouter d\'autres aptitudes depuis le catalogue.</string>
 
     <!-- Feat filters -->
     <string name="sheet_feats_filters_title">Filtrer les dons</string>

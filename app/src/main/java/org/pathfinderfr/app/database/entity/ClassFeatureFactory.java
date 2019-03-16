@@ -4,8 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClassFeatureFactory extends DBEntityFactory {
@@ -29,7 +32,12 @@ public class ClassFeatureFactory extends DBEntityFactory {
 
     private static ClassFeatureFactory instance;
 
+    private Map<Long, Class> classesById;
+    private Map<String, Class> classesByName;
+
     private ClassFeatureFactory() {
+        classesById = new HashMap<>();
+        classesByName = new HashMap<>();
     }
 
     /**
@@ -40,6 +48,30 @@ public class ClassFeatureFactory extends DBEntityFactory {
             instance = new ClassFeatureFactory();
         }
         return instance;
+    }
+
+    private synchronized Class getClass(String name) {
+        if(classesByName.size() == 0) {
+            classesById.clear();
+            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
+            for(DBEntity e : fullList) {
+                classesById.put(e.getId(), (Class)e);
+                classesByName.put(e.getName(), (Class)e);
+            }
+        }
+        return classesByName.get(name);
+    }
+
+    private synchronized Class getClass(long id) {
+        if(classesById.size() == 0) {
+            classesByName.clear();
+            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
+            for(DBEntity e : fullList) {
+                classesById.put(e.getId(), (Class)e);
+                classesByName.put(e.getName(), (Class)e);
+            }
+        }
+        return classesById.get(id);
     }
 
     @Override
@@ -57,7 +89,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
-                        "%s text, %s text, %s integer, %s integer" +
+                        "%s integer, %s text, %s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
@@ -91,7 +123,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         contentValues.put(ClassFeatureFactory.COLUMN_DESC, classFeature.getDescription());
         contentValues.put(ClassFeatureFactory.COLUMN_REFERENCE, classFeature.getReference());
         contentValues.put(ClassFeatureFactory.COLUMN_SOURCE, classFeature.getSource());
-        contentValues.put(ClassFeatureFactory.COLUMN_CLASS, classFeature.getClass_());
+        contentValues.put(ClassFeatureFactory.COLUMN_CLASS, classFeature.getClass_().getId());
         contentValues.put(ClassFeatureFactory.COLUMN_CONDITIONS, classFeature.getConditions());
         contentValues.put(ClassFeatureFactory.COLUMN_LEVEL, classFeature.getLevel());
         contentValues.put(ClassFeatureFactory.COLUMN_AUTOMATIC, classFeature.isAuto() ? 1 : 0);
@@ -108,7 +140,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         classFeature.setDescription(extractValue(resource, ClassFeatureFactory.COLUMN_DESC));
         classFeature.setReference(extractValue(resource, ClassFeatureFactory.COLUMN_REFERENCE));
         classFeature.setSource(extractValue(resource, ClassFeatureFactory.COLUMN_SOURCE));
-        classFeature.setClass(extractValue(resource, ClassFeatureFactory.COLUMN_CLASS));
+        classFeature.setClass(getClass(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_CLASS)));
         classFeature.setConditions(extractValue(resource, ClassFeatureFactory.COLUMN_CONDITIONS));
         classFeature.setLevel(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_LEVEL));
         classFeature.setAuto(extractValueAsBoolean(resource, ClassFeatureFactory.COLUMN_AUTOMATIC));
@@ -122,7 +154,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         classFeature.setDescription((String)attributes.get(YAML_DESC));
         classFeature.setReference((String)attributes.get(YAML_REFERENCE));
         classFeature.setSource((String)attributes.get(YAML_SOURCE));
-        classFeature.setClass((String)attributes.get(YAML_CLASS));
+        classFeature.setClass(getClass((String)attributes.get(YAML_CLASS)));
         classFeature.setConditions((String)attributes.get(YAML_CONDITIONS));
         classFeature.setLevel(Integer.parseInt((String)attributes.get(YAML_LEVEL)));
         classFeature.setAuto("True".equals((String)attributes.get(YAML_AUTO)));
@@ -139,7 +171,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         ClassFeature classFeature = (ClassFeature)entity;
         StringBuffer buf = new StringBuffer();
         String source = classFeature.getSource() == null ? null : getTranslatedText("source." + classFeature.getSource().toLowerCase());
-        buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_()));
+        buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_().getName()));
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, classFeature.getConditions()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, String.valueOf(classFeature.getLevel())));

@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/abilityfilter_class"
+            android:text="@string/classfeatures_class"
             android:textStyle="bold" />
 
         <com.wefika.flowlayout.FlowLayout
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:checked="true"
-                android:text="@string/abilityfilter_all" />
+                android:text="@string/classfeatures_filter_all" />
 
         </com.wefika.flowlayout.FlowLayout>
 
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/abilityfilter_maxlevel"
+            android:text="@string/classfeatures_maxlevel"
             android:textStyle="bold" />
 
         <com.wefika.flowlayout.FlowLayout

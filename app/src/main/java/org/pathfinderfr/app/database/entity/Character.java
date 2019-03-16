@@ -644,7 +644,10 @@ public class Character extends DBEntity {
             public int compare(ClassFeature a1, ClassFeature a2) {
                 if(a1.getLevel() != a2.getLevel()) {
                     return Integer.compare(a1.getLevel(),a2.getLevel());
-                } else {
+                } else if(a1.getClass_() != a2.getClass_()) {
+                    return collator.compare(a1.getClass_().getShortName(), a2.getClass_().getShortName());
+                }
+                else {
                     return collator.compare(a1.getName(), a2.getName());
                 }
             }
@@ -686,7 +689,7 @@ public class Character extends DBEntity {
      */
     public boolean isValidClassFeature(ClassFeature feature) {
         for(Pair<Class,Integer> cl: classes) {
-            if(feature.getClass_().equals(cl.first.getName()) && feature.getLevel() <= cl.second) {
+            if(feature.getClass_().getId() == cl.first.getId() && feature.getLevel() <= cl.second) {
                 return true;
             }
         }

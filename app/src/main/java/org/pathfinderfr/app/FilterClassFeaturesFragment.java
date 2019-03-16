@@ -31,12 +31,12 @@ import java.util.Set;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FilterAbilityFragment.OnFragmentInteractionListener} interface
+ * {@link FilterClassFeaturesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FilterAbilityFragment#newInstance} factory method to
+ * Use the {@link FilterClassFeaturesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilterAbilityFragment extends DialogFragment implements View.OnClickListener {
+public class FilterClassFeaturesFragment extends DialogFragment implements View.OnClickListener {
 
     private static final String ARG_FILTER = "filter";
 
@@ -50,7 +50,7 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
 
     private OnFragmentInteractionListener mListener;
 
-    public FilterAbilityFragment() {
+    public FilterClassFeaturesFragment() {
         // Required empty public constructor
     }
 
@@ -60,8 +60,8 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
      *
      * @return A new instance of fragment FilterSpellFragment.
      */
-    public static FilterAbilityFragment newInstance() {
-        FilterAbilityFragment fragment = new FilterAbilityFragment();
+    public static FilterClassFeaturesFragment newInstance() {
+        FilterClassFeaturesFragment fragment = new FilterClassFeaturesFragment();
         return fragment;
     }
 
@@ -82,7 +82,7 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_ability_filter, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_classfeatures_filter, container, false);
         FlowLayout layoutClass = (FlowLayout) rootView.findViewById(R.id.flowClass);
         FlowLayout layoutMaxLevel = (FlowLayout) rootView.findViewById(R.id.flowMaxLevel);
         CheckBox checkClass = (CheckBox)rootView.findViewById(R.id.classAll);
@@ -94,18 +94,18 @@ public class FilterAbilityFragment extends DialogFragment implements View.OnClic
 
         DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
         String[] sources = PreferenceUtil.getSources(rootView.getContext());
-        List<DBEntity> abilities = dbHelper.getAllEntities(ClassFeatureFactory.getInstance(), sources);
+        List<DBEntity> classFeatures = dbHelper.getAllEntities(ClassFeatureFactory.getInstance(), sources);
         List<DBEntity> classes = dbHelper.getAllEntities(ClassFactory.getInstance(), sources);
 
-        Set<String> clNames = new HashSet<>();
-        for(DBEntity a : abilities) {
-            clNames.add(((ClassFeature)a).getClass_());
+        Set<Long> clIds = new HashSet<>();
+        for(DBEntity clf : classFeatures) {
+            clIds.add(((ClassFeature)clf).getClass_().getId());
         }
 
         if(filter != null) {
             checkClass.setChecked(!filter.hasFilterClass());
             for (DBEntity cl : classes) {
-                if (clNames.contains(cl.getName())) {
+                if (clIds.contains(cl.getId())) {
                     CheckBox cb = new CheckBox(getActivity());
                     Long classId = ((Class) cl).getId();
                     cb.setText(((Class) cl).getShortName());
