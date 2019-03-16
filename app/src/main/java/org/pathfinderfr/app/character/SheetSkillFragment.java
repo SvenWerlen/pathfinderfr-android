@@ -214,7 +214,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                     int total = character.getSkillTotalBonus(skill);
                     String classSkillText = "";
                     if(character.isClassSkill(skill.getName()) && rank > 0) {
-                        classSkillText = String.format(skillTooltipClassSkill);
+                        classSkillText = skillTooltipClassSkill;
                     }
                     ((CharacterSheetActivity)getActivity()).showTooltip(
                             String.format(skillTooltipTitle,skill.getName()),

@@ -7,12 +7,16 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CharacterFactory extends DBEntityFactory {
 
@@ -190,9 +194,13 @@ public class CharacterFactory extends DBEntityFactory {
         if(c.getClassFeatures().size() > 0) {
             StringBuffer value = new StringBuffer();
             for(ClassFeature feat : c.getClassFeatures()) {
-                value.append(feat.getId()).append('#');
+                if(!feat.isAuto()) {
+                    value.append(feat.getId()).append('#');
+                }
             }
-            value.deleteCharAt(value.length()-1);
+            if(value.length() > 0) {
+                value.deleteCharAt(value.length() - 1);
+            }
             Log.d(CharacterFactory.class.getSimpleName(), "Class features: " + value.toString());
             contentValues.put(CharacterFactory.COLUMN_CLFEATURES, value.toString());
         } else {
@@ -345,21 +353,36 @@ public class CharacterFactory extends DBEntityFactory {
         // fill class features
         String featuresValue = extractValue(resource, CharacterFactory.COLUMN_CLFEATURES);
         Log.d(CharacterFactory.class.getSimpleName(), "Class features found: " + featuresValue);
+
+        String[] feats = new String[0];
         if(featuresValue != null && featuresValue.length() > 0) {
-            String[] feats = featuresValue.split("#");
-            long[] featIds = new long[feats.length];
-            try {
-                for(int i = 0; i < feats.length; i++) {
-                    featIds[i] = Long.parseLong(feats[i]);
-                }
-                // retrieve all class features from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, ClassFeatureFactory.getInstance());
-                for(DBEntity e : list) {
+            feats = featuresValue.split("#");
+        }
+        Set<Long> featIds = new HashSet<>();
+        Map<String,Integer> classes = new HashMap<>();
+        try {
+            for(int i = 0; i < feats.length; i++) {
+                featIds.add(Long.parseLong(feats[i]));
+            }
+            for(int i = 0; i < c.getClassesCount(); i++) {
+                Pair<Class,Integer> level = c.getClass(i);
+                classes.put(level.first.getName(), level.second);
+            }
+            // retrieve all class features from DB
+            List<DBEntity> list = DBHelper.getInstance(null).getAllEntities(ClassFeatureFactory.getInstance());
+            for(DBEntity e : list) {
+                ClassFeature cFeat = (ClassFeature) e;
+                // add all automatic class features matching level
+                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_()) && cFeat.getLevel() <= classes.get(cFeat.getClass_())) {
                     c.addClassFeature((ClassFeature) e);
                 }
-            } catch (NumberFormatException nfe) {
-                Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
+                // add all added class features (even if not matching class)
+                if(featIds.contains(cFeat.getId())) {
+                    c.addClassFeature((ClassFeature) e);
+                }
             }
+        } catch (NumberFormatException nfe) {
+            Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
         }
 
         // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>

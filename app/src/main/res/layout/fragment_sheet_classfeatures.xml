@@ -73,6 +73,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/sheet_classfeatures_example_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="5dp"
+                    app:srcCompat="@drawable/ic_unchecked" />
+
                 <TextView
                     android:id="@+id/sheet_classfeatures_example_name"
                     android:layout_width="wrap_content"

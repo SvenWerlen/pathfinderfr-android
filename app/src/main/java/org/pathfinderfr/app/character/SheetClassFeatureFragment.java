@@ -29,6 +29,7 @@ import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -78,8 +79,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     private void applyFilters(View view) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
-        //int filterOnlyType = prefs.getInt(FragmentClassFeatureFilter.KEY_FEATFILTER_TYPE, FragmentClassFeatureFilter.FEATFILTER_TYPE_ALL);
-        boolean filterOnlyFav = prefs.getBoolean(FragmentClassFeatureFilter.KEY_FEATFILTER_FAV, false);
+        boolean filterOnlyFav = prefs.getBoolean(FragmentClassFeatureFilter.KEY_CLASSFEATUREFILTER_FAV, false);
 
         boolean filtersApplied = filterOnlyFav;
         ImageView iv = view.findViewById(R.id.sheet_classfeatures_filters);
@@ -124,6 +124,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
 
         // References
         TableLayout table = view.findViewById(R.id.sheet_classfeatures_table);
+        ImageView exampleIcon = view.findViewById(R.id.sheet_classfeatures_example_icon);
         TextView exampleName = view.findViewById(R.id.sheet_classfeatures_example_name);
         view.findViewById(R.id.sheet_classfeatures_row).setVisibility(View.GONE);
 
@@ -142,9 +143,21 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             row.setGravity(Gravity.CENTER_VERTICAL);
             features.add(new Pair(row,classfeature));
 
+            // icon
+            ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
+            if(classfeature.isAuto()) {
+                iconIv.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_checked));
+            }
+            iconIv.setColorFilter(exampleName.getCurrentTextColor());
+            row.addView(iconIv);
             // name
             TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
-            nameTv.setText(classfeature.getNameLong());
+            String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
+            nameTv.setText(String.format(template, classfeature.getLevel(), classfeature.getNameLong()));
+            // highlight if invalid level or class
+            if(!character.isValidClassFeature(classfeature)) {
+                nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
+            }
             nameTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

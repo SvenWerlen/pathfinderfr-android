@@ -215,7 +215,6 @@ public class Character extends DBEntity {
         return classes.size();
     }
 
-
     public void addOrSetClass(Class cl, int level) {
         // check that this class is not already in
         for(int i=0; i<classes.size(); i++) {
@@ -643,7 +642,11 @@ public class Character extends DBEntity {
         Collections.sort(features, new Comparator<ClassFeature>() {
             @Override
             public int compare(ClassFeature a1, ClassFeature a2) {
-                return collator.compare(a1.getName(), a2.getName());
+                if(a1.getLevel() != a2.getLevel()) {
+                    return Integer.compare(a1.getLevel(),a2.getLevel());
+                } else {
+                    return collator.compare(a1.getName(), a2.getName());
+                }
             }
         });
         return features;
@@ -673,6 +676,19 @@ public class Character extends DBEntity {
         if(found != null) {
             features.remove(found);
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param feature class feature
+     * @return false if feature doesn't match class or level
+     */
+    public boolean isValidClassFeature(ClassFeature feature) {
+        for(Pair<Class,Integer> cl: classes) {
+            if(feature.getClass_().equals(cl.first.getName()) && feature.getLevel() <= cl.second) {
+                return true;
+            }
         }
         return false;
     }
