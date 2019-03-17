@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.data.LoadDataTask;
+import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
@@ -23,6 +25,8 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+
+import java.util.Map;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
@@ -59,7 +63,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     button.setText(getResources().getString(R.string.loaddata_stop));
                     findViewById(R.id.loaddataProgressBar).setVisibility(View.VISIBLE);
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
-                    boolean deleteOrpheans = ((CheckBox)findViewById(R.id.loaddataDeleteOrpheans)).isChecked();
+                    boolean forceUpdate = ((CheckBox)findViewById(R.id.forceupdate)).isChecked();
 
                     Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], RaceFactory.getInstance());
                     Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], ClassFactory.getInstance());
@@ -67,7 +71,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], FeatFactory.getInstance());
                     Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFeatureFactory.getInstance());
                     Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], SpellFactory.getInstance());
-                    loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
+                    loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, forceUpdate);
                     loadTaskInProgress.execute(source0,source1,source2,source3,source4,source5);
 
                 } else {
@@ -98,7 +102,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     public void onProgressUpdate(LoadDataTask.UpdateStatus... progresses) {
         int totalProgress = 0;
         for(LoadDataTask.UpdateStatus p : progresses) {
-            if(p != null) {
+            if(p != null && p.getCountTotal() > 0) {
                 totalProgress += (int) ((p.getCountProcessed() / (float) p.getCountTotal()) * 100);
             }
         }
@@ -108,12 +112,12 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
         String text = "";
         for(int i=0; i<progresses.length; i++) {
             String status;
-            if(progresses[i].getCountProcessed() < 0) {
+            if(progresses[i].getStatus() == LoadDataTask.UpdateStatus.STATUS_NOTSTARTED) {
                 status = getResources().getString(R.string.loaddata_waiting);
-            } else if(progresses[i].getCountTotal() < 0) {
+            } else if(progresses[i].getStatus() == LoadDataTask.UpdateStatus.STATUS_NOUPDATE_REQUIRED) {
                 status = String.format(getResources().getString(R.string.loaddata_noupdate_required), progresses[i].getOldVersion());
                 completed = completed && progresses[i].hasEnded();
-            } else if(progresses[i].getCountTotal() == 0) {
+            } else if(progresses[i].getStatus() == LoadDataTask.UpdateStatus.STATUS_DOWNLOADING) {
                 status = getResources().getString(R.string.loaddata_downloading);
                 completed = completed && progresses[i].hasEnded();
             } else {
@@ -128,9 +132,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             String sourceName = ConfigurationUtil.getInstance(getApplicationContext()).getProperties().getProperty("template.title." + progresses[i].getFactoryId().toLowerCase());
             text += "<b>" + sourceName + "</b>: " + status + "<br/>";
         }
-        if(completed) {
-            text += "<br/>" + favoriteMigrationText(progresses);
-        }
+        //if(completed) {
+        //    text += "<br/>" + favoriteMigrationText(progresses);
+        //}
 
         final int progress = progresses.length == 0 ? 100 : totalProgress / progresses.length;
         final String message = text;
@@ -191,20 +195,17 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                 boolean error = false;
                 String statusText = null;
                 switch (fav.second) {
-                    case LoadDataTask.UpdateStatus.STATUS_PENDING:
-                        statusText = getResources().getString(R.string.loaddata_status_pending);
-                        break;
-                    case LoadDataTask.UpdateStatus.STATUS_NOTCHANGED:
+                    case LoadDataTask.UpdateStatus.STATUS_MIGR_NOTCHANGED:
                         statusText = getResources().getString(R.string.loaddata_status_notchanged);
                         break;
-                    case LoadDataTask.UpdateStatus.STATUS_CHANGED:
+                    case LoadDataTask.UpdateStatus.STATUS_MIGR_CHANGED:
                         statusText = getResources().getString(R.string.loaddata_status_changed);
                         break;
-                    case LoadDataTask.UpdateStatus.STATUS_NOTFOUND:
+                    case LoadDataTask.UpdateStatus.STATUS_MIGR_NOTFOUND:
                         statusText = getResources().getString(R.string.loaddata_status_notfound);
                         error = true;
                         break;
-                    case LoadDataTask.UpdateStatus.STATUS_DELETED:
+                    case LoadDataTask.UpdateStatus.STATUS_MIGR_DELETED:
                         statusText = getResources().getString(R.string.loaddata_status_deleted);
                         error = true;
                         break;

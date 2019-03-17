@@ -36,29 +36,38 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
     public static class UpdateStatus {
 
-        public static final int STATUS_ERROR = -1;
-        public static final int STATUS_PENDING = 0;
-        public static final int STATUS_NOTCHANGED = 1;
-        public static final int STATUS_CHANGED = 2;
-        public static final int STATUS_NOTFOUND = 3;
-        public static final int STATUS_DELETED = 4;
+        // status for items migration
+        public static final int STATUS_MIGR_ERROR = -1;
+        public static final int STATUS_MIGR_PENDING = 0;
+        public static final int STATUS_MIGR_NOTCHANGED = 1;
+        public static final int STATUS_MIGR_CHANGED = 2;
+        public static final int STATUS_MIGR_NOTFOUND = 3;
+        public static final int STATUS_MIGR_DELETED = 4;
+
+        // status for update
+        public static final int STATUS_NOTSTARTED = -1;
+        public static final int STATUS_DOWNLOADING = 0;
+        public static final int STATUS_NOUPDATE_REQUIRED = 1;
+        public static final int STATUS_INPROGRESS = 2;
+        public static final int STATUS_CANCELLED = 3;
+        public static final int STATUS_ENDED = 4;
 
         private String factoryId;
         private int countProcessed;
         private int countTotal;
+        private int status;
         private List<Pair<DBEntity,Integer>> favorite;
         private Integer oldVersion;
         private Integer newVersion;
-        private boolean ended;
 
         public UpdateStatus(String factoryId) {
             this.factoryId = factoryId;
             this.countProcessed = -1;
             this.countTotal = 0;
             this.favorite = new ArrayList<>();
-            this.ended = false;
             this.oldVersion = null;
             this.newVersion = null;
+            status = STATUS_NOTSTARTED;
         }
 
         public String getFactoryId() { return factoryId; }
@@ -68,8 +77,9 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         public void setCountTotal(int countTotal) { this.countTotal = countTotal; }
         public List<Pair<DBEntity,Integer>> getFavoriteStatus() { return new ArrayList<>(this.favorite); }
         public void addFavoriteStatus(DBEntity fav, Integer status) { favorite.add(new Pair<DBEntity, Integer>(fav,status));}
-        public void setHasEnded(boolean ended) { this.ended = ended; }
-        public boolean hasEnded() { return this.ended; }
+        public void setStatus(int status) { this.status = status; }
+        public int getStatus() { return status; }
+        public boolean hasEnded() { return status == STATUS_ENDED || status == STATUS_NOUPDATE_REQUIRED || status == STATUS_CANCELLED; }
         public Integer getOldVersion() { return this.oldVersion; }
         public void setOldVersion(Integer version) { this.oldVersion = version; }
         public Integer getNewVersion() { return this.newVersion; }
@@ -77,11 +87,31 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
     }
 
     private IDataUI caller;
-    private boolean deleteOrpheans;
+    private boolean forceUpdate;
 
-    public LoadDataTask(@NonNull IDataUI caller, boolean deleteOrpheans) {
+    public LoadDataTask(@NonNull IDataUI caller, boolean forceUpdate) {
         this.caller = caller;
-        this.deleteOrpheans = deleteOrpheans;
+        this.forceUpdate = forceUpdate;
+    }
+
+    public static Map<String,Integer> getLatestVersion() {
+        Map<String,Integer> versions = new HashMap<>();
+        try {
+            URL url = new URL(LoadDataActivity.VERSION);
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            YamlReader reader = new YamlReader(new InputStreamReader(in, "UTF-8"));
+            Map map = (Map)reader.read();
+            List<Map> list = (List<Map>)map.get("Versions");
+            for(Map ver: list) {
+                versions.put((String)ver.keySet().iterator().next(), Integer.parseInt((String)ver.values().iterator().next()));
+            }
+            return versions;
+        } catch (Exception e) {
+            // versions couldn't be found???
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -99,20 +129,8 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         Integer[] count = new Integer[sources.length];
 
         // retrieve versions
-        Map<String,Integer> versions = new HashMap<>();
-        try {
-            URL url = new URL(LoadDataActivity.VERSION);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            YamlReader reader = new YamlReader(new InputStreamReader(in, "UTF-8"));
-            Map map = (Map)reader.read();
-            List<Map> list = (List<Map>)map.get("Versions");
-            for(Map ver: list) {
-                versions.put((String)ver.keySet().iterator().next(), Integer.parseInt((String)ver.values().iterator().next()));
-            }
-        } catch (Exception e) {
-            // versions couldn't be found???
-            e.printStackTrace();
+        Map<String,Integer> versions = getLatestVersion();
+        if(versions == null) {
             return Arrays.asList(count);
         }
 
@@ -133,10 +151,8 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
             //System.out.println("Version " + dataId + ": " + oldVersion + " => " + newVersion);
 
             // no update required => skip
-            if(oldVersion != null && newVersion != null && oldVersion.intValue() >= newVersion.intValue()) {
-                progresses[idx].setCountProcessed(0);
-                progresses[idx].setCountTotal(-1);
-                progresses[idx].setHasEnded(true);
+            if(!forceUpdate && oldVersion != null && newVersion != null && oldVersion.intValue() >= newVersion.intValue()) {
+                progresses[idx].setStatus(UpdateStatus.STATUS_NOUPDATE_REQUIRED);
                 idx++;
                 continue;
             }
@@ -163,17 +179,19 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
             }
 
             try {
-                if (isCancelled()) { progresses[idx].setHasEnded(true); break; }
+                if (isCancelled()) { progresses[idx].setStatus(UpdateStatus.STATUS_CANCELLED); break; }
+                progresses[idx].setStatus(UpdateStatus.STATUS_DOWNLOADING);
                 publishProgress(progresses);
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                if (isCancelled()) { progresses[idx].setHasEnded(true); break; }
+                if (isCancelled()) { progresses[idx].setStatus(UpdateStatus.STATUS_CANCELLED); break; }
                 YamlReader reader = new YamlReader(new InputStreamReader(in, "UTF-8"));
                 ArrayList<Object> list  = reader.read(ArrayList.class);
                 progresses[idx].setCountTotal(list.size());
+                progresses[idx].setStatus(UpdateStatus.STATUS_INPROGRESS);
 
                 int lastPercentage = 0;
                 for(int i=0; i<list.size(); i++) {
-                    if (isCancelled()) { progresses[idx].setHasEnded(true); break; }
+                    if (isCancelled()) { progresses[idx].setStatus(UpdateStatus.STATUS_CANCELLED); break; }
                     if(list.get(i) instanceof Map) {
                         DBEntity entity = factory.generateEntity((Map<String,Object>)list.get(i));
                         if(entity != null) {
@@ -193,7 +211,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                         lastPercentage = percentage;
                     }
                 }
-                progresses[idx].setHasEnded(true);
+                progresses[idx].setStatus(UpdateStatus.STATUS_ENDED);
 
                 // update version into database
                 dbHelper.updateVersion(dataId, newVersion);
@@ -223,30 +241,26 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                         name = name.substring(0, index-1);
                     }
                 }
-                int status = LoadDataTask.UpdateStatus.STATUS_PENDING;
+                int migrStatus;
                 try {
                     DBEntity found = dbHelper.fetchEntityByName(name, fav.getFactory());
                     if(found == null) {
-                        if(deleteOrpheans) {
-                            dbHelper.deleteFavorite(fav);
-                            status = UpdateStatus.STATUS_DELETED;
-                        } else {
-                            status = UpdateStatus.STATUS_NOTFOUND;
-                        }
+                        dbHelper.deleteFavorite(fav);
+                        migrStatus = UpdateStatus.STATUS_MIGR_DELETED;
                     } else {
                         if(fav.getId() == found.getId()) {
-                            status = UpdateStatus.STATUS_NOTCHANGED;
+                            migrStatus = UpdateStatus.STATUS_MIGR_NOTCHANGED;
                         } else {
-                            status = UpdateStatus.STATUS_CHANGED;
+                            migrStatus = UpdateStatus.STATUS_MIGR_CHANGED;
                             dbHelper.deleteFavorite(fav);
                             dbHelper.insertFavorite(found);
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    status = LoadDataTask.UpdateStatus.STATUS_ERROR;
+                    migrStatus = LoadDataTask.UpdateStatus.STATUS_MIGR_ERROR;
                 }
-                progresses[idx].addFavoriteStatus(fav, status);
+                progresses[idx].addFavoriteStatus(fav, migrStatus);
             }
 
             idx++;

@@ -56,15 +56,13 @@
     <!-- Strings related to load data -->
     <string name="loaddata_message">En cliquant sur le bouton ci-dessous, l\'application va procéder
         au téléchargement des données depuis internet et les insérer dans la base de données locale.
-        Vous pourrez alors utiliser l\'application sans besoin de connexion à Internet. Si vous aviez
-        déjà des données, celles-ci seront remplacées et les favoris seront ajustés pour pointer
-        vers les bonnes données ou supprimés (si la case ci-dessous est cochée).
+        Vous pourrez alors utiliser l\'application sans besoin de connexion à Internet.
     </string>
     <string name="loaddata_optimisation">Indexation des sorts en cours. Le processus
         peut prendre plusieurs minutes en fonction de la performance de votre appareil. Ne peut être
         arrêté. Veuillez patienter svp...
     </string>
-    <string name="loaddata_deletefavorite">Supprimer les favoris orphelins</string>
+    <string name="loaddata_forceupdate">Forcer la mise à jour</string>
     <string name="loaddata_start">Démarrer</string>
     <string name="loaddata_stop">Arrêter</string>
     <string name="loaddata_stopping">Attendre</string>
