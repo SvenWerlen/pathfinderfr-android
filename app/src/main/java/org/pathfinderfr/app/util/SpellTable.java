@@ -95,7 +95,7 @@ public class SpellTable {
 
         @Override
         public int compareTo(SpellLevel o) {
-            return new Integer(level).compareTo(level);
+            return new Integer(level).compareTo(o.getLevel());
         }
     }
 

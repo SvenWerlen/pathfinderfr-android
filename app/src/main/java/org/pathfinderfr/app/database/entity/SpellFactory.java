@@ -107,7 +107,7 @@ public class SpellFactory extends DBEntityFactory {
 
     public String getQueryFetchAll(SpellFilter filter, String... sources) {
         StringBuffer bufFilter = new StringBuffer();
-        if(sources.length > 0) {
+        if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString( sources,',','\'');
             bufFilter.append(String.format("%s IN (%s)", COLUMN_SOURCE, sourceList));
         }
