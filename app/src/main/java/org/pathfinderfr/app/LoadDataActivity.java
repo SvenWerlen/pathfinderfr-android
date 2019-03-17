@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/abilities";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master";
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     public static final String[] SOURCES = new String[]{
