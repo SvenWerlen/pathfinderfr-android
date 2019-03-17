@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Class features (inventory, load data, sheet, ...)
+- Data versions (data not loaded if version has not changed)
 ### Fixed
 - Invalid message displayed on spell list for non-caster when different order is selected
 

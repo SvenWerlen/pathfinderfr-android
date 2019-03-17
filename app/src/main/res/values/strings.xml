@@ -70,6 +70,7 @@
     <string name="loaddata_stopping">Attendre</string>
     <string name="loaddata_pleasewait">Veuillez svp attendre la fin du processus...</string>
     <string name="loaddata_waiting">en attente</string>
+    <string name="loaddata_noupdate_required">à jour (v%d)</string>
     <string name="loaddata_downloading">fichier en téléchargement</string>
     <string name="loaddata_inprogress">%s/%s (%s) traité</string>
     <string name="loaddata_data_spells">Sorts</string>

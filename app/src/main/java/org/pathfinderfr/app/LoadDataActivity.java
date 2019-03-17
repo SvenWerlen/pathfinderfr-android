@@ -22,20 +22,21 @@ import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    private static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/abilities";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/abilities";
+    public static final String VERSION = SOURCE + "/data/versions.yml";
 
-    private static final String[] SOURCES = new String[]{
+    public static final String[] SOURCES = new String[]{
+            "/data/races.yml",
+            "/data/classes.yml",
             "/data/competences.yml",
             "/data/dons.yml",
             "/data/classfeatures.yml",
-            "/data/spells.yml",
-            "/data/races.yml",
-            "/data/classes.yml"};
+            "/data/spells.yml"};
 
-    private static final String[] SOURCES_NAMES = new String[]{"Compétences", "Dons", "Sorts", "Races", "Classes"};
     private LoadDataTask loadTaskInProgress;
 
     @Override
@@ -60,15 +61,14 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
                     boolean deleteOrpheans = ((CheckBox)findViewById(R.id.loaddataDeleteOrpheans)).isChecked();
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], SkillFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], ClassFeatureFactory.getInstance());
-                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], SpellFactory.getInstance());
-                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], RaceFactory.getInstance());
-                    Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], ClassFactory.getInstance());
+                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], RaceFactory.getInstance());
+                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], ClassFactory.getInstance());
+                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], SkillFactory.getInstance());
+                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], FeatFactory.getInstance());
+                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFeatureFactory.getInstance());
+                    Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], SpellFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, deleteOrpheans);
-                    //loadTaskInProgress.execute(source0,source1,source2,source3,source4);
-                    loadTaskInProgress.execute(source2);
+                    loadTaskInProgress.execute(source0,source1,source2,source3,source4,source5);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);
@@ -108,8 +108,11 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
         String text = "";
         for(int i=0; i<progresses.length; i++) {
             String status;
-            if(progresses[i] == null) {
+            if(progresses[i].getCountProcessed() < 0) {
                 status = getResources().getString(R.string.loaddata_waiting);
+            } else if(progresses[i].getCountTotal() < 0) {
+                status = String.format(getResources().getString(R.string.loaddata_noupdate_required), progresses[i].getOldVersion());
+                completed = completed && progresses[i].hasEnded();
             } else if(progresses[i].getCountTotal() == 0) {
                 status = getResources().getString(R.string.loaddata_downloading);
                 completed = completed && progresses[i].hasEnded();
@@ -121,7 +124,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                 status = String.format(template,done,total,percentage + '%');
                 completed = completed && progresses[i].hasEnded();
             }
-            text += "<b>" + SOURCES_NAMES[i] + "</b>: " + status + "<br/>";
+
+            String sourceName = ConfigurationUtil.getInstance(getApplicationContext()).getProperties().getProperty("template.title." + progresses[i].getFactoryId().toLowerCase());
+            text += "<b>" + sourceName + "</b>: " + status + "<br/>";
         }
         if(completed) {
             text += "<br/>" + favoriteMigrationText(progresses);

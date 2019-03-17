@@ -22,6 +22,7 @@ import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellClassLevel;
 import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.database.entity.VersionFactory;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
@@ -38,7 +39,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 10;
 
     private static DBHelper instance;
 
@@ -134,6 +135,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV9());
             oldVersion = 9;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 9");
+        }
+        // version 10 introduced new table for versions
+        if(oldVersion == 9) {
+            db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
+            oldVersion = 10;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 10");
         }
     }
 
@@ -484,6 +491,50 @@ public class DBHelper extends SQLiteOpenHelper {
             Cursor res = db.rawQuery(query, null);
             res.moveToFirst();
             return res.getLong(res.getColumnIndex("total")) > 0;
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+            return false;
+        }
+    }
+
+    public Integer getVersion(String dataId) {
+        Log.i(DBHelper.class.getSimpleName(), String.format("Retrieving version of data %s", dataId));
+        VersionFactory factory = VersionFactory.getInstance();
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res;
+            res = db.rawQuery(factory.getQueryFetchVersion(dataId), null);
+            // not found?
+            if(res.getCount()<1) {
+                return null;
+            }
+            res.moveToFirst();
+            return res.getInt(res.getColumnIndex("version"));
+        } catch(SQLiteException exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean updateVersion(String dataId, int version) {
+        Log.i(DBHelper.class.getSimpleName(), String.format("Updating version of data %s", dataId));
+        VersionFactory factory = VersionFactory.getInstance();
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res;
+            res = db.rawQuery(factory.getQueryFetchVersion(dataId), null);
+            String query;
+            // not found?
+            if(res.getCount()<1) {
+                query = factory.getQueryInsertVersion(dataId, version);
+            } else {
+                query = factory.getQueryUpdateVersion(dataId, version);
+            }
+            Log.i(DBHelper.class.getSimpleName(), String.format("Executing SQL query: %s", query));
+            db.execSQL(query);
+            return true;
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return false;

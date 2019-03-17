@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 
+import org.pathfinderfr.app.LoadDataActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
@@ -19,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,18 +43,25 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         public static final int STATUS_NOTFOUND = 3;
         public static final int STATUS_DELETED = 4;
 
+        private String factoryId;
         private int countProcessed;
         private int countTotal;
         private List<Pair<DBEntity,Integer>> favorite;
+        private Integer oldVersion;
+        private Integer newVersion;
         private boolean ended;
 
-        public UpdateStatus() {
-            this.countProcessed = 0;
+        public UpdateStatus(String factoryId) {
+            this.factoryId = factoryId;
+            this.countProcessed = -1;
             this.countTotal = 0;
             this.favorite = new ArrayList<>();
             this.ended = false;
+            this.oldVersion = null;
+            this.newVersion = null;
         }
 
+        public String getFactoryId() { return factoryId; }
         public int getCountProcessed() { return countProcessed; }
         public void setCountProcessed(int countProcessed) { this.countProcessed = countProcessed; }
         public int getCountTotal() { return countTotal; }
@@ -61,6 +70,10 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         public void addFavoriteStatus(DBEntity fav, Integer status) { favorite.add(new Pair<DBEntity, Integer>(fav,status));}
         public void setHasEnded(boolean ended) { this.ended = ended; }
         public boolean hasEnded() { return this.ended; }
+        public Integer getOldVersion() { return this.oldVersion; }
+        public void setOldVersion(Integer version) { this.oldVersion = version; }
+        public Integer getNewVersion() { return this.newVersion; }
+        public void setNewVersion(Integer version) { this.newVersion = version; }
     }
 
     private IDataUI caller;
@@ -75,16 +88,58 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
     protected List<Integer> doInBackground(Pair<String,DBEntityFactory>... sources) {
         DBHelper dbHelper = DBHelper.getInstance(null);
 
+        // initialize progresses
         UpdateStatus progresses[] = new UpdateStatus[sources.length];
+        int idx = 0;
+        for(Pair<String,DBEntityFactory> source: sources) {
+            progresses[idx] = new UpdateStatus(source.second.getFactoryId());
+            idx++;
+        }
+
         Integer[] count = new Integer[sources.length];
+
+        // retrieve versions
+        Map<String,Integer> versions = new HashMap<>();
+        try {
+            URL url = new URL(LoadDataActivity.VERSION);
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            YamlReader reader = new YamlReader(new InputStreamReader(in, "UTF-8"));
+            Map map = (Map)reader.read();
+            List<Map> list = (List<Map>)map.get("Versions");
+            for(Map ver: list) {
+                versions.put((String)ver.keySet().iterator().next(), Integer.parseInt((String)ver.values().iterator().next()));
+            }
+        } catch (Exception e) {
+            // versions couldn't be found???
+            e.printStackTrace();
+            return Arrays.asList(count);
+        }
 
         boolean reIndexingRequired = false;
 
-        int idx = 0;
+        idx = 0;
         for(Pair<String,DBEntityFactory> source: sources) {
 
-            progresses[idx] = new UpdateStatus();
             count[idx] = 0;
+
+            // check if update is required
+            String dataId = source.second.getFactoryId().toLowerCase();
+            Integer oldVersion = dbHelper.getVersion(dataId);
+            Integer newVersion = versions.get(dataId);
+            progresses[idx].setOldVersion(oldVersion);
+            progresses[idx].setNewVersion(newVersion);
+
+            //System.out.println("Version " + dataId + ": " + oldVersion + " => " + newVersion);
+
+            // no update required => skip
+            if(oldVersion != null && newVersion != null && oldVersion.intValue() >= newVersion.intValue()) {
+                progresses[idx].setCountProcessed(0);
+                progresses[idx].setCountTotal(-1);
+                progresses[idx].setHasEnded(true);
+                idx++;
+                continue;
+            }
 
             String address = source.first;
             DBEntityFactory factory = source.second;
@@ -139,6 +194,9 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                     }
                 }
                 progresses[idx].setHasEnded(true);
+
+                // update version into database
+                dbHelper.updateVersion(dataId, newVersion);
 
             } catch (Exception e) {
                 e.printStackTrace();
