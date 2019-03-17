@@ -306,7 +306,7 @@
     <string name="sheet_feats_example_name">Don (exemple)</string>
 
     <!-- Class features -->
-    <string name="sheet_classfeatures_empty_list">Les aptitudes pour votre classe n\'ont malheureusement pas encore été ajoutées aux données.</string>
+    <string name="sheet_classfeatures_empty_list">Veuillez mettre à jour vos données. Si c\'est déjà le cas, cela signifie que les aptitudes pour votre classe n\'ont malheureusement pas encore été ajoutées aux données.</string>
     <string name="sheet_classfeatures_filter_empty">Aucun aptitude ne répond à ces critères (filtres).</string>
     <string name="sheet_classfeatures_example_label_name">Aptitudes</string>
     <string name="sheet_classfeatures_example_name">Aptitude (exemple)</string>
