@@ -71,5 +71,5 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
   
   * **Général | Afficher l'avertissement**: permet de désactiver l'avertissement (_disclaimer/copyright_) au bas de la page d'accueil.
   * **Général | Nom long dans les listes**: affiche un nom long dans les listes. Exemple: affiche le niveau du sort directement dans la liste. 
-  * **Général | Détail des compétences, dons, sorts**: affiche le mode détaillé par défaut (voir ci-dessus). Évite de devoir cliquer systématiquement sur le bouton _plus_ pour voir les métadonnées.
+  * **Général | Détail des compétences, dons, sorts**: affiche le mode détaillé par défaut (voir ci-dessus). Recommandé!
   * **Sources de données**: permet d'activer/désactiver les sources de données avec lesquelles vous jouez. Par exemple, désactiver "Art de la magie" permet de masquer tous les sorts qui proviennent de cette extension.

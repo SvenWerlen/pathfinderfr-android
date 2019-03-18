@@ -62,9 +62,21 @@ La gestion des dons s'effectue à partir du troisième onglet (au bas de l'écra
 ![Liste des dons](../images/characters/12-character-feats-list_small.jpg)
 ![Filtrer les dons](../images/characters/13-character-feats-filters_small.jpg)
 
+## Aptitudes
+
+La gestion des aptitudes s'effectue à partir du quatrième onglet (au bas de l'écran).
+* L'ajout d'une aptitude s'effectue comme pour les dons. À partir du catalogue des aptitudes dans la bibliothèque, il est possible de trouver une aptitude à ajouter. Pour l'ajouter, il suffira alors de cliquer sur l'icône d'action correspondante (2ième mini-icône ressemblant à une carte d'identité)
+* Les aptitudes de classe automatique sont affichées en fonction de votre/vos classe(s) sans que vous ayiez besoin de les ajouter 
+* En cliquant sur barre d'en-tête (ou se trouve la mini icône _filtre_), une fenêtre vous permet de configurer les filtres de dons 
+  * **Favoris**: permet d'afficher uniquement les dons que vous avez séléctionné comme favoris
+
+![Liste des aptitudes](../images/characters/18-character-classfeatures-list_small.jpg)
+![Filtrer les aptitudes](../images/characters/19-character-classfeatures-filters_small.jpg)
+![Visionner une aptitude](../images/characters/20-character-classfeature_small.jpg)
+
 ## Sorts
 
-L'ajout de sorts s'effectue à partir du quatrième onglet (au bas de l'écran).
+L'ajout de sorts s'effectue à partir du cinquième onglet (au bas de l'écran).
 * En cliquant sur barre d'en-tête (ou se trouve la mini icône _filtre_), une fenêtre vous permet de configurer les filtres de sorts mais également adapter l'affichage
   * **Favoris**: permet d'afficher uniquement les dons que vous avez séléctionné comme favoris
   * **Affichage**: permet de choisir l'affichage par niveau et école (pratique pour les magiciens et ensorceleurs) ou uniquement par niveau (généralement pour les autres classes)
@@ -74,3 +86,4 @@ L'ajout de sorts s'effectue à partir du quatrième onglet (au bas de l'écran).
 ![Filtrer les sorts et gérer l'affichage](../images/characters/15-character-spells-filters_small.jpg)
 ![Liste des sorts (par niveau uniquement)](../images/characters/16-character-spells-flat_small.jpg)
 ![Sélectionner les favoris](../images/characters/17-character-spells-favorites_small.jpg)
+
