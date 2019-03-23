@@ -39,6 +39,7 @@ import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
@@ -505,8 +506,9 @@ public class MainActivity extends AppCompatActivity
         updateWelcomeAndNavigation();
 
         if(reloadRequired) {
-            if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
-                List<DBEntity> entities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
+            if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory) ||
+                    CharacterFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
+                List<DBEntity> entities = dbhelper.getAllEntities(EntityFactories.getFactoryById(factory));
                 listFull.clear();
                 listFull.addAll(entities);
                 totalCount = listFull.size();

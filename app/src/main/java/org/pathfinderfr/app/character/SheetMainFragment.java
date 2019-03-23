@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
@@ -44,16 +45,18 @@ import java.util.List;
 public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
-        FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener {
+        FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
+        FragmentDeleteAction.OnFragmentInteractionListener {
 
-    private static final String ARG_CHARACTER_ID    = "character_id";
-    private static final String DIALOG_PICK_ABILITY = "ability-picker";
-    private static final String DIALOG_PICK_NAME    = "name-picker";
-    private static final String DIALOG_PICK_RACE    = "race-picker";
-    private static final String DIALOG_PICK_CLASS   = "class-picker";
-    private static final String DIALOG_PICK_HP      = "hitpoint-picker";
-    private static final String DIALOG_PICK_SPEED   = "speed-picker";
-    private static final String DIALOG_PICK_MODIFS  = "modifs-picker";
+    private static final String ARG_CHARACTER_ID     = "character_id";
+    private static final String DIALOG_PICK_ABILITY  = "ability-picker";
+    private static final String DIALOG_DELETE_ACTION = "delete-action";
+    private static final String DIALOG_PICK_NAME     = "name-picker";
+    private static final String DIALOG_PICK_RACE     = "race-picker";
+    private static final String DIALOG_PICK_CLASS    = "class-picker";
+    private static final String DIALOG_PICK_HP       = "hitpoint-picker";
+    private static final String DIALOG_PICK_SPEED    = "speed-picker";
+    private static final String DIALOG_PICK_MODIFS   = "modifs-picker";
 
     private Character character;
     private List<TextView> classPickers;
@@ -196,6 +199,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.ability_int_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_wis_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
+        view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_classpicker).setVisibility(View.GONE);
@@ -852,24 +856,45 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 newFragment.show(ft, DIALOG_PICK_SPEED);
                 return;
             }
-            // MODIFICATION ENABLED/DISABLED
-            else if(v instanceof ImageView) {
-                ImageView icon = (ImageView)v;
-                Character.CharacterModif modif = parent.character.getModif((int)v.getTag());
-                if(modif != null) {
-                    // toggle modification
-                    modif.setEnabled(!modif.isEnabled());
-                    final int colorDisabled = parent.getContext().getResources().getColor(R.color.colorBlack);
-                    final int colorEnabled = parent.getContext().getResources().getColor(R.color.colorPrimaryDark);
-                    if(icon.getDrawable() != null) {
-                        icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
-                    }
-                    parent.updateSheet(parent.getView());
 
-                    // save into preferences
-                    parent.modifStatesIntoPreferences();
+            else if(v instanceof ImageView) {
+                if(v.getId() == R.id.actionDelete) {
+                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_DELETE_ACTION);
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentDeleteAction.newInstance(parent);
+
+                    Bundle arguments = new Bundle();
+                    String name = parent.character.getName();
+                    if(name != null) {
+                        arguments.putString(FragmentDeleteAction.ARG_NAME, name);
+                    }
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_DELETE_ACTION);
+                    return;
                 }
-                return;
+                // MODIFICATION ENABLED/DISABLED
+                else {
+                    ImageView icon = (ImageView) v;
+                    Character.CharacterModif modif = parent.character.getModif((int) v.getTag());
+                    if (modif != null) {
+                        // toggle modification
+                        modif.setEnabled(!modif.isEnabled());
+                        final int colorDisabled = parent.getContext().getResources().getColor(R.color.colorBlack);
+                        final int colorEnabled = parent.getContext().getResources().getColor(R.color.colorPrimaryDark);
+                        if (icon.getDrawable() != null) {
+                            icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
+                        }
+                        parent.updateSheet(parent.getView());
+
+                        // save into preferences
+                        parent.modifStatesIntoPreferences();
+                    }
+                    return;
+                }
             }
         }
 
@@ -958,6 +983,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             // store changes
             characterDBUpdate();
         }
+    }
+
+    @Override
+    public void onDelete() {
+        PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
+                .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
+        DBHelper.getInstance(getContext()).deleteEntity(character);
+        getActivity().finish();
     }
 
     @Override

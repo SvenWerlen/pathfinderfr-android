@@ -140,6 +140,8 @@
 
     <!-- Character props -->
     <string name="sheet_character_name">Nom du personnage</string>
+    <string name="sheet_character_delete">Supprimer "%s"?</string>
+    <string name="sheet_character_confirm">Êtes-vous sûr de vouloir supprimer ce personnage? Par mesure de sécurité, veuiller confirmer en saisissant son nom ci-dessous (alternative: tapez "oui").</string>
 
     <!-- Character abilities -->
     <string name="sheet_label_char">Carac.</string>

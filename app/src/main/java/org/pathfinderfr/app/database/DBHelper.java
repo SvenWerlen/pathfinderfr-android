@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
@@ -195,6 +196,23 @@ public class DBHelper extends SQLiteOpenHelper {
         String query = FavoriteFactory.getInstance().getQueryDeleteByIds(entity.getFactory().getFactoryId(), entity.getId());
         db.execSQL(query);
         return true;
+    }
+
+    /**
+     * Delete one element
+     *
+     * @param entity entity instance
+     * @return true if deletion succeeded
+     */
+    public boolean deleteEntity(DBEntity entity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(entity instanceof Character) {
+            String query = String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId());
+            db.execSQL(query);
+            return true;
+        }
+        // not supported for other tables
+        return false;
     }
 
     /**
