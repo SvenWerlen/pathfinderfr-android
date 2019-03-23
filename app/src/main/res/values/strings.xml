@@ -17,6 +17,7 @@
     <string name="itemdetails_quickaction">Actions:</string>
 
     <!-- Strings related to favorites && addToCharacter -->
+    <string name="nocharacter_selected_failed">Pour utiliser cette action, veuillez épingler un personnage à partir de l\'action correspondante sur sa fiche!</string>
     <string name="generic_failed">Élément introuvable (opération échouée)!</string>
     <string name="favorite_added_success">Favori ajouté avec succès!</string>
     <string name="favorite_removed_success">Favori retiré avec succès!</string>

@@ -155,7 +155,7 @@ public class ItemDetailFragment extends Fragment {
         ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
         updateActionIcons(rootView);
 
-        if(character == null || mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature) ) {
+        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature) ) {
             addToCharacter.setVisibility(View.GONE);
         }
 
@@ -170,7 +170,10 @@ public class ItemDetailFragment extends Fragment {
                 boolean success = false;
                 String message = getResources().getString(R.string.generic_failed);
 
-                if(mItem instanceof Feat) {
+                if(character == null) {
+                    message = getResources().getString(R.string.nocharacter_selected_failed);
+                }
+                else if(mItem instanceof Feat) {
                     Feat feat = (Feat)mItem;
                     if(character.hasFeat(feat)) {
                         character.removeFeat(feat);

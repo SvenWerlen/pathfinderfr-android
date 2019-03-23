@@ -112,12 +112,9 @@ public class Character extends DBEntity {
         StringBuffer classes = new StringBuffer();
         for(int i = 0; i < getClassesCount(); i++) {
             Pair<Class, Integer> cl = getClass(i);
-            classes.append(cl.first.getShortName()).append(" ").append(cl.second);
-            if(i+1 < getClassesCount()) {
-                classes.append(", ");
-            }
+            classes.append(", ").append(cl.first.getShortName()).append(" ").append(cl.second);
         }
-        return name + ": " + race + ", " + classes.toString();
+        return name + " (" + race + classes.toString() + ")";
     }
 
     @Override

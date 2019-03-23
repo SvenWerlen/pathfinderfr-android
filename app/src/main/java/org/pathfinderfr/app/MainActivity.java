@@ -203,20 +203,25 @@ public class MainActivity extends AppCompatActivity
 
         // reset list
         String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        MenuItem selItem;
         if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_sheet));
+            selItem = navigationView.getMenu().findItem(R.id.nav_sheet);
         } else if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
+            selItem = navigationView.getMenu().findItem(R.id.nav_favorites);
         } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
+            selItem = navigationView.getMenu().findItem(R.id.nav_skills);
         } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
+            selItem = navigationView.getMenu().findItem(R.id.nav_feats);
         } else if(ClassFeatureFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_abilities));
+            selItem = navigationView.getMenu().findItem(R.id.nav_abilities);
         } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
+            selItem = navigationView.getMenu().findItem(R.id.nav_spells);
         } else {
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
+            selItem = navigationView.getMenu().findItem(R.id.nav_home);
+        }
+        if(selItem != null) {
+            selItem.setChecked(true);
+            onNavigationItemSelected(selItem);
         }
 
         if(factoryId != null) {
