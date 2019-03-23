@@ -1,15 +1,19 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,6 +41,9 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,6 +209,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.ability_wis_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
 
+        view.findViewById(R.id.actionShare).setOnClickListener(listener);
         view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
@@ -901,6 +909,44 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorEnabled, PorterDuff.Mode.SRC_ATOP);
                     }
                     return;
+                }
+                else if(v.getId() == R.id.actionShare) {
+                    // convert character to YAML
+                    String characterYML = CharacterFactory.exportCharacterAsYML(parent.character);
+                    if(characterYML == null) {
+                        View root = parent.getActivity().findViewById(R.id.sheet_container);
+                        if (root != null) {
+                            Snackbar.make(root, parent.getView().getResources().getString(R.string.character_export_failed),
+                                    Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        }
+                        return;
+                    }
+
+                    Log.i(SheetMainFragment.class.getSimpleName(), characterYML);
+                    // save character to cache directory
+                    try {
+                        File cachePath = new File(parent.getContext().getCacheDir(), "characters");
+                        cachePath.mkdirs(); // don't forget to make the directory
+                        FileOutputStream stream = new FileOutputStream(cachePath + "/personnage.pfc");
+                        stream.write(characterYML.getBytes());
+                        stream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    // read character from cache
+                    File charPath = new File(parent.getContext().getCacheDir(), "characters");
+                    File newFile = new File(charPath, "personnage.pfc");
+                    Uri contentUri = FileProvider.getUriForFile(parent.getContext(), "org.pathfinderfr.app.fileprovider", newFile);
+
+                    if (contentUri != null) {
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                        parent.startActivity(Intent.createChooser(shareIntent, parent.getResources().getString(R.string.sheet_choose_app_export)));
+                    }
                 }
                 else if(v.getId() == R.id.actionDelete) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();

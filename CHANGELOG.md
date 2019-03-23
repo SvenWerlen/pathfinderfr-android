@@ -5,8 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Changed
--
+### Added
+- Support for multiple characters
+- Support for exporting characters (as YML) and share it with others
+- Support for importing characters (from YML)
 
 ## [2.3.0] - 2019-03-17
 ### Changed

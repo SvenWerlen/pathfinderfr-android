@@ -138,10 +138,12 @@
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
     <string name="character_tab_failed_class">Veuillez choisir une classe!</string>
+    <string name="character_export_failed">Exportation en tant que YAML a échoué :-(</string>
 
     <!-- Character props -->
     <string name="sheet_character_name">Nom du personnage</string>
     <string name="sheet_character_delete">Supprimer "%s"?</string>
+    <string name="sheet_choose_app_export">Choisir une application</string>
     <string name="sheet_character_confirm">Êtes-vous sûr de vouloir supprimer ce personnage? Par mesure de sécurité, veuiller confirmer en saisissant son nom ci-dessous (alternative: tapez "oui").</string>
 
     <!-- Character abilities -->
