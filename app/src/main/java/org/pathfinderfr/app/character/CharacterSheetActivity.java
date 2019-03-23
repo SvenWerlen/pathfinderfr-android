@@ -25,6 +25,8 @@ import java.util.List;
 
 public class CharacterSheetActivity extends AppCompatActivity {
 
+    public static final String SELECTED_CHARACTER_ID        = "characterId";
+
     public static final String PREF_SELECTED_CHARACTER_ID   = "pref_characterId";
     public static final String PREF_SELECTED_TAB            = "pref_selectedTab";
     public static final String PREF_CHARACTER_MODIF_STATES  = "pref_characterModifStates";
@@ -37,6 +39,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
     private static final int TAB_CLASSFEATURES = 3;
     private static final int TAB_SPELLS = 4;
 
+    private Character character;
     private int currentTab;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -68,29 +71,6 @@ public class CharacterSheetActivity extends AppCompatActivity {
     };
 
     private boolean showTab() {
-        DBHelper helper = DBHelper.getInstance(getBaseContext());
-        Character character;
-        long characterId = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-                .getLong(PREF_SELECTED_CHARACTER_ID, 0L);
-        character = (Character)helper.fetchEntity(characterId, CharacterFactory.getInstance());
-
-        // if characterId not found? Try to find first character in list
-        if(character == null) {
-            List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
-            if (list != null && list.size() > 0) {
-                // reload with all data
-                character = (Character)helper.fetchEntity(((Character)list.get(0)).getId(), CharacterFactory.getInstance());
-                characterId = character.getId();
-                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                        putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
-            }
-            // something must be wrong
-            else {
-                Snackbar.make(findViewById(R.id.sheet_container), getResources().getString(R.string.character_tab_nocharacter),
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                return false;
-            }
-        }
 
         if(currentTab != TAB_HOME) {
             if (character.getClassesCount() == 0) {
@@ -107,23 +87,23 @@ public class CharacterSheetActivity extends AppCompatActivity {
         switch (currentTab) {
             case TAB_HOME:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_main));
-                showFragment(SheetMainFragment.newInstance(characterId));
+                showFragment(SheetMainFragment.newInstance(character.getId()));
                 return true;
             case TAB_SKILLS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_skills));
-                showFragment(SheetSkillFragment.newInstance(characterId));
+                showFragment(SheetSkillFragment.newInstance(character.getId()));
                 return true;
             case TAB_FEATS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_feats));
-                showFragment(SheetFeatFragment.newInstance(characterId));
+                showFragment(SheetFeatFragment.newInstance(character.getId()));
                 return true;
             case TAB_CLASSFEATURES:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_classfeatures));
-                showFragment(SheetClassFeatureFragment.newInstance(characterId));
+                showFragment(SheetClassFeatureFragment.newInstance(character.getId()));
                 return true;
             case TAB_SPELLS:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_spells));
-                showFragment(SheetSpellFragment.newInstance(characterId));
+                showFragment(SheetSpellFragment.newInstance(character.getId()));
                 return true;
         }
         return false;
@@ -156,25 +136,32 @@ public class CharacterSheetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_character_sheet);
 
+        DBHelper helper = DBHelper.getInstance(getBaseContext());
+        long characterId = getIntent().getLongExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, 0);
+        if(characterId > 0) {
+            character = (Character) helper.fetchEntity(characterId, CharacterFactory.getInstance());
+        } else {
+            character = null;
+        }
+
+        // if characterId not found? New character!
+        if(character == null) {
+            character = new Character();
+            characterId = helper.insertEntity(character);
+            character.setId(characterId);
+            // error???
+            if(characterId <= 0) {
+                finish();
+                return;
+            }
+            getIntent().putExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, characterId);
+        }
+
         String baseText = getResources().getString(R.string.sheet_menu_activity) + " - ";
         setTitle(baseText + getResources().getString(R.string.sheet_menu_main));
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.sheet_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        // search for already created characters
-        long characterId = 0;
-        List<DBEntity> list = DBHelper.getInstance(getBaseContext()).getAllEntities(CharacterFactory.getInstance());
-        if(list != null && list.size() > 0) {
-            characterId = list.get(0).getId();
-        } else {
-            Character character = new Character();
-            characterId = DBHelper.getInstance(getBaseContext()).insertEntity(character);
-        }
-
-        // keep selected character in preferences
-        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                putLong(PREF_SELECTED_CHARACTER_ID, characterId).apply();
 
         currentTab = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
                 .getInt(PREF_SELECTED_TAB, TAB_HOME);

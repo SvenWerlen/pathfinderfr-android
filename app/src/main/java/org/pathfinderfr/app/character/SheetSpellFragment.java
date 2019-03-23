@@ -171,7 +171,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             character = (Character)DBHelper.getInstance(getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
         }
         if(character == null) {
-            character = new Character();
+            throw new IllegalStateException("No character selected!");
         }
 
         // Inflate the layout for this fragment

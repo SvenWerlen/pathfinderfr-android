@@ -12,11 +12,11 @@ import java.util.Map;
 
 public abstract class DBEntityFactory {
 
-    protected static final String COLUMN_ID = "id";
-    protected static final String COLUMN_NAME = "name";
-    protected static final String COLUMN_DESC = "description";
-    protected static final String COLUMN_REFERENCE = "reference";
-    protected static final String COLUMN_SOURCE = "source";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_DESC = "description";
+    public static final String COLUMN_REFERENCE = "reference";
+    public static final String COLUMN_SOURCE = "source";
 
     /**
      * @return the factory identifier

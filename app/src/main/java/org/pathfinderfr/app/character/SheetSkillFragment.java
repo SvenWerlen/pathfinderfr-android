@@ -129,10 +129,9 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             character = (Character)DBHelper.getInstance(getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
         }
         if(character == null) {
-            character = new Character();
-        } else {
-            SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
+            throw new IllegalStateException("No character selected!");
         }
+        SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
 
         // References
         TableLayout table = view.findViewById(R.id.sheet_skills_table);

@@ -62,10 +62,8 @@ public class FragmentDeleteAction extends DialogFragment implements View.OnClick
         View rootView = inflater.inflate(R.layout.fragment_sheet_main_deletecharacter, container, false);
 
         TextView title = rootView.findViewById(R.id.delete_character_title);
-        if(name != null) {
-            String template = getResources().getString(R.string.sheet_character_delete);
-            title.setText(String.format(template, name));
-        }
+        String template = getResources().getString(R.string.sheet_character_delete);
+        title.setText(String.format(template, name == null ? "" : name));
 
         EditText text = rootView.findViewById(R.id.sheet_character_name);
         text.requestFocus();

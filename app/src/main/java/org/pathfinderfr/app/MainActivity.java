@@ -53,10 +53,8 @@ import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener, FilterClassFeaturesFragment.OnFragmentInteractionListener {
@@ -164,6 +162,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // filter button
+        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // remove preselected character
+                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID);
+                // open character sheet
+                Intent intent = new Intent(MainActivity.this, CharacterSheetActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // navigation
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -190,39 +201,43 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // reset list after screen rotation
-        if(savedInstanceState != null) {
-            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
-            if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
-            } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
-            } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
-            } else if(ClassFeatureFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_abilities));
-            } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
-            } else {
-                onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
+        // reset list
+        String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_sheet));
+        } else if(FavoriteFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_favorites));
+        } else if(SkillFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_skills));
+        } else if(FeatFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_feats));
+        } else if(ClassFeatureFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_abilities));
+        } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_spells));
+        } else {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
+        }
+
+        if(factoryId != null) {
+            DialogFragment fragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(DIALOG_FILTER);
+            if(fragment instanceof FilterSpellFragment) {
+                FilterSpellFragment fragSpellFilter = (FilterSpellFragment)fragment;
+                if (fragSpellFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
+                }
+            } else if(fragment instanceof FilterClassFeaturesFragment) {
+                FilterClassFeaturesFragment fragAbilityFilter = (FilterClassFeaturesFragment)fragment;
+                if (fragAbilityFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragAbilityFilter.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+                }
             }
 
-            if(factoryId != null) {
-                DialogFragment fragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(DIALOG_FILTER);
-                if(fragment instanceof FilterSpellFragment) {
-                    FilterSpellFragment fragSpellFilter = (FilterSpellFragment)fragment;
-                    if (fragSpellFilter != null) {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                        fragSpellFilter.setFilter(new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null)));
-                    }
-                } else if(fragment instanceof FilterClassFeaturesFragment) {
-                    FilterClassFeaturesFragment fragAbilityFilter = (FilterClassFeaturesFragment)fragment;
-                    if (fragAbilityFilter != null) {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                        fragAbilityFilter.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
-                    }
-                }
+            updateTitle(factoryId);
 
+            if(savedInstanceState != null) {
                 if (savedInstanceState.getByte(KEY_SEARCH_VISIBLE, (byte) 0) == 1) {
                     searchButton.performClick();
                 }
@@ -231,8 +246,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateWelcomeAndNavigation() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-
         // Welcome screen
         TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
@@ -297,6 +310,22 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(countClasses > 0 && countRaces > 0);
     }
 
+    private void updateTitle(String factoryId) {
+        if(factoryId != null) {
+            // Change menu title by factory (ie. type) name
+            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+            String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
+            if (listCur.size() == totalCount) {
+                title += String.format(" (%d)", listFull.size());
+            } else {
+                title += String.format(" (%d/%d)", listCur.size(), totalCount);
+            }
+            if (toolBar != null && title != null) {
+                toolBar.setTitle(title);
+            }
+        }
+    }
+
     /**
      * This function applies filter and search, then refreshes recycler view
      */
@@ -311,8 +340,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        String factoryId = PreferenceManager.getDefaultSharedPreferences(
-                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
         boolean showNameLong;
         if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
@@ -325,19 +353,7 @@ public class MainActivity extends AppCompatActivity
         ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
         recyclerView.getAdapter().notifyDataSetChanged();
 
-        if(factoryId != null) {
-            // Change menu title by factory (ie. type) name
-            Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
-            String title = ConfigurationUtil.getInstance().getProperties().getProperty("template.title." + factoryId.toLowerCase());
-            if (listCur.size() == totalCount) {
-                title += String.format(" (%d)", listFull.size());
-            } else {
-                title += String.format(" (%d/%d)", listCur.size(), totalCount);
-            }
-            if (toolBar != null && title != null) {
-                toolBar.setTitle(title);
-            }
-        }
+        updateTitle(factoryId);
     }
 
     @Override
@@ -392,8 +408,7 @@ public class MainActivity extends AppCompatActivity
 
         List<DBEntity> newEntities = null;
         if (id == R.id.nav_home && factoryId != null) {
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
-                    .putString(KEY_CUR_FACTORY,null).apply();
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             factoryId = null;
         } else if (id == R.id.nav_favorites) {
             newEntities = dbhelper.getAllEntities(FavoriteFactory.getInstance());
@@ -403,11 +418,6 @@ public class MainActivity extends AppCompatActivity
             newEntities = dbhelper.getAllEntities(CharacterFactory.getInstance());
             totalCount = newEntities.size();
             factoryId = CharacterFactory.FACTORY_ID;
-//            Intent intent = new Intent(this, CharacterSheetActivity.class);
-//            startActivity(intent);
-//            factoryId = CharacterFactory.FACTORY_ID;
-//            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-//                    putString(KEY_CUR_FACTORY,factoryId).apply();
         } else if (id == R.id.nav_skills) {
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             totalCount = newEntities.size();
@@ -443,6 +453,7 @@ public class MainActivity extends AppCompatActivity
             }
             factoryId = SpellFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             Intent intent = new Intent(this, LoadDataActivity.class);
             startActivity(intent);
         }
@@ -456,6 +467,7 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.GONE);
             findViewById(R.id.filterButton).setVisibility(View.GONE);
+            findViewById(R.id.addButton).setVisibility(View.GONE);
             Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
             if (toolBar != null) {
                 toolBar.setTitle(getResources().getString(R.string.title_activity_main));
@@ -470,6 +482,7 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.closeSearchButton).setVisibility(View.GONE);
             findViewById(R.id.searchButton).setVisibility(View.VISIBLE);
             findViewById(R.id.filterButton).setVisibility(filterEnabled ? View.VISIBLE : View.GONE);
+            findViewById(R.id.addButton).setVisibility(CharacterFactory.FACTORY_ID.equalsIgnoreCase(factoryId) ? View.VISIBLE : View.GONE);
             EditText searchInput = (EditText) findViewById(R.id.searchinput);
             searchInput.setText("");
             searchInput.setVisibility(View.GONE);
@@ -504,6 +517,7 @@ public class MainActivity extends AppCompatActivity
         String factory = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
         updateWelcomeAndNavigation();
+        updateTitle(factory);
 
         if(reloadRequired) {
             if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory) ||

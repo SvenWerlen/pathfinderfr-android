@@ -521,6 +521,16 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         // reset listeners for opened dialogs
         if (savedInstanceState != null) {
+            FragmentDeleteAction fragDelete = (FragmentDeleteAction)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_DELETE_ACTION);
+            if (fragDelete != null) {
+                fragDelete.setListener(this);
+            }
+            FragmentNamePicker fragName = (FragmentNamePicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_NAME);
+            if (fragName != null) {
+                fragName.setListener(this);
+            }
             FragmentRacePicker fragRace = (FragmentRacePicker)getActivity().getSupportFragmentManager()
                     .findFragmentByTag(DIALOG_PICK_RACE);
             if (fragRace != null) {
@@ -938,16 +948,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
      * Updates the data into the database for the character
      */
     private void characterDBUpdate() {
-        if(character.getId() <= 0) {
-            long id = DBHelper.getInstance(getContext()).insertEntity(character);
-            if (id > 0) {
-                character.setId(id);
-            } else {
-                Log.e(SheetMainFragment.class.getSimpleName(), "Couldn't persist character into database! Check logs!");
-            }
-        } else {
-            DBHelper.getInstance(getContext()).updateEntity(character);
-        }
+        DBHelper.getInstance(getContext()).updateEntity(character);
     }
 
     @Override

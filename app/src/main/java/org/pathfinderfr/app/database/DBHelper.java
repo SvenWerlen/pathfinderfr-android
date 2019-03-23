@@ -167,7 +167,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean updateEntity(DBEntity entity) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = entity.getFactory().generateContentValuesFromEntity(entity);
-        long rowId = db.update(entity.getFactory().getTableName(), contentValues, null, null);
+        long rowId = db.update(entity.getFactory().getTableName(), contentValues, DBEntityFactory.COLUMN_ID + "=" + entity.getId(), null);
         return rowId > 0;
     }
 

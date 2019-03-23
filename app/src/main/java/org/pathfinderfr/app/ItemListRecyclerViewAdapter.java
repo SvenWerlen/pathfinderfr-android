@@ -55,6 +55,7 @@ public class ItemListRecyclerViewAdapter
             if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
                 Context context = view.getContext();
                 Intent intent = new Intent(mParentActivity, CharacterSheetActivity.class);
+                intent.putExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, item.getId());
                 context.startActivity(intent);
                 factoryId = CharacterFactory.FACTORY_ID;
             } else {
