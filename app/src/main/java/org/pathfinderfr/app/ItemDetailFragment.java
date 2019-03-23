@@ -116,7 +116,7 @@ public class ItemDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.item_description, container, false);
 
         final DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
-        long characterId = PreferenceManager.getDefaultSharedPreferences(rootView.getContext())
+        final long characterId = PreferenceManager.getDefaultSharedPreferences(rootView.getContext())
                 .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
         if(characterId != 0) {
             character = (Character)dbHelper.fetchEntity(characterId,CharacterFactory.getInstance());
@@ -175,10 +175,11 @@ public class ItemDetailFragment extends Fragment {
                 }
                 else if(mItem instanceof Feat) {
                     Feat feat = (Feat)mItem;
+                    String cName = character.getName() == null ? "??" : character.getName();
                     if(character.hasFeat(feat)) {
                         character.removeFeat(feat);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = getResources().getString(R.string.feat_removed_success);
+                            message = String.format(getResources().getString(R.string.feat_removed_success),cName);
                             success = true;
                         } else {
                             character.addFeat(feat); // rollback
@@ -187,7 +188,7 @@ public class ItemDetailFragment extends Fragment {
                     } else {
                         character.addFeat(feat);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = getResources().getString(R.string.feat_added_success);
+                            message = String.format(getResources().getString(R.string.feat_added_success),cName);
                             success = true;
                         } else {
                             character.removeFeat(feat); // rollback
@@ -196,12 +197,13 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof ClassFeature) {
                     ClassFeature classFeature = (ClassFeature)mItem;
+                    String cName = character.getName() == null ? "??" : character.getName();
                     if(classFeature.isAuto()) {
                         message = getResources().getString(R.string.ability_auto);
                     } else if(character.hasClassFeature(classFeature)) {
                         character.removeClassFeature(classFeature);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = getResources().getString(R.string.ability_removed_success);
+                            message = String.format(getResources().getString(R.string.ability_removed_success),cName);
                             success = true;
                         } else {
                             character.addClassFeature(classFeature); // rollback
@@ -210,7 +212,7 @@ public class ItemDetailFragment extends Fragment {
                     } else {
                         character.addClassFeature(classFeature);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = getResources().getString(R.string.ability_added_success);
+                            message = String.format(getResources().getString(R.string.ability_added_success),cName);
                             success = true;
                         } else {
                             character.removeClassFeature(classFeature); // rollback

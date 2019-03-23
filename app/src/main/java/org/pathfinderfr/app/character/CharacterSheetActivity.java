@@ -71,6 +71,8 @@ public class CharacterSheetActivity extends AppCompatActivity {
     };
 
     private boolean showTab() {
+        // update character
+        character = (Character)DBHelper.getInstance(getBaseContext()).fetchEntity(character.getId(),CharacterFactory.getInstance());
 
         if(currentTab != TAB_HOME) {
             if (character.getClassesCount() == 0) {
@@ -163,8 +165,12 @@ public class CharacterSheetActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.sheet_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        currentTab = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-                .getInt(PREF_SELECTED_TAB, TAB_HOME);
+        if (character.getClassesCount() == 0) {
+            currentTab = TAB_HOME;
+        } else {
+            currentTab = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
+                    .getInt(PREF_SELECTED_TAB, TAB_HOME);
+        }
 
         // no state to be restored
         if(savedInstanceState != null) {

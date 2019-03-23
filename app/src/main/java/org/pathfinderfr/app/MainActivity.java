@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // remove preselected character
-                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID);
+                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
                 // open character sheet
                 Intent intent = new Intent(MainActivity.this, CharacterSheetActivity.class);
                 startActivity(intent);

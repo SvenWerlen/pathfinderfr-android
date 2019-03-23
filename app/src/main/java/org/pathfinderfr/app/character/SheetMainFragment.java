@@ -1,6 +1,8 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -199,6 +201,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.ability_int_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_wis_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
+
         view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
@@ -206,6 +209,16 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
 
+        // ACTIONS
+        ImageView actionPin = view.findViewById(R.id.actionPin);
+        actionPin.findViewById(R.id.actionPin).setOnClickListener(listener);
+        actionPin.setBackground(null);
+        actionPin.setImageResource(R.drawable.ic_pin);
+        if(character.getId() == PreferenceManager.getDefaultSharedPreferences(view.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L)) {
+            ((ImageView)view.findViewById(R.id.actionPin)).setColorFilter(view.getContext().getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        } else {
+            ((ImageView)view.findViewById(R.id.actionPin)).setColorFilter(view.getContext().getResources().getColor(R.color.colorDisabled), PorterDuff.Mode.SRC_ATOP);
+        }
         // ABILITIES
         final String abTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.title");
         final String abTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.content");
@@ -868,7 +881,22 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
 
             else if(v instanceof ImageView) {
-                if(v.getId() == R.id.actionDelete) {
+                if(v.getId() == R.id.actionPin) {
+                    final int colorDisabled = parent.getContext().getResources().getColor(R.color.colorDisabled);
+                    final int colorEnabled = parent.getContext().getResources().getColor(R.color.colorPrimaryDark);
+
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+                    long characterId = prefs.getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+                    if(characterId == parent.character.getId()) {
+                        prefs.edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
+                        ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                    } else {
+                        prefs.edit().putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).apply();
+                        ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorEnabled, PorterDuff.Mode.SRC_ATOP);
+                    }
+                    return;
+                }
+                else if(v.getId() == R.id.actionDelete) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_DELETE_ACTION);
                     if (prev != null) {

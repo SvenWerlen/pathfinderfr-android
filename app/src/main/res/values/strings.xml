@@ -23,13 +23,13 @@
     <string name="favorite_removed_success">Favori retiré avec succès!</string>
     <string name="favorite_added_failed">Échec de l\'ajout en tant que favori!</string>
     <string name="favorite_removed_failed">Échec de la suppression du favori!</string>
-    <string name="feat_added_success">Don ajouté au personnage avec succès!</string>
-    <string name="feat_removed_success">Don retiré du personnage avec succès!</string>
+    <string name="feat_added_success">Don ajouté à %s avec succès!</string>
+    <string name="feat_removed_success">Don retiré de %s avec succès!</string>
     <string name="feat_added_failed">Échec de l\'ajout du don au personnage!</string>
     <string name="feat_removed_failed">Échec du retrait du don du personnage!</string>
     <string name="ability_auto">Cette aptitude est automatique et n\'a pas besoin d\'être ajoutée!</string>
-    <string name="ability_added_success">Aptitude ajoutée au personnage avec succès!</string>
-    <string name="ability_removed_success">Aptitude retirée du personnage avec succès!</string>
+    <string name="ability_added_success">Aptitude ajoutée à %s avec succès!</string>
+    <string name="ability_removed_success">Aptitude retirée de %s avec succès!</string>
     <string name="ability_added_failed">Échec de l\'ajout de l\'aptitude au personnage!</string>
     <string name="ability_removed_failed">Échec du retrait de l\'aptitude du personnage!</string>
 
