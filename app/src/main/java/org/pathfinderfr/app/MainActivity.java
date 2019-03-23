@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity
 
         listCur.clear();
         for (DBEntity el : list) {
-            if (search == null || search.length() < 3 || el.getName().toLowerCase().indexOf(search) >= 0) {
+            if (search == null || search.length() < 3 || (el.getName() != null && el.getName().toLowerCase().indexOf(search) >= 0)) {
                 listCur.add(el);
             }
         }
@@ -313,7 +313,12 @@ public class MainActivity extends AppCompatActivity
         String factoryId = PreferenceManager.getDefaultSharedPreferences(
                 getBaseContext()).getString(KEY_CUR_FACTORY, null);
 
-        boolean showNameLong = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_NAMELONG, true);
+        boolean showNameLong;
+        if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
+            showNameLong = true;
+        } else {
+            showNameLong = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_NAMELONG, true);
+        }
 
         ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setFactoryId(factoryId);
         ((ItemListRecyclerViewAdapter)recyclerView.getAdapter()).setShowNameLong(showNameLong);
@@ -394,11 +399,14 @@ public class MainActivity extends AppCompatActivity
             totalCount = newEntities.size();
             factoryId = FavoriteFactory.FACTORY_ID;
         } else if (id == R.id.nav_sheet) {
-            Intent intent = new Intent(this, CharacterSheetActivity.class);
-            startActivity(intent);
+            newEntities = dbhelper.getAllEntities(CharacterFactory.getInstance());
+            totalCount = newEntities.size();
             factoryId = CharacterFactory.FACTORY_ID;
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                    putString(KEY_CUR_FACTORY,factoryId).apply();
+//            Intent intent = new Intent(this, CharacterSheetActivity.class);
+//            startActivity(intent);
+//            factoryId = CharacterFactory.FACTORY_ID;
+//            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+//                    putString(KEY_CUR_FACTORY,factoryId).apply();
         } else if (id == R.id.nav_skills) {
             newEntities = dbhelper.getAllEntities(SkillFactory.getInstance());
             totalCount = newEntities.size();

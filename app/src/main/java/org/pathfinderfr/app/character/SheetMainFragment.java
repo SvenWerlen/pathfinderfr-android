@@ -43,10 +43,12 @@ import java.util.List;
  */
 public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
-        FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener, FragmentSpeedPicker.OnFragmentInteractionListener {
+        FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
+        FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID    = "character_id";
     private static final String DIALOG_PICK_ABILITY = "ability-picker";
+    private static final String DIALOG_PICK_NAME    = "name-picker";
     private static final String DIALOG_PICK_RACE    = "race-picker";
     private static final String DIALOG_PICK_CLASS   = "class-picker";
     private static final String DIALOG_PICK_HP      = "hitpoint-picker";
@@ -194,6 +196,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.ability_int_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_wis_value).setOnClickListener(listener);
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
+        view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_classpicker).setVisibility(View.GONE);
 
@@ -494,6 +497,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
         });
 
+        // update name
+        TextView nameTv = view.findViewById(R.id.sheet_main_namepicker);
+        if(character.getName() != null) {
+            nameTv.setText(character.getName());
+        }
+
         // update race
         TextView raceTv = view.findViewById(R.id.sheet_main_racepicker);
         if(character.getRace() != null) {
@@ -728,6 +737,24 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 newFragment.show(ft, DIALOG_PICK_ABILITY);
                 return;
             }
+            else if(v instanceof TextView && "name".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_NAME);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentNamePicker.newInstance(parent);
+
+                Bundle arguments = new Bundle();
+                String name = parent.character.getName();
+                if(name != null) {
+                    arguments.putString(FragmentNamePicker.ARG_NAME, name);
+                }
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_PICK_NAME);
+                return;
+            }
             else if(v instanceof TextView && "race".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_RACE);
@@ -931,6 +958,17 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             // store changes
             characterDBUpdate();
         }
+    }
+
+    @Override
+    public void onNameChoosen(String name) {
+        character.setName(name);
+        TextView tv = getView().findViewById(R.id.sheet_main_namepicker);
+        if(name != null) {
+            tv.setText(character.getName());
+        }
+        // store changes
+        characterDBUpdate();
     }
 
     @Override

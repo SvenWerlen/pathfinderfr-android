@@ -12,6 +12,50 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp">
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/itemdetails_quickaction"/>
+
+            <ImageButton
+                android:id="@+id/actionPin"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/ic_item_icon_pin" />
+
+        </LinearLayout>
+
+        <com.wefika.flowlayout.FlowLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="start|top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/sheet_name" />
+
+            <TextView
+                android:id="@+id/sheet_main_namepicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:tag="name"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/sheet_click_to_choose" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

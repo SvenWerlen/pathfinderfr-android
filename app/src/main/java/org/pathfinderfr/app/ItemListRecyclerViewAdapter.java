@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.character.CharacterSheetActivity;
+import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -49,12 +52,18 @@ public class ItemListRecyclerViewAdapter
         public void onClick(View view) {
             DBEntity item = (DBEntity) view.getTag();
 
-            Context context = view.getContext();
-            Intent intent = new Intent(context, ItemDetailActivity.class);
-            intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.getId());
-            intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, item.getFactory().getFactoryId());
-
-            context.startActivity(intent);
+            if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
+                Context context = view.getContext();
+                Intent intent = new Intent(mParentActivity, CharacterSheetActivity.class);
+                context.startActivity(intent);
+                factoryId = CharacterFactory.FACTORY_ID;
+            } else {
+                Context context = view.getContext();
+                Intent intent = new Intent(context, ItemDetailActivity.class);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.getId());
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, item.getFactory().getFactoryId());
+                context.startActivity(intent);
+            }
         }
     };
 
@@ -95,6 +104,8 @@ public class ItemListRecyclerViewAdapter
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
+        } else if(entity instanceof Character) {
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_sheet));
         }
     }
 

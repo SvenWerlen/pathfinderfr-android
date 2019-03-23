@@ -105,6 +105,7 @@
     <string name="spellfilter_level">Niveau:</string>
     <string name="apply_filters">Appliquer</string>
     <string name="cancel">Annuler</string>
+    <string name="save">Sauvegarder</string>
     <string name="delete">Supprimer</string>
 
     <!-- ClassFeature filters -->
@@ -137,6 +138,9 @@
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
     <string name="character_tab_failed_class">Veuillez choisir une classe!</string>
 
+    <!-- Character props -->
+    <string name="sheet_character_name">Nom du personnage</string>
+
     <!-- Character abilities -->
     <string name="sheet_label_char">Carac.</string>
     <string name="sheet_label_value">Valeur</string>
@@ -162,6 +166,9 @@
     <string name="sheet_ability_seekbar">Glisser pour sélectionner une valeur:</string>
     <string name="sheet_ability_predefined">Ou sélectionner une valeur pré-définie:</string>
     <string name="sheet_ability_buttons">Cliquer sur la valeur ci-dessous pour l\'accepter.</string>
+
+    <!-- Character details -->
+    <string name="sheet_name">Nom:</string>
 
     <!-- Character race -->
     <string name="sheet_race">Race:</string>

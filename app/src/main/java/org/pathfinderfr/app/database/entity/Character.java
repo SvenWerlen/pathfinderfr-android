@@ -106,6 +106,21 @@ public class Character extends DBEntity {
     }
 
     @Override
+    public String getNameLong() {
+        String name = getName() == null ? "?" : getName();
+        String race = getRace() == null ? "?" : getRace().getName();
+        StringBuffer classes = new StringBuffer();
+        for(int i = 0; i < getClassesCount(); i++) {
+            Pair<Class, Integer> cl = getClass(i);
+            classes.append(cl.first.getShortName()).append(" ").append(cl.second);
+            if(i+1 < getClassesCount()) {
+                classes.append(", ");
+            }
+        }
+        return name + ": " + race + ", " + classes.toString();
+    }
+
+    @Override
     public DBEntityFactory getFactory() {
         return CharacterFactory.getInstance();
     }
