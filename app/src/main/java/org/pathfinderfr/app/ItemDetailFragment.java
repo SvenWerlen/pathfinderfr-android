@@ -222,12 +222,8 @@ public class ItemDetailFragment extends Fragment {
                 }
                 // update list if currently viewing character
                 if(success) {
-                    String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
-                            getView().getContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
-                    if (CharacterFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
-                        PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
-                                .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
-                    }
+                    PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
+                            .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
                 }
                 updateActionIcons(getView());
                 Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).setAction("Action", null).show();

@@ -215,9 +215,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         actionPin.setBackground(null);
         actionPin.setImageResource(R.drawable.ic_pin);
         if(character.getId() == PreferenceManager.getDefaultSharedPreferences(view.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L)) {
-            ((ImageView)view.findViewById(R.id.actionPin)).setColorFilter(view.getContext().getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+            actionPin.setColorFilter(view.getContext().getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         } else {
-            ((ImageView)view.findViewById(R.id.actionPin)).setColorFilter(view.getContext().getResources().getColor(R.color.colorDisabled), PorterDuff.Mode.SRC_ATOP);
+            actionPin.setColorFilter(view.getContext().getResources().getColor(R.color.colorDisabled), PorterDuff.Mode.SRC_ATOP);
         }
         // ABILITIES
         final String abTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.title");
@@ -888,10 +888,16 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
                     long characterId = prefs.getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
                     if(characterId == parent.character.getId()) {
-                        prefs.edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
+                        prefs.edit()
+                                .remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID)
+                                .putString(MainActivity.KEY_CUR_FACTORY, CharacterFactory.FACTORY_ID)
+                                .apply();
                         ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorDisabled, PorterDuff.Mode.SRC_ATOP);
                     } else {
-                        prefs.edit().putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).apply();
+                        prefs.edit()
+                                .remove(MainActivity.KEY_CUR_FACTORY)
+                                .putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId())
+                                .apply();
                         ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorEnabled, PorterDuff.Mode.SRC_ATOP);
                     }
                     return;
