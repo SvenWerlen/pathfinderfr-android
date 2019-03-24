@@ -1,10 +1,20 @@
 package org.pathfinderfr.app.database.entity;
 
+import android.content.Context;
+import android.view.View;
+
 import com.esotericsoftware.yamlbeans.YamlConfig;
+import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 
+import org.pathfinderfr.app.character.FragmentHitPointsPicker;
+import org.pathfinderfr.app.character.FragmentSpeedPicker;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.util.Pair;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,9 +47,31 @@ public class CharacterImportExport {
     private static final String YAML_BONUS_ID      = "Id";
     private static final String YAML_BONUS_VALUE   = "Valeur";
 
+    public static final int ERROR_NAME_TOOLONG         = 1;
+    public static final int ERROR_RACE_NOMATCH         = 2;
+    public static final int ERROR_CLASS_NOMATCH        = 3;
+    public static final int ERROR_CLASS_EXCEPTION      = 4;
+    public static final int ERROR_ABILITIES_FORMAT     = 5;
+    public static final int ERROR_ABILITIES_EXCEPTION  = 6;
+    public static final int ERROR_HITPOINTS_FORMAT     = 7;
+    public static final int ERROR_HITPOINTS_INVALID    = 8;
+    public static final int ERROR_SPEED_FORMAT         = 9;
+    public static final int ERROR_SPEED_INVALID        = 10;
+    public static final int ERROR_SKILLS_FORMAT        = 11;
+    public static final int ERROR_SKILL_NOMATCH        = 12;
+    public static final int ERROR_SKILLS_EXCEPTION     = 13;
+    public static final int ERROR_FEAT_NOMATCH         = 14;
+    public static final int ERROR_FEATS_EXCEPTION      = 15;
+    public static final int ERROR_FEATURE_NOMATCH      = 16;
+    public static final int ERROR_FEATURES_EXCEPTION   = 17;
+    public static final int ERROR_MODIF_SOURCE_TOOLONG = 18;
+    public static final int ERROR_MODIFS_FORMAT        = 19;
+    public static final int ERROR_MODIFS_EXCEPTION     = 20;
+    public static final int ERROR_MODIF_ICON_NOTFOUND  = 21;
 
-    public static String exportCharacterAsYML(Character c) {
-        DBHelper dbHelper = DBHelper.getInstance(null);
+
+    public static String exportCharacterAsYML(Character c, Context ctx) {
+        DBHelper dbHelper = DBHelper.getInstance(ctx);
 
         // basics
         Map<String, Object> data = new LinkedHashMap<>();
@@ -145,5 +177,259 @@ public class CharacterImportExport {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    public static Pair<Character,List<Integer>> importCharacterAsYML(String yml, View view) {
+        DBHelper dbHelper = DBHelper.getInstance(view.getContext());
+        List<Integer> errors = new ArrayList<>();
+
+        Character c = new Character();
+
+        try {
+            YamlReader reader = new YamlReader(yml);
+            Map map = (Map) reader.read();
+
+            // name
+            String name = (String)map.get(YAML_NAME);
+            if(name != null && name.length() > 30) {
+                name = name.substring(0, 30);
+                errors.add(ERROR_NAME_TOOLONG);
+            }
+            if(name != null) {
+                name.replace('\n', ' ').replace('\r', ' ');
+            }
+            c.setName(name);
+
+            // race
+            String raceName = (String)map.get(YAML_RACE);
+            if(raceName != null) {
+                Race race = (Race)dbHelper.fetchEntityByName(raceName, RaceFactory.getInstance());
+                if(race == null) {
+                    errors.add(ERROR_RACE_NOMATCH);
+                }
+                c.setRace(race);
+            }
+
+            // classes
+            try {
+                Object classes = map.get(YAML_CLASSES);
+                if (classes instanceof List) {
+                    List<Object> clList = (List<Object>) classes;
+                    for (Object cl : clList) {
+                        if (cl instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) cl;
+                            if (values.containsKey(YAML_NAME) && values.containsKey(YAML_LEVEL)) {
+                                Class class_ = (Class) dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), ClassFactory.getInstance());
+                                if (class_ == null) {
+                                    errors.add(ERROR_CLASS_NOMATCH);
+                                } else {
+                                    c.addOrSetClass(class_, Integer.parseInt(values.get(YAML_LEVEL).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_CLASS_EXCEPTION);
+            }
+
+            // abilities
+            try {
+                Object abilities = map.get(YAML_ABILITIES);
+                if (abilities instanceof List) {
+                    List<Object> aList = (List<Object>) abilities;
+                    for (Object a : aList) {
+                        if (a instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) a;
+                            for(String abilityName : values.keySet()) {
+                                if(abilityName.equals(YAML_ABILITY_STR)) {
+                                    c.setStrength(Integer.parseInt(values.get(YAML_ABILITY_STR).toString()));
+                                } else if(abilityName.equals(YAML_ABILITY_DEX)) {
+                                    c.setDexterity(Integer.parseInt(values.get(YAML_ABILITY_DEX).toString()));
+                                } else if(abilityName.equals(YAML_ABILITY_CON)) {
+                                    c.setConstitution(Integer.parseInt(values.get(YAML_ABILITY_CON).toString()));
+                                } else if(abilityName.equals(YAML_ABILITY_INT)) {
+                                    c.setIntelligence(Integer.parseInt(values.get(YAML_ABILITY_INT).toString()));
+                                } else if(abilityName.equals(YAML_ABILITY_WIS)) {
+                                    c.setWisdom(Integer.parseInt(values.get(YAML_ABILITY_WIS).toString()));
+                                } else if(abilityName.equals(YAML_ABILITY_CHA)) {
+                                    c.setCharisma(Integer.parseInt(values.get(YAML_ABILITY_CHA).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(NumberFormatException e) {
+                errors.add(ERROR_ABILITIES_FORMAT);
+            } catch(Exception e) {
+                errors.add(ERROR_ABILITIES_EXCEPTION);
+            }
+
+            // hit points
+            try {
+                String hitpoint = (String)map.get(YAML_HP);
+                if(hitpoint != null) {
+                    int hp = Integer.parseInt(hitpoint);
+                    if(hp >= 0 && hp <= FragmentHitPointsPicker.MAX_HITPOINTS) {
+                        c.setHitpoints(hp);
+                    } else {
+                        errors.add(ERROR_HITPOINTS_INVALID);
+                    }
+                }
+            } catch(NumberFormatException e) {
+                errors.add(ERROR_HITPOINTS_FORMAT);
+            }
+
+            // speed
+            try {
+                String speed = (String)map.get(YAML_SPEED);
+                if(speed != null) {
+                    int sp = Integer.parseInt(speed);
+                    if(sp >= 0 && sp <= FragmentSpeedPicker.MAX_SPEED) {
+                        c.setSpeed(sp);
+                    } else {
+                        errors.add(ERROR_SPEED_INVALID);
+                    }
+                }
+            } catch(NumberFormatException e) {
+                errors.add(ERROR_SPEED_FORMAT);
+            }
+
+            // skills
+            try {
+                Object skills = map.get(YAML_SKILLS);
+                if (skills instanceof List) {
+                    List<Object> sList = (List<Object>) skills;
+                    for (Object s : sList) {
+                        if (s instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) s;
+                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_RANK)) {
+                                Skill skill = (Skill)dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), SkillFactory.getInstance());
+                                if(skill == null) {
+                                    errors.add(ERROR_SKILL_NOMATCH);
+                                } else {
+                                    int rank = Integer.parseInt(values.get(YAML_RANK).toString());
+                                    c.setSkillRank(skill.getId(), rank);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(NumberFormatException e) {
+                errors.add(ERROR_SKILLS_FORMAT);
+            } catch(Exception e) {
+                errors.add(ERROR_SKILLS_EXCEPTION);
+            }
+
+            // feats
+            try {
+                Object feats = map.get(YAML_FEATS);
+                if (feats instanceof List) {
+                    List<Object> fList = (List<Object>) feats;
+                    for (Object f : fList) {
+                        if (f instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) f;
+                            if(values.containsKey(YAML_NAME)) {
+                                Feat feat = (Feat)dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), FeatFactory.getInstance());
+                                if(feat == null) {
+                                    errors.add(ERROR_FEAT_NOMATCH);
+                                } else {
+                                    c.addFeat(feat);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_FEATS_EXCEPTION);
+            }
+
+            // classfeatures
+            try {
+                Object features = map.get(YAML_CLASSFEATURES);
+                if (features instanceof List) {
+                    List<Object> fList = (List<Object>) features;
+                    for (Object f : fList) {
+                        if (f instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) f;
+                            if(values.containsKey(YAML_NAME)) {
+                                ClassFeature feature = (ClassFeature)dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), ClassFeatureFactory.getInstance());
+                                if(feature == null) {
+                                    errors.add(ERROR_FEATURE_NOMATCH);
+                                } else if(!feature.isAuto()) {
+                                    c.addClassFeature(feature);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_FEATURES_EXCEPTION);
+            }
+
+            // modifs
+            try {
+                Object modifs = map.get(YAML_MODIFS);
+                if (modifs instanceof List) {
+                    List<Object> mList = (List<Object>) modifs;
+                    for (Object m : mList) {
+                        if (m instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) m;
+                            if(values.containsKey(YAML_MODIF_SOURCE) && values.containsKey(YAML_MODIF_ICON) && values.containsKey(YAML_MODIF_BONUS)) {
+                                String source = (String)values.get(YAML_MODIF_SOURCE);
+                                if(source != null && source.length() > 20) {
+                                    source = source.substring(0, 20);
+                                    errors.add(ERROR_MODIF_SOURCE_TOOLONG);
+                                }
+                                if(source != null) {
+                                    source.replace('\n', ' ').replace('\r', ' ');
+                                }
+                                String icon = (String)values.get(YAML_MODIF_ICON);
+                                int resourceId = view.getResources().getIdentifier("modif_" + icon, "drawable",
+                                        view.getContext().getPackageName());
+                                if(resourceId == 0) {
+                                    errors.add(ERROR_MODIF_ICON_NOTFOUND);
+                                    continue;
+                                }
+                                Object bonus = values.get(YAML_MODIF_BONUS);
+                                List<Pair<Integer,Integer>> bonusList = new ArrayList<>();
+                                if(bonus instanceof List) {
+                                    List<Object> bList = (List<Object>) bonus;
+                                    for (Object b : bList) {
+                                        if (b instanceof Map) {
+                                            Map<String, Object> bValues = (Map<String, Object>) b;
+                                            if(bValues.containsKey(YAML_BONUS_ID) && bValues.containsKey(YAML_BONUS_VALUE)) {
+                                                int id = Integer.parseInt(bValues.get(YAML_BONUS_ID).toString());
+                                                int value = Integer.parseInt(bValues.get(YAML_BONUS_VALUE).toString());
+                                                if(id>0 && Math.abs(value) < 100) {
+                                                    Pair<Integer,Integer> pair = new Pair<>(id,value);
+                                                    bonusList.add(pair);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                c.addModif(new Character.CharacterModif(source, bonusList, icon));
+                            }
+                        }
+                    }
+                }
+            } catch(NumberFormatException e) {
+                errors.add(ERROR_MODIFS_FORMAT);
+            } catch(Exception e) {
+                errors.add(ERROR_MODIFS_EXCEPTION);
+            }
+
+
+
+            System.out.println(exportCharacterAsYML(c, view.getContext()));
+
+            return new Pair<>(c, errors);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }

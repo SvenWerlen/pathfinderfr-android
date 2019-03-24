@@ -435,10 +435,6 @@ public class CharacterFactory extends DBEntityFactory {
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
         throw new UnsupportedOperationException("This class doesn't implement that method!");
     }
-
-    public static String exportCharacterAsYML(Character c) {
-        return CharacterImportExport.exportCharacterAsYML(c);
-    }
 }
 
 

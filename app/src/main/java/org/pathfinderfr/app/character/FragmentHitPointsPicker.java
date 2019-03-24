@@ -20,7 +20,7 @@ import org.pathfinderfr.app.database.entity.Character;
 
 public class FragmentHitPointsPicker extends DialogFragment implements View.OnClickListener {
 
-    private static int MAX_HITPOINTS = 999;
+    public static int MAX_HITPOINTS = 999;
     private int hitpoints;
     private FragmentHitPointsPicker.OnFragmentInteractionListener mListener;
 

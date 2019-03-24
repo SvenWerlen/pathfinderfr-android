@@ -369,5 +369,18 @@
     <!-- Warnings -->
     <string name="warning_missing_indexes">Veuillez recharger les données pour profiter des indexes.</string>
 
+    <!-- Strings related to import character -->
+    <string name="importcharacter_title">Pathfinder-FR: import de personnage</string>
+    <string name="importcharacter_message">Tentative d\'import de personnage à partir d\'un fichier.
+    Retrouvez toutes les informations sur l\'import ci-dessous.</string>
+    <string name="importcharacter_info_acces">Accès au fichier ... succès</string>
+    <string name="importcharacter_info_read">Lecture du fichier ... succès</string>
+    <string name="importcharacter_info_parse">Analyse du fichier ... succès</string>
+    <string name="importcharacter_info_import">Import du personnage ... succès</string>
+    <string name="importcharacter_info_errors">Erreurs trouvées:</string>
+    <string name="importcharacter_error_file">Impossible de lire le fichier</string>
+    <string name="importcharacter_error_format">Le contenu n\'a pas un format YAML valide.</string>
+    <string name="importcharacter_filecontent">Contenu du fichier:</string>
+
 </resources>
 

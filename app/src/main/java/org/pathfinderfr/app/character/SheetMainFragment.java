@@ -31,6 +31,7 @@ import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionLi
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
@@ -912,7 +913,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 }
                 else if(v.getId() == R.id.actionShare) {
                     // convert character to YAML
-                    String characterYML = CharacterFactory.exportCharacterAsYML(parent.character);
+                    String characterYML = CharacterImportExport.exportCharacterAsYML(parent.character, parent.getContext());
                     if(characterYML == null) {
                         View root = parent.getActivity().findViewById(R.id.sheet_container);
                         if (root != null) {

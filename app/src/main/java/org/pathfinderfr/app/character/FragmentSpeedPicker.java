@@ -13,7 +13,7 @@ import org.pathfinderfr.R;
 
 public class FragmentSpeedPicker extends DialogFragment implements View.OnClickListener {
 
-    private static int MAX_SPEED = 99;
+    public static int MAX_SPEED = 99;
     private int speed;
     private FragmentSpeedPicker.OnFragmentInteractionListener mListener;
 

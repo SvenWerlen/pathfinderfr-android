@@ -3,6 +3,7 @@
     package="org.pathfinderfr">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -49,6 +50,33 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.pathfinderfr.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".app.ImportCharacterActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter >
+                <!-- needed for properly formatted email messages -->
+                <data
+                    android:scheme="content"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.pfc" />
+
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+            <intent-filter >
+                <!-- needed for properly formatted email messages -->
+                <data
+                    android:scheme="file"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.pfc" />
+
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
 
         <provider
