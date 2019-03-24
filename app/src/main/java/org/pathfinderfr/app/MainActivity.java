@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity
             sources = new String[0];
         }
 
+        long countCharacters = dbhelper.getCountEntities(CharacterFactory.getInstance());
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
@@ -285,6 +286,7 @@ public class MainActivity extends AppCompatActivity
                 countFeatsFiltered, countFeats,
                 countAbilitiesFiltered, countAbilities,
                 countSpellsFiltered, countSpells,
+                countCharacters,
                 countFavorites,
                 countSources, countSourcesTotal);
         if (countSkills == 0 && countFeats == 0 && countAbilities == 0 && countSpells == 0) {

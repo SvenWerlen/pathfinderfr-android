@@ -174,7 +174,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
 
         // no state to be restored
         if(savedInstanceState != null) {
-            Log.i(CharacterSheetActivity.class.getSimpleName(), "onCreate with savedInstaceState!");
+            Log.i(CharacterSheetActivity.class.getSimpleName(), "onCreate with savedInstanceState!");
         } else {
             // initialize tab based on preferences
             switch(currentTab) {
@@ -183,6 +183,16 @@ public class CharacterSheetActivity extends AppCompatActivity {
                 case TAB_CLASSFEATURES: navigation.setSelectedItemId(R.id.sheet_classfeatures); break;
                 case TAB_SPELLS: navigation.setSelectedItemId(R.id.sheet_spells); break;
                 default: navigation.setSelectedItemId(R.id.sheet_home);
+            }
+        }
+
+        // show
+        long pinnedCharacter = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+        if(pinnedCharacter > 0 && pinnedCharacter == characterId) {
+            View root = findViewById(R.id.sheet_container);
+            if (root != null) {
+                Snackbar.make(root, getResources().getString(R.string.character_pinned_autoselect),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         }
     }
