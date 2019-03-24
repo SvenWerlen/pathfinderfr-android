@@ -40,6 +40,31 @@
                 style="?android:attr/textAppearanceSmall"
                 android:text="@string/importcharacter_message" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/colorWhite"
+                    android:layout_margin="10dp" />
+
+                <Button
+                    android:id="@+id/importButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/importcharacter"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/colorWhite"
+                    android:layout_margin="10dp"/>
+
+            </LinearLayout>
+
             <ScrollView android:id="@+id/textAreaScroller"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
