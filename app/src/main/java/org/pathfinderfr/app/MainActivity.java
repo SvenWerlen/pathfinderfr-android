@@ -424,6 +424,7 @@ public class MainActivity extends AppCompatActivity
             long characterId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
             if(characterId>0 && !CharacterFactory.FACTORY_ID.equals(factoryId)) {
                 Intent intent = new Intent(this, CharacterSheetActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, characterId);
                 getBaseContext().startActivity(intent);
             } else {
