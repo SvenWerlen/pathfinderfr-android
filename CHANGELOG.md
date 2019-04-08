@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Display character's name in header #3
+- Skill bonus not computed correctly #11
 
 ## [2.4.0] - 2019-03-24
 ### Added
