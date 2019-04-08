@@ -85,7 +85,12 @@ public class CharacterSheetActivity extends AppCompatActivity {
             }
         }
 
-        String baseText = getResources().getString(R.string.sheet_menu_activity) + " - ";
+        // show character name in header
+        String baseText = (character == null || character.getName() == null || character.getName().length() == 0 ?
+                getResources().getString(R.string.sheet_menu_activity):
+                character.getName());
+        baseText += " - ";
+
         switch (currentTab) {
             case TAB_HOME:
                 setTitle(baseText + getResources().getString(R.string.sheet_menu_main));
@@ -175,6 +180,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
         // no state to be restored
         if(savedInstanceState != null) {
             Log.i(CharacterSheetActivity.class.getSimpleName(), "onCreate with savedInstanceState!");
+            showTab(); // refresh
         } else {
             // initialize tab based on preferences
             switch(currentTab) {
