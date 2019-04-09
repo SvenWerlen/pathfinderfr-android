@@ -1,35 +1,15 @@
 package org.pathfinderfr.app;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.util.Log;
-import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.EntityFactories;
-import org.pathfinderfr.app.database.entity.FavoriteFactory;
-import org.pathfinderfr.app.database.entity.Spell;
-import org.pathfinderfr.app.database.entity.SpellFactory;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -40,6 +20,8 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private final static String PREF_SHOWDETAILS = "general_showdetails";
     private boolean showDetails;
+
+    public static final String KEY_TOOLBAR_TITLE = "toolbar-title";
 
 
     @Override
@@ -79,6 +61,12 @@ public class ItemDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
+        } else {
+            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+            String title = savedInstanceState.getString(KEY_TOOLBAR_TITLE);
+            if(appBarLayout != null && title != null) {
+                appBarLayout.setTitle(title);
+            }
         }
     }
 
@@ -97,5 +85,16 @@ public class ItemDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        if(appBarLayout != null) {
+            outState.putString(KEY_TOOLBAR_TITLE, appBarLayout.getTitle().toString());
+        }
     }
 }

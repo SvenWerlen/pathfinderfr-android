@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Display character's name in header #3
 - Skill bonus not computed correctly #11
+- Name disappear after screen rotation in item lists #9
 
 ## [2.4.0] - 2019-03-24
 ### Added
