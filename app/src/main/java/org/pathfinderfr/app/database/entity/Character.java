@@ -552,6 +552,7 @@ public class Character extends DBEntity {
             return true;
         } else if(skills.containsKey(skillId) && rank == 0) {
             skills.remove(skillId);
+            return true;
         } else if(skills.containsKey(skillId) && skills.get(skillId) != rank) {
             skills.put(skillId, rank);
             return true;
@@ -584,7 +585,7 @@ public class Character extends DBEntity {
         }
         int rank = getSkillRank(skill.getId());
         int abilityMod = getSkillAbilityMod(skill);
-        int classSkill = isClassSkill(skill.getName()) ? 3 : 0;
+        int classSkill = (rank > 0 && isClassSkill(skill.getName())) ? 3 : 0;
         int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
         return rank + abilityMod + classSkill + bonus;
     }
