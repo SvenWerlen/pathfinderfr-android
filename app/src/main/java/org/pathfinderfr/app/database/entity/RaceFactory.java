@@ -103,7 +103,13 @@ public class RaceFactory extends DBEntityFactory {
                 if(props.length < 2) {
                     continue;
                 }
-                race.getTraits().add(new Race.Trait(props[0], props[1]));
+                // description could have multiple ':'
+                StringBuffer descr = new StringBuffer();
+                for(int i = 1; i<props.length; i++) {
+                    descr.append(props[i]).append(':');
+                }
+                descr.deleteCharAt(descr.length()-1);
+                race.getTraits().add(new Race.Trait(props[0], descr.toString()));
             }
         }
         return race;
