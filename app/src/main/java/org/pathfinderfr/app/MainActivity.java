@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_home);
         }
         if(selItem != null) {
-            selItem.setChecked(true);
+            navigationView.setCheckedItem(selItem.getItemId());
             onNavigationItemSelected(selItem);
         }
 

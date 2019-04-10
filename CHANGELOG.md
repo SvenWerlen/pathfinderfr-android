@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skill bonus not computed correctly #11
 - Name disappear after screen rotation in item lists #9
 - Quick action icons not visible when content is scrollable (long content) #6
+- Two navigation items highlighted at the same time #7
 
 ## [2.4.0] - 2019-03-24
 ### Added
