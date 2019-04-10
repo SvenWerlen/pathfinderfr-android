@@ -2,6 +2,7 @@ package org.pathfinderfr.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -97,6 +98,7 @@ public class ItemListRecyclerViewAdapter
         holder.itemView.setOnClickListener(mOnClickListener);
 
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.itemIcon);
+        icon.setVisibility(View.VISIBLE);
         if(entity instanceof Feat) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
         } else if(entity instanceof ClassFeature) {
@@ -106,7 +108,13 @@ public class ItemListRecyclerViewAdapter
         } else if(entity instanceof Spell) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
         } else if(entity instanceof Character) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_sheet));
+            // show icon for pined character
+            long characterId = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+            if(characterId > 0 && characterId == entity.getId()) {
+                icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_pin));
+            } else {
+                icon.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

@@ -897,16 +897,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
                     long characterId = prefs.getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
                     if(characterId == parent.character.getId()) {
-                        prefs.edit()
-                                .remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID)
-                                .putString(MainActivity.KEY_CUR_FACTORY, CharacterFactory.FACTORY_ID)
-                                .apply();
+                        prefs.edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
                         ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorDisabled, PorterDuff.Mode.SRC_ATOP);
                     } else {
-                        prefs.edit()
-                                .remove(MainActivity.KEY_CUR_FACTORY)
-                                .putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId())
-                                .apply();
+                        prefs.edit().putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).apply();
                         ((ImageView)parent.getView().findViewById(R.id.actionPin)).setColorFilter(colorEnabled, PorterDuff.Mode.SRC_ATOP);
                     }
                     return;

@@ -191,16 +191,6 @@ public class CharacterSheetActivity extends AppCompatActivity {
                 default: navigation.setSelectedItemId(R.id.sheet_home);
             }
         }
-
-        // show
-        long pinnedCharacter = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
-        if(pinnedCharacter > 0 && pinnedCharacter == characterId) {
-            View root = findViewById(R.id.sheet_container);
-            if (root != null) {
-                Snackbar.make(root, getResources().getString(R.string.character_pinned_autoselect),
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        }
     }
 
     @Override
