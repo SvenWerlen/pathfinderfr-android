@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:gravity="center_vertical"
-        tools:context=".app.ItemDetailFragment">
+        tools:context=".app.ItemDetailFragment"
+        android:focusableInTouchMode="true">
 
         <TextView
             android:layout_width="wrap_content"
