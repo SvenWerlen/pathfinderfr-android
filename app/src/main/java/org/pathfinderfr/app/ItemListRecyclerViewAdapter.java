@@ -16,6 +16,7 @@ import org.pathfinderfr.app.character.CharacterSheetActivity;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.Condition;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
@@ -107,6 +108,8 @@ public class ItemListRecyclerViewAdapter
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
+        } else if(entity instanceof Condition) {
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_condition));
         } else if(entity instanceof Character) {
             // show icon for pined character
             long characterId = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);

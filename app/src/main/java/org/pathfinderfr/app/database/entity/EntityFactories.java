@@ -11,6 +11,7 @@ public class EntityFactories {
             RaceFactory.getInstance(),
             ClassFactory.getInstance(),
             CharacterFactory.getInstance(),
+            ConditionFactory.getInstance(),
     };
 
 

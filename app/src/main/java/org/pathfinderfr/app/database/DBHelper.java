@@ -13,6 +13,7 @@ import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
@@ -40,7 +41,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 11;
 
     private static DBHelper instance;
 
@@ -63,6 +64,8 @@ public class DBHelper extends SQLiteOpenHelper {
         for (DBEntityFactory f : EntityFactories.FACTORIES) {
             db.execSQL(f.getQueryCreateTable());
         }
+        // create version table
+        db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
     }
 
     public void clear() {
@@ -142,6 +145,14 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 10;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 10");
+        }
+        // version 11 introduced new table for conditions
+        // fixes version table not created!
+        if(oldVersion == 10) {
+            db.execSQL(ConditionFactory.getInstance().getQueryCreateTable());
+            db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
+            oldVersion = 11;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 11");
         }
     }
 

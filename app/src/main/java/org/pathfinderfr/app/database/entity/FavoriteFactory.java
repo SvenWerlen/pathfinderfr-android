@@ -102,6 +102,8 @@ public class FavoriteFactory extends DBEntityFactory {
             entity = new ClassFeature();
         } else if(SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
             entity = new Spell();
+        } else if(ConditionFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new Condition();
         } else {
             return null;
         }

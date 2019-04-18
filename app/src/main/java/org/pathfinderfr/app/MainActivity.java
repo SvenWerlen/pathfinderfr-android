@@ -38,6 +38,7 @@ import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -216,6 +217,8 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_abilities);
         } else if(SpellFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_spells);
+        } else if(ConditionFactory.FACTORY_ID.equals(factoryId)) {
+            selItem = navigationView.getMenu().findItem(R.id.nav_conditions);
         } else {
             selItem = navigationView.getMenu().findItem(R.id.nav_home);
         }
@@ -268,6 +271,7 @@ public class MainActivity extends AppCompatActivity
         long countSpells = dbhelper.getCountEntities(SpellFactory.getInstance());
         long countRaces = dbhelper.getCountEntities(RaceFactory.getInstance());
         long countClasses = dbhelper.getCountEntities(ClassFactory.getInstance());
+        long countConditions = dbhelper.getCountEntities(ConditionFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
         long countAbilitiesFiltered = dbhelper.getCountEntities(ClassFeatureFactory.getInstance(), sources);
@@ -315,6 +319,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_abilities).setVisible(countAbilities > 0);
         navigationView.getMenu().findItem(R.id.nav_spells).setVisible(countSpells > 0);
         navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(countClasses > 0 && countRaces > 0);
+        navigationView.getMenu().findItem(R.id.nav_conditions).setVisible(countConditions > 0);
+
     }
 
     private void updateTitle(String factoryId) {
@@ -459,6 +465,11 @@ public class MainActivity extends AppCompatActivity
                 totalCount = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
             }
             factoryId = SpellFactory.FACTORY_ID;
+        } else if (id == R.id.nav_conditions) {
+            newEntities = dbhelper.getAllEntities(ConditionFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+            totalCount = newEntities.size();
+            factoryId = ConditionFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             Intent intent = new Intent(this, LoadDataActivity.class);

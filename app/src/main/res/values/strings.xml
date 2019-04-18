@@ -135,6 +135,7 @@
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_classfeatures">Aptitudes</string>
     <string name="sheet_menu_spells">Sorts</string>
+    <string name="sheet_menu_conditions">États préjudiciables</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
     <string name="character_tab_failed_class">Veuillez choisir une classe!</string>

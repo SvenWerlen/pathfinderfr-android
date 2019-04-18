@@ -18,6 +18,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
@@ -39,7 +40,8 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             "/data/competences.yml",
             "/data/dons.yml",
             "/data/classfeatures.yml",
-            "/data/spells.yml"};
+            "/data/spells.yml",
+            "/data/conditions.yml"};
 
     private LoadDataTask loadTaskInProgress;
 
@@ -71,8 +73,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], FeatFactory.getInstance());
                     Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFeatureFactory.getInstance());
                     Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], SpellFactory.getInstance());
+                    Pair<String, DBEntityFactory> source6 = new Pair(SOURCE + SOURCES[6], ConditionFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, forceUpdate);
-                    loadTaskInProgress.execute(source0,source1,source2,source3,source4,source5);
+                    loadTaskInProgress.execute(source0,source1,source2,source3,source4,source5,source6);
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

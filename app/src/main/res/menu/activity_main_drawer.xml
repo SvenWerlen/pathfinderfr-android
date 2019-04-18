@@ -38,6 +38,11 @@
             android:icon="@drawable/ic_item_icon_spell"
             android:title="@string/navigation_item_spells" />
 
+        <item
+            android:id="@+id/nav_conditions"
+            android:icon="@drawable/ic_item_icon_condition"
+            android:title="@string/sheet_menu_conditions" />
+
     </group>
     </menu>
     </item>
