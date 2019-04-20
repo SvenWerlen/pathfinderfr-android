@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -152,6 +153,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(oldVersion == 10) {
             db.execSQL(ConditionFactory.getInstance().getQueryCreateTable());
             db.execSQL(WeaponFactory.getInstance().getQueryCreateTable());
+            db.execSQL(ArmorFactory.getInstance().getQueryCreateTable());
             db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 11;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 11");

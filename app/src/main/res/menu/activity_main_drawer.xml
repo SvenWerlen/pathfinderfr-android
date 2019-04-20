@@ -44,6 +44,11 @@
             android:title="@string/sheet_menu_weapons" />
 
         <item
+            android:id="@+id/nav_armors"
+            android:icon="@drawable/ic_item_icon_armors"
+            android:title="@string/sheet_menu_armors" />
+
+        <item
             android:id="@+id/nav_conditions"
             android:icon="@drawable/ic_item_icon_condition"
             android:title="@string/sheet_menu_conditions" />
