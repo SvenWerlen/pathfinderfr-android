@@ -12,6 +12,7 @@ public class EntityFactories {
             ClassFactory.getInstance(),
             CharacterFactory.getInstance(),
             ConditionFactory.getInstance(),
+            WeaponFactory.getInstance(),
     };
 
 

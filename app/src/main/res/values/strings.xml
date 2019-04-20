@@ -16,6 +16,8 @@
 
     <string name="itemdetails_quickaction">Actions:</string>
 
+    <string name="itemdetails_openurl_failed">Échec de l\'ouverture du navigateur.</string>
+
     <!-- Strings related to favorites && addToCharacter -->
     <string name="nocharacter_selected_failed">Pour utiliser cette action, veuillez épingler un personnage à partir de l\'action correspondante sur sa fiche!</string>
     <string name="generic_failed">Élément introuvable (opération échouée)!</string>
@@ -135,6 +137,7 @@
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_classfeatures">Aptitudes</string>
     <string name="sheet_menu_spells">Sorts</string>
+    <string name="sheet_menu_weapons">Armes</string>
     <string name="sheet_menu_conditions">États préjudiciables</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>

@@ -25,6 +25,7 @@ import org.pathfinderfr.app.database.entity.SpellClassLevel;
 import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.VersionFactory;
+import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
@@ -146,10 +147,11 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 10;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 10");
         }
-        // version 11 introduced new table for conditions
+        // version 11 introduced new tables for conditions, weapons and armors
         // fixes version table not created!
         if(oldVersion == 10) {
             db.execSQL(ConditionFactory.getInstance().getQueryCreateTable());
+            db.execSQL(WeaponFactory.getInstance().getQueryCreateTable());
             db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 11;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 11");

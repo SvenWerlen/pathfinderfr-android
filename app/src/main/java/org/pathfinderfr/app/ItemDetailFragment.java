@@ -277,9 +277,14 @@ public class ItemDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(mItem != null) {
-                    String url = mItem.getReference();
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(browserIntent);
+                    try {
+                        String url = mItem.getReference();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(browserIntent);
+                    } catch(Exception e) {
+                        Snackbar.make(getView(), getResources().getString(R.string.itemdetails_openurl_failed), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
                 }
             }
         });
