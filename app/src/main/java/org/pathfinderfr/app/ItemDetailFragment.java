@@ -20,6 +20,7 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -27,9 +28,11 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * A fragment representing a single Item detail screen.
@@ -155,7 +158,8 @@ public class ItemDetailFragment extends Fragment {
         ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
         updateActionIcons(rootView);
 
-        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature) ) {
+        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature
+                || mItem instanceof Weapon || mItem instanceof Armor) ) {
             addToCharacter.setVisibility(View.GONE);
         }
 
@@ -169,13 +173,13 @@ public class ItemDetailFragment extends Fragment {
 
                 boolean success = false;
                 String message = getResources().getString(R.string.generic_failed);
+                String cName = character == null || character.getName() == null ? "??" : character.getName();
 
                 if(character == null) {
                     message = getResources().getString(R.string.nocharacter_selected_failed);
                 }
                 else if(mItem instanceof Feat) {
                     Feat feat = (Feat)mItem;
-                    String cName = character.getName() == null ? "??" : character.getName();
                     if(character.hasFeat(feat)) {
                         character.removeFeat(feat);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
@@ -197,7 +201,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof ClassFeature) {
                     ClassFeature classFeature = (ClassFeature)mItem;
-                    String cName = character.getName() == null ? "??" : character.getName();
+
                     if(classFeature.isAuto()) {
                         message = getResources().getString(R.string.ability_auto);
                     } else if(character.hasClassFeature(classFeature)) {
@@ -218,6 +222,24 @@ public class ItemDetailFragment extends Fragment {
                             character.removeClassFeature(classFeature); // rollback
                             message = getResources().getString(R.string.ability_added_failed);
                         }
+                    }
+                } else if (mItem instanceof Weapon) {
+                    Weapon w = (Weapon)mItem;
+                    character.addInventoryItem(new Character.InventoryItem(w.getNameLong(), w.getWeightInGrams()));
+                    if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                        message = String.format(getResources().getString(R.string.armor_added_success), cName);
+                        success = true;
+                    } else {
+                        message = getResources().getString(R.string.armor_added_failed);
+                    }
+                } else if (mItem instanceof Armor) {
+                    Armor a = (Armor)mItem;
+                    character.addInventoryItem(new Character.InventoryItem(a.getNameLong(), a.getWeightInGrams()));
+                    if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                        message = String.format(getResources().getString(R.string.armor_added_success), cName);
+                        success = true;
+                    } else {
+                        message = getResources().getString(R.string.armor_added_failed);
                     }
                 }
                 // update list if currently viewing character

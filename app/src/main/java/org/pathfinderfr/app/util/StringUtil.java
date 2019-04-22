@@ -3,6 +3,8 @@ package org.pathfinderfr.app.util;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtil {
 
@@ -103,5 +105,27 @@ public class StringUtil {
             list[i] = Integer.parseInt(values[i]);
         }
         return list;
+    }
+
+    public static int parseWeight(String weight) {
+        if(weight == null || weight.length() == 0) {
+            return 0;
+        }
+
+        try {
+            // check format: 500 g
+            Pattern p = Pattern.compile("^(\\d+) g$");
+            Matcher m = p.matcher(weight.trim());
+            if (m.find()) {
+                return Integer.parseInt(m.group(1));
+            }
+            // check format: 1,5 kg
+            p = Pattern.compile("^([\\d,]+) kg$");
+            m = p.matcher(weight.trim());
+            if (m.find()) {
+                return Math.round(1000 * Float.parseFloat(m.group(1).replaceAll(",","\\.")));
+            }
+        } catch(Exception e) {}
+        return 0;
     }
 }

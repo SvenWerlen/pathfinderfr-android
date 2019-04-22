@@ -123,7 +123,8 @@ public class Character extends DBEntity {
 
         @Override
         public int compareTo(InventoryItem item) {
-            return this.getName().compareTo(item.getName());
+            Collator collator = Collator.getInstance();
+            return Collator.getInstance().compare(getName(),item.getName());
         }
     }
 

@@ -110,4 +110,16 @@ public class StringUtilTest {
         int[] expectedList = new int[] {2, 1, -4, 3};
         assertlistsMatch(expectedList, StringUtil.stringListToIntList(sourceList));
     }
+
+    @Test
+    public void parseWeight() {
+        assertEquals(20, StringUtil.parseWeight("20 g"));
+        assertEquals(0, StringUtil.parseWeight("20,5 g"));
+        assertEquals(20000, StringUtil.parseWeight("20 kg"));
+        assertEquals(2500, StringUtil.parseWeight("2,5 kg"));
+        assertEquals(0, StringUtil.parseWeight("20 gkg"));
+        assertEquals(0, StringUtil.parseWeight("special"));
+        assertEquals(0, StringUtil.parseWeight(null));
+        assertEquals(0, StringUtil.parseWeight(""));
+    }
 }

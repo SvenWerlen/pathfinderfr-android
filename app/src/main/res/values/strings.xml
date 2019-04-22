@@ -34,6 +34,10 @@
     <string name="ability_removed_success">Aptitude retirée de %s avec succès!</string>
     <string name="ability_added_failed">Échec de l\'ajout de l\'aptitude au personnage!</string>
     <string name="ability_removed_failed">Échec du retrait de l\'aptitude du personnage!</string>
+    <string name="weapon_added_success">Arme ajoutée à %s avec succès!</string>
+    <string name="weapon_added_failed">Échec de l\'ajout de l\'arme au personnage!</string>
+    <string name="armor_added_success">Armure ajoutée à %s avec succès!</string>
+    <string name="armor_added_failed">Échec de l\'ajout de l\'armure au personnage!</string>
 
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>

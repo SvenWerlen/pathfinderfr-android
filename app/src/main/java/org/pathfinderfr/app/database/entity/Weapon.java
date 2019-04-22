@@ -1,5 +1,10 @@
 package org.pathfinderfr.app.database.entity;
 
+import org.pathfinderfr.app.util.StringUtil;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Weapon extends DBEntity {
 
     // weapon-specific
@@ -73,6 +78,10 @@ public class Weapon extends DBEntity {
 
     public String getWeight() {
         return weight;
+    }
+
+    public int getWeightInGrams() {
+        return StringUtil.parseWeight(weight);
     }
 
     public void setWeight(String weight) {
