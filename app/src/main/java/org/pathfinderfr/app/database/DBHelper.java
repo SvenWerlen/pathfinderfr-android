@@ -43,7 +43,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 11;
+    public static final int DATABASE_VERSION = 12;
 
     private static DBHelper instance;
 
@@ -157,6 +157,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 11;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 11");
+        }
+        // version 12 introduced new column on character for inventory
+        if(oldVersion == 11) {
+            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV12());
+            oldVersion = 12;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 12");
         }
     }
 

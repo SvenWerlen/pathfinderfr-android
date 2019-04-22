@@ -61,6 +61,7 @@ public class Character extends DBEntity {
     List<Feat> feats;
     List<ClassFeature> features;
     List<CharacterModif> modifs;
+    List<InventoryItem> invItems;
     int hitpoints;
     int speed;
 
@@ -71,6 +72,7 @@ public class Character extends DBEntity {
         feats = new ArrayList<>();
         features = new ArrayList<>();
         modifs = new ArrayList<>();
+        invItems = new ArrayList<>();
     }
 
     // Helper to keep modifs
@@ -102,6 +104,26 @@ public class Character extends DBEntity {
             source = modif.source;
             modifs = modif.modifs;
             icon = modif.icon;
+        }
+    }
+
+    // Helper to keep inventory
+    public static class InventoryItem implements Comparable<InventoryItem> {
+        private String name;
+        private int weight;
+        public InventoryItem(String name, int weight) {
+            this.name = name;
+            this.weight = weight;
+        }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public int getWeight() { return weight; }
+        public void setWeight(int weight) { this.weight = weight; }
+        public boolean isValid() { return name != null && name.length() > 0 && weight > 0; }
+
+        @Override
+        public int compareTo(InventoryItem item) {
+            return this.getName().compareTo(item.getName());
         }
     }
 
@@ -746,5 +768,50 @@ public class Character extends DBEntity {
             return null;
         }
         return modifs.get(idx);
+    }
+
+    public void addInventoryItem(InventoryItem item) {
+        invItems.add(item);
+        Collections.sort(invItems);
+    }
+
+    public void deleteInventoryItem(InventoryItem item) {
+        invItems.remove(item);
+    }
+
+    public void deleteInventoryItem(int idx) {
+        if(idx < 0 || idx >= invItems.size()) {
+            return;
+        }
+        invItems.remove(idx);
+    }
+
+    public void modifyInventoryItem(int idx, InventoryItem item) {
+        if(idx < 0 || idx >= invItems.size() || !item.isValid()) {
+            return;
+        }
+        InventoryItem selItem = invItems.get(idx);
+        selItem.setName(item.getName());
+        selItem.setWeight(item.getWeight());
+        Collections.sort(invItems);
+    }
+
+    /**
+     * @return the list of inventory items (as a copy)
+     */
+    public List<InventoryItem> getInventoryItems() {
+        List<InventoryItem> result = new ArrayList<>();
+        for(InventoryItem el : invItems) {
+            result.add(new InventoryItem(el.getName(), el.getWeight()));
+        }
+        return result;
+    }
+
+    public int getInventoryTotalWeight() {
+        int weight = 0;
+        for(InventoryItem el : invItems) {
+            weight += el.getWeight();
+        }
+        return weight;
     }
 }

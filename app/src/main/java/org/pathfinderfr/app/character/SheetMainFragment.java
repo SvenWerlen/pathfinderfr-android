@@ -13,6 +13,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,21 +59,26 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
-        FragmentDeleteAction.OnFragmentInteractionListener {
+        FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener {
 
-    private static final String ARG_CHARACTER_ID     = "character_id";
-    private static final String DIALOG_PICK_ABILITY  = "ability-picker";
-    private static final String DIALOG_DELETE_ACTION = "delete-action";
-    private static final String DIALOG_PICK_NAME     = "name-picker";
-    private static final String DIALOG_PICK_RACE     = "race-picker";
-    private static final String DIALOG_PICK_CLASS    = "class-picker";
-    private static final String DIALOG_PICK_HP       = "hitpoint-picker";
-    private static final String DIALOG_PICK_SPEED    = "speed-picker";
-    private static final String DIALOG_PICK_MODIFS   = "modifs-picker";
+    private static final String ARG_CHARACTER_ID      = "character_id";
+    private static final String DIALOG_PICK_ABILITY   = "ability-picker";
+    private static final String DIALOG_DELETE_ACTION  = "delete-action";
+    private static final String DIALOG_PICK_NAME      = "name-picker";
+    private static final String DIALOG_PICK_RACE      = "race-picker";
+    private static final String DIALOG_PICK_CLASS     = "class-picker";
+    private static final String DIALOG_PICK_HP        = "hitpoint-picker";
+    private static final String DIALOG_PICK_SPEED     = "speed-picker";
+    private static final String DIALOG_PICK_MODIFS    = "modifs-picker";
+    private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
 
     private Character character;
     private List<TextView> classPickers;
     private List<ImageView> modifPickers;
+
+    private TableLayout inventory;
+    private TextView inventoryNameExample;
+    private TextView inventoryWeightExample;
 
     private long characterId;
     ProfileListener listener;
@@ -585,6 +593,13 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
         }
 
+        // inventory
+        view.findViewById(R.id.sheet_inventory_item_add).setOnClickListener(listener);
+        inventory = view.findViewById(R.id.sheet_inventory_table);
+        inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
+        inventoryWeightExample = view.findViewById(R.id.sheet_inventory_example_weight);
+        updateInventory(view);
+
         return view;
     }
 
@@ -653,6 +668,52 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         }
         // update stats
         updateSheet(view);
+    }
+
+    private void updateInventory(View view) {
+        inventory.removeAllViews();
+        int rowId = 0;
+        for(Character.InventoryItem item : character.getInventoryItems()) {
+            TableRow row = new TableRow(view.getContext());
+            TextView name = FragmentUtil.copyExampleTextFragment(inventoryNameExample);
+            name.setText(item.getName());
+            row.addView(name);
+            TextView weight = FragmentUtil.copyExampleTextFragment(inventoryWeightExample);
+            if(item.getWeight() >= 1000) {
+                weight.setText(String.format("%.1fkg", item.getWeight()/1000f));
+            } else {
+                weight.setText(String.format("%dg", item.getWeight()));
+            }
+            weight.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            row.addView(weight);
+            row.setBackgroundColor(ContextCompat.getColor(getContext(), rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+            final int itemIdx = rowId;
+            final String itemName = item.getName();
+            final int itemWeight = item.getWeight();
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentInventoryPicker.newInstance(SheetMainFragment.this);
+
+                    Bundle arguments = new Bundle();
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_IDX, itemIdx);
+                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, itemName);
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, itemWeight);
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                }
+            });
+            inventory.addView(row);
+            rowId++;
+        }
+        int totalWeight = (int)Math.ceil(character.getInventoryTotalWeight()/1000d);
+        ((TextView)view.findViewById(R.id.sheet_inventory_item_totalweight)).setText(totalWeight + "kg");
     }
 
 
@@ -741,6 +802,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit().
                 putString(CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), buf.toString()).apply();
     }
+
 
     private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener {
 
@@ -981,6 +1043,20 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     return;
                 }
             }
+            else if(v.getId() == R.id.sheet_inventory_item_add) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentInventoryPicker.newInstance(parent);
+
+                Bundle arguments = new Bundle();
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                return;
+            }
         }
 
         @Override
@@ -1165,6 +1241,34 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(value));
         // store changes
         characterDBUpdate();
+    }
+
+    @Override
+    public void onAddItem(Character.InventoryItem item) {
+        if(item != null && item.isValid()) {
+            character.addInventoryItem(item);
+            updateInventory(getView());
+            // store changes
+            characterDBUpdate();
+        }
+    }
+
+    @Override
+    public void onDeleteItem(int itemIdx) {
+        character.deleteInventoryItem(itemIdx);
+        updateInventory(getView());
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onUpdateItem(int itemIdx, Character.InventoryItem item) {
+        if(item != null && item.isValid()) {
+            character.modifyInventoryItem(itemIdx, item);
+            updateInventory(getView());
+            // store changes
+            characterDBUpdate();
+        }
     }
 
 }

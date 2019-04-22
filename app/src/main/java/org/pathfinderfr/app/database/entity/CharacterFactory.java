@@ -34,6 +34,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
     private static final String COLUMN_SPEED       = "speed";
+    private static final String COLUMN_INVENTORY   = "inventory";
 
 
     private static CharacterFactory instance;
@@ -69,7 +70,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text, %s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text, %s text," +
                         "%s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
@@ -77,7 +78,7 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_MODIFS,
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_MODIFS, COLUMN_INVENTORY,
                 COLUMN_HITPOINTS, COLUMN_SPEED);
         return query;
     }
@@ -117,6 +118,13 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV9() {
         return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_CLFEATURES);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v11 to v12
+     */
+    public String getQueryUpgradeV12() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_INVENTORY);
     }
 
     @Override
@@ -232,6 +240,21 @@ public class CharacterFactory extends DBEntityFactory {
             contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
         } else {
             contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
+        }
+
+        // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
+        List<Character.InventoryItem> inventory = c.getInventoryItems();
+        if(inventory.size() > 0 ) {
+            StringBuffer value = new StringBuffer();
+            for(Character.InventoryItem item : inventory) {
+                value.append(item.getName()).append('|');
+                value.append(item.getWeight()).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
         }
 
         return contentValues;
@@ -391,6 +414,7 @@ public class CharacterFactory extends DBEntityFactory {
             Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
         }
 
+
         // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
         // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
         // (assuming that modif ids won't change during data import)
@@ -423,6 +447,30 @@ public class CharacterFactory extends DBEntityFactory {
                 }
             }
         }
+
+        // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
+        String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
+        Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
+        if(inventoryValue != null && inventoryValue.length() > 0) {
+            for(String item : inventoryValue.split("#")) {
+                String[] itemElements = item.split("\\|");
+                if(itemElements != null && itemElements.length == 2) {
+                    String name = itemElements[0];
+                    int weight = 0;
+                    try {
+                        weight = Integer.parseInt(itemElements[1]);
+                    } catch (NumberFormatException nfe) {
+                        Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
+                    }
+
+                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight);
+                    if (toAdd.isValid()) {
+                        c.addInventoryItem(toAdd);
+                    }
+                }
+            }
+        }
+
         return c;
     }
 

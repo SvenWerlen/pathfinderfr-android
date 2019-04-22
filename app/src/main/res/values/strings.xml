@@ -238,7 +238,7 @@
     <string name="sheet_savingthrows_bonusbase">Base</string>
     <string name="sheet_savingthrows_ability">Carac</string>
     <string name="sheet_other_value">0</string>
-    <string name="sheet_other_value_multiple">0\n0\n0</string>
+    <string name="sheet_other_value_multiple">0</string>
     <string name="sheet_savingthrows_all">Tous les jets de sauvegarde</string>
     <string name="sheet_savingthrows_for">VIG</string>
     <string name="sheet_savingthrows_fortitude">Vigueur</string>
@@ -276,6 +276,21 @@
         Vous pouvez également utiliser la fonction \"Modif(s)\" pour intégrer d\'autres bonus/malus sur votre feuille.
     </string>
     <string name="sheet_speed_save">Enregistrer</string>
+
+    <!-- Inventory -->
+    <string name="sheet_main_inventory_example_label_name">Inventaire</string>
+    <string name="sheet_main_inventory_example_label_weight">Poids</string>
+    <string name="sheet_inventory_example_name">Nom de l\'élément de l\'inventaire</string>
+    <string name="sheet_inventory_example_total">0</string>
+    <string name="sheet_inventory_label_total_weight">Poids total:</string>
+    <string name="sheet_inventory_total_weight">12 kg</string>
+
+    <!-- Inventory picker -->
+    <string name="sheet_inventory_item_title">Élément de l\'inventaire:</string>
+    <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments sont toujours triés par ordre alphabétique. Vous pouvez aussi ajouter une arme ou une armure à partir du catalogue.</string>
+    <string name="sheet_inventory_item_name">Descriptif:</string>
+    <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
+    <string name="sheet_inventory_item_ok">Enregistrer</string>
 
     <!-- Skills -->
     <string name="sheet_skills_example_label_name">Compétences</string>

@@ -46,6 +46,8 @@ public class CharacterImportExport {
     private static final String YAML_MODIF_BONUS   = "Bonus";
     private static final String YAML_BONUS_ID      = "Id";
     private static final String YAML_BONUS_VALUE   = "Valeur";
+    private static final String YAML_INVENTORY     = "Inventaire";
+    private static final String YAML_WEIGHT        = "Poids";
 
     public static final int ERROR_NAME_TOOLONG         = 1;
     public static final int ERROR_RACE_NOMATCH         = 2;
@@ -68,6 +70,8 @@ public class CharacterImportExport {
     public static final int ERROR_MODIFS_FORMAT        = 19;
     public static final int ERROR_MODIFS_EXCEPTION     = 20;
     public static final int ERROR_MODIF_ICON_NOTFOUND  = 21;
+    public static final int ERROR_INVENTORY_FORMAT     = 22;
+    public static final int ERROR_INVENTORY_EXCEPTION  = 23;
 
 
     public static String exportCharacterAsYML(Character c, Context ctx) {
@@ -163,6 +167,16 @@ public class CharacterImportExport {
             modifs.add(modifObj);
         }
         data.put(YAML_MODIFS, modifs);
+
+        // inventory
+        List<Map> inventory = new ArrayList();
+        for(Character.InventoryItem item : c.getInventoryItems()) {
+            Map<String, Object> itemObj = new LinkedHashMap();
+            itemObj.put(YAML_NAME, item.getName());
+            itemObj.put(YAML_WEIGHT, item.getWeight());
+            inventory.add(itemObj);
+        }
+        data.put(YAML_INVENTORY, inventory);
 
         try {
             StringWriter exportData = new StringWriter();
@@ -421,7 +435,30 @@ public class CharacterImportExport {
                 errors.add(ERROR_MODIFS_EXCEPTION);
             }
 
-
+            // inventory
+            try {
+                Object inventory = map.get(YAML_INVENTORY);
+                if (inventory instanceof List) {
+                    List<Object> fList = (List<Object>) inventory;
+                    for (Object f : fList) {
+                        if (f instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) f;
+                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_WEIGHT)) {
+                                String itemName = (String)values.get(YAML_NAME);
+                                int itemWeight = 0;
+                                try {
+                                    itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
+                                } catch(NumberFormatException nfe) {
+                                    errors.add(ERROR_INVENTORY_FORMAT);
+                                }
+                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight));
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_INVENTORY_EXCEPTION);
+            }
 
             System.out.println(exportCharacterAsYML(c, view.getContext()));
 
