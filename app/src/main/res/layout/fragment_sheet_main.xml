@@ -44,6 +44,17 @@
                 android:background="@drawable/ic_share" />
 
             <ImageButton
+                android:id="@+id/actionToggle"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/ic_toggle_pos1" />
+
+            <View android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
                 android:id="@+id/actionDelete"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -51,6 +62,12 @@
                 android:background="@drawable/ic_delete" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sheet_main_profile_infos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
@@ -121,6 +138,7 @@
                 android:text="@string/sheet_click_to_add" />
 
         </com.wefika.flowlayout.FlowLayout>
+        </LinearLayout>
 
         <com.wefika.flowlayout.FlowLayout
             android:layout_width="match_parent"
@@ -129,6 +147,7 @@
             android:gravity="start|top">
 
             <TextView
+                android:id="@+id/sheet_main_modif_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
@@ -164,7 +183,23 @@
 
         </com.wefika.flowlayout.FlowLayout>
 
+
+        <ScrollView
+            android:id="@+id/sheet_main_summary_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/sheet_main_summary"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+
         <com.wefika.flowlayout.FlowLayout
+            android:id="@+id/sheet_main_statistics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -1190,6 +1225,11 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:id="@+id/sheet_main_inventory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
         <TableLayout
             android:id="@+id/main_table_header"
@@ -1227,8 +1267,6 @@
             </TableRow>
 
         </TableLayout>
-
-
 
         <TableLayout
             android:id="@+id/sheet_inventory_table"
@@ -1311,7 +1349,7 @@
 
         </TableLayout>
 
-
+        </LinearLayout>
 
 
     </LinearLayout>

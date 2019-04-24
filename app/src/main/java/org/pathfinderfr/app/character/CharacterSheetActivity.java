@@ -20,6 +20,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
     public static final String PREF_SELECTED_CHARACTER_ID   = "pref_characterId";
     public static final String PREF_SELECTED_TAB            = "pref_selectedTab";
     public static final String PREF_CHARACTER_MODIF_STATES  = "pref_characterModifStates";
+    public static final String PREF_MAIN_VIEW_SUMMARY       = "pref_characterViewMode";
 
     private static final String DIALOG_TOOLTIP = "dial_tooltip";
 
@@ -154,6 +156,7 @@ public class CharacterSheetActivity extends AppCompatActivity {
         // if characterId not found? New character!
         if(character == null) {
             character = new Character();
+            character.setName(ConfigurationUtil.getInstance(getBaseContext()).getProperties().getProperty("character.default.name"));
             characterId = helper.insertEntity(character);
             character.setId(characterId);
             // error???

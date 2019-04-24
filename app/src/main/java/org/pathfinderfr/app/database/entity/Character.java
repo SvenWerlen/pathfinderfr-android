@@ -2,6 +2,7 @@ package org.pathfinderfr.app.database.entity;
 
 import android.util.Log;
 
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -198,6 +199,9 @@ public class Character extends DBEntity {
      * @return ability modifier
      */
     private int getAbilityModif(String abilityId) {
+        if(abilityId == null) {
+            return 0;
+        }
         // TODO: make it language-independant
         switch(abilityId) {
             case "FOR": return getStrengthModif();
@@ -235,6 +239,10 @@ public class Character extends DBEntity {
         return race;
     }
 
+    public String getRaceName() {
+        return race == null ? "-" : race.getName();
+    }
+
     public void setRace(Race race) {
         this.race = race;
     }
@@ -244,6 +252,18 @@ public class Character extends DBEntity {
             return null;
         }
         return classes.get(idx);
+    }
+
+    public String getClassNames() {
+        if(classes.size() == 0) {
+            return "-";
+        }
+        StringBuffer buf = new StringBuffer();
+        for(Pair<Class,Integer> cl : classes) {
+            buf.append(cl.first.getName()).append(' ').append(cl.second).append('/');
+        }
+        buf.deleteCharAt(buf.length()-1);
+        return buf.toString();
     }
 
     public int getClassesCount() {
@@ -353,6 +373,31 @@ public class Character extends DBEntity {
         int bonus = getAdditionalBonus(MODIF_COMBAT_AC);
         return 10 + getDexterityModif() + sizeModif + bonus;
     }
+
+    public String getArmorClassDetails() {
+        StringBuffer buf = new StringBuffer();
+        if(getRaceSize() == SIZE_SMALL) {
+            buf.append("taille +1, ");
+        }
+        if(getDexterityModif() != 0) {
+            buf.append(String.format("Dex %+d, ", getDexterityModif()));
+        }
+        List<CharacterModif> result = new ArrayList<>();
+        for(CharacterModif el : modifs) {
+            if(el.isEnabled()) {
+                for (Pair<Integer, Integer> m : el.modifs) {
+                    if (m.first.intValue() == MODIF_COMBAT_AC) {
+                        buf.append(String.format("%s %+d", el.getSource().toLowerCase(), m.second)).append(", ");
+                    }
+                }
+            }
+        }
+        if(buf.length()>0) {
+            buf.delete(buf.length()-2,buf.length());
+        }
+        return buf.toString();
+    }
+
     public int getMagicResistance() {
         int bonus = getAdditionalBonus(MODIF_COMBAT_MAG);
         return bonus;
@@ -509,6 +554,14 @@ public class Character extends DBEntity {
     /**
      * @return base attack bonus (BAB) based on attached classes (and levels)
      */
+    public int getBaseAttackBonusBest() {
+        int[] bab = getBaseAttackBonus();
+        return bab != null && bab.length > 0 ? bab[0] : 0;
+    }
+
+    /**
+     * @return base attack bonus (BAB) based on attached classes (and levels)
+     */
     public int[] getBaseAttackBonus() {
         return getAttackBonus(0);
     }
@@ -542,9 +595,7 @@ public class Character extends DBEntity {
     public int getCombatManeuverBonus() {
         int[] bab = getBaseAttackBonus();
         int bonus = 0;
-        if(bab != null && bab.length > 0) {
-            bonus += bab[0];
-        }
+        bonus += getBaseAttackBonusBest();
         int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
         int addBonus = getAdditionalBonus(MODIF_COMBAT_CMB);
         return bonus + getStrengthModif() + sizeModif + addBonus;
@@ -556,9 +607,7 @@ public class Character extends DBEntity {
     public int getCombatManeuverDefense() {
         int[] bab = getBaseAttackBonus();
         int bonus = 0;
-        if(bab != null && bab.length > 0) {
-            bonus += bab[0];
-        }
+        bonus += getBaseAttackBonusBest();
         int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
         int addBonus = getAdditionalBonus(MODIF_COMBAT_CMD);
         return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif + addBonus;
@@ -593,6 +642,25 @@ public class Character extends DBEntity {
 
     public Set<Long> getSkills() {
         return skills.keySet();
+    }
+
+    public String getSkillsAsString() {
+        if(skills.size() == 0) {
+            return "-";
+        }
+        List<DBEntity> skills = DBHelper.getInstance(null).getAllEntitiesWithAllFields(SkillFactory.getInstance());
+        StringBuffer buf = new StringBuffer();
+        for(DBEntity s : skills) {
+            int rank = getSkillRank(s.getId());
+            if(rank > 0) {
+                buf.append(String.format("%s %+d", s.getName(), getSkillTotalBonus((Skill)s)));
+                buf.append(", ");
+            }
+        }
+        if(buf.length()>0) {
+            buf.delete(buf.length() - 2, buf.length());
+        }
+        return buf.toString();
     }
 
     public int getSkillAbilityMod(Skill skill) {
@@ -637,6 +705,19 @@ public class Character extends DBEntity {
             }
         });
         return feats;
+    }
+
+    public String getFeatsAsString() {
+        List<Feat> feats = getFeats();
+        if(feats.size() == 0) {
+            return "-";
+        }
+        StringBuffer buf = new StringBuffer();
+        for(Feat f : feats) {
+            buf.append(f.getName()).append(", ");
+        }
+        buf.delete(buf.length()-2, buf.length());
+        return buf.toString();
     }
 
     public boolean hasFeat(Feat feat) {
@@ -806,6 +887,18 @@ public class Character extends DBEntity {
             result.add(new InventoryItem(el.getName(), el.getWeight()));
         }
         return result;
+    }
+
+    public String getInventoryAsString() {
+        if(invItems.size() == 0) {
+            return "-";
+        }
+        StringBuffer buf = new StringBuffer();
+        for(InventoryItem el : invItems) {
+            buf.append(el.getName()).append(", ");
+        }
+        buf.delete(buf.length()-2, buf.length());
+        return buf.toString();
     }
 
     public int getInventoryTotalWeight() {

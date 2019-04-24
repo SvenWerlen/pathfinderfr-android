@@ -15,11 +15,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -40,6 +42,8 @@ import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
+import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
@@ -236,6 +240,47 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         } else {
             actionPin.setColorFilter(view.getContext().getResources().getColor(R.color.colorDisabled), PorterDuff.Mode.SRC_ATOP);
         }
+        final View viewInfos = view.findViewById(R.id.sheet_main_profile_infos);
+        final View viewStats = view.findViewById(R.id.sheet_main_statistics);
+        final View viewInventory = view.findViewById(R.id.sheet_main_inventory);
+        final View viewModifLabel = view.findViewById(R.id.sheet_main_modif_label);
+        final View viewModifPicker = view.findViewById(R.id.sheet_main_modifpicker);
+        final ImageView toggleview = view.findViewById(R.id.actionToggle);
+        final View viewSummary = view.findViewById(R.id.sheet_main_summary_view);
+        toggleview.setBackground(null);
+        toggleview.setImageResource(R.drawable.ic_toggle_pos1);
+        toggleview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean viewModeEdit = viewInfos.getVisibility() == View.GONE;
+                viewInfos.setVisibility(viewModeEdit ? View.VISIBLE: View.GONE);
+                viewModifLabel.setVisibility(viewModeEdit ? View.VISIBLE: View.GONE);
+                viewModifPicker.setVisibility(viewModeEdit ? View.VISIBLE: View.GONE);
+                viewStats.setVisibility(viewModeEdit ? View.VISIBLE: View.GONE);
+                viewInventory.setVisibility(viewModeEdit ? View.VISIBLE: View.GONE);
+                toggleview.setImageResource(viewModeEdit ? R.drawable.ic_toggle_pos1 : R.drawable.ic_toggle_pos2);
+                viewSummary.setVisibility(viewModeEdit ? View.GONE: View.VISIBLE);
+                if(viewModeEdit) {
+                    PreferenceManager.getDefaultSharedPreferences(getContext()).edit().
+                            remove(CharacterSheetActivity.PREF_MAIN_VIEW_SUMMARY).apply();
+                } else {
+                    PreferenceManager.getDefaultSharedPreferences(getContext()).edit().
+                            putBoolean(CharacterSheetActivity.PREF_MAIN_VIEW_SUMMARY, true).apply();
+                }
+            }
+        });
+        // initialize view
+        if(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(CharacterSheetActivity.PREF_MAIN_VIEW_SUMMARY, false)) {
+            viewInfos.setVisibility(View.GONE);
+            viewModifLabel.setVisibility(View.GONE);
+            viewModifPicker.setVisibility(View.GONE);
+            viewStats.setVisibility(View.GONE);
+            viewInventory.setVisibility(View.GONE);
+            toggleview.setImageResource(R.drawable.ic_toggle_pos2);
+            viewSummary.setVisibility(View.VISIBLE);
+        }
+
+
         // ABILITIES
         final String abTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.title");
         final String abTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.content");
@@ -714,6 +759,41 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         }
         int totalWeight = (int)Math.ceil(character.getInventoryTotalWeight()/1000d);
         ((TextView)view.findViewById(R.id.sheet_inventory_item_totalweight)).setText(totalWeight + "kg");
+        updateSheetSummary(view);
+    }
+
+    private void updateSheetSummary(View view) {
+        final String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.sheet.summary");
+        Skill perc = (Skill)DBHelper.getInstance(view.getContext()).fetchEntityByName("Perception", SkillFactory.getInstance());
+        String text = String.format(template,
+                character.getName(),
+                character.getRaceName(), character.getClassNames(),
+                character.getInitiative(), character.getSkillTotalBonus(perc),
+                character.getArmorClass(),
+                character.getArmorClassDetails(),
+                character.getHitpoints(),
+                character.getSavingThrowsReflexesTotal(),
+                character.getSavingThrowsFortitudeTotal(),
+                character.getSavingThrowsWillTotal(),
+                character.getSpeed(),
+                character.getAttackBonusMeleeAsString(),
+                character.getAttackBonusRangeAsString(),
+                character.getStrength(),
+                character.getDexterity(),
+                character.getConstitution(),
+                character.getIntelligence(),
+                character.getWisdom(),
+                character.getCharisma(),
+                character.getBaseAttackBonusBest(),
+                character.getCombatManeuverBonus(),
+                character.getCombatManeuverDefense(),
+                character.getFeatsAsString(),
+                character.getSkillsAsString(),
+                character.getInventoryAsString()
+                );
+        WebView content = view.findViewById(R.id.sheet_main_summary);
+        text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + text;
+        content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
     }
 
 
@@ -787,6 +867,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         combatManDefenseTotal.setText(String.valueOf(character.getCombatManeuverDefense()));
         combatManDefenseBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManDefenseAbility.setText(String.valueOf(character.getStrengthModif()+character.getDexterityModif()));
+
+        updateSheetSummary(view);
     }
 
 
