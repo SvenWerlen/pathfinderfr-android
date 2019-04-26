@@ -227,10 +227,10 @@ public class ItemDetailFragment extends Fragment {
                     Weapon w = (Weapon)mItem;
                     character.addInventoryItem(new Character.InventoryItem(w.getNameLong(), w.getWeightInGrams()));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                        message = String.format(getResources().getString(R.string.armor_added_success), cName);
+                        message = String.format(getResources().getString(R.string.weapon_added_success), cName);
                         success = true;
                     } else {
-                        message = getResources().getString(R.string.armor_added_failed);
+                        message = getResources().getString(R.string.weapon_added_failed);
                     }
                 } else if (mItem instanceof Armor) {
                     Armor a = (Armor)mItem;
