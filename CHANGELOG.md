@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+### Fixed
+- Spells: casting time not displayed #15
 
 ## [2.6.1] - 2019-04-25
 ### Fixed
