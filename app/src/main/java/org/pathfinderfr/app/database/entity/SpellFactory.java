@@ -34,7 +34,7 @@ public class SpellFactory extends DBEntityFactory {
     private static final String YAML_SOURCE     = "Source";
     private static final String YAML_SCHOOL     = "École";
     private static final String YAML_LEVEL      = "Niveau";
-    private static final String YAML_CASTING    = "Temps d’incantation";
+    private static final String YAML_CASTING    = "Temps d'incantation";
     private static final String YAML_COMPONENTS = "Composantes";
     private static final String YAML_RANGE      = "Portée";
     private static final String YAML_TARGET     = "Cible ou zone d'effet";
