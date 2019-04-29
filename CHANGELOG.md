@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+
+## [2.6.2] - 2019-04-28
 ### Fixed
 - Spells: casting time not displayed #15
 - Cannot cancel "Inventory" popup if name and weight are not specified
