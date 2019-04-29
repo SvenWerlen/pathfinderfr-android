@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 - Spells: casting time not displayed #15
+- Cannot cancel "Inventory" popup if name and weight are not specified
+- Character popup: crash on action after screen rotate
 
 ## [2.6.1] - 2019-04-25
 ### Fixed

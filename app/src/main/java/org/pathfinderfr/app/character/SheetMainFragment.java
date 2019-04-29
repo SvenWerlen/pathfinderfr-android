@@ -636,6 +636,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             if (fragSpeed != null) {
                 fragSpeed.setListener(this);
             }
+            FragmentInventoryPicker fragInventory = (FragmentInventoryPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_INVENTORY);
+            if (fragInventory != null) {
+                fragInventory.setListener(this);
+            }
         }
 
         // inventory

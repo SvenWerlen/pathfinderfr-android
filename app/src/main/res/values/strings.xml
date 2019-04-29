@@ -295,6 +295,8 @@
     <string name="sheet_inventory_item_name">Descriptif:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_ok">Enregistrer</string>
+    <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
+    <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
 
     <!-- Skills -->
     <string name="sheet_skills_example_label_name">Compétences</string>

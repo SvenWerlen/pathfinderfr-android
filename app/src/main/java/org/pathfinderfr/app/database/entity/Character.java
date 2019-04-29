@@ -120,7 +120,7 @@ public class Character extends DBEntity {
         public void setName(String name) { this.name = name; }
         public int getWeight() { return weight; }
         public void setWeight(int weight) { this.weight = weight; }
-        public boolean isValid() { return name != null && name.length() > 0 && weight > 0; }
+        public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
 
         @Override
         public int compareTo(InventoryItem item) {

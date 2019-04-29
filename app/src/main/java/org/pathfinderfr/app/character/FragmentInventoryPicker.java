@@ -149,21 +149,32 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     public void onClick(View v) {
         ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getView().getWindowToken(),0);
 
-        String itemName;
-        Integer itemWeight;
-        try {
-            itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
-            itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
-        } catch(NumberFormatException nfe) {
-            return;
-        }
-
         if(v.getId() == R.id.inventory_item_cancel) {
             dismiss();
             return;
         }
         else if(v.getId() == R.id.inventory_item_ok) {
-            if(itemName != null && itemName.length() > 3 && itemWeight != null) {
+            String itemName = null;
+            Integer itemWeight = null;
+            try {
+                itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
+                itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
+            } catch(NumberFormatException nfe) {}
+
+            if(itemName == null || itemName.length() < 3) {
+                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_name), Toast.LENGTH_SHORT);
+                int[] xy = new int[2];
+                v.getLocationOnScreen(xy);
+                t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
+                t.show();
+            } else if(itemWeight == null) {
+                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_weight), Toast.LENGTH_SHORT);
+                int[] xy = new int[2];
+                v.getLocationOnScreen(xy);
+                t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
+                t.show();
+            }
+            else {
                 Character.InventoryItem item = new Character.InventoryItem(itemName, itemWeight);
                 if(mListener != null) {
                     if(invIdx >= 0) {
@@ -177,12 +188,11 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             return;
         }
         else if(v.getId() == R.id.inventory_item_delete) {
-            if(itemName != null && itemName.length() > 3 && itemWeight != null) {
-                if(mListener != null) {
-                    mListener.onDeleteItem(invIdx);
-                }
-                dismiss();
+
+            if(mListener != null) {
+                mListener.onDeleteItem(invIdx);
             }
+            dismiss();
             return;
         }
     }
@@ -196,6 +206,12 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        // store already typed source
+        String text = ((EditText)getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
+        outState.putString(ARG_INVENTORY_NAME, text);
+        // store already typed weight
+        String weight = ((EditText)getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString();
+        outState.putString(ARG_INVENTORY_WEIGHT, weight);
     }
 }
 
