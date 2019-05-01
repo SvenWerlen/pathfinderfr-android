@@ -65,6 +65,20 @@ public class EquipmentFactory extends DBEntityFactory {
         return query;
     }
 
+    /**
+     * @return the query to fetch all entities (including fields required for filtering)
+     */
+    @Override
+    public String getQueryFetchAll(String... sources) {
+        String filters = "";
+        if(sources != null && sources.length > 0) {
+            String sourceList = StringUtil.listToString(sources, ',', '\'');
+            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
+        }
+        return String.format("SELECT %s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), filters, COLUMN_NAME);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Equipment)) {

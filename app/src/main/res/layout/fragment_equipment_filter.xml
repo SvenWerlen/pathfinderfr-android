@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/abilityFilter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    android:theme="@style/AppTheme.NoActionBar">
+
+    <com.wefika.flowlayout.FlowLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|top"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/labelCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/equipment_category"
+            android:textStyle="bold" />
+
+        <com.wefika.flowlayout.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/flowCategory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start|top">
+
+            <CheckBox
+                android:id="@+id/categoryAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:checked="true"
+                android:text="@string/equipment_filter_all" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
+        <com.wefika.flowlayout.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/flowActions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start|top">
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/colorWhite"
+                android:layout_margin="10dp"/>
+
+            <Button
+                android:id="@+id/applyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/apply_filters"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/colorWhite"
+                android:layout_margin="10dp" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
+    </com.wefika.flowlayout.FlowLayout>
+
+</ScrollView>

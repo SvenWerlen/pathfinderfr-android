@@ -42,6 +42,7 @@ import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
+import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
@@ -51,6 +52,7 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.EquipmentFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
@@ -61,7 +63,8 @@ import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener, FilterClassFeaturesFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
+        FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
     public static final String KEY_ABILITY_FILTERS = "filter_classfeatures";
+    public static final String KEY_EQUIPMENT_FILTERS = "filter_equipment";
 
     public static final String DIALOG_FILTER = "dialog-filter";
     public static final String KEY_SEARCH_VISIBLE = "search-visible";
@@ -249,6 +253,12 @@ public class MainActivity extends AppCompatActivity
                 if (fragAbilityFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     fragAbilityFilter.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
+                }
+            } else if(fragment instanceof FilterEquipmentFragment) {
+                FilterEquipmentFragment fragEquipmentFilter = (FilterEquipmentFragment)fragment;
+                if (fragEquipmentFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragEquipmentFilter.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null)));
                 }
             }
 
@@ -496,9 +506,13 @@ public class MainActivity extends AppCompatActivity
             totalCount = newEntities.size();
             factoryId = ArmorFactory.FACTORY_ID;
         } else if (id == R.id.nav_equipment) {
-            newEntities = dbhelper.getAllEntities(EquipmentFactory.getInstance(),
-                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
-            totalCount = newEntities.size();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            EquipmentFilter filter = new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null));
+            filterActive = filter.hasAnyFilter();
+            filterEquipment(filter);
+            newEntities = new ArrayList<>(listFull);
+            totalCount = dbhelper.getCountEntities(EquipmentFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
             factoryId = EquipmentFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
@@ -522,7 +536,9 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else if (newEntities != null) {
-            boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId) || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
+            boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
+                    || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
+                    || EquipmentFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.item_list).setVisibility(View.VISIBLE);
@@ -605,6 +621,11 @@ public class MainActivity extends AppCompatActivity
             FilterClassFeaturesFragment newFragment = FilterClassFeaturesFragment.newInstance();
             newFragment.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
+        } else if(EquipmentFactory.FACTORY_ID.equals(factory)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            FilterEquipmentFragment newFragment = FilterEquipmentFragment.newInstance();
+            newFragment.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null)));
+            newFragment.show(ft, DIALOG_FILTER);
         }
 
     }
@@ -643,9 +664,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onApplyFilter(ClassFeatureFilter filter) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String[] sources = PreferenceUtil.getSources(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_ABILITY_FILTERS, filter.generatePreferences()).apply();
         filterClassFeatures(filter);
+        applySearch();
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = filter.hasAnyFilter() ? R.drawable.ic_filtered : R.drawable.ic_filter;
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
+    }
+
+    private void filterEquipment(EquipmentFilter filter) {
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
+        List<DBEntity> equipment = dbhelper.getAllEntities(EquipmentFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+
+        listFull = new ArrayList<>();
+        for(DBEntity e : equipment) {
+            Equipment eq = (Equipment) e;
+            // check filter category
+            if(!filter.hasFilterCategory() || filter.isFilterCategoryEnabled(eq.getCategory())) {
+                listFull.add(e);
+            }
+        }
+    }
+
+    @Override
+    public void onApplyFilter(EquipmentFilter filter) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        prefs.edit().putString(MainActivity.KEY_EQUIPMENT_FILTERS, filter.generatePreferences()).apply();
+        filterEquipment(filter);
         applySearch();
 
         // change icon if filter applied
