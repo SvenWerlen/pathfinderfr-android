@@ -18,6 +18,7 @@ import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EntityFactories;
+import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
@@ -43,7 +44,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 13;
 
     private static DBHelper instance;
 
@@ -163,6 +164,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV12());
             oldVersion = 12;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 12");
+        }
+        // version 13 introduced new table for equipment
+        if(oldVersion == 12) {
+            db.execSQL(EquipmentFactory.getInstance().getQueryCreateTable());
+            oldVersion = 13;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 13");
         }
     }
 

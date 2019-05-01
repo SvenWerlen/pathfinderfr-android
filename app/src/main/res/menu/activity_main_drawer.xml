@@ -49,6 +49,11 @@
             android:title="@string/sheet_menu_armors" />
 
         <item
+            android:id="@+id/nav_equipment"
+            android:icon="@drawable/ic_item_icon_equipment"
+            android:title="@string/sheet_menu_equipment" />
+
+        <item
             android:id="@+id/nav_conditions"
             android:icon="@drawable/ic_item_icon_condition"
             android:title="@string/sheet_menu_conditions" />

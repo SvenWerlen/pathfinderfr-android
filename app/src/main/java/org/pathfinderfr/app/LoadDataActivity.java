@@ -22,6 +22,7 @@ import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
+import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
@@ -35,17 +36,6 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
 
     public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master";
     public static final String VERSION = SOURCE + "/data/versions.yml";
-
-    public static final String[] SOURCES = new String[]{
-            "/data/races.yml",
-            "/data/classes.yml",
-            "/data/competences.yml",
-            "/data/dons.yml",
-            "/data/classfeatures.yml",
-            "/data/spells.yml",
-            "/data/conditions.yml",
-            "/data/armes.yml",
-            "/data/armures.yml"};
 
     private LoadDataTask loadTaskInProgress;
 
@@ -71,17 +61,19 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
                     boolean forceUpdate = ((CheckBox)findViewById(R.id.forceupdate)).isChecked();
 
-                    Pair<String, DBEntityFactory> source0 = new Pair(SOURCE + SOURCES[0], RaceFactory.getInstance());
-                    Pair<String, DBEntityFactory> source1 = new Pair(SOURCE + SOURCES[1], ClassFactory.getInstance());
-                    Pair<String, DBEntityFactory> source2 = new Pair(SOURCE + SOURCES[2], SkillFactory.getInstance());
-                    Pair<String, DBEntityFactory> source3 = new Pair(SOURCE + SOURCES[3], FeatFactory.getInstance());
-                    Pair<String, DBEntityFactory> source4 = new Pair(SOURCE + SOURCES[4], ClassFeatureFactory.getInstance());
-                    Pair<String, DBEntityFactory> source5 = new Pair(SOURCE + SOURCES[5], SpellFactory.getInstance());
-                    Pair<String, DBEntityFactory> source6 = new Pair(SOURCE + SOURCES[6], ConditionFactory.getInstance());
-                    Pair<String, DBEntityFactory> source7 = new Pair(SOURCE + SOURCES[7], WeaponFactory.getInstance());
-                    Pair<String, DBEntityFactory> source8 = new Pair(SOURCE + SOURCES[8], ArmorFactory.getInstance());
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, forceUpdate);
-                    loadTaskInProgress.execute(source0,source1,source2,source3,source4,source5,source6,source7,source8);
+                    loadTaskInProgress.execute(
+                            new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
+                            new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
+                            new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
+                            new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),
+                            new Pair(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()),
+                            new Pair(SOURCE + "/data/spells.yml", SpellFactory.getInstance()),
+                            new Pair(SOURCE + "/data/conditions.yml", ConditionFactory.getInstance()),
+                            new Pair(SOURCE + "/data/armes.yml", WeaponFactory.getInstance()),
+                            new Pair(SOURCE + "/data/armures.yml", ArmorFactory.getInstance()),
+                            new Pair(SOURCE + "/data/equipement.yml", EquipmentFactory.getInstance())
+                            );
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);

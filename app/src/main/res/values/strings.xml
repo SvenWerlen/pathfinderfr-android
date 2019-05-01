@@ -38,6 +38,8 @@
     <string name="weapon_added_failed">Échec de l\'ajout de l\'arme au personnage!</string>
     <string name="armor_added_success">Armure ajoutée à %s avec succès!</string>
     <string name="armor_added_failed">Échec de l\'ajout de l\'armure au personnage!</string>
+    <string name="equipment_added_success">Équipement ajouté à %s avec succès!</string>
+    <string name="equipment_added_failed">Échec de l\'ajout de l\'équipement au personnage!</string>
 
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
@@ -143,6 +145,7 @@
     <string name="sheet_menu_spells">Sorts</string>
     <string name="sheet_menu_weapons">Armes</string>
     <string name="sheet_menu_armors">Armures</string>
+    <string name="sheet_menu_equipment">Équipement</string>
     <string name="sheet_menu_conditions">États préjudiciables</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>

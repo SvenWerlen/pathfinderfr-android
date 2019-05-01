@@ -26,6 +26,7 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
+import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Weapon;
@@ -159,7 +160,7 @@ public class ItemDetailFragment extends Fragment {
         updateActionIcons(rootView);
 
         if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature
-                || mItem instanceof Weapon || mItem instanceof Armor) ) {
+                || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment) ) {
             addToCharacter.setVisibility(View.GONE);
         }
 
@@ -240,6 +241,15 @@ public class ItemDetailFragment extends Fragment {
                         success = true;
                     } else {
                         message = getResources().getString(R.string.armor_added_failed);
+                    }
+                } else if (mItem instanceof Equipment) {
+                    Equipment e = (Equipment)mItem;
+                    character.addInventoryItem(new Character.InventoryItem(e.getNameLong(), e.getWeightInGrams()));
+                    if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                        message = String.format(getResources().getString(R.string.equipment_added_success), cName);
+                        success = true;
+                    } else {
+                        message = getResources().getString(R.string.equipment_added_failed);
                     }
                 }
                 // update list if currently viewing character

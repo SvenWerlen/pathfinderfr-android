@@ -14,6 +14,7 @@ public class EntityFactories {
             ConditionFactory.getInstance(),
             WeaponFactory.getInstance(),
             ArmorFactory.getInstance(),
+            EquipmentFactory.getInstance(),
     };
 
 
