@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Equipment
 - Filters for equipment
+### Fixed
+- Carriage returns not properly handled in item detail (ex: feat - chair angélique)
 
 ## [2.6.2] - 2019-04-28
 ### Fixed

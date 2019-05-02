@@ -145,7 +145,7 @@ public class ItemDetailFragment extends Fragment {
                 String detail = mItem.getFactory().generateDetails(mItem,
                         templates.getProperty("template.spell.details"),
                         templates.getProperty("template.spell.detail"));
-                text = detail + String.format(
+                text = detail.replaceAll("\n","<br />") + String.format(
                         templates.getProperty("template.spell.description"),text);
 
             }
