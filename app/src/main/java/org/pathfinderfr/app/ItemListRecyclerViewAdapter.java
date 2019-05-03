@@ -86,6 +86,9 @@ public class ItemListRecyclerViewAdapter
         //holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
 
         DBEntity entity = mValues.get(position);
+        if(entity == null) {
+            return;
+        }
         String name = showNameLong ? entity.getNameLong() : entity.getName();
 
         // TODO: find a way to better handle this special case.

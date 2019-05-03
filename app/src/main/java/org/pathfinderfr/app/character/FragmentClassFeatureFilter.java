@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 
 import org.pathfinderfr.R;
@@ -15,6 +16,8 @@ import org.pathfinderfr.R;
 public class FragmentClassFeatureFilter extends DialogFragment implements View.OnClickListener {
 
     public static final String KEY_CLASSFEATUREFILTER_FAV    = "pref_classfeatfilter_fav";
+    public static final String KEY_CLASSFEATUREFILTER_TRAITS = "pref_classfeatfilter_traits";
+    public static final String KEY_CLASSFEATUREFILTER_AUTO   = "pref_classfeatfilter_auto";
 
     private FragmentClassFeatureFilter.OnFragmentInteractionListener mListener;
 
@@ -48,14 +51,22 @@ public class FragmentClassFeatureFilter extends DialogFragment implements View.O
 
         // Retrieve preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(rootView.getContext());
+        boolean filterTraits = prefs.getBoolean(KEY_CLASSFEATUREFILTER_TRAITS, true);
+        boolean filterAuto = prefs.getBoolean(KEY_CLASSFEATUREFILTER_AUTO, true);
         boolean filterOnlyFav = prefs.getBoolean(KEY_CLASSFEATUREFILTER_FAV, false);
 
+        if(!filterTraits) {
+            ((CheckBox)rootView.findViewById(R.id.classfeatures_traits)).setChecked(false);
+        }
+        if(!filterAuto) {
+            ((CheckBox)rootView.findViewById(R.id.classfeatures_auto)).setChecked(false);
+        }
         if(filterOnlyFav) {
             ((RadioButton)rootView.findViewById(R.id.classfeatures_filter_favorite_only)).setChecked(true);
         }
 
-        rootView.findViewById(R.id.feats_filter_ok).setOnClickListener(this);
-        rootView.findViewById(R.id.feats_filter_cancel).setOnClickListener(this);
+        rootView.findViewById(R.id.classfeatures_filter_ok).setOnClickListener(this);
+        rootView.findViewById(R.id.classfeatures_filter_cancel).setOnClickListener(this);
 
         return rootView;
     }
@@ -73,20 +84,34 @@ public class FragmentClassFeatureFilter extends DialogFragment implements View.O
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.feats_filter_cancel) {
+        if(v.getId() == R.id.classfeatures_filter_cancel) {
             dismiss();
             return;
         }
-        else if(v.getId() == R.id.feats_filter_ok) {
+        else if(v.getId() == R.id.classfeatures_filter_ok) {
             // store preferences
+            boolean filterTraits = ((CheckBox)getView().findViewById(R.id.classfeatures_traits)).isChecked();
+            boolean filterAuto = ((CheckBox)getView().findViewById(R.id.classfeatures_auto)).isChecked();
             boolean filterOnlyFav = ((RadioButton)getView().findViewById(R.id.classfeatures_filter_favorite_only)).isChecked();
 
+
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit();
+            if(filterTraits) {
+                editor.remove(KEY_CLASSFEATUREFILTER_TRAITS);
+            } else {
+                editor.putBoolean(KEY_CLASSFEATUREFILTER_TRAITS, filterTraits);
+            }
+            if(filterAuto) {
+                editor.remove(KEY_CLASSFEATUREFILTER_AUTO);
+            } else {
+                editor.putBoolean(KEY_CLASSFEATUREFILTER_AUTO, filterAuto);
+            }
             if(filterOnlyFav) {
                 editor.putBoolean(KEY_CLASSFEATUREFILTER_FAV, filterOnlyFav);
             } else {
                 editor.remove(KEY_CLASSFEATUREFILTER_FAV);
             }
+
             editor.apply();
 
             if (mListener != null) {

@@ -369,8 +369,11 @@
     <string name="sheet_feats_filter_apply">Appliquer</string>
 
     <!-- Class features filters -->
-    <string name="sheet_classfeatures_filters_title">Filtrer les aptitudes</string>
+    <string name="sheet_classfeatures_filters_title">Filtrer les traits et aptitudes</string>
     <string name="sheet_classfeatures_filter_favorite">Favoris</string>
+    <string name="sheet_classfeatures_filter_show">Afficher</string>
+    <string name="sheet_classfeatures_filter_show_traits">Traits raciaux</string>
+    <string name="sheet_classfeatures_filter_show_auto">Aptitudes automatiques (classe)</string>
     <string name="sheet_classfeatures_filter_favorite_all">Toutes</string>
     <string name="sheet_classfeatures_filter_favorite_only">Favorites uniquement</string>
     <string name="sheet_classfeatures_filter_apply">Appliquer</string>

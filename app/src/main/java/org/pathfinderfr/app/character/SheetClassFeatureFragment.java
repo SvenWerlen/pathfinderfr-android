@@ -29,6 +29,8 @@ import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Race;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
@@ -50,6 +52,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     private Character character;
     private long characterId;
 
+    private List<TableRow> traits;
     private List<Pair<TableRow, ClassFeature>> features;
 
     public SheetClassFeatureFragment() {
@@ -79,9 +82,11 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     private void applyFilters(View view) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
+        boolean filterTraits = prefs.getBoolean(FragmentClassFeatureFilter.KEY_CLASSFEATUREFILTER_TRAITS, true);
+        boolean filterAuto = prefs.getBoolean(FragmentClassFeatureFilter.KEY_CLASSFEATUREFILTER_AUTO, true);
         boolean filterOnlyFav = prefs.getBoolean(FragmentClassFeatureFilter.KEY_CLASSFEATUREFILTER_FAV, false);
 
-        boolean filtersApplied = filterOnlyFav;
+        boolean filtersApplied = filterOnlyFav || !filterTraits || !filterAuto;
         ImageView iv = view.findViewById(R.id.sheet_classfeatures_filters);
         iv.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 (filtersApplied ? R.drawable.ic_filtered : R.drawable.ic_filter)));
@@ -94,8 +99,14 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         }
 
         int rowId = 0;
+        for(TableRow row : traits) {
+            row.setVisibility(filterTraits ? View.VISIBLE : View.GONE);
+            row.setBackgroundColor(ContextCompat.getColor(getContext(),
+                    rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+            rowId++;
+        }
         for(Pair<TableRow,ClassFeature> entry : features) {
-            if (filterOnlyFav && !favorites.contains(entry.second.getId())) {
+            if ((!filterAuto && entry.second.isAuto()) || (filterOnlyFav && !favorites.contains(entry.second.getId()))) {
                 entry.first.setVisibility(View.GONE);
                 continue;
             }
@@ -132,11 +143,51 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         // determine size
         int height = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 30, view.getResources().getDisplayMetrics());
-
-        // add all skills
         int rowId = 0;
-        features = new ArrayList<>();
 
+        // add all traits
+        traits = new ArrayList<>();
+        if(character.getRace() != null) {
+            float scale = getResources().getDisplayMetrics().density;
+            int dpAsPixels = (int) (5 * scale + 0.5f);
+            for (final Race.Trait t : character.getRace().getTraits()) {
+
+                TableRow row = new TableRow(view.getContext());
+                row.setMinimumHeight(height);
+                row.setGravity(Gravity.CENTER_VERTICAL);
+                traits.add(row);
+
+                // icon
+                ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
+                iconIv.setVisibility(View.GONE);
+                iconIv.setColorFilter(exampleName.getCurrentTextColor());
+                row.addView(iconIv);
+                // name
+                TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
+                String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.racetrait.name");
+                nameTv.setText(String.format(template, character.getRace().getName(), t.getName()));
+                nameTv.setPadding(dpAsPixels,0,0,0);
+                nameTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Context context = SheetClassFeatureFragment.this.getContext();
+                        Intent intent = new Intent(context, ItemDetailActivity.class);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, character.getRace().getId());
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, RaceFactory.getInstance().getFactoryId());
+                        context.startActivity(intent);
+                    }
+                });
+                row.addView(nameTv);
+
+                // add to table
+                table.addView(row);
+
+                rowId++;
+            }
+        }
+
+        // add all class features
+        features = new ArrayList<>();
         for(final ClassFeature classfeature : character.getClassFeatures()) {
 
             TableRow row = new TableRow(view.getContext());

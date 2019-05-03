@@ -29,6 +29,7 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
@@ -162,6 +163,10 @@ public class ItemDetailFragment extends Fragment {
         if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature
                 || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment) ) {
             addToCharacter.setVisibility(View.GONE);
+        }
+
+        if(mItem == null || mItem instanceof Race) {
+            addFavorite.setVisibility(View.GONE);
         }
 
         // Add to character
