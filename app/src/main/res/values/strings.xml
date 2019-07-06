@@ -114,7 +114,7 @@
     <string name="spellfilter_level">Niveau:</string>
     <string name="apply_filters">Appliquer</string>
     <string name="cancel">Annuler</string>
-    <string name="save">Sauvegarder</string>
+    <string name="save">Enregistrer</string>
     <string name="delete">Supprimer</string>
 
     <!-- ClassFeature filters -->
@@ -165,7 +165,23 @@
     <!-- Character abilities -->
     <string name="sheet_label_char">Carac.</string>
     <string name="sheet_label_value">Valeur</string>
+    <string name="sheet_label_base">Base</string>
+    <string name="sheet_label_race">Race</string>
     <string name="sheet_label_modif">Modif.</string>
+    <string name="sheet_label_cost">Coût</string>
+
+    <string name="sheet_calc_title">Choix des caractéristiques:</string>
+    <string name="sheet_calc_description">Cette page permet d\'initialiser les caractéristiques de votre personnage en utilisant la méthode d\'achat de points. La valeur finale sera assignée à chaque caractéristique. Noter que cette interface ne considère pas les valeurs existantes et sert uniquement lors de la création. Aussi, les informations sur la race sont à titre indicatif uniquement. Veuillez saisir les valeurs correspondantes (ou choisie) dans le tableau ci-dessous. Seules les valeurs de -4 à 4 sont acceptées.</string>
+    <string name="sheet_calc_race_title">Race</string>
+    <string name="sheet_calc_quick">Prétirés</string>
+    <string name="sheet_calc_quick_contact">Combattant corps à corps</string>
+    <string name="sheet_calc_quick_range">Combattant à distance</string>
+    <string name="sheet_calc_quick_magic1">Lanceur divin</string>
+    <string name="sheet_calc_quick_magic2">Lanceur profane (Int)</string>
+    <string name="sheet_calc_quick_magic3">Lanceur profane (Cha)</string>
+    <string name="sheet_calc_quick_skills">Axé sur compétences</string>
+    <string name="sheet_calc_quick_simple">Simple</string>
+    <string name="sheet_calc_quick_heroic">Héroïque</string>
 
     <string name="sheet_ability_all">Toutes les caractéristiques</string>
     <string name="sheet_ability_str">FOR</string>
@@ -183,10 +199,15 @@
 
     <string name="sheet_ability_value">10</string>
     <string name="sheet_ability_modif">0</string>
+    <string name="sheet_ability_calc_value">10 (+0)</string>
+    <string name="sheet_ability_minus">-1</string>
+    <string name="sheet_ability_plus">+1</string>
 
     <string name="sheet_ability_seekbar">Glisser pour sélectionner une valeur:</string>
     <string name="sheet_ability_predefined">Ou sélectionner une valeur pré-définie:</string>
+    <string name="sheet_ability_calc">Ou utiliser la calculatrice (méthode d\'achat de points):</string>
     <string name="sheet_ability_buttons">Cliquer sur la valeur ci-dessous pour l\'accepter.</string>
+    <string name="sheet_ability_calc_button">calculatrice</string>
 
     <!-- Character details -->
     <string name="sheet_name">Nom:</string>
@@ -224,7 +245,6 @@
     <string name="sheet_modifs_saves">-- Jets de sauvegarde --</string>
     <string name="sheet_modifs_combat">-- Combat --</string>
     <string name="sheet_modifs_pick">Sélectionner</string>
-    <string name="sheet_modifs_save">Enregistrer</string>
     <string name="sheet_modifs_icon">Icône:</string>
     <string name="sheet_modifs_source">Source:</string>
     <string name="sheet_modifs_value">0</string>
@@ -277,7 +297,6 @@
         L\'application ne permet pas d\'effectuer les passages de niveau et lancer les dés. Saisissez donc
         ci-dessous le nombre de points de vie maximum du personnage.
     </string>
-    <string name="sheet_hitpoints_save">Enregistrer</string>
 
     <!-- Speed -->
     <string name="sheet_speed_title">Vitesse de déplacement:</string>
@@ -286,7 +305,6 @@
         Vous devez saisir la valeur en case(s) (1 case = 1.5m).
         Vous pouvez également utiliser la fonction \"Modif(s)\" pour intégrer d\'autres bonus/malus sur votre feuille.
     </string>
-    <string name="sheet_speed_save">Enregistrer</string>
 
     <!-- Inventory -->
     <string name="sheet_main_inventory_example_label_name">Inventaire</string>
@@ -301,7 +319,6 @@
     <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments sont toujours triés par ordre alphabétique. Vous pouvez aussi ajouter une arme ou une armure à partir du catalogue.</string>
     <string name="sheet_inventory_item_name">Descriptif:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
-    <string name="sheet_inventory_item_ok">Enregistrer</string>
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
 

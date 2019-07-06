@@ -16,6 +16,16 @@ public class Race extends DBEntity {
         return traits;
     }
 
+    // TODO: improve that method
+    public Trait getAbilitiesTrait() {
+        for(Trait t : traits) {
+            if("Caractéristiques".equals(t.getName())) {
+                return t;
+            }
+        }
+        return null;
+    }
+
     /**
      * Races have no description!
      */

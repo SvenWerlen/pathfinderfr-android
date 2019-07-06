@@ -122,6 +122,7 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
         });
         rootView.findViewById(R.id.ability_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.ability_ok).setOnClickListener(this);
+        rootView.findViewById(R.id.ability_calc).setOnClickListener(this);
 
         // restore value that was selected
         if(savedInstanceState != null) {
@@ -157,6 +158,12 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
             }
             dismiss();
             return;
+        } else if(v.getId() == R.id.ability_calc) {
+            dismiss();
+            if(mListener != null) {
+                mListener.onAbilityCalcChosen();
+            }
+            return;
         } else if(v instanceof TextView && v.getTag() != null && v.getTag().toString().startsWith("predefined")) {
             updateChosenValue(getView(), Integer.valueOf(v.getTag().toString().substring("predefined".length())));
         }
@@ -164,6 +171,7 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
 
     public interface OnFragmentInteractionListener {
         void onAbilityValueChosen(int abilityId, int abilityValue);
+        void onAbilityCalcChosen();
     }
 
     @Override

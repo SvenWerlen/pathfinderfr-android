@@ -133,7 +133,7 @@
             android:maxWidth="300dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:text="@string/sheet_inventory_item_ok"
+            android:text="@string/save"
             android:background="@drawable/rounded_button"
             android:textColor="@color/colorWhite"
             android:layout_margin="10dp" />

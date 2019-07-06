@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "org.pathfinderfr"
+        applicationId "org.pathfinderfr.demo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 16
-        versionName "2.7.0"
+        versionCode 18
+        versionName "2.9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

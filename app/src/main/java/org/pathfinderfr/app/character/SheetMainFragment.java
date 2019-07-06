@@ -60,13 +60,15 @@ import java.util.List;
  * Skill tab on character sheet
  */
 public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
+        FragmentAbilityCalc.OnFragmentInteractionListener,
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
-        FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener {
+            FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
     private static final String DIALOG_PICK_ABILITY   = "ability-picker";
+    private static final String DIALOG_CALC_ABILITY   = "ability-calc";
     private static final String DIALOG_DELETE_ACTION  = "delete-action";
     private static final String DIALOG_PICK_NAME      = "name-picker";
     private static final String DIALOG_PICK_RACE      = "race-picker";
@@ -625,6 +627,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     .findFragmentByTag(DIALOG_PICK_ABILITY);
             if (fragAbility != null) {
                 fragAbility.setListener(this);
+            }
+            FragmentAbilityCalc fragAbilityCalc = (FragmentAbilityCalc)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_CALC_ABILITY);
+            if (fragAbilityCalc != null) {
+                fragAbilityCalc.setListener(this);
             }
             FragmentHitPointsPicker fragHP = (FragmentHitPointsPicker)getActivity().getSupportFragmentManager()
                     .findFragmentByTag(DIALOG_PICK_HP);
@@ -1222,6 +1229,39 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             // store changes
             characterDBUpdate();
         }
+    }
+
+    @Override
+    public void onAbilityCalcChosen() {
+        FragmentTransaction ft = this.getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment prev = this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_CALC_ABILITY);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        DialogFragment newFragment = FragmentAbilityCalc.newInstance(this);
+
+        Bundle arguments = new Bundle();
+        if(character.getRace() != null) {
+            arguments.putLong(FragmentAbilityCalc.ARG_RACE_ID, character.getRace().getId());
+        }
+        newFragment.setArguments(arguments);
+        newFragment.show(ft, DIALOG_CALC_ABILITY);
+    }
+
+    @Override
+    public void onAbilityValueChosen(int str, int dex, int con, int intel, int wis, int cha) {
+        character.setStrength(str);
+        character.setDexterity(dex);
+        character.setConstitution(con);
+        character.setIntelligence(intel);
+        character.setWisdom(wis);
+        character.setCharisma(cha);
+
+        // update stats
+        updateSheet(getView());
+        // store changes
+        characterDBUpdate();
     }
 
     @Override

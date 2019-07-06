@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.9.0] - 2019-07-06
+### Added
+- Ability Score Calculator
+### Fixed
+- Top border non-visible (ex: hit points)
+
+## [2.8.0] - 2019-05-02
 ### Added
 - Display race traits on class features tab
 - Filters for class features (traits & auto features)
