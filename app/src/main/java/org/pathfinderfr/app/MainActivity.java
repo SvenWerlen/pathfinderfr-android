@@ -24,6 +24,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
     // preference for showing disclaimer on welcome page
     private static final String PREF_SHOW_DISCLAIMER = "general_show_disclaimer";
+    // preference for line height (in lists)
+    public final static String PREF_LINEHEIGHT = "general_lineheight";
 
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
@@ -196,7 +199,6 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
         recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, false));
-
 
         // Disclaimer / copyright
         boolean showDisclaimer = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean(PREF_SHOW_DISCLAIMER, true);
@@ -370,6 +372,14 @@ public class MainActivity extends AppCompatActivity
     private void applySearch() {
         // pick filtered list or whole list
         List<DBEntity> list = listFull;
+
+        // update line height
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        try {
+            int lineHeight = Integer.parseInt(preferences.getString(PREF_LINEHEIGHT, "0"));
+            lineHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, lineHeight, getResources().getDisplayMetrics());
+            ((ItemListRecyclerViewAdapter) recyclerView.getAdapter()).setMinimumLineHeight(lineHeight);
+        } catch(NumberFormatException nfe) {}
 
         listCur.clear();
         for (DBEntity el : list) {
@@ -582,6 +592,18 @@ public class MainActivity extends AppCompatActivity
 
         updateWelcomeAndNavigation();
         updateTitle(factory);
+
+        try {
+            int oldLineHeight = ((ItemListRecyclerViewAdapter) recyclerView.getAdapter()).getMinimumLineHeight();
+            int newLineHeight = Integer.parseInt(prefs.getString(PREF_LINEHEIGHT, "0"));
+            newLineHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newLineHeight, getResources().getDisplayMetrics());
+            if(oldLineHeight != newLineHeight) {
+                ((ItemListRecyclerViewAdapter) recyclerView.getAdapter()).setMinimumLineHeight(newLineHeight);
+                // force refresh
+                recyclerView.setAdapter(recyclerView.getAdapter());
+            }
+        } catch( NumberFormatException nfe) {}
+
 
         if(reloadRequired) {
             if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory) ||

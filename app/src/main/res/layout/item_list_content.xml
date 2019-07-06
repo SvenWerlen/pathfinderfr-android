@@ -10,8 +10,8 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         app:srcCompat="@drawable/ic_item_icon_spell" />
 
     <TextView
@@ -19,5 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_marginEnd="5dp"/>
 </LinearLayout>

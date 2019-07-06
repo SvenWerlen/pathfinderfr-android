@@ -23,6 +23,7 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -188,14 +189,15 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         view.findViewById(R.id.sheet_spells_row_school).setVisibility(View.GONE);
 
         // determine size
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int lineHeight = Integer.parseInt(prefs.getString(MainActivity.PREF_LINEHEIGHT, "0"));
         int height = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 25, view.getResources().getDisplayMetrics());
+                TypedValue.COMPLEX_UNIT_DIP, lineHeight, view.getResources().getDisplayMetrics());
 
         String templateLevel = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spells.level");
         String templateSpell = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.sheet.spell");
 
         // filters / preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         boolean filterOnlyFav = prefs.getBoolean(FragmentSpellFilter.KEY_SPELLFILTER_FAV, false);
         int filterMode = prefs.getInt(FragmentSpellFilter.KEY_SPELLFILTER_MODE, FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL);
 

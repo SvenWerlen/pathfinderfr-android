@@ -22,6 +22,8 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
+import org.pathfinderfr.app.ItemListRecyclerViewAdapter;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -144,8 +146,10 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         view.findViewById(R.id.sheet_skills_row).setVisibility(View.GONE);
 
         // determine size
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int lineHeight = Integer.parseInt(prefs.getString(MainActivity.PREF_LINEHEIGHT, "0"));
         int height = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 30, view.getResources().getDisplayMetrics());
+                TypedValue.COMPLEX_UNIT_DIP, lineHeight, view.getResources().getDisplayMetrics());
         int width = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 35, view.getResources().getDisplayMetrics());
         int widthAbility = (int) TypedValue.applyDimension(

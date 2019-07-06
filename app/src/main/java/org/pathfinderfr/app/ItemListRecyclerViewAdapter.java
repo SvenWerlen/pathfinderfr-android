@@ -2,9 +2,11 @@ package org.pathfinderfr.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ public class ItemListRecyclerViewAdapter
     private final boolean mTwoPane;
     private String factoryId;
     private boolean showNameLong;
+    private int lineHeight;
 
     ItemListRecyclerViewAdapter(MainActivity parent,
                                 List<DBEntity> items,
@@ -45,12 +48,17 @@ public class ItemListRecyclerViewAdapter
         mTwoPane = twoPane;
         factoryId = null;
         showNameLong = false;
+        lineHeight = 0;
     }
 
     public void setFactoryId(String factoryId) {
         this.factoryId = factoryId;
     }
+
     public void setShowNameLong(boolean nameLong) { this.showNameLong = nameLong; }
+
+    public int getMinimumLineHeight() { return this.lineHeight; }
+    public void setMinimumLineHeight(int lineHeight) { this.lineHeight = lineHeight; System.out.println("LINEHEIGHT = " + this.lineHeight); }
 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -103,6 +111,12 @@ public class ItemListRecyclerViewAdapter
         holder.mContentView.setText(name);
         holder.itemView.setTag(entity);
         holder.itemView.setOnClickListener(mOnClickListener);
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext());
+        holder.itemView.setMinimumHeight(lineHeight);
+        holder.itemView.setBackgroundColor(ContextCompat.getColor(
+                holder.itemView.getContext(), position % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
 
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.itemIcon);
         icon.setVisibility(View.VISIBLE);
