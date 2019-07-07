@@ -41,6 +41,8 @@ import java.util.List;
 
 public class FragmentModifPicker extends DialogFragment implements View.OnClickListener {
 
+    public static final float ZOOM_FACTOR = 1.5f;
+
     public static final String ARG_MODIF_IDX    = "arg_modifIdx";
     public static final String ARG_MODIF_SOURCE = "arg_modifSource";
     public static final String ARG_MODIF_IDS    = "arg_modifIds";
@@ -338,6 +340,11 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                     selectedIcon = iv;
                     if(selectedIcon.getDrawable() != null) {
                         selectedIcon.setBackgroundColor(rootView.getContext().getResources().getColor(R.color.colorPrimaryDark));
+                        // highlight selected icon
+                        FlowLayout.LayoutParams params = new FlowLayout.LayoutParams(selectedIcon.getLayoutParams());
+                        params.width = (int)(selectedIcon.getLayoutParams().width * ZOOM_FACTOR);
+                        params.height = (int)(selectedIcon.getLayoutParams().height * ZOOM_FACTOR);
+                        selectedIcon.setLayoutParams(params);
                     }
                 }
 
@@ -519,11 +526,18 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
             if(selectedIcon != null && selectedIcon.getDrawable() != null) {
                 selectedIcon.setBackgroundColor(colorDisabled);
+                ImageView exampleIcon = getView().findViewById(R.id.sheet_modifs_example_icon);
+                selectedIcon.setLayoutParams(exampleIcon.getLayoutParams());
             }
 
             selectedIcon = (ImageView)v;
             if(selectedIcon.getDrawable() != null) {
                 selectedIcon.setBackgroundColor(colorEnabled);
+                // highlight selected icon
+                FlowLayout.LayoutParams params = new FlowLayout.LayoutParams(selectedIcon.getLayoutParams());
+                params.width = (int)(selectedIcon.getLayoutParams().width * ZOOM_FACTOR);
+                params.height = (int)(selectedIcon.getLayoutParams().height * ZOOM_FACTOR);
+                selectedIcon.setLayoutParams(params);
             }
         }
     }

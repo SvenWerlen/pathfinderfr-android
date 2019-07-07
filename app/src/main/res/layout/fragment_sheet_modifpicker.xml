@@ -111,12 +111,12 @@
                         android:inputType="numberSigned"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:gravity="end"/>
+                        android:gravity="end|center"/>
 
                     <ImageView
                         android:id="@+id/sheet_modifs_add"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_weight = "0"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
@@ -149,8 +149,8 @@
 
                         <ImageView
                             android:id="@+id/sheet_modifs_remove"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginStart="10dp"
                             android:layout_gravity="start|center"
                             app:srcCompat="@drawable/ic_item_icon_remove" />
@@ -184,11 +184,10 @@
 
                     <ImageView
                         android:id="@+id/sheet_modifs_example_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="start|center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="2dp"
                         app:srcCompat="@drawable/modif_angry_eyes" />
 
                 </com.wefika.flowlayout.FlowLayout>

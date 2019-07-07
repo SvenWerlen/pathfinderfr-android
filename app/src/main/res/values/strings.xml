@@ -232,7 +232,7 @@
     <!-- Character modifications -->
     <string name="sheet_modifs">Modif(s):</string>
     <string name="sheet_modifs_title">Modification:</string>
-    <string name="sheet_modifs_description">Une modification peut représenter un état temporaire lié à une condition (ex: rage), un objet (ex: pendentif), un sort (ex: force du taureau), un don (ex: science de l\'initiative), etc.</string>
+    <string name="sheet_modifs_description">Une modification peut représenter un état temporaire lié à une condition (ex: rage), un objet (ex: pendentif), un sort (ex: force du taureau), un don (ex: science de l\'initiative), etc. Noter que pour modifier, supprimer une modification, il est nécessaire d\'appuyer de <b>manière prolongée</b> sur l\'icône dans le profil du personnage.</string>
     <string name="sheet_modifs_about_icons">Toutes les icônes proviennent du site game-icons.net.
         Si vous souhaitez faire ajouter des icônes, veuillez effectuer une demande sur https://github.com/SvenWerlen/pathfinderfr-android/issues .
     </string>
