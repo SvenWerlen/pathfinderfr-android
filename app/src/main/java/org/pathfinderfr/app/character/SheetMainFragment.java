@@ -1358,6 +1358,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     public void onSaveHP(int value) {
         character.setHitpoints(value);
         ((TextView)getView().findViewById(R.id.hitpoint_value)).setText(String.valueOf(value));
+        // update sheet
+        updateSheet(getView());
         // store changes
         characterDBUpdate();
     }
@@ -1366,6 +1368,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     public void onSaveSpeed(int value) {
         character.setSpeed(value);
         ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(value));
+        // update sheet
+        updateSheet(getView());
         // store changes
         characterDBUpdate();
     }

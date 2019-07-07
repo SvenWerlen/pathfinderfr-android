@@ -12,5 +12,6 @@
     <!-- Character sheet specific -->
     <dimen name="sheet_font_labels">12dp</dimen>
     <dimen name="sheet_font_actions">13dp</dimen>
+    <dimen name="sheet_font_text_links">16dp</dimen>
 
 </resources>

@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.10.0] - 2019-07-07
+### Added
+- Preference for increasing line height (for lists) 
+### Changed
+- Improve Modifs to help fat fingers
+### Fixed
+- Character sheet not updated after changing hit points or speed 
+
 ## [2.9.0] - 2019-07-06
 ### Added
 - Ability Score Calculator
