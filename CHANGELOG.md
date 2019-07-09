@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.11.0] - 2019-07-09
+### Added
+- Racial alternate traits 
+
 ## [2.10.0] - 2019-07-07
 ### Added
 - Preference for increasing line height (for lists) 
