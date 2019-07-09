@@ -51,6 +51,7 @@ public class ItemDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
     public static final String ARG_ITEM_FACTORY_ID = "item_factoryid";
     public static final String ARG_ITEM_SHOWDETAILS = "item_showdetails";
+    public static final String ARG_ITEM_SEL_CHARACTER = "item_selected";
     public static final String ARG_ITEM_MESSAGE = "item_message";
 
     private Properties templates = new Properties();
@@ -126,8 +127,15 @@ public class ItemDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.item_description, container, false);
 
         final DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
-        final long characterId = PreferenceManager.getDefaultSharedPreferences(rootView.getContext())
-                .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+
+        long characterId = 0;
+        if(getArguments().containsKey(ARG_ITEM_SEL_CHARACTER)) {
+            characterId = getArguments().getLong(ARG_ITEM_SEL_CHARACTER);
+        }
+        if(characterId == 0){
+            characterId = PreferenceManager.getDefaultSharedPreferences(rootView.getContext())
+                    .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+        }
         if(characterId != 0) {
             character = (Character)dbHelper.fetchEntity(characterId,CharacterFactory.getInstance());
         }

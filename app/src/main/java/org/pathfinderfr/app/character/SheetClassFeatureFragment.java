@@ -232,6 +232,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                         Intent intent = new Intent(context, ItemDetailActivity.class);
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, t.getId());
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, RaceAlternateTraitFactory.getInstance().getFactoryId());
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                         // highlight if invalid trait
                         if(!character.isValidRacialTrait(t)) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
@@ -291,6 +292,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, classfeature.getId());
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, classfeature.getFactory().getFactoryId());
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                     context.startActivity(intent);
                 }
             });

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Add to character doesn't require pin when viewing details from character sheet
+### Fixed
+- Racial alternate traits not exported/imported
 
 ## [2.11.0] - 2019-07-09
 ### Added

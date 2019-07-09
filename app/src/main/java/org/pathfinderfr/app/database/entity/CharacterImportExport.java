@@ -29,6 +29,7 @@ public class CharacterImportExport {
     private static final String YAML_SPEED         = "Vitesse";
     private static final String YAML_CLASSES       = "Classes";
     private static final String YAML_LEVEL         = "Niveau";
+    private static final String YAML_TRAITS        = "TraitsAlternatifs";
     private static final String YAML_ABILITIES     = "Caracs";
     private static final String YAML_ABILITY_STR   = "Force";
     private static final String YAML_ABILITY_DEX   = "Dextérité";
@@ -72,6 +73,8 @@ public class CharacterImportExport {
     public static final int ERROR_MODIF_ICON_NOTFOUND  = 21;
     public static final int ERROR_INVENTORY_FORMAT     = 22;
     public static final int ERROR_INVENTORY_EXCEPTION  = 23;
+    public static final int ERROR_TRAIT_NOMATCH        = 24;
+    public static final int ERROR_TRAITS_EXCEPTION     = 25;
 
 
     public static String exportCharacterAsYML(Character c, Context ctx) {
@@ -177,6 +180,16 @@ public class CharacterImportExport {
             inventory.add(itemObj);
         }
         data.put(YAML_INVENTORY, inventory);
+
+        // racial traits
+        List<Map> traits = new ArrayList();
+        for(RaceAlternateTrait t : c.getAlternateTraits()) {
+            Map<String, Object> traitObj = new LinkedHashMap();
+            traitObj.put(YAML_NAME, t.getName());
+            traitObj.put(YAML_RACE, t.getRace().getName());
+            traits.add(traitObj);
+        }
+        data.put(YAML_TRAITS, traits);
 
         try {
             StringWriter exportData = new StringWriter();
@@ -458,6 +471,39 @@ public class CharacterImportExport {
                 }
             } catch(Exception e) {
                 errors.add(ERROR_INVENTORY_EXCEPTION);
+            }
+
+            // racial alternate traits
+            try {
+                List<DBEntity> allTraits = dbHelper.getAllEntities(RaceAlternateTraitFactory.getInstance());
+                Object traits = map.get(YAML_TRAITS);
+                if (traits instanceof List) {
+                    List<Object> fList = (List<Object>) traits;
+                    for (Object f : fList) {
+                        if (f instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) f;
+                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_RACE)) {
+                                String tName = values.get(YAML_NAME).toString();
+                                String rName = values.get(YAML_RACE).toString();
+                                RaceAlternateTrait trait = null;
+                                for(DBEntity t : allTraits) {
+                                    RaceAlternateTrait tObj = (RaceAlternateTrait)t;
+                                    if(tObj.getName().equals(tName) && tObj.getRace().getName().equals(rName)) {
+                                        trait = (RaceAlternateTrait)t;
+                                        break;
+                                    }
+                                }
+                                if(trait == null) {
+                                    errors.add(ERROR_TRAIT_NOMATCH);
+                                } else {
+                                    c.addAlternateTrait(trait);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_TRAITS_EXCEPTION);
             }
 
             //System.out.println(exportCharacterAsYML(c, view.getContext()));

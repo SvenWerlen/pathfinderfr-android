@@ -174,6 +174,7 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, feat.getId());
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, feat.getFactory().getFactoryId());
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                     context.startActivity(intent);
                 }
             });
