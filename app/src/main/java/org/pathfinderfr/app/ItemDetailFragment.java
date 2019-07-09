@@ -30,6 +30,7 @@ import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
+import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
@@ -50,6 +51,7 @@ public class ItemDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
     public static final String ARG_ITEM_FACTORY_ID = "item_factoryid";
     public static final String ARG_ITEM_SHOWDETAILS = "item_showdetails";
+    public static final String ARG_ITEM_MESSAGE = "item_message";
 
     private Properties templates = new Properties();
 
@@ -107,6 +109,9 @@ public class ItemDetailFragment extends Fragment {
             else if(mItem instanceof ClassFeature) {
                 isAddedToCharacter = character.hasClassFeature((ClassFeature) mItem);
             }
+            else if(mItem instanceof RaceAlternateTrait) {
+                isAddedToCharacter = character.hasAlternateTrait((RaceAlternateTrait) mItem);
+            }
         }
         ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
         addToCharacter.getBackground().setColorFilter(isAddedToCharacter ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
@@ -158,9 +163,11 @@ public class ItemDetailFragment extends Fragment {
         ImageView externalLink = (ImageView)rootView.findViewById(R.id.actionExternalLink);
         ImageView addToCharacter = (ImageView)rootView.findViewById(R.id.actionAddToCharacter);
         ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
+        TextView message = (TextView)rootView.findViewById(R.id.item_alert_message);
         updateActionIcons(rootView);
 
-        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature
+
+        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof RaceAlternateTrait
                 || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment) ) {
             addToCharacter.setVisibility(View.GONE);
         }
@@ -185,11 +192,11 @@ public class ItemDetailFragment extends Fragment {
                     message = getResources().getString(R.string.nocharacter_selected_failed);
                 }
                 else if(mItem instanceof Feat) {
-                    Feat feat = (Feat)mItem;
-                    if(character.hasFeat(feat)) {
+                    Feat feat = (Feat) mItem;
+                    if (character.hasFeat(feat)) {
                         character.removeFeat(feat);
-                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = String.format(getResources().getString(R.string.feat_removed_success),cName);
+                        if (DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = String.format(getResources().getString(R.string.feat_removed_success), cName);
                             success = true;
                         } else {
                             character.addFeat(feat); // rollback
@@ -197,14 +204,36 @@ public class ItemDetailFragment extends Fragment {
                         }
                     } else {
                         character.addFeat(feat);
-                        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
-                            message = String.format(getResources().getString(R.string.feat_added_success),cName);
+                        if (DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = String.format(getResources().getString(R.string.feat_added_success), cName);
                             success = true;
                         } else {
                             character.removeFeat(feat); // rollback
                             message = getResources().getString(R.string.feat_added_failed);
                         }
                     }
+                }
+                else if(mItem instanceof RaceAlternateTrait) {
+                        RaceAlternateTrait trait = (RaceAlternateTrait)mItem;
+                        if(character.hasAlternateTrait(trait)) {
+                            character.removeAlternateTrait(trait);
+                            if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                                message = String.format(getResources().getString(R.string.trait_removed_success),cName);
+                                success = true;
+                            } else {
+                                character.addAlternateTrait(trait); // rollback
+                                message = getResources().getString(R.string.trait_removed_failed);
+                            }
+                        } else {
+                            character.addAlternateTrait(trait);
+                            if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                                message = String.format(getResources().getString(R.string.trait_added_success),cName);
+                                success = true;
+                            } else {
+                                character.removeAlternateTrait(trait); // rollback
+                                message = getResources().getString(R.string.trait_added_failed);
+                            }
+                        }
                 } else if (mItem instanceof ClassFeature) {
                     ClassFeature classFeature = (ClassFeature)mItem;
 
@@ -326,6 +355,13 @@ public class ItemDetailFragment extends Fragment {
             }
         });
 
+
+        String warningMessage = getArguments().getString(ARG_ITEM_MESSAGE);
+        if(warningMessage == null || warningMessage.length() == 0) {
+            message.setVisibility(View.GONE);
+        } else {
+            message.setText(warningMessage);
+        }
 
         return rootView;
     }

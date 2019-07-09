@@ -61,6 +61,7 @@ public class Character extends DBEntity {
     Map<Long,Integer> skills;
     List<Feat> feats;
     List<ClassFeature> features;
+    List<RaceAlternateTrait> traits;
     List<CharacterModif> modifs;
     List<InventoryItem> invItems;
     int hitpoints;
@@ -72,6 +73,7 @@ public class Character extends DBEntity {
         skills = new HashMap<>();
         feats = new ArrayList<>();
         features = new ArrayList<>();
+        traits = new ArrayList<>();
         modifs = new ArrayList<>();
         invItems = new ArrayList<>();
     }
@@ -691,6 +693,65 @@ public class Character extends DBEntity {
     }
 
     /**
+     * @return the list of traits (as a copy)
+     */
+    public List<RaceAlternateTrait> getAlternateTraits() {
+        RaceAlternateTrait[] itemArray = new RaceAlternateTrait[traits.size()];
+        itemArray = traits.toArray(itemArray);
+        List<RaceAlternateTrait> traits = Arrays.asList(itemArray);
+        final Collator collator = Collator.getInstance();
+        Collections.sort(traits, new Comparator<RaceAlternateTrait>() {
+            @Override
+            public int compare(RaceAlternateTrait t1, RaceAlternateTrait t2) {
+                return collator.compare(t1.getName(), t1.getName());
+            }
+        });
+        return traits;
+    }
+
+    public String getAlternateTraitsAsString() {
+        List<RaceAlternateTrait> traits = getAlternateTraits();
+        if(traits.size() == 0) {
+            return "-";
+        }
+        StringBuffer buf = new StringBuffer();
+        for(RaceAlternateTrait f : traits) {
+            buf.append(f.getName()).append(", ");
+        }
+        buf.delete(buf.length()-2, buf.length());
+        return buf.toString();
+    }
+
+    public boolean hasAlternateTrait(RaceAlternateTrait trait) {
+        for(RaceAlternateTrait t : traits) {
+            if(t.getId() == trait.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addAlternateTrait(RaceAlternateTrait trait) {
+        traits.add(trait);
+    }
+
+    public boolean removeAlternateTrait(RaceAlternateTrait trait) {
+        RaceAlternateTrait found = null;
+        for(RaceAlternateTrait t : traits) {
+            if(t.getId() == trait.getId()) {
+                found = t;
+                break;
+            }
+        }
+        if(found != null) {
+            traits.remove(found);
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
      * @return the list of feats (as a copy)
      */
     public List<Feat> getFeats() {
@@ -785,6 +846,11 @@ public class Character extends DBEntity {
         features.add(feature);
     }
 
+    @Override
+    public boolean isValid() {
+        return super.isValid();
+    }
+
     public boolean removeClassFeature(ClassFeature feature) {
         ClassFeature found = null;
         for(ClassFeature a : features) {
@@ -811,6 +877,87 @@ public class Character extends DBEntity {
             }
         }
         return false;
+    }
+
+    /**
+     * @param trait alternate trait
+     * @return false if trait doesn't match race
+     */
+    public boolean isValidRacialTrait(RaceAlternateTrait trait) {
+        if(race == null || trait == null) {
+            return false;
+        }
+        return trait.getRace().getId() == getRace().getId();
+    }
+
+    /**
+     * @param trait alternate trait
+     * @return false if trait replaces/alters a trait that was already replaced/modified
+     */
+    public boolean isDuplicatedRacialTrait(RaceAlternateTrait trait) {
+        if(race == null || trait == null) {
+            return false;
+        }
+        for(RaceAlternateTrait t : getAlternateTraits()) {
+            if(t.getId() == trait.getId()) {
+                continue;
+            }
+            // check same replaces
+            for(String repA : t.getReplaces()) {
+                for(String repB : trait.getReplaces()) {
+                    if(repA.equals(repB)) {
+                        return true;
+                    }
+                }
+            }
+            // check same alters
+            for(String repA : t.getAlters()) {
+                for(String repB : trait.getAlters()) {
+                    if(repA.equals(repB)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if provided trait name is replaced
+     * @param name trait name
+     * @return alternate trait if replaced, null otherwise
+     */
+    public RaceAlternateTrait traitIsReplaced(String name) {
+        for(RaceAlternateTrait t : getAlternateTraits()) {
+            if(getRace() != null && getRace().getId() != t.getRace().getId()) {
+                continue;
+            }
+            for(String rep : t.getReplaces()) {
+                if(rep.equals(name)) {
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if provided trait name is altered
+     * @param name trait name
+     * @return alternate trait if altered, null otherwise
+     */
+    public RaceAlternateTrait traitIsAltered(String name) {
+        for(RaceAlternateTrait t : getAlternateTraits()) {
+            if(getRace() != null && getRace().getId() != t.getRace().getId()) {
+                continue;
+            }
+            for(String rep : t.getAlters()) {
+                if(rep.equals(name)) {
+                    return t;
+                }
+            }
+        }
+        return null;
     }
 
     /**

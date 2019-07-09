@@ -83,11 +83,11 @@
 
                 <ImageView
                     android:id="@+id/sheet_classfeatures_example_icon"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="start|center"
                     android:layout_marginLeft="5dp"
-                    app:srcCompat="@drawable/ic_unchecked" />
+                    app:srcCompat="@drawable/ic_item_icon_feat" />
 
                 <TextView
                     android:id="@+id/sheet_classfeatures_example_name"

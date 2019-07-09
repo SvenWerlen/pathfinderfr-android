@@ -97,7 +97,7 @@ public class StringUtil {
     }
 
     public static final String listToString(List<String> values, String sep) {
-        String[] list = values == null ? new String[]{} : values.toArray(new String[]{});
+        String[] list = values == null || values.size() == 0 ? null : values.toArray(new String[]{});
         return listToString(list, sep, null);
     }
 

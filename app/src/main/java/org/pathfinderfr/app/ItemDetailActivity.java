@@ -56,6 +56,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
             arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
             arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
+            arguments.putString(ItemDetailFragment.ARG_ITEM_MESSAGE, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_MESSAGE));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

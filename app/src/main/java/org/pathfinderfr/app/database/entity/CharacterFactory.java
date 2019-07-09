@@ -31,6 +31,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_SKILLS      = "skills";
     private static final String COLUMN_FEATS       = "feats";
     private static final String COLUMN_CLFEATURES  = "clfeatures";
+    private static final String COLUMN_ALTTRAITS   = "alttraits";
     private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
     private static final String COLUMN_SPEED       = "speed";
@@ -70,7 +71,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text," +
                         "%s integer, %s integer, %s integer, " +
                         "%s integer, %s integer, %s integer," +
-                        "%s text, %s text, %s text, %s text, %s text," +
+                        "%s text, %s text, %s text, %s text, %s text, %s text," +
                         "%s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
@@ -78,7 +79,7 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_MODIFS, COLUMN_INVENTORY,
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
                 COLUMN_HITPOINTS, COLUMN_SPEED);
         return query;
     }
@@ -125,6 +126,13 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV12() {
         return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_INVENTORY);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v14 to v15
+     */
+    public String getQueryUpgradeV15() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_ALTTRAITS);
     }
 
     @Override
@@ -219,6 +227,22 @@ public class CharacterFactory extends DBEntityFactory {
             contentValues.put(CharacterFactory.COLUMN_CLFEATURES, value.toString());
         } else {
             contentValues.put(CharacterFactory.COLUMN_CLFEATURES, "");
+        }
+
+        // race alternate traits are stored using format <trait1Id>#<trait2Id>...
+        // (assuming that traits ids won't change during data import)
+        if(c.getAlternateTraits().size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(RaceAlternateTrait trait : c.getAlternateTraits()) {
+                value.append(trait.getId()).append('#');
+            }
+            if(value.length() > 0) {
+                value.deleteCharAt(value.length() - 1);
+            }
+            Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, "");
         }
 
         // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
@@ -414,6 +438,25 @@ public class CharacterFactory extends DBEntityFactory {
             Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
         }
 
+        // fill race alternate traits
+        String traitsValue = extractValue(resource, CharacterFactory.COLUMN_ALTTRAITS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits found: " + traitsValue);
+        if(traitsValue != null && traitsValue.length() > 0) {
+            String[] traits = traitsValue.split("#");
+            long[] traitIds = new long[traits.length];
+            try {
+                for(int i = 0; i < traits.length; i++) {
+                    traitIds[i] = Long.parseLong(traits[i]);
+                }
+                // retrieve all traits from DB
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(traitIds, RaceAlternateTraitFactory.getInstance());
+                for(DBEntity e : list) {
+                    c.addAlternateTrait((RaceAlternateTrait)e);
+                }
+            } catch (NumberFormatException nfe) {
+                Log.e(CharacterFactory.class.getSimpleName(), "Stored trait '" + traitsValue + "' is invalid (NFE)!");
+            }
+        }
 
         // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
         // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>

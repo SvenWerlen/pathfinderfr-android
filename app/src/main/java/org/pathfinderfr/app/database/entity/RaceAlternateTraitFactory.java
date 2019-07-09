@@ -147,7 +147,7 @@ public class RaceAlternateTraitFactory extends DBEntityFactory {
         }
 
         String alters = extractValue(resource, RaceAlternateTraitFactory.COLUMN_ALTERS);
-        String[] altersList = replaces == null ? new String[]{} : replaces.split("#");
+        String[] altersList = alters == null ? new String[]{} : alters.split("#");
         for(String altEl : altersList) {
             raceAltTrait.alters(altEl);
         }
@@ -194,6 +194,12 @@ public class RaceAlternateTraitFactory extends DBEntityFactory {
         String source = raceAltTrait.getSource() == null ? null : getTranslatedText("source." + raceAltTrait.getSource().toLowerCase());
         buf.append(generateItemDetail(templateItem, YAML_RACE, raceAltTrait.getRace().getName()));
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
+        if(raceAltTrait.getReplaces().size()>0) {
+            buf.append(generateItemDetail(templateItem, YAML_REPLACES, raceAltTrait.getReplaces()));
+        }
+        if(raceAltTrait.getAlters().size()>0) {
+            buf.append(generateItemDetail(templateItem, YAML_ALTERS, raceAltTrait.getAlters()));
+        }
         buf.append(generateItemDetail(templateItem, YAML_DESC, raceAltTrait.getDescription()));
         return String.format(templateList,buf.toString());
     }

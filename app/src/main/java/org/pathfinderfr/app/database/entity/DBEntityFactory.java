@@ -8,6 +8,7 @@ import android.util.Log;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.List;
 import java.util.Map;
 
 public abstract class DBEntityFactory {
@@ -166,6 +167,21 @@ public abstract class DBEntityFactory {
     protected static String generateItemDetail(String template, String propKey, String propValue) {
         if(propValue != null) {
             return String.format(template, propKey, propValue);
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Utility function that returns the template with regex replaced
+     * @param template template (@see assets/templates.properties)
+     * @param propKey name of the property
+     * @param propValue value of the property
+     * @return "" if value is null
+     */
+    protected static String generateItemDetail(String template, String propKey, List<String> propValue) {
+        if(propValue != null && propValue.size() > 0) {
+            return String.format(template, propKey, StringUtil.listToString(propValue, ", "));
         } else {
             return "";
         }
