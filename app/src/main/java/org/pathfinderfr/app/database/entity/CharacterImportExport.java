@@ -460,7 +460,7 @@ public class CharacterImportExport {
                 errors.add(ERROR_INVENTORY_EXCEPTION);
             }
 
-            System.out.println(exportCharacterAsYML(c, view.getContext()));
+            //System.out.println(exportCharacterAsYML(c, view.getContext()));
 
             return new Pair<>(c, errors);
         } catch (Exception e) {

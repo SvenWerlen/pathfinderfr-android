@@ -24,6 +24,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Weapon;
@@ -58,7 +59,7 @@ public class ItemListRecyclerViewAdapter
     public void setShowNameLong(boolean nameLong) { this.showNameLong = nameLong; }
 
     public int getMinimumLineHeight() { return this.lineHeight; }
-    public void setMinimumLineHeight(int lineHeight) { this.lineHeight = lineHeight; System.out.println("LINEHEIGHT = " + this.lineHeight); }
+    public void setMinimumLineHeight(int lineHeight) { this.lineHeight = lineHeight; }
 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -136,6 +137,8 @@ public class ItemListRecyclerViewAdapter
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_armors));
         } else if(entity instanceof Equipment) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_equipment));
+        } else if(entity instanceof RaceAlternateTrait) {
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_trait));
         } else if(entity instanceof Character) {
             // show icon for pined character
             long characterId = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);

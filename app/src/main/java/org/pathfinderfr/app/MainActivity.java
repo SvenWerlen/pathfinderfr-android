@@ -47,6 +47,8 @@ import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
+import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
@@ -55,17 +57,22 @@ import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
+import org.pathfinderfr.app.util.RaceAlternateTraitFilter;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
-        FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener {
+        FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener,
+        FilterRaceAlternateTraitFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
     public static final String KEY_ABILITY_FILTERS = "filter_classfeatures";
+    public static final String KEY_TRAIT_FILTERS = "filter_racetraits";
     public static final String KEY_EQUIPMENT_FILTERS = "filter_equipment";
 
     public static final String DIALOG_FILTER = "dialog-filter";
@@ -234,6 +242,8 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_armors);
         } else if(EquipmentFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_equipment);
+        } else if(RaceAlternateTraitFactory.FACTORY_ID.equals(factoryId)) {
+            selItem = navigationView.getMenu().findItem(R.id.nav_traits);
         } else {
             selItem = navigationView.getMenu().findItem(R.id.nav_home);
         }
@@ -261,6 +271,12 @@ public class MainActivity extends AppCompatActivity
                 if (fragEquipmentFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     fragEquipmentFilter.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null)));
+                }
+            } else if(fragment instanceof FilterRaceAlternateTraitFragment) {
+                FilterRaceAlternateTraitFragment fragTraitFilter = (FilterRaceAlternateTraitFragment)fragment;
+                if (fragTraitFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragTraitFilter.setFilter(new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
                 }
             }
 
@@ -296,6 +312,7 @@ public class MainActivity extends AppCompatActivity
         long countArmors = dbhelper.getCountEntities(ArmorFactory.getInstance());
         long countEquipment = dbhelper.getCountEntities(EquipmentFactory.getInstance());
         long countConditions = dbhelper.getCountEntities(ConditionFactory.getInstance());
+        long countTraits = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance());
 
         long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
         long countAbilitiesFiltered = dbhelper.getCountEntities(ClassFeatureFactory.getInstance(), sources);
@@ -338,6 +355,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
+        navigationView.getMenu().findItem(R.id.nav_traits).setVisible(countTraits > 0
+                && PreferenceUtil.sourceIsActive(getBaseContext(),"MR")); // hide alternate traits if MR is not active
         navigationView.getMenu().findItem(R.id.nav_skills).setVisible(countSkills > 0);
         navigationView.getMenu().findItem(R.id.nav_feats).setVisible(countFeats > 0);
         navigationView.getMenu().findItem(R.id.nav_abilities).setVisible(countAbilities > 0);
@@ -524,6 +543,15 @@ public class MainActivity extends AppCompatActivity
             totalCount = dbhelper.getCountEntities(EquipmentFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
             factoryId = EquipmentFactory.FACTORY_ID;
+        } else if (id == R.id.nav_traits) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            RaceAlternateTraitFilter filter = new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));
+            filterActive = filter.hasAnyFilter();
+            filterRaceAlternateTraits(filter);
+            newEntities = new ArrayList<>(listFull);
+            totalCount = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
+            factoryId = RaceAlternateTraitFactory.FACTORY_ID;
         } else if (id == R.id.nav_refresh_data) {
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             Intent intent = new Intent(this, LoadDataActivity.class);
@@ -548,7 +576,8 @@ public class MainActivity extends AppCompatActivity
         else if (newEntities != null) {
             boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
-                    || EquipmentFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
+                    || EquipmentFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
+                    || RaceAlternateTraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.item_list).setVisibility(View.VISIBLE);
@@ -643,6 +672,11 @@ public class MainActivity extends AppCompatActivity
             FilterClassFeaturesFragment newFragment = FilterClassFeaturesFragment.newInstance();
             newFragment.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
+        } else if(RaceAlternateTraitFactory.FACTORY_ID.equals(factory)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            FilterRaceAlternateTraitFragment newFragment = FilterRaceAlternateTraitFragment.newInstance();
+            newFragment.setFilter(new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
+            newFragment.show(ft, DIALOG_FILTER);
         } else if(EquipmentFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             FilterEquipmentFragment newFragment = FilterEquipmentFragment.newInstance();
@@ -688,6 +722,34 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_ABILITY_FILTERS, filter.generatePreferences()).apply();
         filterClassFeatures(filter);
+        applySearch();
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = filter.hasAnyFilter() ? R.drawable.ic_filtered : R.drawable.ic_filter;
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
+    }
+
+    private void filterRaceAlternateTraits(RaceAlternateTraitFilter filter) {
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
+        List<DBEntity> raceTraits = dbhelper.getAllEntities(RaceAlternateTraitFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+
+        listFull = new ArrayList<>();
+        for(DBEntity e : raceTraits) {
+            RaceAlternateTrait t = (RaceAlternateTrait)e;
+            // check race
+            if(!filter.hasFilterRace() || filter.isFilterRaceEnabled(t.getRace().getId())) {
+                listFull.add(e);
+            }
+        }
+    }
+
+    @Override
+    public void onApplyFilter(RaceAlternateTraitFilter filter) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        prefs.edit().putString(MainActivity.KEY_TRAIT_FILTERS, filter.generatePreferences()).apply();
+        filterRaceAlternateTraits(filter);
         applySearch();
 
         // change icon if filter applied

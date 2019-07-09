@@ -21,6 +21,8 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
+import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellClassLevel;
@@ -44,7 +46,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 13;
+    public static final int DATABASE_VERSION = 14;
 
     private static DBHelper instance;
 
@@ -170,6 +172,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(EquipmentFactory.getInstance().getQueryCreateTable());
             oldVersion = 13;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 13");
+        }
+        // version 14 introduced new table for race alternate traits
+        if(oldVersion == 13) {
+            db.execSQL(RaceAlternateTraitFactory.getInstance().getQueryCreateTable());
+            oldVersion = 14;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 14");
         }
     }
 

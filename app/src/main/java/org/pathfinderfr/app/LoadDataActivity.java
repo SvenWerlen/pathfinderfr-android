@@ -24,6 +24,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
@@ -65,6 +66,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     loadTaskInProgress.execute(
                             new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
                             new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
+                            new Pair(SOURCE + "/data/races-traits-alternatifs.yml", RaceAlternateTraitFactory.getInstance()),
                             new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
                             new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),
                             new Pair(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()),

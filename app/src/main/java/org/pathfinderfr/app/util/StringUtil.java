@@ -2,6 +2,7 @@ package org.pathfinderfr.app.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +93,11 @@ public class StringUtil {
         for(int i = 0; i<values.length; i++) {
             list[i] = String.valueOf(values[i]);
         }
+        return listToString(list, sep, null);
+    }
+
+    public static final String listToString(List<String> values, String sep) {
+        String[] list = values == null ? new String[]{} : values.toArray(new String[]{});
         return listToString(list, sep, null);
     }
 

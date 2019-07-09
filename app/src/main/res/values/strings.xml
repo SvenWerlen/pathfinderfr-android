@@ -54,6 +54,7 @@
     <string name="navigation_item_home">Accueil</string>
     <string name="navigation_item_favorites">Favoris</string>
     <string name="navigation_item_sheets">Personnages</string>
+    <string name="navigation_item_traits">Traits alternatifs</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_abilities">Aptitudes</string>
@@ -123,6 +124,10 @@
     <string name="classfeatures_filter_all">Tous</string>
     <string name="classfeatures_class">Classe:</string>
     <string name="classfeatures_maxlevel">Niveau maximum:</string>
+
+    <!-- RaceAlternateTrait filters -->
+    <string name="racealternatetrait_filter_all">Tous</string>
+    <string name="racealternatetrait_race">Race:</string>
 
     <!-- Equipment filters -->
     <string name="equipment_filter_all">Tous</string>

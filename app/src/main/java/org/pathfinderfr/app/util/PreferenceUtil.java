@@ -19,4 +19,14 @@ public class PreferenceUtil {
         }
         return list.toArray(new String[0]);
     }
+
+    public static boolean sourceIsActive(Context ctx, String source) {
+        String[] activeSources = getSources(ctx);
+        for(String src : activeSources) {
+            if(src.equals(source)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

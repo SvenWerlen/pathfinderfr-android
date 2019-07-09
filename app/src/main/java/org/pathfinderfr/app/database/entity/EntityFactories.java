@@ -15,6 +15,7 @@ public class EntityFactories {
             WeaponFactory.getInstance(),
             ArmorFactory.getInstance(),
             EquipmentFactory.getInstance(),
+            RaceAlternateTraitFactory.getInstance()
     };
 
 
