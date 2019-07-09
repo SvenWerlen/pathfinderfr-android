@@ -191,10 +191,12 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                         RaceAlternateTrait alteredBy = character.traitIsAltered(t.getName());
                         if(replacedBy != null) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
-                                    String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.replaced"), replacedBy.getName()));
+                                    String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.replaced"),
+                                            t.getName(), replacedBy.getName()));
                         } else if(alteredBy != null) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
-                                    String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.altered"), alteredBy.getName()));
+                                    String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.altered"),
+                                            t.getName(), alteredBy.getName()));
                         }
                         context.startActivity(intent);
                     }
