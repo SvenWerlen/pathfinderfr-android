@@ -113,6 +113,7 @@
 
     <string name="pref_sources_default">Cette source ne peut être désactivée</string>
 
+    <string name="pref_title_fat_fingers">Agrandir espaces cliquables</string>
     <string name="pref_title_line_height">Espacement vertical (listes)</string>
 
     <!-- Spell filters -->

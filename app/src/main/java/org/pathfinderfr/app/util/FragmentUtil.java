@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,11 @@ public class FragmentUtil {
         iv.setTag(fragment.getTag());
         iv.setImageDrawable(fragment.getDrawable());
         return iv;
+    }
+
+    public static void adaptForFatFingers(TextView fragment, int minHeight, float scale) {
+        fragment.setMinHeight(minHeight);
+        fragment.setTextSize(TypedValue.COMPLEX_UNIT_PX, fragment.getTextSize() * scale);
     }
 
 }

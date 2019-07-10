@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.ItemListRecyclerViewAdapter;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
@@ -656,6 +658,86 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
         inventoryWeightExample = view.findViewById(R.id.sheet_inventory_example_weight);
         updateInventory(view);
+
+        // fat fingers
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int base = 32;
+        float scale = 1f;
+        try {
+            scale = (Integer.parseInt(preferences.getString(MainActivity.PREF_FATFINGERS, "0"))/100f);
+        } catch(NumberFormatException nfe) {}
+        if(scale > 1) {
+            int minHeight = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, base * scale, view.getResources().getDisplayMetrics());
+
+            FragmentUtil.adaptForFatFingers(nameTv, 0, scale);
+            FragmentUtil.adaptForFatFingers(raceTv, 0, scale);
+            for (TextView tv : classPickers) {
+                FragmentUtil.adaptForFatFingers(tv, 0, scale);
+            }
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_modifpicker), 0, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_str), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_str_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_str_modif), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_dex), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_dex_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_dex_modif), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_con), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_con_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_con_modif), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_int), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_int_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_int_modif), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_wis), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_wis_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_wis_modif), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_cha), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_cha_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.ability_cha_modif), minHeight, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_ini), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.initiative_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_ac), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.armorclass_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_hp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.hitpoint_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_mag), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.magicresistance_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_speed), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.speed_value), minHeight, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_ref), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_reflex_total), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_reflex), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_reflex_ability), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_for), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_fortitude_total), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_fortitude), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_fortitude_ability), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_wil), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_will_total), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_will), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.savingthrows_will_ability), minHeight, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_bab), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.base_attack_bonus_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_attack_melee), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.attack_melee_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_attack_distance), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.attack_distance_value), minHeight, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb_total), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb_bab), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb_ability), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_total), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_bab), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_ability), minHeight, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add), 0, scale);
+        }
 
         return view;
     }

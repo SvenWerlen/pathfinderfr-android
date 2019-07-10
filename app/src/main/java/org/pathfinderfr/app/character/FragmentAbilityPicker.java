@@ -1,8 +1,10 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -17,7 +19,11 @@ import android.widget.TextView;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.util.FragmentUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FragmentAbilityPicker extends DialogFragment implements View.OnClickListener {
@@ -97,6 +103,8 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        List<TextView> predefedTv = new ArrayList<>();
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_sheet_main_abilitypicker, container, false);
         FlowLayout layout = rootView.findViewById(R.id.ability_predefined);
@@ -108,6 +116,7 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
             tv.setTag("predefined" + i);
             tv.setOnClickListener(this);
             layout.addView(tv);
+            predefedTv.add(tv);
         }
         ((SeekBar)rootView.findViewById(R.id.ability_seekbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
@@ -131,6 +140,22 @@ public class FragmentAbilityPicker extends DialogFragment implements View.OnClic
 
         // initialize
         updateChosenValue(rootView, abilityValue);
+
+        // fat fingers
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(rootView.getContext());
+        int base = 32;
+        float scale = 1f;
+        try {
+            scale = (Integer.parseInt(preferences.getString(MainActivity.PREF_FATFINGERS, "0"))/100f);
+        } catch(NumberFormatException nfe) {}
+        if(scale > 1) {
+            int minHeight = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, base * scale, rootView.getResources().getDisplayMetrics());
+
+            for(TextView tv : predefedTv) {
+                FragmentUtil.adaptForFatFingers(tv, minHeight, scale);
+            }
+        }
 
         return rootView;
     }

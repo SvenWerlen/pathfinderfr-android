@@ -1,4 +1,17 @@
 <resources>
+
+    <string-array name="fatfingersTitles">
+        <item>Normal</item>
+        <item>Gros doigts</item>
+        <item>Très gros doigts</item>
+    </string-array>
+
+    <string-array name="fatfingersValues">
+        <item>0</item>
+        <item>125</item>
+        <item>150</item>
+    </string-array>
+
     <string-array name="lineHeightTitles">
         <item>Dense</item>
         <item>Aéré</item>

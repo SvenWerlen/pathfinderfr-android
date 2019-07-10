@@ -75,11 +75,14 @@ public class MainActivity extends AppCompatActivity
         FilterRaceAlternateTraitFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
-    private static final String PREF_SHOW_NAMELONG = "general_list_namelong";
+    private static final String PREF_SHOW_NAMELONG    = "general_list_namelong";
     // preference for showing disclaimer on welcome page
-    private static final String PREF_SHOW_DISCLAIMER = "general_show_disclaimer";
+    private static final String PREF_SHOW_DISCLAIMER  = "general_show_disclaimer";
     // preference for line height (in lists)
-    public final static String PREF_LINEHEIGHT = "general_lineheight";
+    public final static String PREF_LINEHEIGHT        = "general_lineheight";
+    // preference for larger clickable zones
+    public final static String PREF_FATFINGERS        = "general_fatfingers";
+
 
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";

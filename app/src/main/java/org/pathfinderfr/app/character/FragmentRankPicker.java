@@ -1,11 +1,14 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFactory;
@@ -26,6 +30,7 @@ import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -124,6 +129,8 @@ public class FragmentRankPicker extends DialogFragment implements View.OnClickLi
         TextView skillNameTv = rootView.findViewById(R.id.choose_skill_name);
         skillNameTv.setText(skillName);
 
+        List<TextView> predefedTv = new ArrayList<>();
+
         // Prepare ranks
         FlowLayout rankSelector = rootView.findViewById(R.id.skills_rank_layout);
         TextView example = rootView.findViewById(R.id.rank_predefined_example);
@@ -134,12 +141,29 @@ public class FragmentRankPicker extends DialogFragment implements View.OnClickLi
             tv.setTag("rank" + i);
             tv.setOnClickListener(this);
             rankSelector.addView(tv);
+            predefedTv.add(tv);
         }
 
         rootView.findViewById(R.id.rank_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.rank_ok).setOnClickListener(this);
 
         updateChosenRank(rank, rootView);
+
+        // fat fingers
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(rootView.getContext());
+        int base = 32;
+        float scale = 1f;
+        try {
+            scale = (Integer.parseInt(preferences.getString(MainActivity.PREF_FATFINGERS, "0"))/100f);
+        } catch(NumberFormatException nfe) {}
+        if(scale > 1) {
+            int minHeight = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, base * scale, rootView.getResources().getDisplayMetrics());
+
+            for(TextView tv : predefedTv) {
+                FragmentUtil.adaptForFatFingers(tv, minHeight, scale);
+            }
+        }
 
         return rootView;
     }
