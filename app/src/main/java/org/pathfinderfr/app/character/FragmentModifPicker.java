@@ -58,6 +58,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     private int modifIdx;
 
     private static final String[] icons = new String[] {
+            // character initiatin
+            "modif_rollingdices",
             // weapons (swords)
             "modif_plain_dagger",
             "modif_bowie_knife",

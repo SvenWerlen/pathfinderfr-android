@@ -794,11 +794,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             if(modif != null) {
                 final int resourceId = view.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable",
                         view.getContext().getPackageName());
+                iv.setTag(idx);
+                iv.setVisibility(View.VISIBLE);
                 if(resourceId > 0) {
-                    iv.setTag(idx);
                     iv.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
                     iv.setImageResource(resourceId);
-                    iv.setVisibility(View.VISIBLE);
                 }
             } else {
                 iv.setVisibility(View.GONE);
@@ -1332,7 +1332,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onAbilityValueChosen(int str, int dex, int con, int intel, int wis, int cha) {
+    public void onAbilityValueChosen(int str, int dex, int con, int intel, int wis, int cha,
+                                     int strR, int dexR, int conR, int intR, int wisR, int chaR) {
         character.setStrength(str);
         character.setDexterity(dex);
         character.setConstitution(con);
@@ -1340,6 +1341,32 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         character.setWisdom(wis);
         character.setCharisma(cha);
 
+        if(strR != 0 || dexR != 0 || conR != 0 || intR != 0 || wisR != 0 || chaR != 0) {
+            List<Pair<Integer,Integer>> modifs = new ArrayList<>();
+            if(strR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_STR, strR));
+            }
+            if(dexR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_DEX, dexR));
+            }
+            if(conR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_CON, conR));
+            }
+            if(intR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_INT, intR));
+            }
+            if(wisR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_WIS, wisR));
+            }
+            if(chaR != 0) {
+                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_CHA, chaR));
+            }
+            String modifLabel = ConfigurationUtil.getInstance(getView().getContext()).getProperties().getProperty("ability.calc.modifs.title");
+            character.addModif(new Character.CharacterModif(modifLabel, modifs, "rollingdices", true));
+        }
+
+        // update modifs
+        updateModifsPickers(getView());
         // update stats
         updateSheet(getView());
         // store changes

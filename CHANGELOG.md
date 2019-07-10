@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Add to character doesn't require pin when viewing details from character sheet
+- New option for fat fingers (increase clickable UIs)
+- Ability Score Calculator generates a "modif" for racial bonus
 ### Fixed
 - Racial alternate traits not exported/imported
 

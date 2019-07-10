@@ -364,7 +364,9 @@ public class FragmentAbilityCalc extends DialogFragment implements View.OnClickL
             return;
         } else if(v.getId() == R.id.sheet_calc_ok) {
             if(mListener != null) {
-                mListener.onAbilityValueChosen(ability_str, ability_dex, ability_con, ability_int, ability_wis, ability_cha);
+                mListener.onAbilityValueChosen(
+                        ability_str, ability_dex, ability_con, ability_int, ability_wis, ability_cha,
+                        race_str, race_dex, race_con, race_int, race_wis, race_cha);
             }
             dismiss();
             return;
@@ -450,7 +452,9 @@ public class FragmentAbilityCalc extends DialogFragment implements View.OnClickL
     }
 
     public interface OnFragmentInteractionListener {
-        void onAbilityValueChosen(int str, int dex, int con, int intel, int wis, int cha);
+        void onAbilityValueChosen(
+                int str, int dex, int con, int intel, int wis, int cha,
+                int strRace, int dexRace, int conRace, int intRace, int wisRace, int chaRace);
     }
 
     @Override
