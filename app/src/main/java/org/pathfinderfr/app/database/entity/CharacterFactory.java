@@ -425,6 +425,7 @@ public class CharacterFactory extends DBEntityFactory {
         }
         Set<Long> featIds = new HashSet<>();
         Map<Long,Integer> classes = new HashMap<>();
+        Set<Long> archetypes = new HashSet<>();
         try {
             for(int i = 0; i < feats.length; i++) {
                 featIds.add(Long.parseLong(feats[i]));
@@ -432,13 +433,18 @@ public class CharacterFactory extends DBEntityFactory {
             for(int i = 0; i < c.getClassesCount(); i++) {
                 Triplet<Class,ClassArchetype,Integer> level = c.getClass(i);
                 classes.put(level.first.getId(), level.third);
+                if(level.second != null) {
+                    archetypes.add(level.second.getId());
+                }
             }
             // retrieve all class features from DB
             List<DBEntity> list = DBHelper.getInstance(null).getAllEntities(ClassFeatureFactory.getInstance());
             for(DBEntity e : list) {
                 ClassFeature cFeat = (ClassFeature) e;
-                // add all automatic class features matching level
-                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_().getId()) && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
+                // add all automatic class features matching level and archetype
+                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_().getId())
+                        && (cFeat.getClassArchetype() == null || archetypes.contains(cFeat.getClassArchetype().getId()))
+                        && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
                     c.addClassFeature((ClassFeature) e);
                 }
                 // add all added class features (even if not matching class)
