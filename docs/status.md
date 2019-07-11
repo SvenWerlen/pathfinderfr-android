@@ -95,7 +95,7 @@
 | Inquisiteur (archétypes)     | ok     |
 |                              |        |
 | Oracle (mystères)            | -      |
-| Oracle (malédictions)        | -      |
+| Oracle (malédictions)        | ok     |
 | Oracle (sorts)               | ok     |
 | Oracle (archétypes)          | ok     |
 |                              |        |
