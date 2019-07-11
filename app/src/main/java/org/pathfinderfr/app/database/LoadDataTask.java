@@ -1,4 +1,4 @@
-package org.pathfinderfr.app.data;
+package org.pathfinderfr.app.database;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -7,7 +7,6 @@ import android.util.Pair;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 import org.pathfinderfr.app.LoadDataActivity;
-import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;

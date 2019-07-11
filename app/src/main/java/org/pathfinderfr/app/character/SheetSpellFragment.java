@@ -28,6 +28,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
@@ -41,6 +42,7 @@ import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellTable;
 import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -110,7 +112,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
      */
     private static int generateTableRows(
             List<SpellTable.SpellAndClass> spells,
-            List<Pair<Class,Integer>> spellClasses,
+            List<Triplet<Class, ClassArchetype,Integer>> spellClasses,
             Set<Long> favorites,
             Context ctx,
             int startIdx,
@@ -218,12 +220,12 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         // fetch spells
         final DBHelper dbHelper = DBHelper.getInstance(view.getContext());
         List<Spell> spells = new ArrayList<>();
-        List<Pair<Class,Integer>> spellClasses = new ArrayList<>();
+        List<Triplet<Class,ClassArchetype,Integer>> spellClasses = new ArrayList<>();
         for(int i=0; i<character.getClassesCount(); i++) {
             SpellFilter filter = new SpellFilter(null);
-            Pair<Class,Integer> classLvl = character.getClass(i);
+            Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
             filter.addFilterClass(classLvl.first.getId());
-            Class.Level lvl = classLvl.first.getLevel(classLvl.second);
+            Class.Level lvl = classLvl.first.getLevel(classLvl.third);
             if(lvl != null && lvl.getMaxSpellLvl() > 0) {
                 filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
                 spellClasses.add(classLvl);
@@ -248,8 +250,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             TextView levelTv = FragmentUtil.copyExampleTextFragment(exampleLevel);
             // list of classes that can have spell at that level
             List<Class> classForThatLevel = new ArrayList<>();
-            for(Pair<Class,Integer> pair : spellClasses) {
-                Class.Level lvl = pair.first.getLevel(pair.second);
+            for(Triplet<Class, ClassArchetype,Integer> pair : spellClasses) {
+                Class.Level lvl = pair.first.getLevel(pair.third);
                 if(level.getLevel() == 0 || (lvl != null && level.getLevel() <= lvl.getMaxSpellLvl())) {
                     classForThatLevel.add(pair.first);
                 }
@@ -257,7 +259,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
 
             if(classForThatLevel.size() > 1) {
                 StringBuffer buf = new StringBuffer();
-                for(Pair<Class, Integer> pair : spellClasses) {
+                for(Triplet<Class, ClassArchetype,Integer> pair : spellClasses) {
                     buf.append(pair.first.getShortName()).append("/");
                 }
                 buf.deleteCharAt(buf.length()-1);

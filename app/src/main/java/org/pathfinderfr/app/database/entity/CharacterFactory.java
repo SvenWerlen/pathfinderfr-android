@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,9 +171,13 @@ public class CharacterFactory extends DBEntityFactory {
         if(c.getClassesCount() > 0) {
             StringBuffer value = new StringBuffer();
             for(int i=0; i<c.getClassesCount(); i++) {
-                value.append(c.getClass(i).first.id).append(':');
-                value.append(c.getClass(i).first.name).append(':');
-                value.append(c.getClass(i).second);
+                Triplet<Class, ClassArchetype, Integer> cl = c.getClass(i);
+                value.append(cl.first.id).append(':');
+                value.append(cl.first.name).append(':');
+                value.append(cl.third).append(':');
+                if(cl.second != null) {
+                    value.append(c.getClass(i).second.id);
+                }
                 if(i+1 != c.getClassesCount()) {
                     value.append('#');
                 }
@@ -339,24 +344,31 @@ public class CharacterFactory extends DBEntityFactory {
             String[] classes = classesValue.split("#");
             for(String cl : classes) {
                 String[] clDetails = cl.split(":");
-                if(clDetails != null && clDetails.length == 3) {
+                if(clDetails != null && clDetails.length >= 3) {
                     try {
                         long classId = Long.parseLong(clDetails[0]);
                         String className = clDetails[1];
                         int level = Integer.parseInt(clDetails[2]);
-                        Class clEntity = (Class) DBHelper.getInstance(null).fetchEntity(classId, ClassFactory.getInstance());
-                        // class found
-                        if(clEntity != null && clEntity.getName().equals(className)) {
-                            c.addOrSetClass(clEntity, level);
+                        long archetypeId = 0;
+                        String archetypeName = null;
+                        // archetype was added later
+                        if(clDetails.length==4) {
+                            archetypeId = Long.parseLong(clDetails[3]);
                         }
+
+                        Class clEntity = (Class) DBHelper.getInstance(null).fetchEntity(classId, ClassFactory.getInstance());
+                        ClassArchetype archEntity = archetypeId == 0 ? null : (ClassArchetype) DBHelper.getInstance(null).fetchEntity(archetypeId, ClassArchetypesFactory.getInstance());
+
                         // class not found => search by name
-                        else {
+                        if(clEntity == null) {
                             Log.w(CharacterFactory.class.getSimpleName(), "Couldn't find class by id: " + cl);
                             clEntity = (Class) DBHelper.getInstance(null).fetchEntityByName(className, ClassFactory.getInstance());
-                            if(clEntity != null) {
-                                c.addOrSetClass(clEntity, level);
-                            }
                         }
+
+                        if(clEntity != null) {
+                            c.addOrSetClass(clEntity, archEntity, level);
+                        }
+
                     } catch(NumberFormatException nfe) {
                         Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + cl + "' is invalid (NFE)!");
                     }
@@ -418,8 +430,8 @@ public class CharacterFactory extends DBEntityFactory {
                 featIds.add(Long.parseLong(feats[i]));
             }
             for(int i = 0; i < c.getClassesCount(); i++) {
-                Pair<Class,Integer> level = c.getClass(i);
-                classes.put(level.first.getId(), level.second);
+                Triplet<Class,ClassArchetype,Integer> level = c.getClass(i);
+                classes.put(level.first.getId(), level.third);
             }
             // retrieve all class features from DB
             List<DBEntity> list = DBHelper.getInstance(null).getAllEntities(ClassFeatureFactory.getInstance());

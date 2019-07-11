@@ -1,6 +1,7 @@
 package org.pathfinderfr.app.util;
 
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.Spell;
 
 import java.util.ArrayList;
@@ -34,17 +35,17 @@ public class SpellUtil {
      * @return the classes and level for which the spell is available
      * Ex: if classes = {Bar, Mag} and spell is available for "Bar 2, Mag 1", the result will be {(Mag,1),(Bar,2)}
      */
-    public static List<Pair<String,Integer>> getLevel(List<Pair<Class,Integer>> classes, Spell spell) {
+    public static List<Pair<String,Integer>> getLevel(List<Triplet<Class, ClassArchetype,Integer>> classes, Spell spell) {
         List<Pair<String,Integer>> levels = cleanClasses(spell.getLevel());
         List<Pair<String,Integer>> matches = new ArrayList<>();
 
         // find lowest level for given classes
         for(Pair<String,Integer> pair : levels) {
-            for(Pair<Class,Integer> cl : classes) {
+            for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
                 // matching class
                 if(cl.first.getShortName().equals(pair.first)) {
                     // matching level
-                    Class.Level level = cl.first.getLevel(cl.second);
+                    Class.Level level = cl.first.getLevel(cl.third);
                     if(level != null && level.getMaxSpellLvl() >= pair.second) {
                         matches.add(pair);
                     }

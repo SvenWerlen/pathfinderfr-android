@@ -17,6 +17,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
 
     private static final String TABLENAME         = "classfeatures";
     private static final String COLUMN_CLASS      = "class";
+    private static final String COLUMN_ARCHETYPE  = "archetype";
     private static final String COLUMN_CONDITIONS = "conditions";
     private static final String COLUMN_AUTOMATIC  = "auto";
     private static final String COLUMN_LEVEL      = "level";
@@ -26,6 +27,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_SOURCE       = "Source";
     private static final String YAML_CLASS        = "Classe";
+    private static final String YAML_ARCHETYPE    = "Archétype";
     private static final String YAML_CONDITIONS   = "Conditions";
     private static final String YAML_AUTO         = "Auto";
     private static final String YAML_LEVEL        = "Niveau";
@@ -34,10 +36,14 @@ public class ClassFeatureFactory extends DBEntityFactory {
 
     private Map<Long, Class> classesById;
     private Map<String, Class> classesByName;
+    private Map<Long, ClassArchetype> archetypesById;
+    private Map<String, ClassArchetype> archetypesByName;
 
     private ClassFeatureFactory() {
         classesById = new HashMap<>();
         classesByName = new HashMap<>();
+        archetypesById = new HashMap<>();
+        archetypesByName = new HashMap<>();
     }
 
     /**
@@ -74,6 +80,30 @@ public class ClassFeatureFactory extends DBEntityFactory {
         return classesById.get(id);
     }
 
+    private synchronized ClassArchetype getArchetype(String name) {
+        if(archetypesByName.size() == 0) {
+            archetypesById.clear();
+            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
+            for(DBEntity e : fullList) {
+                archetypesById.put(e.getId(), (ClassArchetype)e);
+                archetypesByName.put(e.getName(), (ClassArchetype)e);
+            }
+        }
+        return archetypesByName.get(name);
+    }
+
+    private synchronized ClassArchetype getArchetype(long id) {
+        if(archetypesById.size() == 0) {
+            archetypesByName.clear();
+            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
+            for(DBEntity e : fullList) {
+                archetypesById.put(e.getId(), (ClassArchetype)e);
+                archetypesByName.put(e.getName(), (ClassArchetype)e);
+            }
+        }
+        return archetypesById.get(id);
+    }
+
     @Override
     public String getFactoryId() {
         return FACTORY_ID;
@@ -89,12 +119,19 @@ public class ClassFeatureFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
-                        "%s integer, %s text, %s integer, %s integer" +
+                        "%s integer, %s integer, %s text, %s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
-                COLUMN_CLASS, COLUMN_CONDITIONS, COLUMN_LEVEL, COLUMN_AUTOMATIC);
+                COLUMN_CLASS, COLUMN_ARCHETYPE, COLUMN_CONDITIONS, COLUMN_LEVEL, COLUMN_AUTOMATIC);
         return query;
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v15 to v16
+     */
+    public String getQueryUpgradeV16() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_ARCHETYPE);
     }
 
     /**
@@ -107,8 +144,8 @@ public class ClassFeatureFactory extends DBEntityFactory {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
             filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
         }
-        return String.format("SELECT %s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_CLASS, COLUMN_LEVEL, COLUMN_AUTOMATIC, getTableName(), filters, COLUMN_NAME);
+        return String.format("SELECT %s,%s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_CLASS, COLUMN_ARCHETYPE, COLUMN_LEVEL, COLUMN_AUTOMATIC, getTableName(), filters, COLUMN_NAME);
     }
 
 
@@ -124,6 +161,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         contentValues.put(ClassFeatureFactory.COLUMN_REFERENCE, classFeature.getReference());
         contentValues.put(ClassFeatureFactory.COLUMN_SOURCE, classFeature.getSource());
         contentValues.put(ClassFeatureFactory.COLUMN_CLASS, classFeature.getClass_().getId());
+        contentValues.put(ClassFeatureFactory.COLUMN_ARCHETYPE, (classFeature.getClassArchetype() == null ? null : classFeature.getClassArchetype().getId()));
         contentValues.put(ClassFeatureFactory.COLUMN_CONDITIONS, classFeature.getConditions());
         contentValues.put(ClassFeatureFactory.COLUMN_LEVEL, classFeature.getLevel());
         contentValues.put(ClassFeatureFactory.COLUMN_AUTOMATIC, classFeature.isAuto() ? 1 : 0);
@@ -141,6 +179,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         classFeature.setReference(extractValue(resource, ClassFeatureFactory.COLUMN_REFERENCE));
         classFeature.setSource(extractValue(resource, ClassFeatureFactory.COLUMN_SOURCE));
         classFeature.setClass(getClass(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_CLASS)));
+        classFeature.setClassArchetype(getArchetype(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_ARCHETYPE)));
         classFeature.setConditions(extractValue(resource, ClassFeatureFactory.COLUMN_CONDITIONS));
         classFeature.setLevel(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_LEVEL));
         classFeature.setAuto(extractValueAsBoolean(resource, ClassFeatureFactory.COLUMN_AUTOMATIC));
@@ -155,9 +194,10 @@ public class ClassFeatureFactory extends DBEntityFactory {
         classFeature.setReference((String)attributes.get(YAML_REFERENCE));
         classFeature.setSource((String)attributes.get(YAML_SOURCE));
         classFeature.setClass(getClass((String)attributes.get(YAML_CLASS)));
+        classFeature.setClassArchetype(getArchetype((String)attributes.get(YAML_ARCHETYPE)));
         classFeature.setConditions((String)attributes.get(YAML_CONDITIONS));
         classFeature.setLevel(Integer.parseInt((String)attributes.get(YAML_LEVEL)));
-        classFeature.setAuto("True".equals((String)attributes.get(YAML_AUTO)));
+        classFeature.setAuto("True".equalsIgnoreCase((String)attributes.get(YAML_AUTO)));
         return classFeature.isValid() ? classFeature : null;
     }
 
@@ -172,6 +212,9 @@ public class ClassFeatureFactory extends DBEntityFactory {
         StringBuffer buf = new StringBuffer();
         String source = classFeature.getSource() == null ? null : getTranslatedText("source." + classFeature.getSource().toLowerCase());
         buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_().getName()));
+        if(classFeature.getClassArchetype() != null) {
+            buf.append(generateItemDetail(templateItem, YAML_ARCHETYPE, classFeature.getClassArchetype().getName()));
+        }
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, classFeature.getConditions()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, String.valueOf(classFeature.getLevel())));

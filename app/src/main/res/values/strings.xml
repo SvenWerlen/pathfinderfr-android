@@ -237,7 +237,9 @@
     <string name="sheet_class_example_name">Nom de la classe</string>
     <string name="sheet_class_example_details">Détails de la classe</string>
     <string name="sheet_click_to_add">Ajouter</string>
-    <string name="sheet_class_select">Sélectionner le niveau:</string>
+    <string name="sheet_class_archetype_select">Archétype:</string>
+    <string name="sheet_class_archetype_value">classe de base</string>
+    <string name="sheet_class_select">Niveau:</string>
     <string name="sheet_class_level_value">1</string>
 
     <!-- Character modifications -->
@@ -453,5 +455,10 @@
     <string name="importcharacter_error_format">Le contenu n\'a pas un format YAML valide.</string>
     <string name="importcharacter_filecontent">Contenu du fichier:</string>
 
+    <!-- Strings related to archetypes -->
+    <string name="archetypes_cannot_choose">L\'archétype ne peut être changé! Il est choisi à la création.</string>
+    <string name="sheet_archetype_example_name">Nom de l\'archétype</string>
+    <string name="sheet_archetype_example_details">Détails d\'archétype</string>
+    <string name="archetype_cancel">De base</string>
 </resources>
 

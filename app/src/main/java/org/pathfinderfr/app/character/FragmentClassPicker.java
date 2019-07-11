@@ -1,9 +1,13 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
@@ -19,11 +23,17 @@ import android.widget.TextView;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.ItemDetailActivity;
+import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
+import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
@@ -34,20 +44,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FragmentClassPicker extends DialogFragment implements View.OnClickListener {
+public class FragmentClassPicker extends DialogFragment implements View.OnClickListener, FragmentClassArchetypePicker.OnFragmentInteractionListener {
 
-    public static final String ARG_CLASS_ID       = "class_id";
-    public static final String ARG_CLASS_LVL      = "class_lvl";
-    public static final String ARG_CLASS_MAX_LVL  = "class_max_lvl";
-    public static final String ARG_CLASS_EXCL     = "class_excl";
+    public static final String ARG_SELECTED        = "selected";
+    public static final String ARG_CLASS_ID        = "class_id";
+    public static final String ARG_ARCHETYPE_ID    = "archetype_id";
+    public static final String ARG_CLASS_LVL       = "class_lvl";
+    public static final String ARG_CLASS_MAX_LVL   = "class_max_lvl";
+    public static final String ARG_CLASS_EXCL      = "class_excl";
 
+    private static final String DIALOG_ARCHETYPE  = "dial_archetype";
 
     private FragmentClassPicker.OnFragmentInteractionListener mListener;
 
-    private long classId;    // selected Class
-    private int level;       // selected Level
-    private long[] excluded; // excluded classes (already chosen!)
-    private int maxLevel;    // max level (could be less < 20 if other classes selected)
+    private boolean selected; // class has been selected (edit mode for levels)
+    private long classId;     // selected Class
+    private long archetypeId; // selected Archetype
+    private int level;        // selected Level
+    private long[] excluded;  // excluded classes (already chosen!)
+    private int maxLevel;     // max level (could be less < 20 if other classes selected)
 
     private TextView selectedName;  // TextView (name) currently selected
     private TextView selectedDescr; // TextView (description) currently selected
@@ -57,6 +72,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
 
     public FragmentClassPicker() {
         // Required empty public constructor
+        selected = false;
         levels = new ArrayList<>();
     }
 
@@ -83,7 +99,14 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         level = 1;
 
         if (getArguments() != null && getArguments().containsKey(ARG_CLASS_ID)) {
+            selected = true;
             classId = getArguments().getLong(ARG_CLASS_ID);
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_ARCHETYPE_ID)) {
+            archetypeId = getArguments().getLong(ARG_ARCHETYPE_ID);
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_SELECTED)) {
+            selected = getArguments().getBoolean(ARG_SELECTED);
         }
         if (getArguments() != null && getArguments().containsKey(ARG_CLASS_LVL)) {
             level = getArguments().getInt(ARG_CLASS_LVL);
@@ -101,6 +124,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         // restore values that were selected
         if(savedInstanceState != null) {
             classId = savedInstanceState.getLong(ARG_CLASS_ID, classId);
+            archetypeId = savedInstanceState.getLong(ARG_ARCHETYPE_ID, archetypeId);
             level = savedInstanceState.getInt(ARG_CLASS_LVL, level);
         }
 
@@ -125,6 +149,9 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         if(selectedDescr != null && descr != null) {
             selectedDescr.setVisibility(View.GONE);
         }
+        // show additional selection
+        rootView.findViewById(R.id.archetype_layout).setVisibility(View.VISIBLE);
+        rootView.findViewById(R.id.level_layout).setVisibility(View.VISIBLE);
 
         // new selection
         selectedName = name == null ? selectedName : name;
@@ -177,6 +204,19 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         });
     }
 
+    /**
+     * Updates the fragment when archetype is selected
+     */
+    private void updateChosenArchetype(View rootView) {
+        TextView tv = rootView.findViewById(R.id.class_archetype);
+        if(archetypeId == 0) {
+            tv.setText(R.string.sheet_class_archetype_value);
+        } else {
+            DBEntity arch = DBHelper.getInstance(getContext()).fetchEntity(archetypeId, ClassArchetypesFactory.getInstance());
+            tv.setText(arch.getName());
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -205,6 +245,11 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
         List<DBEntity> entities =
                 DBHelper.getInstance(rootView.getContext()).getAllEntitiesWithAllFields(ClassFactory.getInstance(), PreferenceUtil.getSources(rootView.getContext()));
 
+        if(this.classId == 0) {
+            rootView.findViewById(R.id.archetype_layout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.level_layout).setVisibility(View.GONE);
+        }
+
         for(DBEntity e : entities) {
             Class cl = (Class)e;
             // skip excluded classes
@@ -212,7 +257,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
                 continue;
             }
             // skip non-selected classes (if any)
-            if(classId > 0 && cl.getId() != classId) {
+            if(selected && classId > 0 && cl.getId() != classId) {
                 continue;
             }
 
@@ -233,25 +278,30 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             // selected if matching
             if(this.classId > 0 && classId == this.classId) {
                 updateChosenClass(className, classDescr, level, rootView);
+                updateChosenArchetype(rootView);
             }
 
-            // class selected
-            className.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    updateChosenClass(className, classDescr, level, getView());
-                }
-            });
+            // react to selection
+            if(!selected) {
+                // class selected
+                className.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateChosenClass(className, classDescr, level, getView());
+                    }
+                });
 
-            // collapse class description
-            classDescr.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    classDescr.setVisibility(View.GONE);
-                }
-            });
+                // collapse class description
+                classDescr.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        classDescr.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
 
+        rootView.findViewById(R.id.class_archetype).setOnClickListener(this);
         rootView.findViewById(R.id.class_delete).setOnClickListener(this);
         rootView.findViewById(R.id.class_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.class_ok).setOnClickListener(this);
@@ -260,6 +310,15 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             rootView.findViewById(R.id.class_level_layout).setVisibility(View.GONE);
             rootView.findViewById(R.id.class_ok).setVisibility(View.GONE);
             rootView.findViewById(R.id.class_delete).setVisibility(View.GONE);
+        }
+
+        // reset listeners for opened dialogs
+        if (savedInstanceState != null) {
+            FragmentClassArchetypePicker fragArchetype = (FragmentClassArchetypePicker) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_ARCHETYPE);
+            if (fragArchetype != null) {
+                fragArchetype.setListener(this);
+            }
         }
 
         return rootView;
@@ -288,7 +347,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
                 return;
             }
             if(mListener != null) {
-                mListener.onClassChosen(classId, level);
+                mListener.onClassChosen(classId, archetypeId, level);
             }
             dismiss();
             return;
@@ -302,22 +361,56 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             }
             dismiss();
             return;
+        } else if(v.getId() == R.id.class_archetype) {
+            if(selected) {
+                Snackbar.make(v.getRootView().findViewById(android.R.id.content),
+                        getResources().getString(R.string.archetypes_cannot_choose), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else if(classId > 0){
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_ARCHETYPE);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentClassArchetypePicker.newInstance(FragmentClassPicker.this);
+                Bundle arguments = new Bundle();
+                arguments.putLong(FragmentClassArchetypePicker.ARG_CLASS_ID, classId);
+                //arguments.putLong(FragmentClassArchetypePicker.ARG_ARCHETYPE_ID, text);
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_ARCHETYPE);
+            }
+            return;
         } else if(v instanceof TextView && v.getTag() != null && v.getTag().toString().startsWith("level")) {
             int level = Integer.valueOf(v.getTag().toString().substring("level".length()));
             updateChosenClass(null, null, level, getView());
         }
     }
 
+    @Override
+    public void onArchetypeChosen(long archetypeId) {
+        this.archetypeId = archetypeId;
+        updateChosenArchetype(getView());
+    }
+
+    @Override
+    public void onArchetypeDeleted() {
+        this.archetypeId = 0;
+        updateChosenArchetype(getView());
+    }
+
     public interface OnFragmentInteractionListener {
         void onClassDeleted(long classId);
-        void onClassChosen(long classId, int level);
+        void onClassChosen(long classId, long archetypeId, int level);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // store currently selected values
+        outState.putBoolean(ARG_SELECTED, selected);
         outState.putLong(ARG_CLASS_ID, classId);
+        outState.putLong(ARG_ARCHETYPE_ID, archetypeId);
         outState.putInt(ARG_CLASS_LVL, level);
     }
 }

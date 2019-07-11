@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HACK to force fill the screen (minHeight, minWidth) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:minHeight="1000dp"
+    android:minWidth="1000dp"
+    android:padding="10dp">
+
+    <ScrollView
+        android:id="@+id/choose_archetype_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/choose_archetype_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/choose_archetype_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/sheet_archetype_example_name" />
+
+            <TextView
+                android:id="@+id/choose_archetype_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_archetype_example_details"
+                android:maxWidth="300dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/archetype_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/archetype_cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/archetype_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_race_value"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

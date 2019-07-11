@@ -45,6 +45,41 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/archetype_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginTop="2dp"
+            android:height="2dp"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"
+            android:text="@string/sheet_class_archetype_select" />
+
+        <TextView
+            android:id="@+id/class_archetype"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/sheet_class_archetype_value" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/level_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -54,6 +89,7 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="@string/sheet_class_select" />
 
         <com.wefika.flowlayout.FlowLayout
@@ -71,11 +107,11 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/text_box"
                 android:padding="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginBottom="4dp"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
         </com.wefika.flowlayout.FlowLayout>

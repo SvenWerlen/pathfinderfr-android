@@ -13,15 +13,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.data.LoadDataTask;
-import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.LoadDataTask;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
-import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
@@ -31,11 +29,9 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
-import java.util.Map;
-
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/master";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/Archtypes";
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     private LoadDataTask loadTaskInProgress;
@@ -66,6 +62,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     loadTaskInProgress.execute(
                             new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
                             new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
+                            new Pair(SOURCE + "/data/class-archetypes.yml", ClassArchetypesFactory.getInstance()),
                             new Pair(SOURCE + "/data/races-traits-alternatifs.yml", RaceAlternateTraitFactory.getInstance()),
                             new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
                             new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),

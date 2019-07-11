@@ -10,6 +10,8 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
@@ -185,6 +187,13 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 15;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 15");
         }
+        // version 16 introduced new table for archetypes and new column on classfeatures for archetypes
+        if(oldVersion == 15) {
+            db.execSQL(ClassArchetypesFactory.getInstance().getQueryCreateTable());
+            db.execSQL(ClassFeatureFactory.getInstance().getQueryUpgradeV16());
+            oldVersion = 16;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 16");
+        }
     }
 
     /**
@@ -323,6 +332,27 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         res.moveToFirst();
         return factory.generateEntity(res);
+    }
+
+    /**
+     * @param name entity name to be searched
+     * @param factory factory corresponding to the element (skill, feet, spell, etc.)
+     * @return the entity as object (or null if not found)
+     */
+    public List<DBEntity> fetchAllEntitiesByName(String name, DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
+        // not found?
+        if(res.getCount()<1) {
+            return null;
+        }
+        res.moveToFirst();
+        List<DBEntity> list = new ArrayList<>();
+        while (res.isAfterLast() == false) {
+            list.add(factory.generateEntity(res));
+            res.moveToNext();
+        }
+        return list;
     }
 
 

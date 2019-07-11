@@ -40,6 +40,8 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
@@ -50,6 +52,7 @@ import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -386,10 +389,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
                     }
                 }
                 act.showTooltip(babTooltipTitle,String.format(
@@ -413,10 +416,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
                     }
                 }
                 act.showTooltip(babTooltipTitle,String.format(
@@ -437,10 +440,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.second, lvl.getBaseAttackBonusAsString() ));
+                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
                     }
                 }
                 act.showTooltip(babTooltipTitle,String.format(
@@ -511,10 +514,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getFortitudeBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getFortitudeBonus()));
                     }
                 }
                 act.showTooltip(
@@ -537,10 +540,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getReflexBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getReflexBonus()));
                     }
                 }
                 act.showTooltip(
@@ -563,10 +566,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) {
                 StringBuffer text = new StringBuffer();
                 for(int i=0; i<character.getClassesCount(); i++) {
-                    Pair<Class,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.second);
+                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                    Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.second, lvl.getWillBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getWillBonus()));
                     }
                 }
                 act.showTooltip(
@@ -757,9 +760,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         int idx = 0;
         int maxLevel = 20 - character.getOtherClassesLevel(-1);
         for(TextView tv : classPickers) {
-            Pair<Class,Integer> cl = character.getClass(idx);
+            Triplet<Class, ClassArchetype,Integer> cl = character.getClass(idx);
             if(cl != null) {
-                tv.setText(cl.first.getName() + " " + cl.second);
+                tv.setText(cl.first.getName() + " " + cl.third);
                 tv.setVisibility(View.VISIBLE);
             } else if(idx == character.getClassesCount() && maxLevel > 0) {
                 tv.setText(reference.getText());
@@ -1067,7 +1070,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     Log.w(SheetMainFragment.class.getSimpleName(), "Class picker couldn't be found!!");
                     return;
                 }
-                Pair<Class,Integer> curClass = parent.character.getClass(idx);
+                Triplet<Class, ClassArchetype,Integer> curClass = parent.character.getClass(idx);
 
                 // prepare parameters
                 long[] excluded = parent.character.getOtherClassesIds(curClass == null ? -1 : curClass.first.getId());
@@ -1076,7 +1079,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 Bundle arguments = new Bundle();
                 if(curClass != null) {
                     arguments.putLong(FragmentClassPicker.ARG_CLASS_ID, curClass.first.getId());
-                    arguments.putInt(FragmentClassPicker.ARG_CLASS_LVL, curClass.second);
+                    if(curClass.second != null) {
+                        arguments.putLong(FragmentClassPicker.ARG_ARCHETYPE_ID, curClass.second.getId());
+                    }
+                    arguments.putInt(FragmentClassPicker.ARG_CLASS_LVL, curClass.third);
                 }
                 arguments.putLongArray(FragmentClassPicker.ARG_CLASS_EXCL, excluded);
                 arguments.putInt(FragmentClassPicker.ARG_CLASS_MAX_LVL, maxLevel);
@@ -1419,10 +1425,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onClassChosen(long classId, int level) {
+    public void onClassChosen(long classId, long archetypeId, int level) {
         Class cl = (Class)DBHelper.getInstance(getContext()).fetchEntity(classId, ClassFactory.getInstance());
+        ClassArchetype arch = null;
+        if(archetypeId > 0) {
+            arch = (ClassArchetype) DBHelper.getInstance(getContext()).fetchEntity(archetypeId, ClassArchetypesFactory.getInstance());
+        }
         if(cl != null) {
-            character.addOrSetClass(cl, level);
+            character.addOrSetClass(cl, arch, level);
             updateClassPickers(getView());
         }
         // store changes

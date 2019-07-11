@@ -3,6 +3,7 @@ package org.pathfinderfr.app.util;
 import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.Spell;
 
 import java.text.Collator;
@@ -26,9 +27,9 @@ import java.util.Set;
  *      ...
  */
 public class SpellTable {
-    private List<Pair<Class,Integer>> classLevels;
+    private List<Triplet<Class,ClassArchetype,Integer>> classLevels;
     private Map<Integer, SpellLevel> levels;
-    public SpellTable(List<Pair<Class,Integer>> classLevels) {
+    public SpellTable(List<Triplet<Class, ClassArchetype,Integer>> classLevels) {
         this.classLevels = classLevels;
         levels = new HashMap<>();
     }

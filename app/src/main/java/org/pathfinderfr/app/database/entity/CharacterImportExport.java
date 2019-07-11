@@ -28,6 +28,7 @@ public class CharacterImportExport {
     private static final String YAML_HP            = "PointsVie";
     private static final String YAML_SPEED         = "Vitesse";
     private static final String YAML_CLASSES       = "Classes";
+    private static final String YAML_ARCHETYPE     = "Archetype";
     private static final String YAML_LEVEL         = "Niveau";
     private static final String YAML_TRAITS        = "TraitsAlternatifs";
     private static final String YAML_ABILITIES     = "Caracs";
@@ -90,7 +91,8 @@ public class CharacterImportExport {
         for(int idx = 0; idx < c.getClassesCount(); idx++) {
             Map<String, Object> cl = new LinkedHashMap();
             cl.put(YAML_NAME, c.getClass(idx).first.getName());
-            cl.put(YAML_LEVEL, c.getClass(idx).second);
+            cl.put(YAML_ARCHETYPE, c.getClass(idx).second.getName());
+            cl.put(YAML_LEVEL, c.getClass(idx).third);
             classes.add(cl);
         }
         data.put(YAML_CLASSES, classes);
@@ -248,10 +250,22 @@ public class CharacterImportExport {
                             Map<String, Object> values = (Map<String, Object>) cl;
                             if (values.containsKey(YAML_NAME) && values.containsKey(YAML_LEVEL)) {
                                 Class class_ = (Class) dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), ClassFactory.getInstance());
+                                ClassArchetype arch = null;
+                                if(values.containsKey(YAML_ARCHETYPE)) {
+                                    List<DBEntity> list = dbHelper.fetchAllEntitiesByName(values.get(YAML_ARCHETYPE).toString(), ClassArchetypesFactory.getInstance());
+                                    for(DBEntity e : list) {
+                                        ClassArchetype a = (ClassArchetype)e;
+                                        if(a.getClass_().getId() == class_.getId()) {
+                                            arch = a;
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 if (class_ == null) {
                                     errors.add(ERROR_CLASS_NOMATCH);
                                 } else {
-                                    c.addOrSetClass(class_, Integer.parseInt(values.get(YAML_LEVEL).toString()));
+                                    c.addOrSetClass(class_, arch, Integer.parseInt(values.get(YAML_LEVEL).toString()));
                                 }
                             }
                         }

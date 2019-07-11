@@ -5,6 +5,7 @@ import android.util.Log;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class Character extends DBEntity {
     // character-specific
     int[] abilities;
     Race race;
-    List<Pair<Class,Integer>> classes;
+    List<Triplet<Class,ClassArchetype,Integer>> classes;
     Map<Long,Integer> skills;
     List<Feat> feats;
     List<ClassFeature> features;
@@ -137,8 +138,8 @@ public class Character extends DBEntity {
         String race = getRace() == null ? "?" : getRace().getName();
         StringBuffer classes = new StringBuffer();
         for(int i = 0; i < getClassesCount(); i++) {
-            Pair<Class, Integer> cl = getClass(i);
-            classes.append(", ").append(cl.first.getShortName()).append(" ").append(cl.second);
+            Triplet<Class,ClassArchetype,Integer> cl = getClass(i);
+            classes.append(", ").append(cl.first.getShortName()).append(" ").append(cl.third);
         }
         return name + " (" + race + classes.toString() + ")";
     }
@@ -249,7 +250,7 @@ public class Character extends DBEntity {
         this.race = race;
     }
 
-    public Pair<Class,Integer> getClass(int idx) {
+    public Triplet<Class,ClassArchetype,Integer> getClass(int idx) {
         if(idx >= classes.size()) {
             return null;
         }
@@ -261,8 +262,8 @@ public class Character extends DBEntity {
             return "-";
         }
         StringBuffer buf = new StringBuffer();
-        for(Pair<Class,Integer> cl : classes) {
-            buf.append(cl.first.getName()).append(' ').append(cl.second).append('/');
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
+            buf.append(cl.first.getName()).append(' ').append(cl.third).append('/');
         }
         buf.deleteCharAt(buf.length()-1);
         return buf.toString();
@@ -272,23 +273,23 @@ public class Character extends DBEntity {
         return classes.size();
     }
 
-    public void addOrSetClass(Class cl, int level) {
+    public void addOrSetClass(Class cl, ClassArchetype arch, int level) {
         // check that this class is not already in
         for(int i=0; i<classes.size(); i++) {
-            Pair<Class,Integer> c = classes.get(i);
+            Triplet<Class,ClassArchetype,Integer> c = classes.get(i);
             if(c.first.getId() == cl.getId()) {
-                classes.set(i, new Pair<Class, Integer>(c.first, level));
+                classes.set(i, new Triplet<Class,ClassArchetype,Integer>(c.first, arch, level));
                 Collections.sort(classes, new ClassComparator());
                 return;
             }
         }
-        classes.add(new Pair<Class, Integer>(cl,level));
+        classes.add(new Triplet<Class,ClassArchetype,Integer>(cl, arch, level));
         Collections.sort(classes, new ClassComparator());
     }
 
     public void removeClass(Class cl) {
-        Pair<Class,Integer> found = null;
-        for(Pair<Class,Integer> c : classes) {
+        Triplet<Class,ClassArchetype,Integer> found = null;
+        for(Triplet<Class,ClassArchetype,Integer> c : classes) {
             if(c.first.getId() == cl.getId()) {
                 found = c;
                 break;
@@ -305,7 +306,7 @@ public class Character extends DBEntity {
      */
     public long[] getOtherClassesIds(long id) {
         List<Long> list = new ArrayList<>();
-        for(Pair<Class,Integer> c : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> c : classes) {
             if(c.first.getId() != id) {
                 list.add(c.first.getId());
             }
@@ -323,9 +324,9 @@ public class Character extends DBEntity {
      */
     public int getOtherClassesLevel(long id) {
         int total = 0;
-        for(Pair<Class,Integer> c : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> c : classes) {
             if(c.first.getId() != id) {
-                total+=c.second;
+                total+=c.third;
             }
         }
         return total;
@@ -341,14 +342,14 @@ public class Character extends DBEntity {
     /**
      * Sort by level (higher first) then name
      */
-    private class ClassComparator implements java.util.Comparator<Pair<Class, Integer>> {
+    private class ClassComparator implements java.util.Comparator<Triplet<Class,ClassArchetype,Integer>> {
 
         @Override
-        public int compare(Pair<Class, Integer> p1, Pair<Class, Integer> p2) {
+        public int compare(Triplet<Class,ClassArchetype,Integer> p1, Triplet<Class,ClassArchetype,Integer> p2) {
             if(p1 == null || p2 == null) {
                 return 0;
-            } else if(p1.second != p2.second) {
-                return Long.compare(p2.second,p1.second);
+            } else if(p1.third != p2.third) {
+                return Long.compare(p2.third,p1.third);
             } else {
                 return p1.first.getName().compareTo(p2.first.getName());
             }
@@ -417,18 +418,18 @@ public class Character extends DBEntity {
             return 0;
         }
         int total = 0;
-        for(Pair<Class, Integer> cl : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
             for(Class.Level lvl: cl.first.getLevels()) {
-                if(lvl.getLvl() == cl.second) {
+                if(lvl.getLvl() == cl.third) {
                     total+=lvl.getReflexBonus();
                     found = true;
                     break;
                 }
             }
             if(!found) {
-                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.second));
+                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.third));
             }
         }
         return total;
@@ -442,18 +443,18 @@ public class Character extends DBEntity {
             return 0;
         }
         int total = 0;
-        for(Pair<Class, Integer> cl : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
             for(Class.Level lvl: cl.first.getLevels()) {
-                if(lvl.getLvl() == cl.second) {
+                if(lvl.getLvl() == cl.third) {
                     total+=lvl.getFortitudeBonus();
                     found = true;
                     break;
                 }
             }
             if(!found) {
-                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.second));
+                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.third));
             }
         }
         return total;
@@ -467,18 +468,18 @@ public class Character extends DBEntity {
             return 0;
         }
         int total = 0;
-        for(Pair<Class, Integer> cl : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
             for(Class.Level lvl: cl.first.getLevels()) {
-                if(lvl.getLvl() == cl.second) {
+                if(lvl.getLvl() == cl.third) {
                     total+=lvl.getWillBonus();
                     found = true;
                     break;
                 }
             }
             if(!found) {
-                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.second));
+                Log.w(Character.class.getSimpleName(), String.format("Couldn't find saving throws for %s and level %d", cl.first.getName(), cl.third));
             }
         }
         return total;
@@ -522,11 +523,11 @@ public class Character extends DBEntity {
             return null;
         }
         List<Integer> bab = new ArrayList<>();
-        for(Pair<Class, Integer> cl : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
             for(Class.Level lvl: cl.first.getLevels()) {
-                if(lvl.getLvl() == cl.second) {
+                if(lvl.getLvl() == cl.third) {
                     int[] bonus = lvl.getBaseAttackBonus();
                     if(bonus != null) {
                         for(int i=0; i<bonus.length; i++) {
@@ -542,7 +543,7 @@ public class Character extends DBEntity {
                 }
             }
             if(!found) {
-                Log.w(Character.class.getSimpleName(), String.format("Couldn't find base attack bonus (bab) for %s and level %d", cl.first.getName(), cl.second));
+                Log.w(Character.class.getSimpleName(), String.format("Couldn't find base attack bonus (bab) for %s and level %d", cl.first.getName(), cl.third));
             }
         }
         // convert to int[]
@@ -684,7 +685,7 @@ public class Character extends DBEntity {
     }
 
     public boolean isClassSkill(String skillName) {
-        for(Pair<Class, Integer> cl : classes) {
+        for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             if(cl.first.getSkills().contains(skillName)) {
                 return true;
             }
@@ -871,8 +872,8 @@ public class Character extends DBEntity {
      * @return false if feature doesn't match class or level
      */
     public boolean isValidClassFeature(ClassFeature feature) {
-        for(Pair<Class,Integer> cl: classes) {
-            if(feature.getClass_().getId() == cl.first.getId() && feature.getLevel() <= cl.second) {
+        for(Triplet<Class,ClassArchetype,Integer> cl: classes) {
+            if(feature.getClass_().getId() == cl.first.getId() && feature.getLevel() <= cl.third) {
                 return true;
             }
         }
