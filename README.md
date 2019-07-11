@@ -14,3 +14,11 @@ The application is available on:
 
 For more details, see the [documentation](docs/).
 For screenshots, see the [user documentation](docs/user/)
+
+## Status of the supported data
+
+| Races                 |    |
+| -------------         |:--:|
+| Races de base         | ok |
+| Races additionnelles  | ok |
+| Races extraordinaires | ok |
