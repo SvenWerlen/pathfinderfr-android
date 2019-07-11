@@ -17,8 +17,30 @@ For screenshots, see the [user documentation](docs/user/)
 
 ## Status of the supported data
 
-| Races                 |    |
-| -------------         |:--:|
-| Races de base         | ok |
-| Races additionnelles  | ok |
-| Races extraordinaires | ok |
+| Les personnages         | status |
+| -------------           |:------:|
+| Races de base           | ok     |
+| Races additionnelles    | ok     |
+| Races extraordinaires   | ok     |
+|                         |        |
+| Classes de base         | ok     |
+| Classes supplémentaires | ok     |
+| Classes hybrides        | ok     |
+| Classes occultes        | ok     |
+| Classes de prestige     | ok     |
+| Voies mythiques         | ok     |
+|                         |        |
+| Compétences             | ok     |
+| Dons                    | ok     |
+| Traits de personnages   | -      |
+| Alignement              | -      |
+| État civil et les mensurations | -      |
+| Réapprentissage         | -      |
+
+
+| L'équipement            | status |
+| -------------           |:------:|
+| Armes                   | ok     |
+| Armures                 | ok     |
+| Matériaux               | ok     |
+| Marchandises et les services | ok       |
