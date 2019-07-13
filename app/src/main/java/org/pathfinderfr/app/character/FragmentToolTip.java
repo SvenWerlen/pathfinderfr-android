@@ -50,7 +50,7 @@ public class FragmentToolTip extends DialogFragment {
         TextView title = rootView.findViewById(R.id.sheet_tooltip_title);
         title.setText(HtmlCompat.fromHtml(this.title,HtmlCompat.FROM_HTML_MODE_COMPACT));
         WebView content = rootView.findViewById(R.id.sheet_tooltip_content);
-        content.loadDataWithBaseURL(null, this.text, "text/html", "utf-8", null);
+        content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
         content.setBackgroundColor(Color.TRANSPARENT);
         rootView.findViewById(R.id.tooltip_ok).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -47,6 +47,7 @@ import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
@@ -245,6 +246,8 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_armors);
         } else if(EquipmentFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_equipment);
+        } else if(MagicItemFactory.FACTORY_ID.equals(factoryId)) {
+            selItem = navigationView.getMenu().findItem(R.id.nav_magic);
         } else if(RaceAlternateTraitFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_traits);
         } else {
@@ -314,6 +317,7 @@ public class MainActivity extends AppCompatActivity
         long countWeapons = dbhelper.getCountEntities(WeaponFactory.getInstance());
         long countArmors = dbhelper.getCountEntities(ArmorFactory.getInstance());
         long countEquipment = dbhelper.getCountEntities(EquipmentFactory.getInstance());
+        long countMagic = dbhelper.getCountEntities(MagicItemFactory.getInstance());
         long countConditions = dbhelper.getCountEntities(ConditionFactory.getInstance());
         long countTraits = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance());
 
@@ -368,6 +372,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_weapons).setVisible(countWeapons > 0);
         navigationView.getMenu().findItem(R.id.nav_armors).setVisible(countArmors > 0);
         navigationView.getMenu().findItem(R.id.nav_equipment).setVisible(countEquipment > 0);
+        navigationView.getMenu().findItem(R.id.nav_magic).setVisible(countMagic > 0);
         navigationView.getMenu().findItem(R.id.nav_conditions).setVisible(countConditions > 0);
 
     }
@@ -546,6 +551,11 @@ public class MainActivity extends AppCompatActivity
             totalCount = dbhelper.getCountEntities(EquipmentFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
             factoryId = EquipmentFactory.FACTORY_ID;
+        } else if (id == R.id.nav_magic) {
+            newEntities = dbhelper.getAllEntities(MagicItemFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+            totalCount = newEntities.size();
+            factoryId = MagicItemFactory.FACTORY_ID;
         } else if (id == R.id.nav_traits) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             RaceAlternateTraitFilter filter = new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));

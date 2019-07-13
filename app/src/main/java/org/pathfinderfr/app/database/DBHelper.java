@@ -23,6 +23,7 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
@@ -48,7 +49,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 15;
+    public static final int DATABASE_VERSION = 17;
 
     private static DBHelper instance;
 
@@ -58,6 +59,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 throw new IllegalArgumentException("Cannot create new DBHelper instance without context!");
             }
             instance = new DBHelper(context);
+            //SQLiteDatabase db = instance.getWritableDatabase();
+            //db.execSQL("DROP TABLE " + MagicItemFactory.getInstance().getTableName());
+            //db.execSQL(MagicItemFactory.getInstance().getQueryCreateTable());
         }
         return instance;
     }
@@ -189,10 +193,18 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         // version 16 introduced new table for archetypes and new column on classfeatures for archetypes
         if(oldVersion == 15) {
-            db.execSQL(ClassArchetypesFactory.getInstance().getQueryCreateTable());
-            db.execSQL(ClassFeatureFactory.getInstance().getQueryUpgradeV16());
+            try { // was upgraded with previous version due to bug => ignore any error (duplicate column)
+                db.execSQL(ClassArchetypesFactory.getInstance().getQueryCreateTable());
+                db.execSQL(ClassFeatureFactory.getInstance().getQueryUpgradeV16());
+            } catch(Exception e) {}
             oldVersion = 16;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 16");
+        }
+        // version 17 introduced new table for magic item
+        if(oldVersion == 16) {
+            db.execSQL(MagicItemFactory.getInstance().getQueryCreateTable());
+            oldVersion = 17;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 17");
         }
     }
 

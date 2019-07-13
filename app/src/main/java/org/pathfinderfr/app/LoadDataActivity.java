@@ -22,6 +22,7 @@ import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
@@ -31,7 +32,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/Archtypes";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/Magic";
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     private LoadDataTask loadTaskInProgress;
@@ -71,7 +72,8 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                             new Pair(SOURCE + "/data/conditions.yml", ConditionFactory.getInstance()),
                             new Pair(SOURCE + "/data/armes.yml", WeaponFactory.getInstance()),
                             new Pair(SOURCE + "/data/armures.yml", ArmorFactory.getInstance()),
-                            new Pair(SOURCE + "/data/equipement.yml", EquipmentFactory.getInstance())
+                            new Pair(SOURCE + "/data/equipement.yml", EquipmentFactory.getInstance()),
+                            new Pair(SOURCE + "/data/magic.yml", MagicItemFactory.getInstance())
                             );
 
                 } else {

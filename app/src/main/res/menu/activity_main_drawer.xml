@@ -58,6 +58,11 @@
             android:title="@string/sheet_menu_equipment" />
 
         <item
+            android:id="@+id/nav_magic"
+            android:icon="@drawable/ic_item_icon_magic"
+            android:title="@string/sheet_menu_magic" />
+
+        <item
             android:id="@+id/nav_conditions"
             android:icon="@drawable/ic_item_icon_condition"
             android:title="@string/sheet_menu_conditions" />

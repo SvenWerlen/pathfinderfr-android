@@ -2,6 +2,7 @@ package org.pathfinderfr.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +37,6 @@ import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 /**
  * A fragment representing a single Item detail screen.
@@ -57,7 +58,7 @@ public class ItemDetailFragment extends Fragment {
     private Properties templates = new Properties();
 
     private String text;
-    private TextView textview;
+    private WebView content;
 
     /**
      * The item that this view is presenting
@@ -147,23 +148,29 @@ public class ItemDetailFragment extends Fragment {
 
             Log.d(ItemDetailFragment.class.getSimpleName(), "onCreateView " + showDetails);
 
-            // if no description is available, details must always be visible
-            if(mItem.getDescription() == null) {
-                showDetails = true;
-                text = "";
-            } else {
-                text = mItem.getDescription().replaceAll("\n","<br />");
-            }
+            // if full content available, take it
+            text = mItem.getFactory().gerenateHTMLContent(mItem);
+            // not available, build it (details + description)
+            if( text == null) {
+                // if no description is available, details must always be visible
+                if (mItem.getDescription() == null) {
+                    showDetails = true;
+                    text = "";
+                } else {
+                    text = mItem.getDescription().replaceAll("\n", "<br />");
+                }
 
-            if(showDetails) {
-                String detail = mItem.getFactory().generateDetails(mItem,
-                        templates.getProperty("template.spell.details"),
-                        templates.getProperty("template.spell.detail"));
-                text = detail.replaceAll("\n","<br />") + String.format(
-                        templates.getProperty("template.spell.description"),text);
+                if (showDetails) {
+                    String detail = mItem.getFactory().generateDetails(mItem,
+                            templates.getProperty("template.spell.details"),
+                            templates.getProperty("template.spell.detail"));
+                    text = detail.replaceAll("\n", "<br />") + String.format(
+                            templates.getProperty("template.spell.description"), text);
 
+                }
+                text = "<div class=\"main\">" + text  + "</div>";
             }
-            textview = (TextView) rootView.findViewById(R.id.item_full_description);
+            content = (WebView) rootView.findViewById(R.id.item_full_description);
 
             isFavorite = dbHelper.isFavorite(mItem.getFactory().getFactoryId(), mItem.getId());
         }
@@ -378,6 +385,8 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        textview.setText(Html.fromHtml(text));
+        text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + text;
+        content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
+        content.setBackgroundColor(Color.TRANSPARENT);
     }
 }

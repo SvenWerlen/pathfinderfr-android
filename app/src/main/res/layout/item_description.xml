@@ -56,13 +56,15 @@
         android:text="@string/itemdetails_alert_message"
         android:textSize="12sp"/>
 
-    <TextView
-        android:id="@+id/item_full_description"
-        style="?android:attr/textAppearanceMedium"
-        android:autoLink="web"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:textIsSelectable="true" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <WebView
+            android:id="@+id/item_full_description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
 </LinearLayout>

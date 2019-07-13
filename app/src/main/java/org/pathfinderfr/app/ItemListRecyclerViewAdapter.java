@@ -24,6 +24,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -137,6 +138,8 @@ public class ItemListRecyclerViewAdapter
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_armors));
         } else if(entity instanceof Equipment) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_equipment));
+        } else if(entity instanceof MagicItem) {
+            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_magic));
         } else if(entity instanceof RaceAlternateTrait) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_trait));
         } else if(entity instanceof Character) {
