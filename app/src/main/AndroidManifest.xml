@@ -52,28 +52,41 @@
                 android:value="org.pathfinderfr.app.MainActivity" />
         </activity>
         <activity
+            android:name=".app.TreasureActivity"
+            android:label="@string/title_activity_treasure"
+            android:parentActivityName=".app.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.pathfinderfr.app.MainActivity" />
+        </activity>
+        <activity
             android:name=".app.ImportCharacterActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter >
+            <intent-filter>
+
                 <!-- needed for properly formatted email messages -->
                 <data
-                    android:scheme="content"
                     android:mimeType="*/*"
-                    android:pathPattern=".*\\.pfc" />
+                    android:pathPattern=".*\\.pfc"
+                    android:scheme="content" />
 
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
-            <intent-filter >
+            <intent-filter>
+
                 <!-- needed for properly formatted email messages -->
                 <data
-                    android:scheme="file"
                     android:mimeType="*/*"
-                    android:pathPattern=".*\\.pfc" />
+                    android:pathPattern=".*\\.pfc"
+                    android:scheme="file" />
 
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
@@ -82,8 +95,8 @@
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.pathfinderfr.app.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />

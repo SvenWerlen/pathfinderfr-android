@@ -63,10 +63,7 @@ import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -565,6 +562,10 @@ public class MainActivity extends AppCompatActivity
             totalCount = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
             factoryId = RaceAlternateTraitFactory.FACTORY_ID;
+        } else if (id == R.id.nav_magic_generator) {
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
+            Intent intent = new Intent(this, TreasureActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_refresh_data) {
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             Intent intent = new Intent(this, LoadDataActivity.class);

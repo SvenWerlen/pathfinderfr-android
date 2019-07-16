@@ -4,6 +4,7 @@
     <string name="title_item_detail">Détails</string>
     <string name="title_activity_main">Pathfinder FR</string>
     <string name="title_activity_load_data">Mise à jour des données</string>
+    <string name="title_activity_treasure">Générateur de trésors</string>
     <string name="title_activity_settings">Paramètres</string>
 
     <string name="navigation_drawer_open">Ouvrir la navigation latérale</string>
@@ -65,6 +66,8 @@
     <string name="navigation_item_abilities">Aptitudes</string>
     <string name="navigation_item_spells">Sorts</string>
     <string name="navigation_title_catalog">Catalogue</string>
+    <string name="navigation_title_gm">Pour les maîtres du jeu (MJ)</string>
+    <string name="navigation_item_magic">Générateur de trésors</string>
     <string name="navigation_title_advanced">Options avancées</string>
     <string name="navigation_refresh_data">Mettre à jour la bibliothèque</string>
 
@@ -461,5 +464,22 @@
     <string name="sheet_archetype_example_name">Nom de l\'archétype</string>
     <string name="sheet_archetype_example_details">Détails d\'archétype</string>
     <string name="archetype_cancel">De base</string>
+
+
+    <!-- Strings related to treasure generator -->
+    <string name="treasure_type_weak">Faible</string>
+    <string name="treasure_type_intermediate">Intermédiaire</string>
+    <string name="treasure_type_powerful">Puissant</string>
+    <string name="treasure_type_mj">Manuel des joueurs</string>
+    <string name="treasure_type_mjra">Règles avancées</string>
+    <string name="treasure_table_header_dice">D100</string>
+    <string name="treasure_table_header_result">Résultat</string>
+    <string name="treasure_table_row_dice">01-04</string>
+    <string name="treasure_table_row_result">Armures et boucliers</string>
+    <string name="treasure_history">> Arme ou armure > Armure spécifique</string>
+    <string name="treasure_back">Revenir</string>
+    <string name="treasure_choose_in_list">Choisir ci-dessous OU</string>
+    <string name="treasure_random_dice">Aléatoire</string>
+
 </resources>
 

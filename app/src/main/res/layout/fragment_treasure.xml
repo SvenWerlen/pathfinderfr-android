@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/treasure_type_choices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/treasure_type_weak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/treasure_type_weak"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/treasure_type_intermediate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/treasure_type_intermediate" />
+
+            <RadioButton
+                android:id="@+id/treasure_type_powerful"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/treasure_type_powerful" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/treasure_source_choices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/treasure_source_mj"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/treasure_type_mj"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/treasure_source_mjra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/treasure_type_mjra" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        android:id="@+id/treasure_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/treasure_history_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/treasure_history"
+            android:textStyle="bold"
+            android:padding="5dp"/>
+
+        <Button
+            android:id="@+id/treasure_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/treasure_back"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:minHeight="30dp"/>
+
+    </com.wefika.flowlayout.FlowLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/treasure_choose_in_list"
+            android:padding="5dp"/>
+
+        <Button
+            android:id="@+id/treasure_random_dice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/treasure_random_dice"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:minHeight="30dp"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp">
+
+        <TableLayout
+            android:id="@+id/treasure_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/treasure_table_header_dice"
+                    android:textColor="@color/colorWhite"
+                    android:padding="5dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/treasure_table_header_result"
+                    android:textColor="@color/colorWhite"
+                    android:padding="5dp"
+                    android:textStyle="bold"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/treasure_table_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/treasure_dice_example"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/treasure_table_row_dice"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/treasure_dice_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/treasure_table_row_result"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"/>
+
+            </TableRow>
+        </TableLayout>
+
+    </ScrollView>
+
+</LinearLayout>
