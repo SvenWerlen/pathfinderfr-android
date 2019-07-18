@@ -7,8 +7,12 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.Pair;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public class TreasureUtil {
 
@@ -27,7 +31,10 @@ public class TreasureUtil {
     public static final String TABLE_SHIELD_SPEC       = "shield.specific";
     public static final String TABLE_SHIELD_SPEC_MJRA  = "shield.specific.mjra";
 
-
+    public static final String TABLE_ARMOR_KEY_ARMOR   = "Armure spécifique";
+    public static final String TABLE_ARMOR_KEY_SHIELD  = "Bouclier spécifique";
+    public static final String TABLE_ARMOR_KEY_PROP    = "Propriété spéciale (armure ou bouclier)";
+    public static final String TABLE_ARMOR_KEY_2PROPS  = "Relancez deux fois le dé";
 
     private static TreasureUtil instance;
     private Properties properties;
@@ -98,6 +105,11 @@ public class TreasureUtil {
             return null;
         }
 
+        // make sure that choice doesn't already exist
+        if(entryExists(history, choice)) {
+            throw new IllegalArgumentException(ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.duplicate.choice"));
+        }
+
         switch (curTable) {
             case TreasureUtil.TABLE_MAIN:
                 if("Armures et boucliers".equals(choice)) {
@@ -106,11 +118,11 @@ public class TreasureUtil {
                     return null;
                 }
             case TreasureUtil.TABLE_ARMOR_MAIN:
-                if("Armure spécifique".equals(choice)) {
+                if(TABLE_ARMOR_KEY_ARMOR.equals(choice)) {
                     return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_ARMOR_SPEC : TreasureUtil.TABLE_ARMOR_SPEC_MJRA;
-                } else if("Bouclier spécifique".equals(choice)) {
+                } else if(TABLE_ARMOR_KEY_SHIELD.equals(choice)) {
                     return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_SHIELD_SPEC : TreasureUtil.TABLE_SHIELD_SPEC_MJRA;
-                } else if(choice.startsWith("Propriété spéciale")) {
+                } else if(TABLE_ARMOR_KEY_PROP.equals(choice)) {
                     // make sure that not already in history
                     if(entryExists(history, choice)) {
                         throw new IllegalArgumentException(ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.duplicate.special"));
@@ -118,7 +130,7 @@ public class TreasureUtil {
                     return TreasureUtil.TABLE_ARMOR_MAIN; // rejouer le dé
                 } else {
                     // check if history has special property
-                    if(entryExists(history,"Propriété spéciale (armure ou bouclier)")) {
+                    if(entryExists(history, TABLE_ARMOR_KEY_PROP)) {
                         // armor or shield
                         if(choice.toLowerCase().indexOf("armure") >= 0) {
                             return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_ARMOR_PROPS : TreasureUtil.TABLE_ARMOR_PROPS_MJRA;
@@ -128,36 +140,49 @@ public class TreasureUtil {
                     }
                     return null;
                 }
+            case TreasureUtil.TABLE_ARMOR_SPEC:
+            case TreasureUtil.TABLE_ARMOR_SPEC_MJRA:
+            case TreasureUtil.TABLE_SHIELD_SPEC:
+            case TreasureUtil.TABLE_SHIELD_SPEC_MJRA:
+                if(entryExists(history, TABLE_ARMOR_KEY_PROP)) {
+                    // armor or shield
+                    if(entryExists(history, TABLE_ARMOR_SPEC) || entryExists(history, TABLE_ARMOR_SPEC_MJRA) ) {
+                        return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_ARMOR_PROPS : TreasureUtil.TABLE_ARMOR_PROPS_MJRA;
+                    } else {
+                        return TreasureUtil.TABLE_SHIELD_PROPS;
+                    }
+                }
+                return null;
             case TreasureUtil.TABLE_ARMOR_PROPS:
-                if("Relancez deux fois le dé".equals(choice)) {
+                if(TABLE_ARMOR_KEY_2PROPS.equals(choice)) {
                     // make sure that not already in history
                     if(entryExists(history, choice)) {
                         throw new IllegalArgumentException(ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.duplicate.2properties"));
                     }
                     return TreasureUtil.TABLE_ARMOR_PROPS;
-                } else if(entryExists(history, "Relancez deux fois le dé")) {
+                } else if(entryExists(history, TABLE_ARMOR_KEY_2PROPS)) {
                     // history must have 3x choices
                     return countTableEntries(history, TreasureUtil.TABLE_ARMOR_PROPS) >= 2 ? null : TreasureUtil.TABLE_ARMOR_PROPS;
                 }
             case TreasureUtil.TABLE_ARMOR_PROPS_MJRA:
-                if("Relancez deux fois le dé".equals(choice)) {
+                if(TABLE_ARMOR_KEY_2PROPS.equals(choice)) {
                     // make sure that not already in history
                     if(entryExists(history, choice)) {
                         throw new IllegalArgumentException(ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.duplicate.2properties"));
                     }
                     return TreasureUtil.TABLE_ARMOR_PROPS_MJRA;
-                } else if(entryExists(history, "Relancez deux fois le dé")) {
+                } else if(entryExists(history, TABLE_ARMOR_KEY_2PROPS)) {
                     // history must have 3x choices
                     return countTableEntries(history, TreasureUtil.TABLE_ARMOR_PROPS_MJRA) >= 2 ? null : TreasureUtil.TABLE_ARMOR_PROPS_MJRA;
                 }
             case TreasureUtil.TABLE_SHIELD_PROPS:
-                if("Relancez deux fois le dé".equals(choice)) {
+                if(TABLE_ARMOR_KEY_2PROPS.equals(choice)) {
                     // make sure that not already in history
                     if(entryExists(history, choice)) {
                         throw new IllegalArgumentException(ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.duplicate.2properties"));
                     }
                     return TreasureUtil.TABLE_SHIELD_PROPS;
-                } else if(entryExists(history, "Relancez deux fois le dé")) {
+                } else if(entryExists(history, TABLE_ARMOR_KEY_2PROPS)) {
                     // history must have 3x choices
                     return countTableEntries(history, TreasureUtil.TABLE_SHIELD_PROPS) >= 2 ? null : TreasureUtil.TABLE_SHIELD_PROPS;
                 }
@@ -165,6 +190,27 @@ public class TreasureUtil {
             default:
                 return null;
         }
+    }
+
+
+    /**
+     * Returns true if give choice was made
+     */
+    public static List<String> getResults(List<Pair<String,String>> history) {
+        List<String> results = new ArrayList<>();
+        if(history.size() < 2) {
+            return null;
+        }
+        final Set<String> IGNORE = new HashSet<>(Arrays.asList(
+                TABLE_ARMOR_KEY_ARMOR, TABLE_ARMOR_KEY_SHIELD, TABLE_ARMOR_KEY_PROP, TABLE_ARMOR_KEY_2PROPS
+                ));
+
+        for(int i=1; i<history.size(); i++) {
+            if(!IGNORE.contains(history.get(i).second)) {
+                results.add(history.get(i).second);
+            }
+        }
+        return results;
     }
 
 }

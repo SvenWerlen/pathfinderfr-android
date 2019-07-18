@@ -480,6 +480,10 @@
     <string name="treasure_back">Revenir</string>
     <string name="treasure_choose_in_list">Choisir ci-dessous OU</string>
     <string name="treasure_random_dice">Aléatoire</string>
+    <string name="treasure_result_header">Résultat</string>
+    <string name="treasure_result1">Bouclier +1</string>
+    <string name="treasure_result2">Résistance à la magie (13)</string>
+    <string name="treasure_result3">Contrôle des morts-vivants</string>
 
 </resources>
 

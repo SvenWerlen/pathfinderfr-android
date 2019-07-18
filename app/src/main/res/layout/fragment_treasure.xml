@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -93,6 +94,7 @@
     </com.wefika.flowlayout.FlowLayout>
 
     <LinearLayout
+        android:id="@+id/treasure_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp">
@@ -103,18 +105,85 @@
             android:text="@string/treasure_choose_in_list"
             android:padding="5dp"/>
 
-        <Button
+        <ImageView
             android:id="@+id/treasure_random_dice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/treasure_random_dice"
-            android:background="@drawable/rounded_button"
-            android:textColor="@color/colorWhite"
-            android:minHeight="30dp"/>
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_margin="2dp"
+            app:srcCompat="@drawable/ic_item_icon_rolling_dices" />
 
     </LinearLayout>
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/treasure_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:id="@+id/treasure_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/treasure_result_header"
+                    android:textColor="@color/colorWhite"
+                    android:padding="5dp"
+                    android:textStyle="bold"/>
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/treasure_result1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:textStyle="bold"
+            android:text="@string/treasure_result1" />
+
+        <TextView
+            android:id="@+id/treasure_result2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:textStyle="italic"
+            android:text="@string/treasure_result2" />
+
+        <TextView
+            android:id="@+id/treasure_result3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="italic"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/treasure_result3" />
+    </LinearLayout>
+
+        <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
