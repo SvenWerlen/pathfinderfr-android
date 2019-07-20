@@ -68,6 +68,38 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/treasure_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/treasure_action_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/treasure_choose_in_list"
+            android:padding="5dp"
+            android:gravity="center_vertical"/>
+
+        <ImageView
+            android:id="@+id/treasure_random_dice"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center"
+            android:layout_margin="2dp"
+            app:srcCompat="@drawable/ic_item_icon_rolling_dices" />
+
+        <TextView
+            android:id="@+id/treasure_random_again"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/treasure_random_again"
+            android:padding="5dp"
+            android:gravity="center_vertical"/>
+
+    </LinearLayout>
+
     <com.wefika.flowlayout.FlowLayout
         android:id="@+id/treasure_history"
         android:layout_width="match_parent"
@@ -92,28 +124,6 @@
             android:minHeight="30dp"/>
 
     </com.wefika.flowlayout.FlowLayout>
-
-    <LinearLayout
-        android:id="@+id/treasure_actions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/treasure_choose_in_list"
-            android:padding="5dp"/>
-
-        <ImageView
-            android:id="@+id/treasure_random_dice"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_margin="2dp"
-            app:srcCompat="@drawable/ic_item_icon_rolling_dices" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/treasure_results"

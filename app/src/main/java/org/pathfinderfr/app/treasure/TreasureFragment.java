@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import org.pathfinderfr.app.character.SheetFeatFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
+import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -35,6 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TreasureFragment extends Fragment implements View.OnClickListener {
 
@@ -42,8 +47,10 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
     private int curSource;
     private String curTable;
     private List<Pair<String,String>> history;
+    private boolean random;
 
     public TreasureFragment() {
+        random = false;
         history = new ArrayList<>();
         curType = TreasureRow.TYPE_WEAK;
         curSource = TreasureUtil.TABLE_SOURCE_MJ;
@@ -61,8 +68,10 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.treasure_table_row).setVisibility(View.GONE);
         view.findViewById(R.id.treasure_history).setVisibility(View.GONE);
         view.findViewById(R.id.treasure_results).setVisibility(View.GONE);
+        view.findViewById(R.id.treasure_random_again).setVisibility(View.GONE);
 
         view.findViewById(R.id.treasure_back).setOnClickListener(this);
+        view.findViewById(R.id.treasure_random_dice).setOnClickListener(this);
         view.findViewById(R.id.treasure_type_weak).setOnClickListener(this);
         view.findViewById(R.id.treasure_type_intermediate).setOnClickListener(this);
         view.findViewById(R.id.treasure_type_powerful).setOnClickListener(this);
@@ -136,20 +145,217 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
     private final String generateHistory() {
         StringBuffer buf = new StringBuffer();
         for(Pair<String,String> el : history) {
-            buf.append("> ").append(el.second);
+            buf.append(" > ").append(el.second);
         }
         return buf.toString();
     }
 
+
+    private void showHistory() {
+        getView().findViewById(R.id.treasure_history).setVisibility(View.VISIBLE);
+        ((TextView)getView().findViewById(R.id.treasure_history_text)).setText(generateHistory());
+    }
+
+    private void showResult() {
+        getView().findViewById(R.id.treasure_table).setVisibility(View.GONE);
+
+        if(random) {
+            getView().findViewById(R.id.treasure_actions).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.treasure_action_label).setVisibility(View.GONE);
+            getView().findViewById(R.id.treasure_random_again).setVisibility(View.VISIBLE);
+        }
+
+        List<String> results = TreasureUtil.getResults(history);
+        if(results != null) {
+            TextView tv1 = ((TextView)getView().findViewById(R.id.treasure_result1));
+            TextView tv2 = ((TextView)getView().findViewById(R.id.treasure_result2));
+            TextView tv3 = ((TextView)getView().findViewById(R.id.treasure_result3));
+
+            final long id1, id2, id3;
+
+            tv1.setText(results.get(0));
+            Map<String, Long> items = new HashMap<>();
+            final String factoryId;
+            if(TreasureUtil.resultsIsSpell(history)) {
+                for (DBEntity entity : DBHelper.getInstance(getContext()).getAllEntities(SpellFactory.getInstance())) {
+                    items.put(entity.getName().toLowerCase(), entity.getId());
+                }
+                factoryId = SpellFactory.FACTORY_ID;
+            } else {
+                for (DBEntity entity : DBHelper.getInstance(getContext()).getAllEntities(MagicItemFactory.getInstance())) {
+                    int prefixIdx = entity.getName().indexOf(':');
+                    if (prefixIdx > 0) {
+                        items.put(entity.getName().substring(prefixIdx + 2).toLowerCase(), entity.getId());
+                    } else {
+                        items.put(entity.getName().toLowerCase(), entity.getId());
+                    }
+                }
+                factoryId = MagicItemFactory.FACTORY_ID;
+            }
+
+            if(items.containsKey(results.get(0).toLowerCase())) {
+                id1 = items.get(results.get(0).toLowerCase());
+            } else {
+                id1 = 0L;
+                Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(0));
+            }
+
+            if(results.size() > 1) {
+                tv2.setText(results.get(1));
+                tv2.setVisibility(View.VISIBLE);
+                if(items.containsKey(results.get(1).toLowerCase())) {
+                    id2 = items.get(results.get(1).toLowerCase());
+                } else {
+                    id2 = 0L;
+                    Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(1));
+                }
+            } else {
+                tv2.setVisibility(View.GONE);
+                id2 = 0L;
+            }
+            if(results.size() > 2) {
+                tv3.setText(results.get(2));
+                tv3.setVisibility(View.VISIBLE);
+                if(items.containsKey(results.get(2).toLowerCase())) {
+                    id3 = items.get(results.get(2).toLowerCase());
+                } else {
+                    id3 = 0L;
+                    Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(2));
+                }
+            } else {
+                tv3.setVisibility(View.GONE);
+                id3 = 0L;
+            }
+            getView().findViewById(R.id.treasure_results).setVisibility(View.VISIBLE);
+
+            final Context ctx = getView().getContext();
+            if(id1 > 0) {
+                tv1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ctx, ItemDetailActivity.class);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id1);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, factoryId);
+                        ctx.startActivity(intent);
+                    }
+                });
+            } else {
+                tv1.setOnClickListener(null);
+            }
+            if(id2 > 0) {
+                tv2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ctx, ItemDetailActivity.class);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id2);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, factoryId);
+                        ctx.startActivity(intent);
+                    }
+                });
+            } else {
+                tv2.setOnClickListener(null);
+            }
+            if(id3 > 0) {
+                tv3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ctx, ItemDetailActivity.class);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id3);
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, factoryId);
+                        ctx.startActivity(intent);
+                    }
+                });
+            } else {
+                tv3.setOnClickListener(null);
+            }
+        }
+    }
+
+
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.treasure_back) {
+        if(v.getId() == R.id.treasure_random_dice) {
+            // reset
+            random = true;
+            curTable = TreasureUtil.TABLE_MAIN;
+
+            // clear history (shouldn't be necessary)
+            history.clear();
+
+            // iterate until choice done
+            int iter = 0;
+            while(iter < 10) {
+                TreasureTable table = TreasureUtil.getInstance(getContext()).generateTable(curTable);
+                int maxChoice = table.maxChoice(curType);
+                // no choice? something is wrong
+                if(maxChoice == 0) {
+                    Snackbar.make(v.getRootView().findViewById(android.R.id.content),
+                            ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.generator.1"), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    history.clear();
+                    return;
+                }
+                int resultDice = (new Random()).nextInt(maxChoice) + 1;
+                if(curTable == TreasureUtil.TABLE_MAIN) {
+                    resultDice = 80;
+                }
+                Log.i(TreasureFragment.class.getSimpleName(), String.format("Dice result for #%d = %d", iter, resultDice));
+                String result = table.getChoice(curType, resultDice);
+                // no result? something is wrong
+                if(result == null) {
+                    Snackbar.make(v.getRootView().findViewById(android.R.id.content),
+                            ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.generator.2"), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    history.clear();
+                    return;
+                }
+                try {
+                    String newTable = TreasureUtil.nextTable(curType, curSource, history, curTable, result);
+                    // store choice
+                    history.add(new Pair<String, String>(curTable, result));
+                    curTable = newTable;
+                } catch(IllegalArgumentException e) {}
+
+                // magic item generator worked!
+                if(curTable == null) {
+                    // hide treasure type choices
+                    getView().findViewById(R.id.treasure_results).setVisibility(View.GONE);
+                    getView().findViewById(R.id.treasure_type_choices).setVisibility(View.GONE);
+                    getView().findViewById(R.id.treasure_source_choices).setVisibility(View.GONE);
+                    getView().findViewById(R.id.treasure_actions).setVisibility(View.GONE);
+                    // show results
+                    showHistory();
+                    showResult();
+                    return;
+                }
+
+                iter++;
+            }
+
+            Snackbar.make(v.getRootView().findViewById(android.R.id.content),
+                    ConfigurationUtil.getInstance().getProperties().getProperty("treasure.error.generator.3"), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            history.clear();
+            return;
+        }
+        else if(v.getId() == R.id.treasure_back) {
+            // go back to first step
+            if(random) {
+                getView().findViewById(R.id.treasure_type_choices).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.treasure_source_choices).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.treasure_actions).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.treasure_action_label).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.treasure_random_again).setVisibility(View.GONE);
+                getView().findViewById(R.id.treasure_history).setVisibility(View.GONE);
+                history.clear();
+                random = false;
+                curTable = TreasureUtil.TABLE_MAIN;
+            }
             // go back one step
             if(history.size() > 0) {
                 Pair<String,String> choice = history.remove(history.size()-1);
                 curTable = choice.first;
-                showTable(getView(), this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
-                ((TextView)getView().findViewById(R.id.treasure_history_text)).setText(generateHistory());
+                showHistory();
                 // back to root? => reset
                 if(history.size() == 0) {
                     getView().findViewById(R.id.treasure_type_choices).setVisibility(View.VISIBLE);
@@ -159,6 +365,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 }
             }
             showTable(getView(), this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
+
         } else if(v.getId() == R.id.treasure_type_weak) {
             curType = TreasureRow.TYPE_WEAK;
             showTable(getView(), this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
@@ -173,6 +380,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
         } else if(v.getId() == R.id.treasure_source_mjra) {
             curSource = TreasureUtil.TABLE_SOURCE_MJRA;
         } else if(v instanceof TableRow) {
+            random = false;
             // hide treasure type choices
             getView().findViewById(R.id.treasure_type_choices).setVisibility(View.GONE);
             getView().findViewById(R.id.treasure_source_choices).setVisibility(View.GONE);
@@ -181,7 +389,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
             // determine next choice
             String result = v.getTag().toString();
             try {
-                String newTable = TreasureUtil.nextTable(curSource, history, curTable, result);
+                String newTable = TreasureUtil.nextTable(curType, curSource, history, curTable, result);
                 // store choice
                 history.add(new Pair<String, String>(curTable, result));
                 curTable = newTable;
@@ -192,9 +400,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
-            // show choice
-            getView().findViewById(R.id.treasure_history).setVisibility(View.VISIBLE);
-            ((TextView)getView().findViewById(R.id.treasure_history_text)).setText(generateHistory());
+            showHistory();
 
             // show next table
             if(curTable != null) {
@@ -202,81 +408,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 showTable(getView(), this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
             } else {
                 // FOUND!!
-                getView().findViewById(R.id.treasure_table).setVisibility(View.GONE);
-                List<String> results = TreasureUtil.getResults(history);
-                if(results != null) {
-                    TextView tv1 = ((TextView)getView().findViewById(R.id.treasure_result1));
-                    TextView tv2 = ((TextView)getView().findViewById(R.id.treasure_result2));
-                    TextView tv3 = ((TextView)getView().findViewById(R.id.treasure_result3));
-
-                    final long id1, id2, id3;
-
-                    tv1.setText(results.get(0));
-                    Map<String, Long> items = new HashMap<>();
-                    for(DBEntity entity : DBHelper.getInstance(getContext()).getAllEntities(MagicItemFactory.getInstance())) {
-                        int prefixIdx = entity.getName().indexOf(':');
-                        if(prefixIdx > 0) {
-                            items.put(entity.getName().substring(prefixIdx + 2).toLowerCase(), entity.getId());
-                        } else {
-                            items.put(entity.getName().toLowerCase(), entity.getId());
-                        }
-                    }
-
-                    id1 = items.containsKey(results.get(0).toLowerCase()) ? items.get(results.get(0).toLowerCase()) : 0L;
-
-                    if(results.size() > 1) {
-                        tv2.setText(results.get(1));
-                        tv2.setVisibility(View.VISIBLE);
-                        id2 = items.containsKey(results.get(1).toLowerCase()) ? items.get(results.get(1).toLowerCase()) : 0L;
-                    } else {
-                        tv2.setVisibility(View.GONE);
-                        id2 = 0L;
-                    }
-                    if(results.size() > 2) {
-                        tv3.setText(results.get(2));
-                        tv3.setVisibility(View.VISIBLE);
-                        id3 = items.containsKey(results.get(2).toLowerCase()) ? items.get(results.get(2).toLowerCase()) : 0L;
-                    } else {
-                        tv3.setVisibility(View.GONE);
-                        id3 = 0L;
-                    }
-                    getView().findViewById(R.id.treasure_results).setVisibility(View.VISIBLE);
-
-                    final Context ctx = getView().getContext();
-                    if(id1 > 0) {
-                        tv1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(ctx, ItemDetailActivity.class);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id1);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, MagicItemFactory.FACTORY_ID);
-                                ctx.startActivity(intent);
-                            }
-                        });
-                    }
-                    if(id2 > 0) {
-                        tv2.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(ctx, ItemDetailActivity.class);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id2);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, MagicItemFactory.FACTORY_ID);
-                                ctx.startActivity(intent);
-                            }
-                        });
-                    }
-                    if(id3 > 0) {
-                        tv3.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(ctx, ItemDetailActivity.class);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, id3);
-                                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, MagicItemFactory.FACTORY_ID);
-                                ctx.startActivity(intent);
-                            }
-                        });
-                    }
-                }
+                showResult();
             }
         }
     }
