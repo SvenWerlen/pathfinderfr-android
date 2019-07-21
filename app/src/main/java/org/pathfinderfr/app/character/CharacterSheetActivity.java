@@ -211,4 +211,16 @@ public class CharacterSheetActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        if(currentTab == TAB_HOME) {
+            // name might have change (or newly created character)
+            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                    .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
+            this.finish();
+        } else {
+            ((BottomNavigationView) findViewById(R.id.sheet_navigation)).setSelectedItemId(R.id.sheet_home);
+        }
+    }
 }

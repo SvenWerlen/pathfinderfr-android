@@ -203,7 +203,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // remove preselected character
-                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
+                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                        .remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
                 // open character sheet
                 Intent intent = new Intent(MainActivity.this, CharacterSheetActivity.class);
                 startActivity(intent);
@@ -388,7 +389,7 @@ public class MainActivity extends AppCompatActivity
             ((TextView)findViewById(R.id.welcome_selchar_text)).setText(charName);
             findViewById(R.id.welcome_selchar).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.welcome_selchar).setVisibility(View.INVISIBLE);
+            findViewById(R.id.welcome_selchar).setVisibility(countClasses > 0 ? View.INVISIBLE : View.GONE);
         }
     }
 
