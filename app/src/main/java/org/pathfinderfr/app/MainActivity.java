@@ -136,27 +136,6 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.welcome_condition).setOnClickListener(this);
         findViewById(R.id.welcome_generator).setOnClickListener(this);
 
-        // hide selected character if no character selected
-        Character character = null;
-        long characterId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
-        if(characterId > 0) {
-            character = (Character) DBHelper.getInstance(getApplicationContext()).fetchEntity(characterId, CharacterFactory.getInstance());
-        }
-        if(character != null) {
-            String charName = character.getName() == null ? "-" : character.getName();
-            if(charName.indexOf(' ') > 0) {
-                charName = charName.substring(0,charName.indexOf(' '));
-            }
-            if(charName.length() > 15) {
-                charName = charName.substring(0,15);
-                System.out.println(charName);
-            }
-            ((TextView)findViewById(R.id.welcome_selchar_text)).setText(charName);
-        } else {
-            findViewById(R.id.welcome_selchar).setVisibility(View.INVISIBLE);
-        }
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -329,15 +308,9 @@ public class MainActivity extends AppCompatActivity
 
     private void updateWelcomeAndNavigation() {
         // Welcome screen
-        //TextView textview = (TextView) findViewById(R.id.welcome_screen);
+        TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
 
-        String[] sources = PreferenceUtil.getSources(getBaseContext());
-        if(sources.length == ConfigurationUtil.getInstance().getAvailableSources().length) {
-            sources = new String[0];
-        }
-
-        long countCharacters = dbhelper.getCountEntities(CharacterFactory.getInstance());
         long countFavorites = dbhelper.getCountEntities(FavoriteFactory.getInstance());
         long countSkills = dbhelper.getCountEntities(SkillFactory.getInstance());
         long countFeats = dbhelper.getCountEntities(FeatFactory.getInstance());
@@ -352,30 +325,9 @@ public class MainActivity extends AppCompatActivity
         long countConditions = dbhelper.getCountEntities(ConditionFactory.getInstance());
         long countTraits = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance());
 
-        long countFeatsFiltered = dbhelper.getCountEntities(FeatFactory.getInstance(), sources);
-        long countAbilitiesFiltered = dbhelper.getCountEntities(ClassFeatureFactory.getInstance(), sources);
-        long countSpellsFiltered = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
-        long countRacesFiltered = dbhelper.getCountEntities(RaceFactory.getInstance(), sources);
-        long countClassesFiltered = dbhelper.getCountEntities(ClassFactory.getInstance(), sources);
-
-        long countSources = sources.length == 0 ? ConfigurationUtil.getInstance().getAvailableSources().length : sources.length;
-        long countSourcesTotal = ConfigurationUtil.getInstance().getAvailableSources().length;
-
-
-        String welcomeText = String.format(props.getProperty("template.welcome"),
-                countRacesFiltered, countRaces,
-                countClassesFiltered, countClasses,
-                countSkills,
-                countFeatsFiltered, countFeats,
-                countAbilitiesFiltered, countAbilities,
-                countSpellsFiltered, countSpells,
-                countCharacters,
-                countFavorites,
-                countSources, countSourcesTotal);
+        String welcomeText = "";
         if (countSkills == 0 && countFeats == 0 && countAbilities == 0 && countSpells == 0) {
             welcomeText += props.getProperty("template.welcome.first");
-        } else {
-            welcomeText += props.getProperty("template.welcome.second");
         }
         welcomeText += props.getProperty("template.welcome.userdoc");
 
@@ -389,7 +341,7 @@ public class MainActivity extends AppCompatActivity
             welcomeText += String.format(props.getProperty("template.welcome.version"),"??");
         }
 
-        //textview.setText(Html.fromHtml(welcomeText));
+        textview.setText(Html.fromHtml(welcomeText));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
@@ -403,7 +355,41 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_equipment).setVisible(countEquipment + countWeapons + countArmors > 0);
         navigationView.getMenu().findItem(R.id.nav_magic).setVisible(countMagic > 0);
         navigationView.getMenu().findItem(R.id.nav_conditions).setVisible(countConditions > 0);
+        navigationView.getMenu().findItem(R.id.nav_magic_generator).setVisible(countMagic > 0);
 
+        findViewById(R.id.welcome_sheets).setVisibility(countClasses > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_favorites).setVisibility(countFavorites > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_skills).setVisibility(countSkills > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_feats).setVisibility(countFeats > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_abilities).setVisibility(countAbilities > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_traits).setVisibility(countTraits > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_spells).setVisibility(countSpells > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_equipment).setVisibility(countEquipment > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_magic).setVisibility(countMagic > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_condition).setVisibility(countConditions > 0 ? View.VISIBLE : View.GONE);
+        findViewById(R.id.welcome_generator).setVisibility(countMagic > 0 ? View.VISIBLE : View.GONE);
+
+        // hide selected character if no character selected
+        Character character = null;
+        long characterId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+        if(characterId > 0) {
+            character = (Character) DBHelper.getInstance(getApplicationContext()).fetchEntity(characterId, CharacterFactory.getInstance());
+        }
+        if(character != null) {
+            String charName = character.getName() == null ? "-" : character.getName();
+            if(charName.indexOf(' ') > 0) {
+                charName = charName.substring(0,charName.indexOf(' '));
+            }
+            if(charName.length() > 15) {
+                charName = charName.substring(0,15);
+                System.out.println(charName);
+            }
+            ((TextView)findViewById(R.id.welcome_selchar_text)).setText(charName);
+            findViewById(R.id.welcome_selchar).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.welcome_selchar).setVisibility(View.INVISIBLE);
+        }
     }
 
     private void updateTitle(String factoryId) {
@@ -885,6 +871,7 @@ public class MainActivity extends AppCompatActivity
                 Context context = getApplicationContext();
                 Intent intent = new Intent(this, CharacterSheetActivity.class);
                 intent.putExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, characterId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
                 return;
         }
