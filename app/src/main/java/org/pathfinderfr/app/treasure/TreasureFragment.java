@@ -43,6 +43,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TreasureFragment extends Fragment implements View.OnClickListener {
 
+    public static final String ARG_CUR_TYPE     = "arg_treasureType";
+    public static final String ARG_CUR_SOURCE   = "arg_treasureSource";
+    public static final String ARG_CUR_TABLE    = "arg_treasureTable";
+    public static final String ARG_CUR_HISTORY  = "arg_treasureHistory";
+    public static final String ARG_CUR_RANDOM   = "arg_treasureRandom";
+
     private int curType;
     private int curSource;
     private String curTable;
@@ -78,9 +84,38 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.treasure_source_mj).setOnClickListener(this);
         view.findViewById(R.id.treasure_source_mjra).setOnClickListener(this);
 
-        TableLayout table = view.findViewById(R.id.treasure_table);
-        TreasureTable treasure = TreasureUtil.getInstance(view.getContext()).generateTable(curTable);
-        showTable(view, this, treasure, curType);
+        if(savedInstanceState != null) {
+            curType = savedInstanceState.getInt(ARG_CUR_TYPE);
+            curSource = savedInstanceState.getInt(ARG_CUR_SOURCE);
+            curTable = savedInstanceState.getString(ARG_CUR_TABLE);
+            random = savedInstanceState.getBoolean(ARG_CUR_RANDOM);
+            String[] historySaved = savedInstanceState.getString(ARG_CUR_HISTORY).split("\\|");
+            for(String h : historySaved) {
+                String[] keyval = h.split("@");
+                if(keyval.length == 2) {
+                    history.add(new Pair<String, String>(keyval[0], keyval[1]));
+                }
+            }
+            // initialize view
+            if(history.size() > 0) {
+                // hide treasure type choices
+                view.findViewById(R.id.treasure_type_choices).setVisibility(View.GONE);
+                view.findViewById(R.id.treasure_source_choices).setVisibility(View.GONE);
+                view.findViewById(R.id.treasure_actions).setVisibility(View.GONE);
+                // show history
+                showHistory(view);
+                if(curTable == null) {
+                    showResult(view);
+                } else {
+                    showTable(view, this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
+                }
+            } else {
+                showTable(view, this, TreasureUtil.getInstance(view.getContext()).generateTable(curTable), curType);
+            }
+
+        } else {
+            showTable(view, this, TreasureUtil.getInstance(view.getContext()).generateTable(curTable), curType);
+        }
 
         return view;
     }
@@ -151,25 +186,25 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private void showHistory() {
-        getView().findViewById(R.id.treasure_history).setVisibility(View.VISIBLE);
-        ((TextView)getView().findViewById(R.id.treasure_history_text)).setText(generateHistory());
+    private void showHistory(View view) {
+        view.findViewById(R.id.treasure_history).setVisibility(View.VISIBLE);
+        ((TextView)view.findViewById(R.id.treasure_history_text)).setText(generateHistory());
     }
 
-    private void showResult() {
-        getView().findViewById(R.id.treasure_table).setVisibility(View.GONE);
+    private void showResult(View view) {
+        view.findViewById(R.id.treasure_table).setVisibility(View.GONE);
 
         if(random) {
-            getView().findViewById(R.id.treasure_actions).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.treasure_action_label).setVisibility(View.GONE);
-            getView().findViewById(R.id.treasure_random_again).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.treasure_actions).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.treasure_action_label).setVisibility(View.GONE);
+            view.findViewById(R.id.treasure_random_again).setVisibility(View.VISIBLE);
         }
 
         List<String> results = TreasureUtil.getResults(history);
         if(results != null) {
-            TextView tv1 = ((TextView)getView().findViewById(R.id.treasure_result1));
-            TextView tv2 = ((TextView)getView().findViewById(R.id.treasure_result2));
-            TextView tv3 = ((TextView)getView().findViewById(R.id.treasure_result3));
+            TextView tv1 = ((TextView)view.findViewById(R.id.treasure_result1));
+            TextView tv2 = ((TextView)view.findViewById(R.id.treasure_result2));
+            TextView tv3 = ((TextView)view.findViewById(R.id.treasure_result3));
 
             final long id1, id2, id3;
 
@@ -226,9 +261,9 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 tv3.setVisibility(View.GONE);
                 id3 = 0L;
             }
-            getView().findViewById(R.id.treasure_results).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.treasure_results).setVisibility(View.VISIBLE);
 
-            final Context ctx = getView().getContext();
+            final Context ctx = view.getContext();
             if(id1 > 0) {
                 tv1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -324,8 +359,8 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                     getView().findViewById(R.id.treasure_source_choices).setVisibility(View.GONE);
                     getView().findViewById(R.id.treasure_actions).setVisibility(View.GONE);
                     // show results
-                    showHistory();
-                    showResult();
+                    showHistory(getView());
+                    showResult(getView());
                     return;
                 }
 
@@ -355,7 +390,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
             if(history.size() > 0) {
                 Pair<String,String> choice = history.remove(history.size()-1);
                 curTable = choice.first;
-                showHistory();
+                showHistory(getView());
                 // back to root? => reset
                 if(history.size() == 0) {
                     getView().findViewById(R.id.treasure_type_choices).setVisibility(View.VISIBLE);
@@ -400,7 +435,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
-            showHistory();
+            showHistory(getView());
 
             // show next table
             if(curTable != null) {
@@ -408,7 +443,7 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 showTable(getView(), this, TreasureUtil.getInstance(getContext()).generateTable(curTable), curType);
             } else {
                 // FOUND!!
-                showResult();
+                showResult(getView());
             }
         }
     }
@@ -424,5 +459,29 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
             onClick(getView().findViewById(R.id.treasure_back));
             return true;
         }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // store selected radios
+        outState.putInt(ARG_CUR_TYPE, curType);
+        outState.putInt(ARG_CUR_SOURCE, curSource);
+
+        // store state
+        outState.putString(ARG_CUR_TABLE, curTable);
+        outState.putBoolean(ARG_CUR_RANDOM, random);
+
+        // store history
+        StringBuffer buf = new StringBuffer();
+        for(Pair<String,String> p : history) {
+            buf.append(p.first).append("@").append(p.second).append("|");
+        }
+        if(buf.length() > 0) {
+            buf.deleteCharAt(buf.length()-1);
+        }
+        outState.putString(ARG_CUR_HISTORY, buf.toString());
     }
 }

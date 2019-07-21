@@ -115,6 +115,9 @@ public class TreasureUtil {
      * @return TreasureTable object
      */
     public TreasureTable generateTable(String tableId) {
+        if(tableId == null) {
+            tableId = TABLE_MAIN;
+        }
         // special case for spells
         if(tableId.startsWith(TreasureUtil.TABLE_SPELL_MAIN)) {
             int lvl = 0;
