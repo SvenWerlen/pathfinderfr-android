@@ -19,5 +19,10 @@ public class TreasureTest {
         table = new TreasureTable();
         table.addRow(text);
         System.out.println(table);
+        text = "01-05\t-\t-\tParchemin 0 (NLS 1)";
+        table = new TreasureTable();
+        table.addRow(text);
+        System.out.println(table);
+
     }
 }

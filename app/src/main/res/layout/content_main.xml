@@ -22,20 +22,349 @@
             android:id="@+id/welcomeScroller"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:padding="15dp">
 
-            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/welcome_screen"
-                style="?android:attr/textAppearanceMedium"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:background="@color/colorWhite"
-                android:padding="5dp"
-                android:textIsSelectable="true"
-                tools:context=".app.ItemDetailFragment" />
+                android:orientation="vertical"
+                android:gravity="center">
 
+            <com.wefika.flowlayout.FlowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/welcome_sheets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_sheet"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_sheets"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_selchar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_sheet"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:id="@+id/welcome_selchar_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_character"
+                        android:maxWidth="64dp"
+                        android:textStyle="italic"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_favorites"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_link_favorite"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_favorites"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_skills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp"
+                    >
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_skill"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_skills"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_feats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                         app:srcCompat="@drawable/ic_item_icon_feat"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_feats"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_abilities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_classfeature"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_abilities"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_traits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_trait"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_traits"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_spells"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_spell"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_spells"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_equipment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_equipment"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_equipment"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_magic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_magic"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_magic_items"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_condition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_condition"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_conditions"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/welcome_generator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    android:minWidth="64dp">
+
+                    <ImageView
+                        app:srcCompat="@drawable/ic_item_icon_rolling_dices"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:text="@string/home_item_magic"
+                        android:maxWidth="64dp"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+            </com.wefika.flowlayout.FlowLayout>
+
+            </LinearLayout>
         </ScrollView>
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"

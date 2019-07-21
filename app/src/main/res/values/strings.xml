@@ -65,6 +65,11 @@
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_abilities">Aptitudes</string>
     <string name="navigation_item_spells">Sorts</string>
+    <string name="navigation_item_weapons">Armes</string>
+    <string name="navigation_item_armors">Armures</string>
+    <string name="navigation_item_equipment">Équipement</string>
+    <string name="navigation_item_magic_items">Objets magiques</string>
+    <string name="navigation_item_conditions">États préjudiciables</string>
     <string name="navigation_title_catalog">Catalogue</string>
     <string name="navigation_title_gm">Pour les maîtres du jeu (MJ)</string>
     <string name="navigation_item_magic">Générateur de trésors</string>
@@ -163,11 +168,6 @@
     <string name="sheet_menu_feats">Dons</string>
     <string name="sheet_menu_classfeatures">Aptitudes</string>
     <string name="sheet_menu_spells">Sorts</string>
-    <string name="sheet_menu_weapons">Armes</string>
-    <string name="sheet_menu_armors">Armures</string>
-    <string name="sheet_menu_equipment">Équipement</string>
-    <string name="sheet_menu_magic">Objets magiques</string>
-    <string name="sheet_menu_conditions">États préjudiciables</string>
 
     <string name="character_tab_nocharacter">Aucun personnage créé! Erreur bizarre.</string>
     <string name="character_tab_failed_class">Veuillez choisir une classe!</string>
@@ -485,6 +485,24 @@
     <string name="treasure_result1">Bouclier +1</string>
     <string name="treasure_result2">Résistance à la magie (13)</string>
     <string name="treasure_result3">Contrôle des morts-vivants</string>
+
+    <!-- Strings related to Home -->
+    <string name="home_item_favorites">Favoris</string>
+    <string name="home_item_sheets">PJs</string>
+    <string name="home_item_character">Nom du PJ</string>
+    <string name="home_item_traits">Traits</string>
+    <string name="home_item_skills">Compé tences</string>
+    <string name="home_item_feats">Dons</string>
+    <string name="home_item_abilities">Aptitudes</string>
+    <string name="home_item_spells">Sorts</string>
+    <string name="home_item_magic">Trésors</string>
+    <string name="home_refresh_data">Mise à jour</string>
+    <string name="home_item_weapons">Armes</string>
+    <string name="home_item_armors">Armures</string>
+    <string name="home_item_equipment">Équip ement</string>
+    <string name="home_item_magic_items">Objets magiques</string>
+    <string name="home_item_conditions">États</string>
+    <string name="home_item_update">Màj données</string>
 
 </resources>
 

@@ -22,10 +22,6 @@
         <menu>
             <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_traits"
-            android:icon="@drawable/ic_item_icon_trait"
-            android:title="@string/navigation_item_traits" />
-        <item
             android:id="@+id/nav_skills"
             android:icon="@drawable/ic_item_icon_skill"
             android:title="@string/navigation_item_skills" />
@@ -41,31 +37,18 @@
             android:id="@+id/nav_spells"
             android:icon="@drawable/ic_item_icon_spell"
             android:title="@string/navigation_item_spells" />
-
         <item
-            android:id="@+id/nav_weapons"
-            android:icon="@drawable/ic_item_icon_weapons"
-            android:title="@string/sheet_menu_weapons" />
-
-        <item
-            android:id="@+id/nav_armors"
-            android:icon="@drawable/ic_item_icon_armors"
-            android:title="@string/sheet_menu_armors" />
-
+            android:id="@+id/nav_traits"
+            android:icon="@drawable/ic_item_icon_trait"
+            android:title="@string/navigation_item_traits" />
         <item
             android:id="@+id/nav_equipment"
             android:icon="@drawable/ic_item_icon_equipment"
-            android:title="@string/sheet_menu_equipment" />
-
+            android:title="@string/navigation_item_equipment" />
         <item
             android:id="@+id/nav_magic"
             android:icon="@drawable/ic_item_icon_magic"
-            android:title="@string/sheet_menu_magic" />
-
-        <item
-            android:id="@+id/nav_conditions"
-            android:icon="@drawable/ic_item_icon_condition"
-            android:title="@string/sheet_menu_conditions" />
+            android:title="@string/navigation_item_magic_items" />
 
     </group>
     </menu>
@@ -73,6 +56,10 @@
 
     <item android:title="@string/navigation_title_gm">
         <menu>
+            <item
+                android:id="@+id/nav_conditions"
+                android:icon="@drawable/ic_item_icon_condition"
+                android:title="@string/home_item_conditions" />
             <item
                 android:id="@+id/nav_magic_generator"
                 android:icon="@drawable/ic_item_icon_rolling_dices"

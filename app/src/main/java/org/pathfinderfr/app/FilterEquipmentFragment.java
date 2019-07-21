@@ -97,6 +97,8 @@ public class FilterEquipmentFragment extends DialogFragment implements View.OnCl
         List<DBEntity> equipment = dbHelper.getAllEntities(EquipmentFactory.getInstance(), sources);
 
         Set<String> categ = new HashSet<>();
+        categ.add(rootView.getResources().getString(R.string.home_item_armors));
+        categ.add(rootView.getResources().getString(R.string.home_item_weapons));
         for(DBEntity eq : equipment) {
             categ.add(((Equipment)eq).getCategory());
         }

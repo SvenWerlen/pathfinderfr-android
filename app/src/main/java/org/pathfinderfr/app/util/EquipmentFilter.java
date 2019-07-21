@@ -2,14 +2,23 @@ package org.pathfinderfr.app.util;
 
 import android.util.Log;
 
+import org.pathfinderfr.app.database.entity.Armor;
+import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Equipment;
+import org.pathfinderfr.app.database.entity.Weapon;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class EquipmentFilter {
 
     private HashSet<String> filterCategory;
+    private final String armorId, weaponId;
 
-    public EquipmentFilter(String preferences) {
+    public EquipmentFilter(String preferences, String armorId, String weaponId) {
+        this.armorId = armorId;
+        this.weaponId = weaponId;
+
         filterCategory = new HashSet<>();
 
         Log.d(EquipmentFilter.class.getSimpleName(), "Preferences: " + preferences );
@@ -39,6 +48,17 @@ public class EquipmentFilter {
      */
     public boolean isFilterCategoryEnabled(String category) {
         return filterCategory.contains(category);
+    }
+
+    public boolean isFiltered(DBEntity entity) {
+        if(entity instanceof Equipment) {
+            return !filterCategory.contains(((Equipment)entity).getCategory());
+        } else if(entity instanceof Armor) {
+            return !filterCategory.contains(armorId);
+        } else if(entity instanceof Weapon) {
+            return !filterCategory.contains(weaponId);
+        }
+        return false;
     }
 
     public boolean hasFilterCategory() {

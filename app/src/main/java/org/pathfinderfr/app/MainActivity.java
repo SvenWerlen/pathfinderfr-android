@@ -36,6 +36,7 @@ import android.widget.TextView;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
+import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -68,7 +69,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
+        implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
         FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener,
         FilterRaceAlternateTraitFragment.OnFragmentInteractionListener {
 
@@ -120,6 +121,41 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         dbhelper = DBHelper.getInstance(getBaseContext());
+
+        // listen to welcome page
+        findViewById(R.id.welcome_sheets).setOnClickListener(this);
+        findViewById(R.id.welcome_selchar).setOnClickListener(this);
+        findViewById(R.id.welcome_favorites).setOnClickListener(this);
+        findViewById(R.id.welcome_skills).setOnClickListener(this);
+        findViewById(R.id.welcome_feats).setOnClickListener(this);
+        findViewById(R.id.welcome_abilities).setOnClickListener(this);
+        findViewById(R.id.welcome_traits).setOnClickListener(this);
+        findViewById(R.id.welcome_spells).setOnClickListener(this);
+        findViewById(R.id.welcome_equipment).setOnClickListener(this);
+        findViewById(R.id.welcome_magic).setOnClickListener(this);
+        findViewById(R.id.welcome_condition).setOnClickListener(this);
+        findViewById(R.id.welcome_generator).setOnClickListener(this);
+
+        // hide selected character if no character selected
+        Character character = null;
+        long characterId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+        if(characterId > 0) {
+            character = (Character) DBHelper.getInstance(getApplicationContext()).fetchEntity(characterId, CharacterFactory.getInstance());
+        }
+        if(character != null) {
+            String charName = character.getName() == null ? "-" : character.getName();
+            if(charName.indexOf(' ') > 0) {
+                charName = charName.substring(0,charName.indexOf(' '));
+            }
+            if(charName.length() > 15) {
+                charName = charName.substring(0,15);
+                System.out.println(charName);
+            }
+            ((TextView)findViewById(R.id.welcome_selchar_text)).setText(charName);
+        } else {
+            findViewById(R.id.welcome_selchar).setVisibility(View.INVISIBLE);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -237,10 +273,6 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_spells);
         } else if(ConditionFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_conditions);
-        } else if(WeaponFactory.FACTORY_ID.equals(factoryId)) {
-            selItem = navigationView.getMenu().findItem(R.id.nav_weapons);
-        } else if(ArmorFactory.FACTORY_ID.equals(factoryId)) {
-            selItem = navigationView.getMenu().findItem(R.id.nav_armors);
         } else if(EquipmentFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_equipment);
         } else if(MagicItemFactory.FACTORY_ID.equals(factoryId)) {
@@ -273,7 +305,9 @@ public class MainActivity extends AppCompatActivity
                 FilterEquipmentFragment fragEquipmentFilter = (FilterEquipmentFragment)fragment;
                 if (fragEquipmentFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                    fragEquipmentFilter.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null)));
+                    fragEquipmentFilter.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null),
+                            getResources().getString(R.string.home_item_armors),
+                            getResources().getString(R.string.home_item_weapons)));
                 }
             } else if(fragment instanceof FilterRaceAlternateTraitFragment) {
                 FilterRaceAlternateTraitFragment fragTraitFilter = (FilterRaceAlternateTraitFragment)fragment;
@@ -295,7 +329,7 @@ public class MainActivity extends AppCompatActivity
 
     private void updateWelcomeAndNavigation() {
         // Welcome screen
-        TextView textview = (TextView) findViewById(R.id.welcome_screen);
+        //TextView textview = (TextView) findViewById(R.id.welcome_screen);
         Properties props = ConfigurationUtil.getInstance(getBaseContext()).getProperties();
 
         String[] sources = PreferenceUtil.getSources(getBaseContext());
@@ -355,7 +389,7 @@ public class MainActivity extends AppCompatActivity
             welcomeText += String.format(props.getProperty("template.welcome.version"),"??");
         }
 
-        textview.setText(Html.fromHtml(welcomeText));
+        //textview.setText(Html.fromHtml(welcomeText));
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(countFavorites > 0);
@@ -366,9 +400,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_abilities).setVisible(countAbilities > 0);
         navigationView.getMenu().findItem(R.id.nav_spells).setVisible(countSpells > 0);
         navigationView.getMenu().findItem(R.id.nav_sheet).setVisible(countClasses > 0 && countRaces > 0);
-        navigationView.getMenu().findItem(R.id.nav_weapons).setVisible(countWeapons > 0);
-        navigationView.getMenu().findItem(R.id.nav_armors).setVisible(countArmors > 0);
-        navigationView.getMenu().findItem(R.id.nav_equipment).setVisible(countEquipment > 0);
+        navigationView.getMenu().findItem(R.id.nav_equipment).setVisible(countEquipment + countWeapons + countArmors > 0);
         navigationView.getMenu().findItem(R.id.nav_magic).setVisible(countMagic > 0);
         navigationView.getMenu().findItem(R.id.nav_conditions).setVisible(countConditions > 0);
 
@@ -434,7 +466,14 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+            if(factoryId != null) {
+                NavigationView nav = (NavigationView) findViewById(R.id.nav_view);
+                nav.setCheckedItem(R.id.nav_home);
+                onNavigationItemSelected(nav.getMenu().findItem(R.id.nav_home));
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -529,19 +568,11 @@ public class MainActivity extends AppCompatActivity
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
             totalCount = newEntities.size();
             factoryId = ConditionFactory.FACTORY_ID;
-        } else if (id == R.id.nav_weapons) {
-            newEntities = dbhelper.getAllEntities(WeaponFactory.getInstance(),
-                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
-            totalCount = newEntities.size();
-            factoryId = WeaponFactory.FACTORY_ID;
-        } else if (id == R.id.nav_armors) {
-            newEntities = dbhelper.getAllEntities(ArmorFactory.getInstance(),
-                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
-            totalCount = newEntities.size();
-            factoryId = ArmorFactory.FACTORY_ID;
         } else if (id == R.id.nav_equipment) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            EquipmentFilter filter = new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null));
+            EquipmentFilter filter = new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null),
+                    getResources().getString(R.string.home_item_armors),
+                    getResources().getString(R.string.home_item_weapons));
             filterActive = filter.hasAnyFilter();
             filterEquipment(filter);
             newEntities = new ArrayList<>(listFull);
@@ -694,7 +725,9 @@ public class MainActivity extends AppCompatActivity
         } else if(EquipmentFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             FilterEquipmentFragment newFragment = FilterEquipmentFragment.newInstance();
-            newFragment.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null)));
+            newFragment.setFilter(new EquipmentFilter(prefs.getString(KEY_EQUIPMENT_FILTERS, null),
+                    getResources().getString(R.string.home_item_armors),
+                    getResources().getString(R.string.home_item_weapons)));
             newFragment.show(ft, DIALOG_FILTER);
         }
 
@@ -772,16 +805,22 @@ public class MainActivity extends AppCompatActivity
         filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
+    /**
+     * Combines weapons, armors, and other equipment
+     */
     private void filterEquipment(EquipmentFilter filter) {
         String[] sources = PreferenceUtil.getSources(getBaseContext());
-        List<DBEntity> equipment = dbhelper.getAllEntities(EquipmentFactory.getInstance(),
-                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+        List<DBEntity> equipment = new ArrayList<>();
+        equipment.addAll(dbhelper.getAllEntities(WeaponFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
+        equipment.addAll(dbhelper.getAllEntities(ArmorFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
+        equipment.addAll(dbhelper.getAllEntities(EquipmentFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
 
         listFull = new ArrayList<>();
         for(DBEntity e : equipment) {
-            Equipment eq = (Equipment) e;
-            // check filter category
-            if(!filter.hasFilterCategory() || filter.isFilterCategoryEnabled(eq.getCategory())) {
+            if(!filter.hasAnyFilter() || !filter.isFiltered(e)) {
                 listFull.add(e);
             }
         }
@@ -805,6 +844,54 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         if(findViewById(R.id.closeSearchButton).getVisibility() == View.VISIBLE) {
             outState.putByte(KEY_SEARCH_VISIBLE, (byte)1);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        NavigationView nav = (NavigationView) findViewById(R.id.nav_view);
+
+        int navId = 0;
+        switch(v.getId()) {
+            case R.id.welcome_sheets:
+                navId = R.id.nav_sheet; break;
+            case R.id.welcome_favorites:
+                navId = R.id.nav_favorites; break;
+            case R.id.welcome_skills:
+                navId = R.id.nav_skills; break;
+            case R.id.welcome_feats:
+                navId = R.id.nav_feats; break;
+            case R.id.welcome_abilities:
+                navId = R.id.nav_abilities; break;
+            case R.id.welcome_traits:
+                navId = R.id.nav_traits; break;
+            case R.id.welcome_spells:
+                navId = R.id.nav_spells; break;
+            case R.id.welcome_equipment:
+                navId = R.id.nav_equipment; break;
+            case R.id.welcome_magic:
+                navId = R.id.nav_magic; break;
+            case R.id.welcome_condition:
+                navId = R.id.nav_conditions; break;
+            case R.id.welcome_generator:
+                navId = R.id.nav_magic_generator; break;
+            // special case (open selected character)
+            case R.id.welcome_selchar:
+                long characterId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                        .getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+                if(characterId <= 0) {
+                    return;
+                }
+                Context context = getApplicationContext();
+                Intent intent = new Intent(this, CharacterSheetActivity.class);
+                intent.putExtra(CharacterSheetActivity.SELECTED_CHARACTER_ID, characterId);
+                context.startActivity(intent);
+                return;
+        }
+
+        if(navId > 0) {
+            nav.setCheckedItem(navId);
+            onNavigationItemSelected(nav.getMenu().findItem(navId));
         }
     }
 }

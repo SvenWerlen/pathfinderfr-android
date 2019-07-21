@@ -151,6 +151,7 @@ public class ItemListRecyclerViewAdapter
                 icon.setVisibility(View.INVISIBLE);
             }
         }
+        icon.setColorFilter(holder.itemView.getResources().getColor(R.color.colorBlack));
     }
 
     @Override

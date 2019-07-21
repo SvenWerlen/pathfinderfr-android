@@ -412,4 +412,17 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+    /**
+     * Tries to go back in history
+     * Returns false if normal onBack should be done
+     */
+    public boolean onBack() {
+        if(history.size() == 0) {
+            return false;
+        } else {
+            onClick(getView().findViewById(R.id.treasure_back));
+            return true;
+        }
+    }
 }
