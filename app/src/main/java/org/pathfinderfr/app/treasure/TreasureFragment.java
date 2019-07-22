@@ -230,6 +230,8 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
 
             if(items.containsKey(results.get(0).toLowerCase())) {
                 id1 = items.get(results.get(0).toLowerCase());
+            } else if(items.containsKey(TreasureUtil.getNameForSearch(results.get(0)))) {
+                id1 = items.get(TreasureUtil.getNameForSearch(results.get(0)));
             } else {
                 id1 = 0L;
                 Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(0));
@@ -240,6 +242,8 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 tv2.setVisibility(View.VISIBLE);
                 if(items.containsKey(results.get(1).toLowerCase())) {
                     id2 = items.get(results.get(1).toLowerCase());
+                } else if(items.containsKey(TreasureUtil.getNameForSearch(results.get(1)))) {
+                    id2 = items.get(TreasureUtil.getNameForSearch(results.get(1)));
                 } else {
                     id2 = 0L;
                     Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(1));
@@ -253,6 +257,8 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                 tv3.setVisibility(View.VISIBLE);
                 if(items.containsKey(results.get(2).toLowerCase())) {
                     id3 = items.get(results.get(2).toLowerCase());
+                } else if(items.containsKey(TreasureUtil.getNameForSearch(results.get(2)))) {
+                    id3 = items.get(TreasureUtil.getNameForSearch(results.get(2)));
                 } else {
                     id3 = 0L;
                     Log.w(TreasureFragment.class.getSimpleName(), "Correspondance objet magique non-trouvée: " + results.get(2));

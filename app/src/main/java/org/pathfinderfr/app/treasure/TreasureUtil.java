@@ -37,6 +37,7 @@ public class TreasureUtil {
     private static final String TABLE_RING_CHOICE       = "Anneaux";
     private static final String TABLE_PARCH_CHOICE      = "Parchemins";
     private static final String TABLE_WAND_CHOICE       = "Baguettes";
+    private static final String TABLE_SCEPTER_CHOICE    = "Sceptres";
     private static final String TABLE_STAFF_CHOICE      = "Bâtons";
     private static final String TABLE_OBJECT_CHOICE     = "Objets merveilleux";
 
@@ -69,6 +70,8 @@ public class TreasureUtil {
     private static final String TABLE_POTION_MAIN       = "potion";
     private static final String TABLE_PARCH_MAIN        = "parch";
     private static final String TABLE_WAND_MAIN         = "wand";
+    private static final String TABLE_SCEPTER_MAIN      = "scepter";
+    private static final String TABLE_SCEPTER_MAIN_MJRA = "scepter.mjra";
 
     private static final String TABLE_STAFF_MAIN        = "staff";
     private static final String TABLE_STAFF_MAIN_MJRA   = "staff.mjra";
@@ -192,6 +195,8 @@ public class TreasureUtil {
                     return TreasureUtil.TABLE_PARCH_MAIN;
                 } else if(TABLE_WAND_CHOICE.equals(choice)) {
                     return TreasureUtil.TABLE_WAND_MAIN;
+                } else if(TABLE_SCEPTER_CHOICE.equals(choice)) {
+                    return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_SCEPTER_MAIN : TreasureUtil.TABLE_SCEPTER_MAIN_MJRA;
                 } else if(TABLE_STAFF_CHOICE.equals(choice)) {
                     return curSource == TreasureUtil.TABLE_SOURCE_MJ ? TreasureUtil.TABLE_STAFF_MAIN : TreasureUtil.TABLE_STAFF_MAIN_MJRA;
                 } else if(TABLE_OBJECT_CHOICE.equals(choice)) {
@@ -447,6 +452,17 @@ public class TreasureUtil {
             }
         }
         return results;
+    }
+
+    public static String getNameForSearch(String value) {
+        value = value == null ? "" : value.toLowerCase().trim();
+        Pattern pattern = Pattern.compile("(.*)\\(.*\\)$");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        } else {
+            return value;
+        }
     }
 
 }
