@@ -5,8 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.0] - 2019-07-21
 ### Added
 - Class archetypes
+- Magic items
+- Treasure generator
+### Changed
+- Welcome page rebranded with icons
+- Back goes back to welcome page
+- Equipment merged (weapons, armors and others)
+### Fixed
+- Blank page on character sheet after pressing back
+- Character list not updated when going back
 
 ## [2.12.0] - 2019-07-09
 ### Changed
