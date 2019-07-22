@@ -149,7 +149,7 @@ public class ItemDetailFragment extends Fragment {
             Log.d(ItemDetailFragment.class.getSimpleName(), "onCreateView " + showDetails);
 
             // if full content available, take it
-            text = mItem.getFactory().gerenateHTMLContent(mItem);
+            text = mItem.getFactory().generateHTMLContent(mItem);
             // not available, build it (details + description)
             if( text == null) {
                 // if no description is available, details must always be visible

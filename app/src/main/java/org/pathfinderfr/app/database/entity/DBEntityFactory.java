@@ -135,7 +135,7 @@ public abstract class DBEntityFactory {
      * Generates the HTML content to be rendered
      * Null by default. Must be implemented by each factory
      */
-    public String gerenateHTMLContent(@NonNull DBEntity entity) { return null; }
+    public String generateHTMLContent(@NonNull DBEntity entity) { return null; }
 
     protected static String extractValue(@NonNull final Cursor resource, String columnName) {
         if(resource.getColumnIndex(columnName)>=0) {

@@ -184,7 +184,7 @@ public class MagicItemFactory extends DBEntityFactory {
     }
 
     @Override
-    public String gerenateHTMLContent(@NonNull DBEntity entity) {
+    public String generateHTMLContent(@NonNull DBEntity entity) {
         if(!(entity instanceof MagicItem)) {
             return "";
         }

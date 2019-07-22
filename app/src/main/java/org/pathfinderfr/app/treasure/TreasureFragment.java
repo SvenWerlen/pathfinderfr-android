@@ -337,9 +337,10 @@ public class TreasureFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
                 int resultDice = (new Random()).nextInt(maxChoice) + 1;
-                if(curTable == TreasureUtil.TABLE_MAIN) {
-                    resultDice = 80;
-                }
+                // Uncomment to test on specific table
+                //if(curTable == TreasureUtil.TABLE_MAIN) {
+                //    resultDice = 45;
+                //}
                 Log.i(TreasureFragment.class.getSimpleName(), String.format("Dice result for #%d = %d", iter, resultDice));
                 String result = table.getChoice(curType, resultDice);
                 // no result? something is wrong
