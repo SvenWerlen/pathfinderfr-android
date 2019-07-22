@@ -65,6 +65,8 @@ import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -804,6 +806,14 @@ public class MainActivity extends AppCompatActivity
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
         equipment.addAll(dbhelper.getAllEntities(EquipmentFactory.getInstance(),
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
+
+        // sort equipment
+        Collections.sort(equipment, new Comparator<DBEntity>() {
+            @Override
+            public int compare(DBEntity o1, DBEntity o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
         listFull = new ArrayList<>();
         for(DBEntity e : equipment) {
