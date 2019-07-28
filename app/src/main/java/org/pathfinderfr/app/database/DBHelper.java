@@ -290,7 +290,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = FavoriteFactory.getInstance().getQueryFetchByIds(factoryId, entityId);
         Cursor res = db.rawQuery(query, null);
-        return res.getCount() > 0;
+        boolean isFavorite = res.getCount() > 0;
+        res.close();
+        return isFavorite;
     }
 
     /**
@@ -303,10 +305,13 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery( factory.getQueryFetchById(id), null );
         // not found?
         if(res.getCount()<1) {
+            res.close();
             return null;
         }
         res.moveToFirst();
-        return factory.generateEntity(res);
+        DBEntity entity = factory.generateEntity(res);
+        res.close();
+        return entity;
     }
 
     /**
@@ -319,6 +324,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery( factory.getQueryFetchAllById(ids), null );
         // not found?
         if(res.getCount()<1) {
+            res.close();
             return null;
         }
         res.moveToFirst();
@@ -327,6 +333,7 @@ public class DBHelper extends SQLiteOpenHelper {
             list.add(factory.generateEntity(res));
             res.moveToNext();
         }
+        res.close();
         return list;
     }
 
@@ -340,10 +347,13 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
         // not found?
         if(res.getCount()<1) {
+            res.close();
             return null;
         }
         res.moveToFirst();
-        return factory.generateEntity(res);
+        DBEntity entity = factory.generateEntity(res);
+        res.close();
+        return entity;
     }
 
     /**
@@ -356,6 +366,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
         // not found?
         if(res.getCount()<1) {
+            res.close();
             return null;
         }
         res.moveToFirst();
@@ -364,6 +375,7 @@ public class DBHelper extends SQLiteOpenHelper {
             list.add(factory.generateEntity(res));
             res.moveToNext();
         }
+        res.close();
         return list;
     }
 
@@ -373,9 +385,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters", (sources == null ? 0 : sources.length)));
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res;
             res = db.rawQuery(factory.getQueryFetchAll(sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
@@ -385,17 +397,20 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch(SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
-
         return list;
     }
 
     public List<DBEntity> getAllEntitiesWithAllFields(DBEntityFactory factory, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res;
             res = db.rawQuery(factory.getQueryFetchAllWithAllFields(sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
@@ -405,6 +420,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch(SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
 
         return list;
@@ -412,26 +431,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     public long getCountEntities(DBEntityFactory factory) {
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             String query = String.format("SELECT COUNT(*) as total FROM %s", factory.getTableName());
-            Cursor res = db.rawQuery(query, null);
+            res = db.rawQuery(query, null);
             res.moveToFirst();
             return res.getLong(res.getColumnIndex("total"));
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return 0;
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
     }
 
     public long getCountEntities(DBEntityFactory factory, String... sources) {
+        Cursor res = null;
         try {
             // check that column "source" exist for that table
             SQLiteDatabase db = this.getReadableDatabase();
             int count = 0;
 
             // Works with old SQLite versions
-            Cursor res = db.rawQuery(String.format("PRAGMA table_info(%s);",
+            res = db.rawQuery(String.format("PRAGMA table_info(%s);",
                     factory.getTableName()),null);
 
             res.moveToFirst();
@@ -468,6 +493,10 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return 0;
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
     }
 
@@ -526,9 +555,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public Set<Long> getClassesWithSpells() {
         Set<Long> list = new HashSet<>();
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery(SpellClassLevelFactory.getInstance().getQueryClassesWithSpells(), null);
+            res = db.rawQuery(SpellClassLevelFactory.getInstance().getQueryClassesWithSpells(), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
@@ -537,6 +567,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch(SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
 
         return list;
@@ -545,9 +579,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public Set<String> getSpellSchools() {
         List<String> list = new ArrayList<>();
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery(SpellFactory.getInstance().getQuerySchools(), null);
+            res = db.rawQuery(SpellFactory.getInstance().getQuerySchools(), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
@@ -556,6 +591,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch(SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
 
         Collections.sort(list);
@@ -566,9 +605,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<Spell> getSpells(SpellFilter filter, String... sources) {
         ArrayList<Spell> list = new ArrayList<>();
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery(SpellFactory.getInstance().getQueryFetchAll(filter, sources), null);
+            res = db.rawQuery(SpellFactory.getInstance().getQueryFetchAll(filter, sources), null);
             res.moveToFirst();
             while (res.isAfterLast() == false) {
                 Spell spell = (Spell) SpellFactory.getInstance().generateEntity(res);
@@ -579,6 +619,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch(SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
         return list;
     }
@@ -587,15 +631,20 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return true if spell indexes have been generated
      */
     public boolean hasSpellIndexes() {
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             String query = String.format("SELECT COUNT(*) as total FROM spellclasslevel");
-            Cursor res = db.rawQuery(query, null);
+            res = db.rawQuery(query, null);
             res.moveToFirst();
             return res.getLong(res.getColumnIndex("total")) > 0;
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return false;
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
     }
 
@@ -603,9 +652,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.i(DBHelper.class.getSimpleName(), String.format("Retrieving version of data %s", dataId));
         VersionFactory factory = VersionFactory.getInstance();
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res;
             res = db.rawQuery(factory.getQueryFetchVersion(dataId), null);
             // not found?
             if(res.getCount()<1) {
@@ -616,6 +665,10 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return null;
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
     }
 
@@ -623,9 +676,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.i(DBHelper.class.getSimpleName(), String.format("Updating version of data %s", dataId));
         VersionFactory factory = VersionFactory.getInstance();
 
+        Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res;
             res = db.rawQuery(factory.getQueryFetchVersion(dataId), null);
             String query;
             // not found?
@@ -640,6 +693,10 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch(SQLiteException exception) {
             exception.printStackTrace();
             return false;
+        } finally {
+            if(res != null) {
+                res.close();
+            }
         }
     }
 }

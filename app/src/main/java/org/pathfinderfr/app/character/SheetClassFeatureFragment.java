@@ -142,6 +142,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         TextView exampleName = view.findViewById(R.id.sheet_classfeatures_example_name);
         view.findViewById(R.id.sheet_classfeatures_row).setVisibility(View.GONE);
         TextView messageAdd = view.findViewById(R.id.sheet_classfeatures_add);
+        exampleIcon.setColorFilter(view.getResources().getColor(R.color.colorBlack));
 
         // determine size
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -163,6 +164,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 // icon
                 ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
                 iconIv.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_item_icon_trait));
+                iconIv.setColorFilter(view.getResources().getColor(R.color.colorBlack));
                 row.addView(iconIv);
                 // name
                 TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
