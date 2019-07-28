@@ -454,6 +454,7 @@
     <string name="importcharacter_info_parse">Analyse du fichier ... succès</string>
     <string name="importcharacter_info_import">Import du personnage ... succès</string>
     <string name="importcharacter_info_errors">Erreurs trouvées:</string>
+    <string name="importcharacter_error_security">L\'application ne semble pas avoir les droits pour accéder au fichier.</string>
     <string name="importcharacter_error_file">Impossible de lire le fichier</string>
     <string name="importcharacter_error_size">La taille du fichier excède le maximum (100K). Vérifiez qu\'il s\'agit bien d\'une feuille de personnage (.pfc) au format YAML.</string>
     <string name="importcharacter_error_parsing">Erreur d\'analyse du fichier (validez le format YAML!)</string>

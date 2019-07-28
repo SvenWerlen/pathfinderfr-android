@@ -93,6 +93,9 @@ public class ImportCharacterActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (SecurityException e) {
+            content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_security) + "<br/>" +  e.getMessage() + "</font>");
+            return content.toString();
         } catch (Throwable e) {
             content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_file) + "<br/>" +  e.getMessage() + "</font>");
             return content.toString();
