@@ -32,6 +32,8 @@ import java.util.List;
 
 public class ImportCharacterActivity extends AppCompatActivity {
 
+    private static final int MAX_SIZE = 100 * 1024; // 100K
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,11 +83,19 @@ public class ImportCharacterActivity extends AppCompatActivity {
         String text = null;
         try {
             InputStream inputStream = getContentResolver().openInputStream(uri);
+            // check maxsize (avoid out-of-memory)
+            if(inputStream.available() > MAX_SIZE) {
+                content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_size) + "</font>");
+                return content.toString();
+            }
             text = getStringFromInputStream(inputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Throwable e) {
+            content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_file) + "<br/>" +  e.getMessage() + "</font>");
+            return content.toString();
         }
         if (text == null) {
             content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_file) + "</font>");

@@ -455,6 +455,7 @@
     <string name="importcharacter_info_import">Import du personnage ... succès</string>
     <string name="importcharacter_info_errors">Erreurs trouvées:</string>
     <string name="importcharacter_error_file">Impossible de lire le fichier</string>
+    <string name="importcharacter_error_size">La taille du fichier excède le maximum (100K). Vérifiez qu\'il s\'agit bien d\'une feuille de personnage (.pfc) au format YAML.</string>
     <string name="importcharacter_error_parsing">Erreur d\'analyse du fichier (validez le format YAML!)</string>
     <string name="importcharacter_error_format">Le contenu n\'a pas un format YAML valide.</string>
     <string name="importcharacter_filecontent">Contenu du fichier:</string>
