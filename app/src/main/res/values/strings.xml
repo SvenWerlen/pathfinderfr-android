@@ -147,6 +147,10 @@
     <string name="equipment_filter_all">Tous</string>
     <string name="equipment_category">Catégorie:</string>
 
+    <!-- Equipment filters -->
+    <string name="magicitem_filter_all">Tous</string>
+    <string name="magicitem_category">Catégorie:</string>
+
     <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
     <string name="source_mj">Manuel des joueurs</string>
     <string name="source_mjra">Manuel des joueurs - règles avancées</string>

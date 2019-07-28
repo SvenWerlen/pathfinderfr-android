@@ -58,6 +58,7 @@ import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
+import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.RaceAlternateTraitFilter;
 import org.pathfinderfr.app.util.SpellFilter;
@@ -73,7 +74,7 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
         FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener,
-        FilterRaceAlternateTraitFragment.OnFragmentInteractionListener {
+        FilterRaceAlternateTraitFragment.OnFragmentInteractionListener, FilterMagicItemFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG    = "general_list_namelong";
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity
     public static final String KEY_ABILITY_FILTERS = "filter_classfeatures";
     public static final String KEY_TRAIT_FILTERS = "filter_racetraits";
     public static final String KEY_EQUIPMENT_FILTERS = "filter_equipment";
+    public static final String KEY_MAGICITEM_FILTERS = "filter_magicitems";
 
     public static final String DIALOG_FILTER = "dialog-filter";
     public static final String KEY_SEARCH_VISIBLE = "search-visible";
@@ -296,6 +298,12 @@ public class MainActivity extends AppCompatActivity
                 if (fragTraitFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     fragTraitFilter.setFilter(new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
+                }
+            } else if(fragment instanceof FilterMagicItemFragment) {
+                FilterMagicItemFragment fragMagicItemFilter = (FilterMagicItemFragment)fragment;
+                if (fragMagicItemFilter != null) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    fragMagicItemFilter.setFilter(new MagicItemFilter(prefs.getString(KEY_MAGICITEM_FILTERS, null)));
                 }
             }
 
@@ -573,6 +581,15 @@ public class MainActivity extends AppCompatActivity
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
             totalCount = newEntities.size();
             factoryId = MagicItemFactory.FACTORY_ID;
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            MagicItemFilter filter = new MagicItemFilter(prefs.getString(KEY_MAGICITEM_FILTERS, null));
+            filterActive = filter.hasAnyFilter();
+            filterMagicItem(filter);
+            newEntities = new ArrayList<>(listFull);
+            totalCount = dbhelper.getCountEntities(MagicItemFactory.getInstance(),
+                    sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
+            factoryId = MagicItemFactory.FACTORY_ID;
         } else if (id == R.id.nav_traits) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             RaceAlternateTraitFilter filter = new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));
@@ -611,7 +628,8 @@ public class MainActivity extends AppCompatActivity
             boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || EquipmentFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
-                    || RaceAlternateTraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
+                    || RaceAlternateTraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
+                    || MagicItemFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
             findViewById(R.id.item_list).setVisibility(View.VISIBLE);
@@ -718,6 +736,11 @@ public class MainActivity extends AppCompatActivity
                     getResources().getString(R.string.home_item_armors),
                     getResources().getString(R.string.home_item_weapons)));
             newFragment.show(ft, DIALOG_FILTER);
+        } else if(MagicItemFactory.FACTORY_ID.equals(factory)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            FilterMagicItemFragment newFragment = FilterMagicItemFragment.newInstance();
+            newFragment.setFilter(new MagicItemFilter(prefs.getString(KEY_MAGICITEM_FILTERS, null)));
+            newFragment.show(ft, DIALOG_FILTER);
         }
 
     }
@@ -808,15 +831,27 @@ public class MainActivity extends AppCompatActivity
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
 
         // sort equipment
-        Collections.sort(equipment, new Comparator<DBEntity>() {
-            @Override
-            public int compare(DBEntity o1, DBEntity o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(equipment);
 
         listFull = new ArrayList<>();
         for(DBEntity e : equipment) {
+            if(!filter.hasAnyFilter() || !filter.isFiltered(e)) {
+                listFull.add(e);
+            }
+        }
+    }
+
+    private void filterMagicItem(MagicItemFilter filter) {
+        String[] sources = PreferenceUtil.getSources(getBaseContext());
+        List<DBEntity> magicitems = new ArrayList<>();
+        magicitems.addAll(dbhelper.getAllEntities(MagicItemFactory.getInstance(),
+                sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources));
+
+        // sort magic item
+        Collections.sort(magicitems);
+
+        listFull = new ArrayList<>();
+        for(DBEntity e : magicitems) {
             if(!filter.hasAnyFilter() || !filter.isFiltered(e)) {
                 listFull.add(e);
             }
@@ -828,6 +863,19 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_EQUIPMENT_FILTERS, filter.generatePreferences()).apply();
         filterEquipment(filter);
+        applySearch();
+
+        // change icon if filter applied
+        FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.filterButton);
+        int filterButtonId = filter.hasAnyFilter() ? R.drawable.ic_filtered : R.drawable.ic_filter;
+        filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
+    }
+
+    @Override
+    public void onApplyFilter(MagicItemFilter filter) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        prefs.edit().putString(MainActivity.KEY_MAGICITEM_FILTERS, filter.generatePreferences()).apply();
+        filterMagicItem(filter);
         applySearch();
 
         // change icon if filter applied

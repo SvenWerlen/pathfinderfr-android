@@ -1,8 +1,9 @@
 package org.pathfinderfr.app.database.entity;
 
 import java.io.Serializable;
+import java.text.Collator;
 
-public abstract class DBEntity implements Serializable {
+public abstract class DBEntity implements Serializable, Comparable<DBEntity> {
 
     public abstract DBEntityFactory getFactory();
 
@@ -44,6 +45,15 @@ public abstract class DBEntity implements Serializable {
     public boolean isValid() {
         return getName() != null && getName().length() > 0
                 && getDescription() != null && getDescription().length() > 0;
+    }
+
+    @Override
+    public int compareTo(DBEntity o) {
+        if(o == null || getName() == null || o.getName() == null) {
+            return 0;
+        } else {
+            return Collator.getInstance().compare(getName(),o.getName());
+        }
     }
 
     @Override
