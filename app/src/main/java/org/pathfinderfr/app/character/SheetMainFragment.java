@@ -3,11 +3,16 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.print.PrintAttributes;
+import android.print.pdf.PrintedPdfDocument;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -15,6 +20,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatViewInflater;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -24,6 +30,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -239,7 +247,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         // ACTIONS
         ImageView actionPin = view.findViewById(R.id.actionPin);
-        actionPin.findViewById(R.id.actionPin).setOnClickListener(listener);
+        actionPin.setOnClickListener(listener);
         actionPin.setBackground(null);
         actionPin.setImageResource(R.drawable.ic_pin);
         if(character.getId() == PreferenceManager.getDefaultSharedPreferences(view.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L)) {
@@ -276,6 +284,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 }
             }
         });
+        view.findViewById(R.id.actionPDF).setOnClickListener(listener);
         // initialize view
         if(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(CharacterSheetActivity.PREF_MAIN_VIEW_SUMMARY, false)) {
             viewInfos.setVisibility(View.GONE);
@@ -1186,6 +1195,73 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                         parent.startActivity(Intent.createChooser(shareIntent, parent.getResources().getString(R.string.sheet_choose_app_export)));
                     }
+                    return;
+                }
+                else if(v.getId() == R.id.actionPDF) {
+                    Log.i(SheetMainFragment.class.getSimpleName(), "Generating PDF");
+                    // save character to cache directory
+                    try {
+                        File cachePath = new File(parent.getContext().getCacheDir(), "characters");
+                        cachePath.mkdirs(); // don't forget to make the directory
+                        FileOutputStream stream = new FileOutputStream(cachePath + "/personnage.pdf");
+
+                        // open a new document
+                        PrintAttributes printAttributes = new PrintAttributes.Builder()
+                                .setMediaSize(PrintAttributes.MediaSize.ISO_A0)
+                                .setMinMargins(new PrintAttributes.Margins(5, 5, 5, 5))
+                                .setResolution(new PrintAttributes.Resolution("res1", "PRINT_SERVICE", 300, 300))
+                                .setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
+                                .build();
+
+                        PrintedPdfDocument document = new PrintedPdfDocument(v.getContext(), printAttributes);
+
+                        // start a page
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder((int)(8.5*72), 11*72, 1).create();
+                        PdfDocument.Page page = document.startPage(pageInfo);
+
+                        // draw something on the page
+                        //Inflate an XML template into a view with a LinearLayout root
+                        LinearLayout container = new LinearLayout(parent.getContext());
+                        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+                        View view = new View(parent.getContext());
+                        view = inflater.inflate(R.layout.fragment_sheet_feats, container, true);
+
+                        //create page
+                        Canvas canvas = page.getCanvas();
+
+                        //Draw view on the page
+                        int measureWidth = View.MeasureSpec.makeMeasureSpec(canvas.getWidth(), View.MeasureSpec.EXACTLY);
+                        int measuredHeight = View.MeasureSpec.makeMeasureSpec(canvas.getHeight(), View.MeasureSpec.EXACTLY);
+                        container.measure(measureWidth, measuredHeight);
+                        container.layout(0, 0, canvas.getWidth(), canvas.getHeight());
+                        container.draw(canvas);
+
+                        // finish the page
+                        document.finishPage(page);
+
+                        // write the document content
+                        document.writeTo(stream);
+                        document.close();
+                        stream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    // read character from cache
+                    File charPath = new File(parent.getContext().getCacheDir(), "characters");
+                    File newFile = new File(charPath, "personnage.pdf");
+                    System.out.println("SIZE = " + newFile.length());
+                    Uri contentUri = FileProvider.getUriForFile(parent.getContext(), "org.pathfinderfr.app.fileprovider", newFile);
+
+                    if (contentUri != null) {
+                        Intent pdfIntent = new Intent();
+                        pdfIntent.setAction(Intent.ACTION_VIEW);
+                        pdfIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        pdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        pdfIntent.setDataAndType(contentUri, "application/pdf");
+                        parent.startActivity(Intent.createChooser(pdfIntent, parent.getResources().getString(R.string.sheet_choose_app_export)));
+                    }
+                    return;
                 }
                 else if(v.getId() == R.id.actionDelete) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
