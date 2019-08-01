@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/pdfview">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,6 +50,13 @@
                 android:layout_height="25dp"
                 android:layout_margin="@dimen/fab_margin"
                 android:background="@drawable/ic_toggle_pos1" />
+
+            <ImageButton
+                android:id="@+id/actionPDF"
+                android:layout_width="19dp"
+                android:layout_height="25dp"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/ic_genpdf" />
 
             <View android:layout_width="0dp"
                 android:layout_height="match_parent"

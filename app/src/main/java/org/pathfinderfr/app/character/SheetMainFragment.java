@@ -3,6 +3,8 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -37,6 +39,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.layout.element.Image;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
@@ -56,15 +60,18 @@ import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.util.CharacterPDF;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.Triplet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1204,46 +1211,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         File cachePath = new File(parent.getContext().getCacheDir(), "characters");
                         cachePath.mkdirs(); // don't forget to make the directory
                         FileOutputStream stream = new FileOutputStream(cachePath + "/personnage.pdf");
-
-                        // open a new document
-                        PrintAttributes printAttributes = new PrintAttributes.Builder()
-                                .setMediaSize(PrintAttributes.MediaSize.ISO_A0)
-                                .setMinMargins(new PrintAttributes.Margins(5, 5, 5, 5))
-                                .setResolution(new PrintAttributes.Resolution("res1", "PRINT_SERVICE", 300, 300))
-                                .setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
-                                .build();
-
-                        PrintedPdfDocument document = new PrintedPdfDocument(v.getContext(), printAttributes);
-
-                        // start a page
-                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder((int)(8.5*72), 11*72, 1).create();
-                        PdfDocument.Page page = document.startPage(pageInfo);
-
-                        // draw something on the page
-                        //Inflate an XML template into a view with a LinearLayout root
-                        LinearLayout container = new LinearLayout(parent.getContext());
-                        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                        View view = new View(parent.getContext());
-                        view = inflater.inflate(R.layout.fragment_sheet_feats, container, true);
-
-                        //create page
-                        Canvas canvas = page.getCanvas();
-
-                        //Draw view on the page
-                        int measureWidth = View.MeasureSpec.makeMeasureSpec(canvas.getWidth(), View.MeasureSpec.EXACTLY);
-                        int measuredHeight = View.MeasureSpec.makeMeasureSpec(canvas.getHeight(), View.MeasureSpec.EXACTLY);
-                        container.measure(measureWidth, measuredHeight);
-                        container.layout(0, 0, canvas.getWidth(), canvas.getHeight());
-                        container.draw(canvas);
-
-                        // finish the page
-                        document.finishPage(page);
-
-                        // write the document content
-                        document.writeTo(stream);
-                        document.close();
+                        // get logo
+                        InputStream ims = parent.getActivity().getAssets().open("pdf-logo.png");
+                        Bitmap bmp = BitmapFactory.decodeStream(ims);
+                        ByteArrayOutputStream logo = new ByteArrayOutputStream();
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, logo);
+                        new CharacterPDF(parent.character).generatePDF(stream, ImageDataFactory.create(logo.toByteArray()));
                         stream.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return;
                     }
