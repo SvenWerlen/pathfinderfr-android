@@ -1226,7 +1226,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         ByteArrayOutputStream logo = new ByteArrayOutputStream();
                         bmp.compress(Bitmap.CompressFormat.PNG, 100, logo);
                         List<DBEntity> skills = DBHelper.getInstance(parent.getContext()).getAllEntitiesWithAllFields(SkillFactory.getInstance());
-                        new CharacterPDF(parent.character, skills).generatePDF(stream, ImageDataFactory.create(logo.toByteArray()));
+                        new CharacterPDF(parent.character, skills, parent.character.getInventoryWeapons()).generatePDF(stream, ImageDataFactory.create(logo.toByteArray()));
                         stream.close();
                     } catch (Exception e) {
                         e.printStackTrace();

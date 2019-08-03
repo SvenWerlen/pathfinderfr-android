@@ -9,6 +9,7 @@ import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Weapon;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +36,7 @@ public class CharacterPDFTest {
     public void test() throws IOException {
 
         Character c = new Character();
-        c.setStrength(11);
+        c.setStrength(15);
         c.setDexterity(12);
         c.setConstitution(13);
         c.setIntelligence(14);
@@ -170,9 +171,37 @@ public class CharacterPDFTest {
 
         String logoPath = "/home/sven/AndroidStudioProjects/PathfinderFR/app/src/main/assets/pdf-logo.png";
 
+        List<Weapon> weapons = new ArrayList<>();
+        Weapon w = new Weapon();
+        w.setName("Arc long");
+        w.setDamageSmall("1d6");
+        w.setDamageMedium("1d8");
+        w.setCritical("x3");
+        w.setRange("30 m (20 c)");
+        w.setType("P");
+        weapons.add(w);
+
+        w = new Weapon();
+        w.setName("Arc court composite");
+        w.setDamageSmall("1d4");
+        w.setDamageMedium("1d6");
+        w.setCritical("19-20/x2");
+        w.setRange("20 m (15 c)");
+        w.setType("P");
+        weapons.add(w);
+
+        w = new Weapon();
+        w.setName("Hache d'armes");
+        w.setDamageSmall("1d6");
+        w.setDamageMedium("1d8");
+        w.setCritical("x3");
+        w.setRange("--");
+        w.setType("T");
+        weapons.add(w);
+
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);
-        (new CharacterPDF(c, skills)).generatePDF(fos, ImageDataFactory.create(logoPath));
+        (new CharacterPDF(c, skills, weapons)).generatePDF(fos, ImageDataFactory.create(logoPath));
         fos.close();
     }
 }

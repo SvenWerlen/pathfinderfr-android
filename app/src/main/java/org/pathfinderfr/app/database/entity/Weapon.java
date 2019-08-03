@@ -60,6 +60,31 @@ public class Weapon extends DBEntity {
         this.damageMedium = damageMedium;
     }
 
+    public String getDamageForSize(int size) {
+        if(size == Character.SIZE_MEDIUM) {
+            return getDamageMedium();
+        } else if(size == Character.SIZE_SMALL) {
+            return getDamageSmall();
+        } else {
+            // not supported
+            return "";
+        }
+    }
+
+    public int getDamageBonus(int strBonus) {
+        if("-".equals(getRangeInMeters())) {
+            return strBonus;
+        } else if (name.toLowerCase().contains("fronde")) {
+            return strBonus;
+        } else if (name.toLowerCase().contains("composite")) {
+            return strBonus;
+        } else if (name.toLowerCase().contains("arc") && strBonus < 0) {
+            return strBonus;
+        } else {
+            return 0;
+        }
+    }
+
     public String getCritical() {
         return critical;
     }
@@ -70,6 +95,18 @@ public class Weapon extends DBEntity {
 
     public String getRange() {
         return range;
+    }
+
+    public boolean isRanged() {
+        return range != null && range.indexOf(" (") > 0;
+    }
+
+    public String getRangeInMeters() {
+        if(range != null && range.indexOf(" (") > 0) {
+            return range.substring(0, range.indexOf(" ("));
+        } else {
+            return "-";
+        }
     }
 
     public void setRange(String range) {

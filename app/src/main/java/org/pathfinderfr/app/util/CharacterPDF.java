@@ -27,6 +27,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Weapon;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,6 +38,7 @@ public class CharacterPDF {
 
     private Character character;
     private List<DBEntity> skills;
+    private List<Weapon> weapons;
     private static final int LOGO_WIDTH = 185;
     private static final int STATS_CELL_SPACING = 3;
     private static final int STATS_CELL_WIDTH = 22;
@@ -59,9 +61,10 @@ public class CharacterPDF {
         STYLE_LABEL_BOTTOM = new Style().setFontSize(4);
     }
 
-    public CharacterPDF(Character character, List<DBEntity> skills) {
+    public CharacterPDF(Character character, List<DBEntity> skills, List<Weapon> weapons) {
         this.character = character;
         this.skills = skills;
+        this.weapons = weapons;
 
         try {
             FONT_BOLD = PdfFontFactory.createRegisteredFont(StandardFonts.HELVETICA_BOLD);
@@ -716,7 +719,8 @@ public class CharacterPDF {
     }
 
 
-    public Table createSectionWeapon(int left, int bottom) {
+    public Table createSectionWeapon(int left, int bottom, int weaponIdx) {
+        Weapon w = weapons != null && weapons.size() > weaponIdx ? weapons.get(weaponIdx) : null;
         Table table = new Table(5);
         table.setFixedPosition(left, bottom, 0);
         table.addCell(createLabel("Arme", "", 2,3)
@@ -724,23 +728,29 @@ public class CharacterPDF {
                 .setBorderLeft(Border.NO_BORDER)
                 .setBorderRight(Border.NO_BORDER)
                 .setBorderTopLeftRadius(new BorderRadius(5))
-                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(184));
+                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(170));
         table.addCell(createHeader("").setMinHeight(5));
         table.addCell(createHeader(""));
-        table.addCell(createLabel("","Bonus à l'attaque").setMinWidth(45));
+        table.addCell(createLabel("","Bonus à l'attaque").setMinWidth(58));
         table.addCell(createLabel("","Critique").setMinWidth(45));
 
-        table.addCell(createValueCell("", false, 1, 3).setMinHeight(15));
-        table.addCell(createValueCell("", false, 1, 1));
-        table.addCell(createValueCell("", false, 1, 1));
+        table.addCell(createInfoText(w == null ? "" : w.getName(), 3, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
+        String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString() : character.getAttackBonusMeleeAsString());
+        table.addCell(createInfoText(attackBonus, 1, TextAlignment.CENTER, true));
+        table.addCell(createInfoText(w == null ? "" : w.getCritical(), 1, TextAlignment.CENTER, true));
         table.addCell(createLabel("","Type").setWidth(20));
         table.addCell(createLabel("","Portée"));
-        table.addCell(createLabel("","Munitions").setMinWidth(100));
+        table.addCell(createLabel("","Munitions").setMinWidth(90));
         table.addCell(createLabel("","Dégâts", 1,2));
-        table.addCell(createValueCell("", false, 1, 1).setMinHeight(15));
-        table.addCell(createValueCell("", false, 1, 1));
-        table.addCell(createValueCell("", false, 1, 1));
-        table.addCell(createValueCell("", false, 1, 2));
+        table.addCell(createInfoText(w == null ? "" : w.getType(), 1, TextAlignment.CENTER, true).setMinHeight(15));
+        table.addCell(createInfoText(w == null ? "" : w.getRangeInMeters(), 1, TextAlignment.CENTER, true));
+        table.addCell(createInfoText(w == null ? "" : (w.isRanged() ? "" : "-"), 1, TextAlignment.CENTER, true));
+        String damage = w == null ? "" : w.getDamageForSize(character.getSizeType());
+        int damageBonus = w == null ? 0 : w.getDamageBonus(character.getStrengthModif());
+        if(damageBonus != 0) {
+            damage = String.format("%s %+d", damage, damageBonus);
+        }
+        table.addCell(createInfoText(damage, 2, TextAlignment.CENTER, true));
 
         return table;
     }
@@ -825,11 +835,11 @@ public class CharacterPDF {
         document.add(createSectionArmorClass());
         document.add(createSectionResistances());
         document.add(createSectionAttackDefense());
-        document.add(createSectionWeapon(21,310));
-        document.add(createSectionWeapon(21,245));
-        document.add(createSectionWeapon(21,180));
-        document.add(createSectionWeapon(21,115));
-        document.add(createSectionWeapon(21,50));
+        document.add(createSectionWeapon(21,310, 0));
+        document.add(createSectionWeapon(21,245, 1));
+        document.add(createSectionWeapon(21,180, 2));
+        document.add(createSectionWeapon(21,115, 3));
+        document.add(createSectionWeapon(21,50, 4));
         document.add(createSectionSkills());
         document.add(createSectionOthers());
 

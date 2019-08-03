@@ -781,11 +781,29 @@ public class Character extends DBEntity {
     }
 
     /**
+     * @return attack bonus (melee)
+     */
+    public int getAttackBestBonusMelee() {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE);
+        int bestBonus = getBaseAttackBonusBest();
+        return bestBonus + addBonus + getStrengthModif();
+    }
+
+    /**
      * @return attack bonus (range), as string
      */
     public String getAttackBonusRangeAsString() {
         int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED);
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
+    }
+
+    /**
+     * @return attack bonus (melee)
+     */
+    public int getAttackBestBonusRange() {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED);
+        int bestBonus = getBaseAttackBonusBest();
+        return bestBonus + addBonus + getDexterityModif();
     }
 
     /**
@@ -1184,7 +1202,9 @@ public class Character extends DBEntity {
                 buf.append(el.getSource()).append(", ");
             }
         }
-        buf.delete(buf.length() - 2, buf.length());
+        if(buf.length()>0) {
+            buf.delete(buf.length() - 2, buf.length());
+        }
         return buf.toString();
     }
 
@@ -1254,6 +1274,25 @@ public class Character extends DBEntity {
         List<InventoryItem> result = new ArrayList<>();
         for(InventoryItem el : invItems) {
             result.add(new InventoryItem(el));
+        }
+        return result;
+    }
+
+    /**
+     * @return the list of inventory items which are weapons
+     */
+    public List<Weapon> getInventoryWeapons() {
+        List<Weapon> result = new ArrayList<>();
+        DBHelper helper = DBHelper.getInstance(null);
+        for(InventoryItem el : invItems) {
+            if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
+                DBEntity entity = helper.fetchObjectEntity(el.getObjectId());
+                if(entity instanceof Weapon) {
+                    Weapon w = (Weapon)entity;
+                    w.setName(el.getName());
+                    result.add(w);
+                }
+            }
         }
         return result;
     }
