@@ -67,10 +67,15 @@ public class Character extends DBEntity {
     public static final int MODIF_ABILITY_WIS = 6;
     public static final int MODIF_ABILITY_CHA = 7;
 
-    public static final int MODIF_SAVES_ALL = 11;
-    public static final int MODIF_SAVES_REF = 12;
-    public static final int MODIF_SAVES_FOR = 13;
-    public static final int MODIF_SAVES_WIL = 14;
+    public static final int MODIF_SAVES_ALL     = 11;
+    public static final int MODIF_SAVES_REF     = 12;
+    public static final int MODIF_SAVES_FOR     = 13;
+    public static final int MODIF_SAVES_WIL     = 14;
+    public static final int MODIF_SAVES_MAG_ALL = 15;
+    public static final int MODIF_SAVES_MAG_REF = 16;
+    public static final int MODIF_SAVES_MAG_FOR = 17;
+    public static final int MODIF_SAVES_MAG_WIL = 18;
+
 
     public static final int MODIF_COMBAT_INI = 21;
     public static final int MODIF_COMBAT_AC = 22;
@@ -675,7 +680,9 @@ public class Character extends DBEntity {
         // check if modif is applied
         int bonus = 0;
         bonus += getAdditionalBonus(MODIF_SAVES_ALL);
+        bonus += getAdditionalBonus(MODIF_SAVES_MAG_ALL);
         bonus += getAdditionalBonus(bonusId);
+        bonus += getAdditionalBonus(bonusId+4); // magic bonus
         return bonus;
     }
 
@@ -781,9 +788,9 @@ public class Character extends DBEntity {
         int[] bab = getBaseAttackBonus();
         int bonus = 0;
         bonus += getBaseAttackBonusBest();
-        int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
+        int sizeModif = getSizeModifier(getSizeType());
         int addBonus = getAdditionalBonus(MODIF_COMBAT_CMB);
-        return bonus + getStrengthModif() + sizeModif + addBonus;
+        return bonus + getStrengthModif() - sizeModif + addBonus;
     }
 
     /**
@@ -793,9 +800,9 @@ public class Character extends DBEntity {
         int[] bab = getBaseAttackBonus();
         int bonus = 0;
         bonus += getBaseAttackBonusBest();
-        int sizeModif = getRaceSize() == SIZE_SMALL ? -1 : 0;
+        int sizeModif = getSizeModifier(getSizeType());
         int addBonus = getAdditionalBonus(MODIF_COMBAT_CMD);
-        return 10 + bonus + getStrengthModif() + getDexterityModif() + sizeModif + addBonus;
+        return 10 + bonus + getStrengthModif() + getDexterityModif() - sizeModif + addBonus;
     }
 
     /**

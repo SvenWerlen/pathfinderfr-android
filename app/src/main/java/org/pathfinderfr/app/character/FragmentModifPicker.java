@@ -159,10 +159,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_ABILITY_INT: return getResources().getString(R.string.sheet_ability_intelligence);
             case Character.MODIF_ABILITY_WIS: return getResources().getString(R.string.sheet_ability_wisdom);
             case Character.MODIF_ABILITY_CHA: return getResources().getString(R.string.sheet_ability_charisma);
-            case Character.MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_savingthrows_all);
-            case Character.MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_reflex);
-            case Character.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_fortitude);
-            case Character.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_will);
+            case Character.MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_savingthrows_other_all);
+            case Character.MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_other_reflex);
+            case Character.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_other_fortitude);
+            case Character.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_other_will);
+            case Character.MODIF_SAVES_MAG_ALL: return getResources().getString(R.string.sheet_savingthrows_mag_all);
+            case Character.MODIF_SAVES_MAG_REF: return getResources().getString(R.string.sheet_savingthrows_mag_reflex);
+            case Character.MODIF_SAVES_MAG_FOR: return getResources().getString(R.string.sheet_savingthrows_mag_fortitude);
+            case Character.MODIF_SAVES_MAG_WIL: return getResources().getString(R.string.sheet_savingthrows_mag_will);
             case Character.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
             case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass_other);
             case Character.MODIF_COMBAT_AC_ARMOR: return getResources().getString(R.string.sheet_armorclass_armor);
@@ -284,9 +288,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Character.MODIF_ABILITY_ALL));
         // Saves
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_saves), 0));
+        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_REF));
         list.add(getStringWithTag(Character.MODIF_SAVES_REF));
+        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_FOR));
         list.add(getStringWithTag(Character.MODIF_SAVES_FOR));
+        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_WIL));
         list.add(getStringWithTag(Character.MODIF_SAVES_WIL));
+        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_ALL));
         list.add(getStringWithTag(Character.MODIF_SAVES_ALL));
         // Combat
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_combat), 0));

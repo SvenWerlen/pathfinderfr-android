@@ -352,12 +352,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             @Override
             public void onClick(View v) {
                 act.showTooltip(acTooltipTitle,String.format(acTooltipContent,
-                        character.getModif(Character.MODIF_COMBAT_AC_ARMOR),
-                        character.getModif(Character.MODIF_COMBAT_AC_SHIELD),
+                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_ARMOR),
+                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_SHIELD),
                         character.getDexterityModif(), // dex modif
                         character.getSizeModifierArmorClass(),
-                        character.getModif(Character.MODIF_COMBAT_AC_NATURAL),
-                        character.getModif(Character.MODIF_COMBAT_AC_PARADE),
+                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_NATURAL),
+                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_PARADE),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_AC, tooltipModif), // others
                         character.getArmorClass()));
             }
@@ -545,6 +545,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_constitution).toLowerCase(), character.getConstitutionModif(),
+                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_FOR),
                                 generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
                                         + generateOtherBonusText(character, Character.MODIF_SAVES_FOR, tooltipModif), // other
                                 character.getSavingThrowsFortitudeTotal()));
@@ -571,6 +572,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_dexterity).toLowerCase(), character.getDexterityModif(),
+                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_REF),
                                 generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
                                         + generateOtherBonusText(character, Character.MODIF_SAVES_REF, tooltipModif), // other
                                 character.getSavingThrowsReflexesTotal()));
@@ -597,6 +599,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_wisdom).toLowerCase(), character.getWisdomModif(),
+                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_WIL),
                                 generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
                                         + generateOtherBonusText(character, Character.MODIF_SAVES_WIL, tooltipModif), // other
                                 character.getSavingThrowsWillTotal()));

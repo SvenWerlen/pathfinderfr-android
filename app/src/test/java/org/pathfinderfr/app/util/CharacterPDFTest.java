@@ -103,6 +103,33 @@ public class CharacterPDFTest {
         modif = new Character.CharacterModif("Bague", modifs, "-", true);
         c.addModif(modif);
 
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_REF, 1));
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_FOR, 2));
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_WIL, 3));
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_MAG, 1));
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_INI, 2));
+        modif = new Character.CharacterModif("Objet combat", modifs, "-", true);
+        c.addModif(modif);
+
 
         List<DBEntity> skills = new ArrayList<>();
         skills.add(createSkill("Acrobatie", "Dex", false));

@@ -596,9 +596,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_REF)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_REF)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -612,9 +612,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getConstitutionModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_FOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_FOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -628,9 +628,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getWisdomModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_WIL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_WIL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -663,7 +663,7 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getStrengthModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getSizeModifierManeuver()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
         table.addCell(createCell("Mod.", TextAlignment.RIGHT, 2, 8, 0, 0));
 
@@ -690,7 +690,7 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getSizeModifierManeuver()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createValueCell(10).setPadding(0).setMinWidth(9).setBorder(Border.NO_BORDER));
         table.addCell(createHeader("").setMinWidth(35));
