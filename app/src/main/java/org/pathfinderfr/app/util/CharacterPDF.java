@@ -2,7 +2,10 @@ package org.pathfinderfr.app.util;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -10,23 +13,29 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
+import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Skill;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 public class CharacterPDF {
 
     private Character character;
+    private List<DBEntity> skills;
     private static final int LOGO_WIDTH = 185;
     private static final int STATS_CELL_SPACING = 3;
     private static final int STATS_CELL_WIDTH = 22;
@@ -47,8 +56,9 @@ public class CharacterPDF {
         STYLE_LABEL_BOTTOM = new Style().setFontSize(4);
     }
 
-    public CharacterPDF(Character character) {
+    public CharacterPDF(Character character, List<DBEntity> skills) {
         this.character = character;
+        this.skills = skills;
 
         try {
             FONT_BOLD = PdfFontFactory.createRegisteredFont(StandardFonts.HELVETICA_BOLD);
@@ -58,14 +68,26 @@ public class CharacterPDF {
     }
 
     public Cell createHeader(String text) {
-        return new Cell()
+        return createHeader(text,TextAlignment.CENTER,1,1);
+    }
+
+    public Cell createHeader(String text, TextAlignment align) {
+        return createHeader(text, align, 1,1);
+    }
+
+    public Cell createHeader(String text, int rowspan, int colspan) {
+        return createHeader(text, TextAlignment.CENTER, rowspan, colspan);
+    }
+
+    public Cell createHeader(String text, TextAlignment align, int rowspan, int colspan) {
+        return new Cell(rowspan, colspan)
                 .addStyle(STYLE_HEADER)
                 .setBorder(Border.NO_BORDER)
                 .setVerticalAlignment(VerticalAlignment.BOTTOM)
                 .setMargin(0)
                 .setPadding(0)
                 .add(new Paragraph(text.toUpperCase())
-                    .setTextAlignment(TextAlignment.CENTER).setFixedLeading(5).setPaddingTop(1));
+                    .setTextAlignment(align).setFixedLeading(5).setPaddingTop(1));
     }
 
     public Paragraph createLabelTop(String text) {
@@ -89,7 +111,11 @@ public class CharacterPDF {
     }
 
     public Cell createLabel(String text1, String text2) {
-        return new Cell()
+        return createLabel(text1, text2,1,1);
+    }
+
+    public Cell createLabel(String text1, String text2, int rowspan, int colspan) {
+        return new Cell(rowspan, colspan)
                 .setPaddingLeft(2)
                 .setPaddingRight(2)
                 .setPaddingTop(0)
@@ -108,15 +134,24 @@ public class CharacterPDF {
     }
 
     public Cell createValueCell(Integer value, boolean total) {
-        Cell c = new Cell()
+        return createValueCell(value == null ? "" : String.format("%d", value), total, 1, 1);
+    }
+
+    public Cell createValueCell(String value, boolean total, int rowspan, int colspan) {
+        Cell c = new Cell(rowspan, colspan)
                 .setPadding(0)
                 .setMargin(0)
                 .addStyle(total ? STYLE_TEXT_TOTAL : STYLE_CELL_DEFAULT)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER)
-                .setVerticalAlignment(VerticalAlignment.MIDDLE)
-                .add((new Paragraph(value == null ? "" : String.format("%d", value)))
-                        .setWidth(STATS_CELL_WIDTH)
-                        .setTextAlignment(TextAlignment.CENTER));
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        if(colspan == 1) {
+            c.add((new Paragraph(value))
+                    .setWidth(STATS_CELL_WIDTH)
+                    .setTextAlignment(TextAlignment.CENTER));
+        } else {
+            c.add((new Paragraph(value))
+                    .setTextAlignment(TextAlignment.CENTER));
+        }
         if(total) {
             c.setFont(FONT_BOLD);
         }
@@ -192,6 +227,10 @@ public class CharacterPDF {
     }
 
     public Cell createInfoText(String text, int colspan) {
+        return createInfoText(text, colspan, TextAlignment.LEFT);
+    }
+
+    public Cell createInfoText(String text, int colspan, TextAlignment align) {
         return new Cell(1, colspan)
                 .setPadding(0)
                 .setPaddingTop(3)
@@ -204,7 +243,7 @@ public class CharacterPDF {
                 .setMinWidth(colspan*40)
                 .setHorizontalAlignment(HorizontalAlignment.LEFT)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
-                .add((new Paragraph(text).setTextAlignment(TextAlignment.LEFT)));
+                .add((new Paragraph(text).setTextAlignment(align)));
     }
 
     public Table createSectionInfos() {
@@ -498,6 +537,171 @@ public class CharacterPDF {
     }
 
 
+    public Table createSectionAttackDefense() {
+        Table table = new Table(18);
+        table.setFixedPosition(21, 375, 0);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+
+        table.addCell(createLabel("BBA", "Bonus de base à l'attaque").setMinWidth(70));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createValueCell(character.getBaseAttackBonusAsString(), false, 1, 7));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createLabel("Résistance", "à la magie", 1, 6).setMinWidth(67));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createValueCell(character.getMagicResistance(), false));
+
+        table.addCell(new Cell(1,18).setBorder(Border.NO_BORDER));
+
+        table.addCell(createLabel("BMO", "Bonus de manœuvre offensive").setMinWidth(70));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createValueCell(character.getCombatManeuverBonus(), true));
+        table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(character.getBaseAttackBonusBest()));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(character.getStrengthModif()));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(null));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createCell("Mod.", TextAlignment.RIGHT, 2, 8, 0, 0));
+
+        table.addCell(createHeader(""));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Total").setVerticalAlignment(VerticalAlignment.TOP));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("BBA").setVerticalAlignment(VerticalAlignment.TOP));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. de force"));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. de taille"));
+        table.addCell(createHeader(""));
+
+        table.addCell(new Cell(1,18).setBorder(Border.NO_BORDER));
+
+        table.addCell(createLabel("DMD", "Degré de manœuvre défensive").setMinWidth(70));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).setMinWidth(3).setPadding(0).setMargin(0));
+        table.addCell(createValueCell(character.getCombatManeuverDefense(), true));
+        table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(character.getBaseAttackBonusBest()));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(character.getStrengthModif()));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(character.getDexterityModif()));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createBonusCell(null));
+        table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
+        table.addCell(createValueCell(10).setPadding(0).setMinWidth(9).setBorder(Border.NO_BORDER));
+        table.addCell(createHeader("").setMinWidth(35));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader(""));
+
+        table.addCell(createHeader(""));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Total").setVerticalAlignment(VerticalAlignment.TOP));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("BBA").setVerticalAlignment(VerticalAlignment.TOP));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. de force"));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. de Dex"));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. de taille"));
+        table.addCell(createHeader(""));
+
+        return table;
+    }
+
+
+    public Table createSectionWeapon(int left, int bottom) {
+        Table table = new Table(5);
+        table.setFixedPosition(left, bottom, 0);
+        table.addCell(createLabel("Arme", "", 2,3)
+                .setBorderTop(Border.NO_BORDER)
+                .setBorderLeft(Border.NO_BORDER)
+                .setBorderRight(Border.NO_BORDER)
+                .setBorderTopLeftRadius(new BorderRadius(5))
+                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(184));
+        table.addCell(createHeader("").setMinHeight(5));
+        table.addCell(createHeader(""));
+        table.addCell(createLabel("","Bonus à l'attaque").setMinWidth(45));
+        table.addCell(createLabel("","Critique").setMinWidth(45));
+
+        table.addCell(createValueCell("", false, 1, 3).setMinHeight(15));
+        table.addCell(createValueCell("", false, 1, 1));
+        table.addCell(createValueCell("", false, 1, 1));
+        table.addCell(createLabel("","Type").setWidth(20));
+        table.addCell(createLabel("","Portée"));
+        table.addCell(createLabel("","Munitions").setMinWidth(100));
+        table.addCell(createLabel("","Dégâts", 1,2));
+        table.addCell(createValueCell("", false, 1, 1).setMinHeight(15));
+        table.addCell(createValueCell("", false, 1, 1));
+        table.addCell(createValueCell("", false, 1, 1));
+        table.addCell(createValueCell("", false, 1, 2));
+
+        return table;
+    }
+
+    public Cell createCheckBox(boolean checked) {
+        return new Cell().setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .add(new Paragraph().setBackgroundColor(checked ? ColorConstants.BLACK: ColorConstants.WHITE)
+                .setMinHeight(6).setMinWidth(6)
+                .setBorder(new SolidBorder(1)));
+    }
+
+    public Table createSectionSkills() {
+        Table table = new Table(9);
+        table.setFixedPosition(313, 50, 0);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+        table.addCell(createLabel("Compétences", "", 1,9).setMinWidth(251).setMinHeight(12));
+        table.addCell(createHeader("").setMinWidth(10));
+        table.addCell(createHeader("Nom de la compétence",TextAlignment.LEFT).setMinWidth(120));
+        table.addCell(createHeader("Bonus total"));
+        table.addCell(createHeader("Mod. carac",1,2));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Rang"));
+        table.addCell(createHeader(""));
+        table.addCell(createHeader("Mod. divers"));
+        int idx = 0;
+        Color gray =  new DeviceRgb(230, 230, 230);
+        for(DBEntity skill : skills) {
+            if(skill instanceof Skill) {
+                Color backgnd = idx++ % 2 == 0 ? gray : ColorConstants.WHITE;
+                Skill s = (Skill)skill;
+                String name = s.getName() + ( s.requiresTraining() ? "*" : "" );
+                name = name.replaceAll("Connaissances", "Conn." );
+                table.addCell(createCheckBox(character.isClassSkill(s.getName())).setBackgroundColor(backgnd));
+                table.addCell(createInfoText(name,1).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd).setPaddingBottom(2).setPaddingLeft(1));
+                table.addCell(createValueCell(character.getSkillTotalBonus(s),true).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+                table.addCell(createInfoText(s.getAbilityId(),1, TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd).setMinWidth(20).setPaddingBottom(2));
+                table.addCell(createValueCell(character.getSkillAbilityMod(s)).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+                table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+                table.addCell(createValueCell(character.getSkillRank(s.getId())).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+                table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+                table.addCell(createValueCell(character.getSkillModBonus(s)).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
+            }
+        }
+        return table;
+    }
+
+
+    public Table createSectionOthers() {
+        Table table = new Table(1);
+        table.setFixedPosition(313, 680, 0);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+
+        table.addCell(createInfoText("", 1).setMinWidth(256));
+        table.addCell(createInfo("Langues", 1));
+        return table;
+    }
+
+
     public void generatePDF(OutputStream output, ImageData logo) {
         PdfDocument pdf = new PdfDocument(new PdfWriter(output));
         Document document = new Document(pdf);
@@ -516,6 +720,15 @@ public class CharacterPDF {
         document.add(createSectionInitiative());
         document.add(createSectionArmorClass());
         document.add(createSectionResistances());
+        document.add(createSectionAttackDefense());
+        document.add(createSectionWeapon(21,310));
+        document.add(createSectionWeapon(21,245));
+        document.add(createSectionWeapon(21,180));
+        document.add(createSectionWeapon(21,115));
+        document.add(createSectionWeapon(21,50));
+        document.add(createSectionSkills());
+        document.add(createSectionOthers());
+
         document.close();
     }
 }

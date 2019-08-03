@@ -684,6 +684,16 @@ public class Character extends DBEntity {
         return rank + abilityMod + classSkill + bonus;
     }
 
+    public int getSkillModBonus(Skill skill) {
+        if(skill == null) {
+            return 0;
+        }
+        int rank = getSkillRank(skill.getId());
+        int classSkill = (rank > 0 && isClassSkill(skill.getName())) ? 3 : 0;
+        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
+        return classSkill + bonus;
+    }
+
     public boolean isClassSkill(String skillName) {
         for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             if(cl.first.getSkills().contains(skillName)) {

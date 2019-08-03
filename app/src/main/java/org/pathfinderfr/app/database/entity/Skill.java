@@ -32,6 +32,7 @@ public class Skill extends DBEntity {
         }
     }
 
+    public boolean requiresTraining() { return "oui".equalsIgnoreCase(training); }
     public String getTraining() {
         return training;
     }
