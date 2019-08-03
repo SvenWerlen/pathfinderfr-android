@@ -173,19 +173,26 @@ public class Character extends DBEntity {
     public static class InventoryItem implements Comparable<InventoryItem> {
         private String name;
         private int weight;
-        public InventoryItem(String name, int weight) {
+        private long objectId; // reference to original object
+        public InventoryItem(String name, int weight, long objectId) {
             this.name = name;
             this.weight = weight;
+            this.objectId = objectId;
+        }
+        public InventoryItem(InventoryItem copy) {
+            this.name = copy.name;
+            this.weight = copy.weight;
+            this.objectId = copy.objectId;
         }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
         public int getWeight() { return weight; }
         public void setWeight(int weight) { this.weight = weight; }
+        public long getObjectId() { return this.objectId; }
         public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
 
         @Override
         public int compareTo(InventoryItem item) {
-            Collator collator = Collator.getInstance();
             return Collator.getInstance().compare(getName(),item.getName());
         }
     }
@@ -1246,7 +1253,7 @@ public class Character extends DBEntity {
     public List<InventoryItem> getInventoryItems() {
         List<InventoryItem> result = new ArrayList<>();
         for(InventoryItem el : invItems) {
-            result.add(new InventoryItem(el.getName(), el.getWeight()));
+            result.add(new InventoryItem(el));
         }
         return result;
     }

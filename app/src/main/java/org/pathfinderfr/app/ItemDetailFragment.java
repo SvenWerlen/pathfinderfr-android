@@ -31,6 +31,7 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.Weapon;
@@ -183,7 +184,7 @@ public class ItemDetailFragment extends Fragment {
 
 
         if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof RaceAlternateTrait
-                || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment) ) {
+                || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem) ) {
             addToCharacter.setVisibility(View.GONE);
         }
 
@@ -275,7 +276,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Weapon) {
                     Weapon w = (Weapon)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(w.getNameLong(), w.getWeightInGrams()));
+                    character.addInventoryItem(new Character.InventoryItem(w.getName(), w.getWeightInGrams(), DBHelper.IDX_WEAPONS + w.getId()));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.weapon_added_success), cName);
                         success = true;
@@ -284,7 +285,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Armor) {
                     Armor a = (Armor)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(a.getNameLong(), a.getWeightInGrams()));
+                    character.addInventoryItem(new Character.InventoryItem(a.getName(), a.getWeightInGrams(), DBHelper.IDX_ARMORS + a.getId()));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.armor_added_success), cName);
                         success = true;
@@ -293,12 +294,21 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Equipment) {
                     Equipment e = (Equipment)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(e.getNameLong(), e.getWeightInGrams()));
+                    character.addInventoryItem(new Character.InventoryItem(e.getName(), e.getWeightInGrams(), DBHelper.IDX_EQUIPMENT + e.getId()));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.equipment_added_success), cName);
                         success = true;
                     } else {
                         message = getResources().getString(R.string.equipment_added_failed);
+                    }
+                } else if (mItem instanceof MagicItem) {
+                    MagicItem m = (MagicItem)mItem;
+                    character.addInventoryItem(new Character.InventoryItem(m.getName(), m.getWeightInGrams(), DBHelper.IDX_MAGICITEM + m.getId()));
+                    if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                        message = String.format(getResources().getString(R.string.magicitem_added_success), cName);
+                        success = true;
+                    } else {
+                        message = getResources().getString(R.string.magicitem_added_failed);
                     }
                 }
                 // update list if currently viewing character

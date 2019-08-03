@@ -98,6 +98,31 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/sheet_inventory_reference_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:gravity="left">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_inventory_item_reference" />
+
+                <TextView
+                    android:id="@+id/sheet_inventory_reference"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp"
+                    android:text="@string/sheet_inventory_item_reference_example" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

@@ -277,7 +277,8 @@ public class CharacterFactory extends DBEntityFactory {
             StringBuffer value = new StringBuffer();
             for(Character.InventoryItem item : inventory) {
                 value.append(item.getName()).append('|');
-                value.append(item.getWeight()).append('#');
+                value.append(item.getWeight()).append('|');
+                value.append(item.getObjectId()).append('#');
             }
             value.deleteCharAt(value.length()-1);
             Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
@@ -515,7 +516,7 @@ public class CharacterFactory extends DBEntityFactory {
         if(inventoryValue != null && inventoryValue.length() > 0) {
             for(String item : inventoryValue.split("#")) {
                 String[] itemElements = item.split("\\|");
-                if(itemElements != null && itemElements.length == 2) {
+                if(itemElements != null && itemElements.length >= 2) {
                     String name = itemElements[0];
                     int weight = 0;
                     try {
@@ -523,8 +524,17 @@ public class CharacterFactory extends DBEntityFactory {
                     } catch (NumberFormatException nfe) {
                         Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
                     }
+                    // item reference was introduced later
+                    long objId = 0;
+                    if(itemElements.length >= 3) {
+                        try {
+                            objId = Long.parseLong(itemElements[2]);
+                        } catch (NumberFormatException nfe) {
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
+                        }
+                    }
 
-                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight);
+                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, objId);
                     if (toAdd.isValid()) {
                         c.addInventoryItem(toAdd);
                     }

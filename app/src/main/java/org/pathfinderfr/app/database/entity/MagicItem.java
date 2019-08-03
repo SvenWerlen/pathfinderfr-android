@@ -62,6 +62,10 @@ public class MagicItem extends DBEntity {
         return weight;
     }
 
+    public int getWeightInGrams() {
+        return StringUtil.parseWeight(weight);
+    }
+
     public void setWeight(String weight) {
         this.weight = weight;
     }

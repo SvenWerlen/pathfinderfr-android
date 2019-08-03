@@ -117,6 +117,7 @@ public class StringUtil {
         if(weight == null || weight.length() == 0) {
             return 0;
         }
+        weight = weight.replaceAll("  ", " ");
 
         try {
             // check format: 500 g

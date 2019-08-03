@@ -50,6 +50,11 @@ public class CharacterImportExport {
     private static final String YAML_BONUS_VALUE   = "Valeur";
     private static final String YAML_INVENTORY     = "Inventaire";
     private static final String YAML_WEIGHT        = "Poids";
+    private static final String YAML_REFERENCE     = "Référence";
+    private static final String YAML_REF_TYPE_W    = "Arme";
+    private static final String YAML_REF_TYPE_A    = "Armure";
+    private static final String YAML_REF_TYPE_E    = "Équipement";
+    private static final String YAML_REF_TYPE_M    = "Objet magique";
 
     public static final int ERROR_NAME_TOOLONG         = 1;
     public static final int ERROR_RACE_NOMATCH         = 2;
@@ -76,6 +81,7 @@ public class CharacterImportExport {
     public static final int ERROR_INVENTORY_EXCEPTION  = 23;
     public static final int ERROR_TRAIT_NOMATCH        = 24;
     public static final int ERROR_TRAITS_EXCEPTION     = 25;
+    public static final int ERROR_INVENTORY_REFERENCE  = 26;
 
 
     public static String exportCharacterAsYML(Character c, Context ctx) {
@@ -91,7 +97,9 @@ public class CharacterImportExport {
         for(int idx = 0; idx < c.getClassesCount(); idx++) {
             Map<String, Object> cl = new LinkedHashMap();
             cl.put(YAML_NAME, c.getClass(idx).first.getName());
-            cl.put(YAML_ARCHETYPE, c.getClass(idx).second.getName());
+            if(c.getClass(idx).second != null) {
+                cl.put(YAML_ARCHETYPE, c.getClass(idx).second.getName());
+            }
             cl.put(YAML_LEVEL, c.getClass(idx).third);
             classes.add(cl);
         }
@@ -179,6 +187,20 @@ public class CharacterImportExport {
             Map<String, Object> itemObj = new LinkedHashMap();
             itemObj.put(YAML_NAME, item.getName());
             itemObj.put(YAML_WEIGHT, item.getWeight());
+            if(item.getObjectId() > 0) {
+                DBEntity e = dbHelper.fetchObjectEntity(item.getObjectId());
+                if(e != null) {
+                    if(e instanceof Weapon) {
+                        itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_W + " " + e.getName());
+                    } else if(e instanceof Armor) {
+                        itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_A + " " + e.getName());
+                    } else if(e instanceof Equipment) {
+                        itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_E + " " + e.getName());
+                    } else if(e instanceof MagicItem) {
+                        itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_M + " " + e.getName());
+                    }
+                }
+            }
             inventory.add(itemObj);
         }
         data.put(YAML_INVENTORY, inventory);
@@ -473,12 +495,37 @@ public class CharacterImportExport {
                             if(values.containsKey(YAML_NAME) && values.containsKey(YAML_WEIGHT)) {
                                 String itemName = (String)values.get(YAML_NAME);
                                 int itemWeight = 0;
+                                long itemObjId = 0L;
                                 try {
                                     itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
                                 } catch(NumberFormatException nfe) {
                                     errors.add(ERROR_INVENTORY_FORMAT);
                                 }
-                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight));
+                                long objectId = 0L;
+                                if(values.containsKey(YAML_REFERENCE)) {
+                                    DBEntity object = null;
+                                    String reference = (String)values.get(YAML_REFERENCE);
+                                    if(reference.startsWith(YAML_REF_TYPE_W)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_W.length()+1), WeaponFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_WEAPONS + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_A)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_A.length()+1), ArmorFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_ARMORS + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_E)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_E.length()+1), EquipmentFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_EQUIPMENT + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_M)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_M.length()+1), MagicItemFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_MAGICITEM + object.getId();
+                                    }
+                                    if(object == null) {
+                                        errors.add(ERROR_INVENTORY_REFERENCE);
+                                    }
+                                }
+                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId));
                             }
                         }
                     }

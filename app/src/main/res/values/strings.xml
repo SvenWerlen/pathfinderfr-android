@@ -46,6 +46,8 @@
     <string name="armor_added_failed">Échec de l\'ajout de l\'armure au personnage!</string>
     <string name="equipment_added_success">Équipement ajouté à %s avec succès!</string>
     <string name="equipment_added_failed">Échec de l\'ajout de l\'équipement au personnage!</string>
+    <string name="magicitem_added_success">Objet magique ajouté à %s avec succès!</string>
+    <string name="magicitem_added_failed">Échec de l\'ajout de l\'objet magique au personnage!</string>
 
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>
@@ -354,6 +356,8 @@
     <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments sont toujours triés par ordre alphabétique. Vous pouvez aussi ajouter une arme ou une armure à partir du catalogue.</string>
     <string name="sheet_inventory_item_name">Descriptif:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
+    <string name="sheet_inventory_item_reference">Référence:</string>
+    <string name="sheet_inventory_item_reference_example">Épée longue</string>
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
 

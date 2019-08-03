@@ -23,6 +23,7 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
+import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
 import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
@@ -33,6 +34,7 @@ import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.VersionFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
+import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
@@ -52,6 +54,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 17;
 
     private static DBHelper instance;
+
+    public static final long IDX_WEAPONS = 0L;
+    public static final long IDX_ARMORS = 1000000L;
+    public static final long IDX_EQUIPMENT = 2000000L;
+    public static final long IDX_MAGICITEM = 3000000L;
 
     public static synchronized DBHelper getInstance(Context context) {
         if(instance == null) {
@@ -312,6 +319,24 @@ public class DBHelper extends SQLiteOpenHelper {
         DBEntity entity = factory.generateEntity(res);
         res.close();
         return entity;
+    }
+
+    /**
+     * @param id unique ID of the object to be fetched
+     * @return the entity as object (assuming that it will always be found)
+     */
+    public DBEntity fetchObjectEntity(long id) {
+        if(id <= 0) {
+            return null;
+        } else if(id <= IDX_ARMORS) {
+            return fetchEntity(id -IDX_WEAPONS, WeaponFactory.getInstance());
+        } else if(id <= IDX_EQUIPMENT) {
+            return fetchEntity(id -IDX_ARMORS, ArmorFactory.getInstance());
+        } else if(id <= IDX_MAGICITEM) {
+            return fetchEntity(id -IDX_EQUIPMENT, EquipmentFactory.getInstance());
+        } else {
+            return fetchEntity(id -IDX_MAGICITEM, MagicItemFactory.getInstance());
+        }
     }
 
     /**
