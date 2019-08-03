@@ -300,7 +300,11 @@
     <string name="sheet_savingthrows_reflex">Réflexes</string>
     <string name="sheet_savingthrows_wil">VOL</string>
     <string name="sheet_savingthrows_will">Volonté</string>
-
+    <string name="sheet_armorclass_other">Classe d\'armure (divers)</string>
+    <string name="sheet_armorclass_armor">Classe d\'armure (armure)</string>
+    <string name="sheet_armorclass_shield">Classe d\'armure (bouclier)</string>
+    <string name="sheet_armorclass_natural">Classe d\'armure (naturelle)</string>
+    <string name="sheet_armorclass_parade">Classe d\'armure (parade)</string>
     <string name="sheet_combat">Combat</string>
     <string name="sheet_bab">BBA</string>
     <string name="sheet_baseattackbonus">Bonus de base à l\'attaque</string>

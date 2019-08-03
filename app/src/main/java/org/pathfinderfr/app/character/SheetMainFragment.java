@@ -352,8 +352,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             @Override
             public void onClick(View v) {
                 act.showTooltip(acTooltipTitle,String.format(acTooltipContent,
+                        character.getModif(Character.MODIF_COMBAT_AC_ARMOR),
+                        character.getModif(Character.MODIF_COMBAT_AC_SHIELD),
                         character.getDexterityModif(), // dex modif
-                        character.getRaceSize() == Character.SIZE_SMALL ? 1 : 0, // size
+                        character.getSizeModifierArmorClass(),
+                        character.getModif(Character.MODIF_COMBAT_AC_NATURAL),
+                        character.getModif(Character.MODIF_COMBAT_AC_PARADE),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_AC, tooltipModif), // others
                         character.getArmorClass()));
             }

@@ -26,8 +26,38 @@ public class Character extends DBEntity {
     public static final int ABILITY_WISDOM       = 4;
     public static final int ABILITY_CHARISMA     = 5;
 
-    public static final int SIZE_SMALL = -1;
-    public static final int SIZE_MEDIUM = 0;
+    public static final int SIZE_FINE        = 1;
+    public static final int SIZE_DIMINUTIVE  = 2;
+    public static final int SIZE_TINY        = 3;
+    public static final int SIZE_SMALL       = 4;
+    public static final int SIZE_MEDIUM      = 5;
+    public static final int SIZE_LARGE_TALL  = 6;
+    public static final int SIZE_LARGE_LONG  = 7;
+    public static final int SIZE_HUGE_TALL   = 8;
+    public static final int SIZE_HUGE_LONG   = 9;
+    public static final int SIZE_GARG_TALL   = 10;
+    public static final int SIZE_GARG_LONG   = 11;
+    public static final int SIZE_COLO_TALL   = 12;
+    public static final int SIZE_COLO_LONG   = 13;
+
+    public static final int ALIGN_LG = 1;
+    public static final int ALIGN_NG = 2;
+    public static final int ALIGN_CG = 3;
+    public static final int ALIGN_LN = 4;
+    public static final int ALIGN_N = 5;
+    public static final int ALIGN_CN = 6;
+    public static final int ALIGN_LE = 7;
+    public static final int ALIGN_NE = 8;
+    public static final int ALIGN_CE = 9;
+
+    public static final int SEX_M = 1;
+    public static final int SEX_F = 2;
+
+    public static final int SPEED_MANEUV_CLUMBSY = 1;
+    public static final int SPEED_MANEUV_POOR    = 2;
+    public static final int SPEED_MANEUV_AVERAGE = 3;
+    public static final int SPEED_MANEUV_GOOD    = 4;
+    public static final int SPEED_MANEUV_PERFECT = 5;
 
     public static final int MODIF_ABILITY_ALL = 1;
     public static final int MODIF_ABILITY_STR = 2;
@@ -48,6 +78,11 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_HP = 24; // not supported
     public static final int MODIF_COMBAT_SPEED = 25;
 
+    public static final int MODIF_COMBAT_AC_ARMOR = 26;
+    public static final int MODIF_COMBAT_AC_SHIELD = 27;
+    public static final int MODIF_COMBAT_AC_NATURAL = 28;
+    public static final int MODIF_COMBAT_AC_PARADE = 29;
+
     public static final int MODIF_COMBAT_ATT_MELEE = 31;
     public static final int MODIF_COMBAT_ATT_RANGED = 32;
     public static final int MODIF_COMBAT_CMB = 33;
@@ -67,6 +102,24 @@ public class Character extends DBEntity {
     List<InventoryItem> invItems;
     int hitpoints;
     int speed;
+
+    // infos additionnelles
+    int alignment;
+    String player;
+    String divinity;
+    String origin;
+    int sizeType;
+    int sex;
+    int age;
+    int height;
+    int weight;
+    String hair;
+    String eyes;
+    int speedDig;
+    int speedWithArmor;
+    int speedFly;
+    int speedFlyManeuv;
+    String languages;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
@@ -197,6 +250,31 @@ public class Character extends DBEntity {
     public int getCharismaModif() { return getAbilityModif(ABILITY_CHARISMA); }
     public void setCharisma(int value) { setAbilityValue(ABILITY_CHARISMA, value); }
 
+    public int getAlignment() { return alignment; }
+    public void setAlignment(int alignment) { this.alignment = alignment; }
+    public String getPlayer() { return player; }
+    public void setPlayer(String player) { this.player = player; }
+    public String getDivinity() { return divinity; }
+    public void setDivinity(String divinity) { this.divinity = divinity; }
+    public String getOrigin() { return origin; }
+    public void setOrigin(String origin) { this.origin = origin; }
+    public int getSizeType() { return sizeType; }
+    public void setSizeType(int sizeType) { this.sizeType = sizeType; }
+    public int getSex() { return sex; }
+    public void setSex(int sex) { this.sex = sex; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+    public int getHeight() { return height; }
+    public void setHeight(int height) { this.height = height; }
+    public int getWeight() { return weight; }
+    public void setWeight(int weight) { this.weight = weight; }
+    public String getHair() { return hair; }
+    public void setHair(String hair) { this.hair = hair; }
+    public String getEyes() { return eyes; }
+    public void setEyes(String eyes) { this.eyes = eyes; }
+    public String getLanguages() { return languages; }
+    public void setLanguages(String languages) { this.languages = languages; }
+
     /**
      * @param abilityId ability identifier
      * @return ability modifier
@@ -234,8 +312,53 @@ public class Character extends DBEntity {
         return speed;
     }
 
+    public int getBaseSpeedWithArmor() {
+        return speedWithArmor;
+    }
+
+    public int getBaseSpeedDig() {
+        return speedDig;
+    }
+
+    public int getBaseSpeedFly() {
+        return speedFly;
+    }
+
+    public int getBaseSpeedManeuverability() {
+        return speedFlyManeuv;
+    }
+
+    public int getSpeedWithArmor() {
+        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        return speedWithArmor + bonus;
+    }
+
+    public float getSpeedSwimming() {
+        return getSpeed() / 4f;
+    }
+
+    public float getSpeedClimbing() {
+        return getSpeed() / 4f;
+    }
+
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public void setSpeedWithArmor(int speed) {
+        this.speedWithArmor = speed;
+    }
+
+    public void setSpeedDig(int speed) {
+        this.speedDig = speed;
+    }
+
+    public void setSpeedFly(int speed) {
+        this.speedFly = speed;
+    }
+
+    public void setSpeedManeuverability(int speed) {
+        this.speedFlyManeuv = speed;
     }
 
     public Race getRace() {
@@ -370,30 +493,89 @@ public class Character extends DBEntity {
         return SIZE_MEDIUM;
     }
 
+    private static int getSizeModifier(int size) {
+        switch(size) {
+            case SIZE_FINE: return 8;
+            case SIZE_DIMINUTIVE: return 4;
+            case SIZE_TINY: return 2;
+            case SIZE_SMALL: return 1;
+            case SIZE_LARGE_TALL: return -1;
+            case SIZE_LARGE_LONG: return -1;
+            case SIZE_HUGE_TALL: return -2;
+            case SIZE_HUGE_LONG: return -2;
+            case SIZE_GARG_TALL: return -4;
+            case SIZE_GARG_LONG: return -4;
+            case SIZE_COLO_TALL: return -8;
+            case SIZE_COLO_LONG: return -8;
+            default: return 0;
+        }
+    }
+
     public int getInitiative() { return getDexterityModif() + getAdditionalBonus(MODIF_COMBAT_INI); }
     public int getArmorClass() {
-        int sizeModif = getRaceSize() == SIZE_SMALL ? 1 : 0;
-        int bonus = getAdditionalBonus(MODIF_COMBAT_AC);
-        return 10 + getDexterityModif() + sizeModif + bonus;
+        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_size = getSizeModifierArmorClass();
+        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
+        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        return 10 + bonus_armor + bonus_shield + getDexterityModif() + bonus_size + bonus_natural + bonus_parade + bonus_other;
+    }
+
+    public int getArmorClassContact() {
+        int bonus_size = getSizeModifierArmorClass();
+        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        return 10 + getDexterityModif() + bonus_size + bonus_parade + bonus_other;
+    }
+
+    public int getArmorClassFlatFooted() {
+        int bonus_dex = getDexterityModif();
+        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_size = getSizeModifierArmorClass();
+        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
+        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        return 10 + bonus_armor + bonus_shield + ( bonus_dex < 0 ? bonus_dex : 0 ) + bonus_size + bonus_natural + bonus_other;
+    }
+
+    public int getSizeModifierArmorClass() {
+        return getSizeModifier(getSizeType());
+    }
+
+    public int getSizeModifierManeuver() {
+        return -getSizeModifier(getSizeType());
     }
 
     public String getArmorClassDetails() {
         StringBuffer buf = new StringBuffer();
-        if(getRaceSize() == SIZE_SMALL) {
-            buf.append("taille +1, ");
+        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_dex = getDexterityModif();
+        int bonus_size = getSizeModifierArmorClass();
+        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
+        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        if(bonus_armor != 0) {
+            buf.append(String.format("armure %+d, ", bonus_armor));
         }
-        if(getDexterityModif() != 0) {
-            buf.append(String.format("Dex %+d, ", getDexterityModif()));
+        if(bonus_shield != 0) {
+            buf.append(String.format("bouclier %+d, ", bonus_shield));
         }
-        List<CharacterModif> result = new ArrayList<>();
-        for(CharacterModif el : modifs) {
-            if(el.isEnabled()) {
-                for (Pair<Integer, Integer> m : el.modifs) {
-                    if (m.first.intValue() == MODIF_COMBAT_AC) {
-                        buf.append(String.format("%s %+d", el.getSource().toLowerCase(), m.second)).append(", ");
-                    }
-                }
-            }
+        if(bonus_dex != 0) {
+            buf.append(String.format("Dex %+d, ", bonus_dex));
+        }
+        if(bonus_size != 0) {
+            buf.append(String.format("taille %+d, ", bonus_size));
+        }
+        if(bonus_natural != 0) {
+            buf.append(String.format("naturelle %+d, ", bonus_natural));
+        }
+        if(bonus_parade != 0) {
+            buf.append(String.format("parade %+d, ", bonus_parade));
+        }
+        if(bonus_other != 0) {
+            buf.append(String.format("divers %+d, ", bonus_other));
         }
         if(buf.length()>0) {
             buf.delete(buf.length()-2,buf.length());
@@ -972,11 +1154,26 @@ public class Character extends DBEntity {
     }
 
     /**
-     * @return the list of modifs (as a copy)
+     * @return the list of modifs
      */
     public List<CharacterModif> getModifs() {
         return modifs;
     }
+
+    public String getModifsAsString() {
+        StringBuffer buf = new StringBuffer();
+        if(modifs.size() == 0) {
+            return "-";
+        }
+        for(CharacterModif el : modifs) {
+            if(el.isEnabled()) {
+                buf.append(el.getSource()).append(", ");
+            }
+        }
+        buf.delete(buf.length() - 2, buf.length());
+        return buf.toString();
+    }
+
 
     public List<CharacterModif> getModifsForId(Integer id) {
         List<CharacterModif> result = new ArrayList<>();

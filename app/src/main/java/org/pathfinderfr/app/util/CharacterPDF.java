@@ -30,6 +30,7 @@ import org.pathfinderfr.app.database.entity.Skill;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CharacterPDF {
@@ -46,6 +47,8 @@ public class CharacterPDF {
     private static final Style STYLE_LABEL_TOP;
     private static final Style STYLE_LABEL_BOTTOM;
     private PdfFont FONT_BOLD;
+
+    private static final String TEXT_LONG_TEST = "Ceci est un vraiment long texte pour tester dans les champs qui font vraiment plus que 100 charactères de long";
 
     static {
         STYLE_CELL_DEFAULT = new Style().setFontSize(8);
@@ -231,19 +234,77 @@ public class CharacterPDF {
     }
 
     public Cell createInfoText(String text, int colspan, TextAlignment align) {
-        return new Cell(1, colspan)
+        return createInfoText(text, colspan, align, false);
+    }
+
+    public Cell createInfoText(String text, int colspan, TextAlignment align, boolean border) {
+        Cell c = new Cell(1, colspan)
                 .setPadding(0)
                 .setPaddingTop(3)
                 .setMargin(0)
                 .addStyle(STYLE_TEXT)
-                .setBorderLeft(Border.NO_BORDER)
-                .setBorderRight(Border.NO_BORDER)
-                .setBorderTop(Border.NO_BORDER)
                 .setMinHeight(10)
                 .setMinWidth(colspan*40)
                 .setHorizontalAlignment(HorizontalAlignment.LEFT)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
-                .add((new Paragraph(text).setTextAlignment(align)));
+                .add((new Paragraph(text).setTextAlignment(align).setFixedLeading(9)));
+        if(!border) {
+            c.setBorderLeft(Border.NO_BORDER);
+            c.setBorderRight(Border.NO_BORDER);
+            c.setBorderTop(Border.NO_BORDER);
+        }
+        return c;
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public String alignment2Text(int alignment) {
+        switch(alignment) {
+            case Character.ALIGN_LG: return "LB";
+            case Character.ALIGN_NG: return "NB";
+            case Character.ALIGN_CG: return "CB";
+            case Character.ALIGN_LN: return "LN";
+            case Character.ALIGN_CN: return "CN";
+            case Character.ALIGN_LE: return "LM";
+            case Character.ALIGN_NE: return "NM";
+            case Character.ALIGN_CE: return "CM";
+            default: return "N";
+        }
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public String size2Text(int size) {
+        switch(size) {
+            case Character.SIZE_FINE: return "I";
+            case Character.SIZE_DIMINUTIVE: return "Min";
+            case Character.SIZE_TINY: return "TP";
+            case Character.SIZE_SMALL: return "P";
+            case Character.SIZE_LARGE_TALL: return "G";
+            case Character.SIZE_LARGE_LONG: return "G";
+            case Character.SIZE_HUGE_TALL: return "TG";
+            case Character.SIZE_HUGE_LONG: return "TG";
+            case Character.SIZE_GARG_TALL: return "Gig";
+            case Character.SIZE_GARG_LONG: return "Gig";
+            case Character.SIZE_COLO_TALL: return "C";
+            case Character.SIZE_COLO_LONG: return "C";
+            default: return "M";
+        }
+    }
+
+    /**
+     * Returns a string with max characters
+     */
+    public String stringMax(String str, int maxChars) {
+        if(str == null) {
+            return "-";
+        } else if(str.length() <= maxChars) {
+            return str;
+        } else {
+            return str.substring(0, maxChars) + "…";
+        }
     }
 
     public Table createSectionInfos() {
@@ -253,28 +314,28 @@ public class CharacterPDF {
         table.setVerticalBorderSpacing(0);
         table.setHorizontalBorderSpacing(STATS_CELL_SPACING);
 
-        table.addCell(createInfoText(character.getName() == null ? "" : character.getName(), 3));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 4));
+        table.addCell(createInfoText(stringMax(character.getName(), 30), 3));
+        table.addCell(createInfoText(alignment2Text(character.getAlignment()), 1));
+        table.addCell(createInfoText(stringMax(character.getPlayer(), 35), 4));
         table.addCell(createInfo("Nom du personnage", 3));
         table.addCell(createInfo("Alignement", 1));
         table.addCell(createInfo("Joueur", 4));
 
         table.addCell(createInfoText(character.getClassNames(), 4));
-        table.addCell(createInfoText("", 2));
-        table.addCell(createInfoText("", 2));
+        table.addCell(createInfoText(stringMax(character.getDivinity(), 18), 2));
+        table.addCell(createInfoText(stringMax(character.getOrigin(), 18), 2));
         table.addCell(createInfo("Classe et niveau", 4));
         table.addCell(createInfo("Divinité", 2));
         table.addCell(createInfo("Origine", 2));
 
         table.addCell(createInfoText(character.getRaceName(), 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
-        table.addCell(createInfoText("", 1));
+        table.addCell(createInfoText(size2Text(character.getSizeType()), 1));
+        table.addCell(createInfoText(character.getSex() == Character.SEX_M ? "M" : "F", 1));
+        table.addCell(createInfoText(String.format("%d ans", character.getAge()), 1));
+        table.addCell(createInfoText(String.format("%d cm", character.getHeight()), 1));
+        table.addCell(createInfoText(String.format("%d kg", character.getWeight()), 1));
+        table.addCell(createInfoText(stringMax(character.getHair(), 8), 1));
+        table.addCell(createInfoText(stringMax(character.getEyes(), 8), 1));
         table.addCell(createInfo("Race", 1));
         table.addCell(createInfo("Catégorie de taille", 1));
         table.addCell(createInfo("Sexe", 1));
@@ -284,6 +345,22 @@ public class CharacterPDF {
         table.addCell(createInfo("Cheveux", 1));
         table.addCell(createInfo("Yeux", 1));
         return table;
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public String flyManeuverability2Text(int man) {
+        if(man == 0) {
+            return "-";
+        }
+        switch(man) {
+            case Character.SPEED_MANEUV_CLUMBSY: return "Déplorable";
+            case Character.SPEED_MANEUV_POOR: return "Médiocre";
+            case Character.SPEED_MANEUV_GOOD: return "Bonne";
+            case Character.SPEED_MANEUV_PERFECT: return "Parfaite";
+            default: return "Moyenne";
+        }
     }
 
     public Cell createSpeed(String label1, String label2, String value1, String value2) {
@@ -296,14 +373,30 @@ public class CharacterPDF {
                 .setVerticalAlignment(VerticalAlignment.BOTTOM);
         if(label1 != null) {
             Table t = new Table(4).setWidth(70);
-            t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_TEXT).setPadding(0).setMargin(0).setWidth(20)
-                    .setVerticalAlignment(VerticalAlignment.MIDDLE).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(value1)));
-            t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_HEADER).setPadding(0).setMargin(0).setWidth(15)
-                    .setVerticalAlignment(VerticalAlignment.BOTTOM).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(label1)));
-            t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_TEXT).setPadding(0).setMargin(0).setWidth(20)
-                    .setVerticalAlignment(VerticalAlignment.MIDDLE).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(value2)));
-            t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_HEADER).setPadding(0).setMargin(0).setWidth(15)
-                    .setVerticalAlignment(VerticalAlignment.BOTTOM).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(label2)));
+            if(value1 != null) {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_TEXT).setPadding(0).setMargin(0).setWidth(20)
+                        .setVerticalAlignment(VerticalAlignment.MIDDLE).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(value1)));
+            } else {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
+            }
+            if(label1 != null) {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_HEADER).setPadding(0).setMargin(0).setWidth(15)
+                        .setVerticalAlignment(VerticalAlignment.BOTTOM).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(label1)));
+            } else {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
+            }
+            if(value2 != null) {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_TEXT).setPadding(0).setMargin(0).setWidth(20)
+                        .setVerticalAlignment(VerticalAlignment.MIDDLE).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(value2)));
+            } else {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
+            }
+            if(label2 != null) {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).addStyle(STYLE_HEADER).setPadding(0).setMargin(0).setWidth(15)
+                        .setVerticalAlignment(VerticalAlignment.BOTTOM).setTextAlignment(TextAlignment.RIGHT).add(new Paragraph(label2)));
+            } else {
+                t.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
+            }
             c.add(t);
         }
         return c;
@@ -324,6 +417,14 @@ public class CharacterPDF {
         return c;
     }
 
+    public String formatSpeed(float speed, String unit) {
+        if(speed <= 0) {
+            return "-";
+        } else {
+            return new DecimalFormat("#.#" + unit).format(speed);
+        }
+    }
+
     public Table createSectionSpeed() {
         Table table = new Table(6);
         table.setFixedPosition(310, 705, 0);
@@ -332,15 +433,15 @@ public class CharacterPDF {
         table.setHorizontalBorderSpacing(STATS_CELL_SPACING);
         table.addCell(createLabel("VD", "Déplacement"));
         table.addCell(createSpeed("Mètres", "Cases", String.valueOf(character.getSpeed()*1.5), String.valueOf(character.getSpeed())));
-        table.addCell(createSpeed("Mètres", "Cases","",""));
+        table.addCell(createSpeed("Mètres", "Cases", String.valueOf(character.getSpeedWithArmor()*1.5), String.valueOf(character.getSpeedWithArmor())));
         table.addCell(createCell("Mod. Temporaires", TextAlignment.CENTER, 3, 1, 58, 0));
         table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(createCell("Vitesse de déplacement", TextAlignment.CENTER, 1, 2, 0, 0).setBorder(Border.NO_BORDER).setPaddingBottom(2));
         table.addCell(createCell("Avec armure", TextAlignment.CENTER, 1, 2, 0, 0).setBorder(Border.NO_BORDER).setPaddingBottom(2));
-        table.addCell(createSpeed("Mètres", "","",""));
-        table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 0, 0));
-        table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 0, 0));
-        table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 0, 0));
+        table.addCell(createSpeed("Mètres", null,formatSpeed(character.getBaseSpeedFly(), ""),flyManeuverability2Text(character.getBaseSpeedManeuverability())));
+        table.addCell(createInfoText(formatSpeed(character.getSpeedSwimming(), " m"),1, TextAlignment.CENTER, true).setMinWidth(0));
+        table.addCell(createInfoText(formatSpeed(character.getSpeedClimbing(), " m"), 1, TextAlignment.CENTER, true).setMinWidth(0));
+        table.addCell(createInfoText(formatSpeed(character.getBaseSpeedDig(), " m"), 1, TextAlignment.CENTER, true).setMinWidth(0));
         table.addCell(createCell("Vol", TextAlignment.LEFT, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(createCell("Manœuvr.", TextAlignment.RIGHT, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(createCell("Natation", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
@@ -389,11 +490,11 @@ public class CharacterPDF {
         table.setVerticalBorderSpacing(0);
         table.setHorizontalBorderSpacing(STATS_CELL_SPACING);
         table.addCell(createLabel("INI", "Initiative").setMinWidth(28));
-        table.addCell(createCell("", TextAlignment.LEFT, 1, 1, 20, 0));
+        table.addCell(createValueCell(character.getInitiative()));
         table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 0, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createCell("", TextAlignment.LEFT, 1, 1, 20, 0));
+        table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 0, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createCell("", TextAlignment.LEFT, 1, 1, 20, 0));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_INI)));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createCell("Total", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
@@ -415,19 +516,19 @@ public class CharacterPDF {
         table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createValueCell(10).setPadding(0).setMinWidth(9).setBorder(Border.NO_BORDER));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_ARMOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_SHIELD)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getSizeModifierArmorClass()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_NATURAL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_PARADE)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(null));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC)));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createCell("Total", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
@@ -450,11 +551,11 @@ public class CharacterPDF {
         table.addCell(new Cell(1,19).setBorder(Border.NO_BORDER));
         table.addCell(createLabel("Contact", "Classe d'armure"));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
-        table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 20, 0));
+        table.addCell(createValueCell(character.getArmorClassContact()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
         table.addCell(new Cell(1,7).setBorder(Border.NO_BORDER).setPadding(0).setVerticalAlignment(VerticalAlignment.MIDDLE).setBackgroundColor(ColorConstants.BLACK).add(createLabel("Pris au dépourvu", "Classe d'armure")));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
-        table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 20, 0));
+        table.addCell(createValueCell(character.getArmorClassFlatFooted()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
         table.addCell(createCell("Mod.", TextAlignment.RIGHT, 1, 5, 0, 0));
         return table;
@@ -653,7 +754,7 @@ public class CharacterPDF {
 
     public Table createSectionSkills() {
         Table table = new Table(9);
-        table.setFixedPosition(313, 50, 0);
+        table.setFixedPosition(313, 145, 0);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setVerticalBorderSpacing(0);
         table.setHorizontalBorderSpacing(0);
@@ -691,12 +792,15 @@ public class CharacterPDF {
 
     public Table createSectionOthers() {
         Table table = new Table(1);
-        table.setFixedPosition(313, 680, 0);
+        table.setFixedPosition(313, 50, 0);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setVerticalBorderSpacing(0);
         table.setHorizontalBorderSpacing(0);
 
-        table.addCell(createInfoText("", 1).setMinWidth(256));
+        table.addCell(createInfoText(stringMax(character.getModifsAsString(), 200), 1).setMinWidth(256).setVerticalAlignment(VerticalAlignment.BOTTOM));
+        table.addCell(createInfo("Modificateurs particuliers", 1));
+
+        table.addCell(createInfoText(stringMax(character.getLanguages(), 200), 1).setMinWidth(256).setMinHeight(30).setVerticalAlignment(VerticalAlignment.BOTTOM));
         table.addCell(createInfo("Langues", 1));
         return table;
     }

@@ -53,8 +53,56 @@ public class CharacterPDFTest {
         r.setName("Humain");
         c.setRace(r);
         c.setSpeed(6);
+        c.setSpeedWithArmor(4);
+        c.setSpeedDig(3);
+        c.setSpeedFly(10);
+        c.setSpeedManeuverability(Character.SPEED_MANEUV_AVERAGE);
         c.setHitpoints(125);
         c.setSkillRank(1, 3);
+
+        c.setAlignment(Character.ALIGN_CN);
+        c.setPlayer("Émilie");
+        c.setDivinity("Dieu du vin");
+        c.setOrigin("Varisie");
+        c.setSizeType(Character.SIZE_SMALL);
+        c.setSex(Character.SEX_F);
+        c.setAge(17);
+        c.setHeight(150);
+        c.setWeight(57);
+        c.setHair("Noirs");
+        c.setEyes("Bruns");
+        c.setLanguages("Commun, gobelin, elfique, draconique");
+
+
+
+        Character.CharacterModif modif = new Character.CharacterModif("Race", new ArrayList<Pair<Integer, Integer>>(), "-", true);
+        c.addModif(modif);
+
+        List<Pair<Integer, Integer>> modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_ARMOR, 7));
+        modif = new Character.CharacterModif("Armure de plates", modifs, "-", true);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_SHIELD, 2));
+        modif = new Character.CharacterModif("Écu", modifs, "-", true);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_NATURAL, 3));
+        modif = new Character.CharacterModif("Peau d'écorce", modifs, "-", true);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_PARADE, 1));
+        modif = new Character.CharacterModif("Bracelets", modifs, "-", true);
+        c.addModif(modif);
+
+        modifs = new ArrayList<Pair<Integer, Integer>>();
+        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC, -2));
+        modif = new Character.CharacterModif("Bague", modifs, "-", true);
+        c.addModif(modif);
+
 
         List<DBEntity> skills = new ArrayList<>();
         skills.add(createSkill("Acrobatie", "Dex", false));

@@ -164,7 +164,11 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_fortitude);
             case Character.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_will);
             case Character.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
-            case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass);
+            case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass_other);
+            case Character.MODIF_COMBAT_AC_ARMOR: return getResources().getString(R.string.sheet_armorclass_armor);
+            case Character.MODIF_COMBAT_AC_SHIELD: return getResources().getString(R.string.sheet_armorclass_shield);
+            case Character.MODIF_COMBAT_AC_NATURAL: return getResources().getString(R.string.sheet_armorclass_natural);
+            case Character.MODIF_COMBAT_AC_PARADE: return getResources().getString(R.string.sheet_armorclass_parade);
             case Character.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
             case Character.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
             case Character.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
@@ -287,6 +291,10 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // Combat
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_combat), 0));
         list.add(getStringWithTag(Character.MODIF_COMBAT_INI));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_ARMOR));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_SHIELD));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_NATURAL));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_PARADE));
         list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
         list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
         //list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
