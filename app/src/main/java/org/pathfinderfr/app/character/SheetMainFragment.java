@@ -597,7 +597,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         // update name
         TextView nameTv = view.findViewById(R.id.sheet_main_namepicker);
         if(character.getName() != null) {
-            nameTv.setText(character.getName());
+            if(character.getPlayer() != null) {
+                nameTv.setText(String.format("%s (%s)", character.getName(), character.getPlayer()));
+            } else {
+                nameTv.setText(character.getName());
+            }
         }
 
         // update race
@@ -1041,6 +1045,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 if(name != null) {
                     arguments.putString(FragmentNamePicker.ARG_NAME, name);
                 }
+                String player = parent.character.getPlayer();
+                if(player != null) {
+                    arguments.putString(FragmentNamePicker.ARG_PNAME, player);
+                }
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_NAME);
                 return;
@@ -1415,11 +1423,16 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onNameChoosen(String name) {
+    public void onNameChoosen(String name, String playerName) {
         character.setName(name);
-        TextView tv = getView().findViewById(R.id.sheet_main_namepicker);
-        if(name != null) {
-            tv.setText(character.getName());
+        character.setPlayer(playerName == null || playerName.length() == 0 ? null : playerName);
+        TextView nameTv = getView().findViewById(R.id.sheet_main_namepicker);
+        if(character.getName() != null) {
+            if(character.getPlayer() != null) {
+                nameTv.setText(String.format("%s (%s)", character.getName(), character.getPlayer()));
+            } else {
+                nameTv.setText(character.getName());
+            }
         }
         // store changes
         characterDBUpdate();

@@ -21,9 +21,11 @@ import org.pathfinderfr.app.util.FragmentUtil;
 public class FragmentNamePicker extends DialogFragment implements View.OnClickListener {
 
     public static final String ARG_NAME = "argName";
+    public static final String ARG_PNAME = "argPlayerName";
 
     private FragmentNamePicker.OnFragmentInteractionListener mListener;
     private String name;
+    private String playerName;
 
     public FragmentNamePicker() {
         // Required empty public constructor
@@ -52,10 +54,14 @@ public class FragmentNamePicker extends DialogFragment implements View.OnClickLi
         if (getArguments() != null && getArguments().containsKey(ARG_NAME)) {
             name = getArguments().getString(ARG_NAME);
         }
+        if (getArguments() != null && getArguments().containsKey(ARG_PNAME)) {
+            playerName = getArguments().getString(ARG_PNAME);
+        }
 
         // restore value that was selected
         if(savedInstanceState != null) {
             name = savedInstanceState.getString(ARG_NAME, name);
+            playerName = savedInstanceState.getString(ARG_PNAME, playerName);
         }
     }
 
@@ -70,8 +76,12 @@ public class FragmentNamePicker extends DialogFragment implements View.OnClickLi
         if(name != null) {
             text.setText(name);
         }
-        text.requestFocus();
         ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(text, 0);
+
+        text.requestFocus();
+        if(playerName != null) {
+            ((EditText)rootView.findViewById(R.id.sheet_player_name)).setText(playerName);
+        }
 
         rootView.findViewById(R.id.name_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.name_ok).setOnClickListener(this);
@@ -101,8 +111,9 @@ public class FragmentNamePicker extends DialogFragment implements View.OnClickLi
         } else if(v.getId() == R.id.name_ok) {
             if(mListener != null) {
                 EditText text = (EditText)getView().findViewById(R.id.sheet_character_name);
+                EditText textP = (EditText)getView().findViewById(R.id.sheet_player_name);
                 if(text.getText().length() > 0) {
-                    mListener.onNameChoosen(text.getText().toString());
+                    mListener.onNameChoosen(text.getText().toString().trim(), textP.getText().toString().trim());
                     dismiss();
                 }
             }
@@ -111,7 +122,7 @@ public class FragmentNamePicker extends DialogFragment implements View.OnClickLi
     }
 
     public interface OnFragmentInteractionListener {
-        void onNameChoosen(String name);
+        void onNameChoosen(String name, String player);
     }
 }
 
