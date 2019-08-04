@@ -109,6 +109,10 @@ public class Weapon extends DBEntity {
         }
     }
 
+    public boolean isAmmo() {
+        return name.contains("(");
+    }
+
     public void setRange(String range) {
         this.range = range;
     }

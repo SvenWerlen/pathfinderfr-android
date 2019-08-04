@@ -1289,8 +1289,10 @@ public class Character extends DBEntity {
                 DBEntity entity = helper.fetchObjectEntity(el.getObjectId());
                 if(entity instanceof Weapon) {
                     Weapon w = (Weapon)entity;
-                    w.setName(el.getName());
-                    result.add(w);
+                    if(!w.isAmmo()) {
+                        w.setName(el.getName());
+                        result.add(w);
+                    }
                 }
             }
         }

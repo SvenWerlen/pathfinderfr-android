@@ -52,6 +52,15 @@
                 android:value="org.pathfinderfr.app.MainActivity" />
         </activity>
         <activity
+            android:name=".app.character.GeneratePDFActivity"
+            android:label="@string/title_activity_generate_pdf"
+            android:parentActivityName=".app.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.pathfinderfr.app.MainActivity" />
+        </activity>
+        <activity
             android:name=".app.TreasureActivity"
             android:label="@string/title_activity_treasure"
             android:parentActivityName=".app.MainActivity"

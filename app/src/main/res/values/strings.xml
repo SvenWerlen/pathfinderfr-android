@@ -6,6 +6,7 @@
     <string name="title_activity_load_data">Mise à jour des données</string>
     <string name="title_activity_treasure">Générateur de trésors</string>
     <string name="title_activity_settings">Paramètres</string>
+    <string name="title_activity_generate_pdf">Feuille de personnage (PDF)</string>
 
     <string name="navigation_drawer_open">Ouvrir la navigation latérale</string>
     <string name="navigation_drawer_close">Fermer la navigation latérale</string>
@@ -85,13 +86,13 @@
     </string>
     <string name="loaddata_optimisation">Indexation des sorts en cours. Le processus
         peut prendre plusieurs minutes en fonction de la performance de votre appareil. Ne peut être
-        arrêté. Veuillez patienter svp...
+        arrêté. Veuillez patienter svp…
     </string>
     <string name="loaddata_forceupdate">Forcer la mise à jour</string>
     <string name="loaddata_start">Démarrer</string>
     <string name="loaddata_stop">Arrêter</string>
     <string name="loaddata_stopping">Attendre</string>
-    <string name="loaddata_pleasewait">Veuillez svp attendre la fin du processus...</string>
+    <string name="loaddata_pleasewait">Veuillez svp attendre la fin du processus…</string>
     <string name="loaddata_waiting">en attente</string>
     <string name="loaddata_noupdate_required">à jour (v%d)</string>
     <string name="loaddata_downloading">fichier en téléchargement</string>
@@ -99,11 +100,20 @@
     <string name="loaddata_data_spells">Sorts</string>
 
     <string name="loaddata_status_error">erreur inconnue</string>
-    <string name="loaddata_status_pending">...</string>
+    <string name="loaddata_status_pending">…</string>
     <string name="loaddata_status_notchanged">inchangé</string>
     <string name="loaddata_status_changed">migré avec succés</string>
     <string name="loaddata_status_notfound">introuvable</string>
     <string name="loaddata_status_deleted">introuvable, à été supprimé!</string>
+
+    <!-- Strings related to generate PDF -->
+    <string name="generatepdf_message">La génération de la feuille de personnage au format PDF peut
+        prendre quelques secondes en fonction de la performance de votre appareil. Lorsque demandé,
+        ouvrez le document avec une visionneuse PDF. Vous pourrez ensuite l\'envoyer par courriel et
+        l\'imprimer.
+    </string>
+    <string name="generatepdf_start">Générer PDF</string>
+    <string name="generatepdf_inprogress">en cours…</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>

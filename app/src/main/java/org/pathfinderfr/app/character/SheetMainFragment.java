@@ -5,25 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.print.PrintAttributes;
-import android.print.pdf.PrintedPdfDocument;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatViewInflater;
-import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -32,19 +23,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.layout.element.Image;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.ItemListRecyclerViewAdapter;
+import org.pathfinderfr.app.ItemDetailActivity;
+import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
@@ -61,7 +50,6 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.CharacterPDF;
-import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
@@ -1214,38 +1202,10 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     return;
                 }
                 else if(v.getId() == R.id.actionPDF) {
-                    Log.i(SheetMainFragment.class.getSimpleName(), "Generating PDF");
-                    // save character to cache directory
-                    try {
-                        File cachePath = new File(parent.getContext().getCacheDir(), "characters");
-                        cachePath.mkdirs(); // don't forget to make the directory
-                        FileOutputStream stream = new FileOutputStream(cachePath + "/personnage.pdf");
-                        // get logo
-                        InputStream ims = parent.getActivity().getAssets().open("pdf-logo.png");
-                        Bitmap bmp = BitmapFactory.decodeStream(ims);
-                        ByteArrayOutputStream logo = new ByteArrayOutputStream();
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, logo);
-                        List<DBEntity> skills = DBHelper.getInstance(parent.getContext()).getAllEntitiesWithAllFields(SkillFactory.getInstance());
-                        new CharacterPDF(parent.character, skills, parent.character.getInventoryWeapons()).generatePDF(stream, ImageDataFactory.create(logo.toByteArray()));
-                        stream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                    // read character from cache
-                    File charPath = new File(parent.getContext().getCacheDir(), "characters");
-                    File newFile = new File(charPath, "personnage.pdf");
-                    System.out.println("SIZE = " + newFile.length());
-                    Uri contentUri = FileProvider.getUriForFile(parent.getContext(), "org.pathfinderfr.app.fileprovider", newFile);
-
-                    if (contentUri != null) {
-                        Intent pdfIntent = new Intent();
-                        pdfIntent.setAction(Intent.ACTION_VIEW);
-                        pdfIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        pdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        pdfIntent.setDataAndType(contentUri, "application/pdf");
-                        parent.startActivity(Intent.createChooser(pdfIntent, parent.getResources().getString(R.string.sheet_choose_app_export)));
-                    }
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, GeneratePDFActivity.class);
+                    intent.putExtra(GeneratePDFActivity.ARG_CHARACTER_ID, parent.character.getId());
+                    context.startActivity(intent);
                     return;
                 }
                 else if(v.getId() == R.id.actionDelete) {
