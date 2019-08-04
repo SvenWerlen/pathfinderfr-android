@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:minHeight="1000dp"
+    android:minWidth="1000dp"
     android:padding="10dp">
 
 
@@ -56,6 +58,164 @@
                     android:layout_marginStart="10dp"
                     android:textSize="20sp"
                     android:text="@string/sheet_speed_unit" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:textStyle="italic"
+                android:textSize="12sp"
+                android:text="@string/sheet_speed_other_description" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:width="150dp"
+                    android:textAlignment="textEnd"
+                    android:text="@string/sheet_speed_witharmor" />
+
+                <EditText
+                    android:id="@+id/sheet_speed_armor_value"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="2"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="32sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_speed_unit" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textEnd"
+                    android:width="150dp"
+                    android:text="@string/sheet_speed_dig" />
+
+                <EditText
+                    android:id="@+id/sheet_speed_dig_value"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="2"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="32sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_speed_meters" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textEnd"
+                    android:width="150dp"
+                    android:text="@string/sheet_speed_fly" />
+
+                <EditText
+                    android:id="@+id/sheet_speed_fly_value"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="2"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="32sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_speed_meters" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textEnd"
+                    android:width="150dp"
+                    android:text="@string/sheet_speed_fly_maneuver" />
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/sheet_speed_fly_maneuver_spinner"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/sheet_speed_fly_maneuver"
+                    android:entries="@array/speed_fly_maneuver">
+
+                </android.support.v7.widget.AppCompatSpinner>
 
             </LinearLayout>
 

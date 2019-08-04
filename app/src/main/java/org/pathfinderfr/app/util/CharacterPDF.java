@@ -353,8 +353,8 @@ public class CharacterPDF {
     /**
      * Returns the french translation for the alignment
      */
-    public String flyManeuverability2Text(int man) {
-        if(man == 0) {
+    public String flyManeuverability2Text(int fly, int man) {
+        if(fly == 0 || man == 0) {
             return "-";
         }
         switch(man) {
@@ -441,7 +441,7 @@ public class CharacterPDF {
         table.addCell(createCell("", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(createCell("Vitesse de déplacement", TextAlignment.CENTER, 1, 2, 0, 0).setBorder(Border.NO_BORDER).setPaddingBottom(2));
         table.addCell(createCell("Avec armure", TextAlignment.CENTER, 1, 2, 0, 0).setBorder(Border.NO_BORDER).setPaddingBottom(2));
-        table.addCell(createSpeed("Mètres", null,formatSpeed(character.getBaseSpeedFly(), ""),flyManeuverability2Text(character.getBaseSpeedManeuverability())));
+        table.addCell(createSpeed("Mètres", null,formatSpeed(character.getBaseSpeedFly(), ""),flyManeuverability2Text(character.getBaseSpeedFly(), character.getBaseSpeedManeuverability())));
         table.addCell(createInfoText(formatSpeed(character.getSpeedSwimming(), " m"),1, TextAlignment.CENTER, true).setMinWidth(0));
         table.addCell(createInfoText(formatSpeed(character.getSpeedClimbing(), " m"), 1, TextAlignment.CENTER, true).setMinWidth(0));
         table.addCell(createInfoText(formatSpeed(character.getBaseSpeedDig(), " m"), 1, TextAlignment.CENTER, true).setMinWidth(0));

@@ -23,4 +23,14 @@
         <item>25</item>
         <item>50</item>
     </string-array>
+
+    <string-array name="speed_fly_maneuver">
+        <item>-- s.o. --</item>
+        <item>Déplorable</item>
+        <item>Médiocre</item>
+        <item>Moyenne</item>
+        <item>Bonne</item>
+        <item>Parfaite</item>
+    </string-array>
+
 </resources>

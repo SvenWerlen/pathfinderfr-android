@@ -109,8 +109,8 @@ public class Character extends DBEntity {
     int speed;
 
     // infos additionnelles
-    int alignment;
     String player;
+    int alignment;
     String divinity;
     String origin;
     int sizeType;
@@ -120,8 +120,8 @@ public class Character extends DBEntity {
     int weight;
     String hair;
     String eyes;
-    int speedDig;
     int speedWithArmor;
+    int speedDig;
     int speedFly;
     int speedFlyManeuv;
     String languages;
@@ -135,6 +135,7 @@ public class Character extends DBEntity {
         traits = new ArrayList<>();
         modifs = new ArrayList<>();
         invItems = new ArrayList<>();
+        sizeType = SIZE_MEDIUM;
     }
 
     // Helper to keep modifs

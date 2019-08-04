@@ -1138,7 +1138,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
-                DialogFragment newFragment = FragmentSpeedPicker.newInstance(parent, parent.character.getBaseSpeed());
+                DialogFragment newFragment = FragmentSpeedPicker.newInstance(parent,
+                        parent.character.getBaseSpeed(),
+                        parent.character.getBaseSpeedWithArmor(),
+                        parent.character.getBaseSpeedDig(),
+                        parent.character.getBaseSpeedFly(),
+                        parent.character.getBaseSpeedManeuverability());
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
@@ -1505,9 +1510,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onSaveSpeed(int value) {
-        character.setSpeed(value);
-        ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(value));
+    public void onSaveSpeed(int speed, int speedArmor, int speedDig, int speedFly, int speedManeuver) {
+        character.setSpeed(speed);
+        character.setSpeedWithArmor(speedArmor);
+        character.setSpeedDig(speedDig);
+        character.setSpeedFly(speedFly);
+        System.out.println("Maneuver: " + speedManeuver);
+        character.setSpeedManeuverability(speedManeuver);
+        ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(speed));
         // update sheet
         updateSheet(getView());
         // store changes

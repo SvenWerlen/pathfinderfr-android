@@ -348,10 +348,19 @@
     <!-- Speed -->
     <string name="sheet_speed_title">Vitesse de déplacement:</string>
     <string name="sheet_speed_unit">case(s)</string>
+    <string name="sheet_speed_meters">mètre(s)</string>
     <string name="sheet_speed_description">Il s\'agit ici de la vitesse de déplacement de base du personnage.
         Vous devez saisir la valeur en case(s) (1 case = 1.5m).
         Vous pouvez également utiliser la fonction \"Modif(s)\" pour intégrer d\'autres bonus/malus sur votre feuille.
     </string>
+    <string name="sheet_speed_other_description">Les valeurs ci-dessous servent à compléter la
+        feuille de personnage. Les valeurs ne seront pas visibles dans l\'application mais uniquement
+        lorsque vous générez le feuille au format PDF (pour l\'imprimer).
+    </string>
+    <string name="sheet_speed_witharmor">Avec armure:</string>
+    <string name="sheet_speed_dig">Creusement:</string>
+    <string name="sheet_speed_fly">Vol:</string>
+    <string name="sheet_speed_fly_maneuver">Manœuvrabilité:</string>
 
     <!-- Inventory -->
     <string name="sheet_main_inventory_example_label_name">Inventaire</string>

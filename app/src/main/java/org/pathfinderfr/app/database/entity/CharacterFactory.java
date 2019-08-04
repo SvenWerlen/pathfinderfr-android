@@ -36,7 +36,23 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
     private static final String COLUMN_SPEED       = "speed";
+    private static final String COLUMN_SPEED_ARMOR = "speedarmor";
+    private static final String COLUMN_SPEED_DIG   = "speeddig";
+    private static final String COLUMN_SPEED_FLY   = "speedfly";
+    private static final String COLUMN_SPEED_FLYM  = "speedflym";
     private static final String COLUMN_INVENTORY   = "inventory";
+    private static final String COLUMN_PLAYER      = "player";
+    private static final String COLUMN_ALIGNMENT   = "align";
+    private static final String COLUMN_DIVINITY    = "divinity";
+    private static final String COLUMN_ORIGIN      = "origin";
+    private static final String COLUMN_SIZETYPE    = "sizetype";
+    private static final String COLUMN_SEX         = "sex";
+    private static final String COLUMN_AGE         = "age";
+    private static final String COLUMN_HEIGHT      = "height";
+    private static final String COLUMN_WEIGHT      = "weight";
+    private static final String COLUMN_HAIR        = "hair";
+    private static final String COLUMN_EYES        = "eyes";
+    private static final String COLUMN_LANG        = "languages";
 
 
     private static CharacterFactory instance;
@@ -69,19 +85,27 @@ public class CharacterFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
-                        "%s text, %s text," +
-                        "%s integer, %s integer, %s integer, " +
-                        "%s integer, %s integer, %s integer," +
-                        "%s text, %s text, %s text, %s text, %s text, %s text," +
-                        "%s integer, %s integer" +
+                        "%s text, %s integer, %s text, %s text," +                      // player, alignment, divinity, origin
+                        "%s integer, %s integer, %s integer, %s integer," +             // sizeType, sex, age, height, weight
+                        "%s text, %s text, " +                                          // hair, eyes
+                        "%s text, %s text, " +                                          // race, classes
+                        "%s integer, %s integer, %s integer, " +                        // str, dex, con
+                        "%s integer, %s integer, %s integer," +                         // int, wis, cha
+                        "%s text, %s text, %s text, %s text, %s text, %s text," +       // skills, feats, features, traits, modifs, inventory
+                        "%s integer, %s integer, %s integer, %s integer, %s integer, %s integer," +  // hitpoints, speed (reg, armor, dig, fly, maneuver)
+                        "%s text" +                                                     // languages
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
+                COLUMN_PLAYER, COLUMN_ALIGNMENT, COLUMN_DIVINITY, COLUMN_ORIGIN,
+                COLUMN_SIZETYPE, COLUMN_SEX, COLUMN_AGE, COLUMN_HEIGHT, COLUMN_WEIGHT,
+                COLUMN_HAIR, COLUMN_EYES,
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
                 COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
-                COLUMN_HITPOINTS, COLUMN_SPEED);
+                COLUMN_HITPOINTS, COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
+                COLUMN_LANG);
         return query;
     }
 
@@ -134,6 +158,30 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV15() {
         return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_ALTTRAITS);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v17 to v18
+     */
+    public List<String> getQueriesUpgradeV18() {
+        List<String> changes = new ArrayList<>();
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_PLAYER));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_ALIGNMENT));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_DIVINITY));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_ORIGIN));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SIZETYPE));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SEX));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_AGE));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_HEIGHT));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_WEIGHT));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_HAIR));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_EYES));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_ARMOR));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_DIG));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_FLY));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_FLYM));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_LANG));
+        return changes;
     }
 
     @Override
@@ -286,6 +334,24 @@ public class CharacterFactory extends DBEntityFactory {
         } else {
             contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
         }
+
+        // new 16 fields for PDF
+        contentValues.put(CharacterFactory.COLUMN_SPEED_ARMOR, c.getSpeedWithArmor());
+        contentValues.put(CharacterFactory.COLUMN_SPEED_DIG, c.getBaseSpeedDig());
+        contentValues.put(CharacterFactory.COLUMN_SPEED_FLY, c.getBaseSpeedFly());
+        contentValues.put(CharacterFactory.COLUMN_SPEED_FLYM, c.getBaseSpeedManeuverability());
+        contentValues.put(CharacterFactory.COLUMN_PLAYER, c.getPlayer());
+        contentValues.put(CharacterFactory.COLUMN_ALIGNMENT, c.getAlignment());
+        contentValues.put(CharacterFactory.COLUMN_DIVINITY, c.getDivinity());
+        contentValues.put(CharacterFactory.COLUMN_ORIGIN, c.getOrigin());
+        contentValues.put(CharacterFactory.COLUMN_SIZETYPE, c.getSizeType());
+        contentValues.put(CharacterFactory.COLUMN_SEX, c.getSex());
+        contentValues.put(CharacterFactory.COLUMN_AGE, c.getAge());
+        contentValues.put(CharacterFactory.COLUMN_HEIGHT, c.getHeight());
+        contentValues.put(CharacterFactory.COLUMN_WEIGHT, c.getWeight());
+        contentValues.put(CharacterFactory.COLUMN_HAIR, c.getHair());
+        contentValues.put(CharacterFactory.COLUMN_EYES, c.getEyes());
+        contentValues.put(CharacterFactory.COLUMN_LANG, c.getLanguages());
 
         return contentValues;
     }
@@ -541,6 +607,24 @@ public class CharacterFactory extends DBEntityFactory {
                 }
             }
         }
+
+        // new 16 fields for PDF
+        c.setSpeedWithArmor(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_ARMOR));
+        c.setSpeedDig(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_DIG));
+        c.setSpeedFly(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLY));
+        c.setSpeedManeuverability(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLYM));
+        c.setPlayer(extractValue(resource, CharacterFactory.COLUMN_PLAYER));
+        c.setAlignment(extractValueAsInt(resource, CharacterFactory.COLUMN_ALIGNMENT));
+        c.setDivinity(extractValue(resource, CharacterFactory.COLUMN_DIVINITY));
+        c.setOrigin(extractValue(resource, CharacterFactory.COLUMN_ORIGIN));
+        c.setSizeType(extractValueAsInt(resource, CharacterFactory.COLUMN_SIZETYPE));
+        c.setSex(extractValueAsInt(resource, CharacterFactory.COLUMN_SEX));
+        c.setAge(extractValueAsInt(resource, CharacterFactory.COLUMN_AGE));
+        c.setHeight(extractValueAsInt(resource, CharacterFactory.COLUMN_HEIGHT));
+        c.setWeight(extractValueAsInt(resource, CharacterFactory.COLUMN_WEIGHT));
+        c.setHair(extractValue(resource, CharacterFactory.COLUMN_HAIR));
+        c.setEyes(extractValue(resource, CharacterFactory.COLUMN_EYES));
+        c.setLanguages(extractValue(resource, CharacterFactory.COLUMN_LANG));
 
         return c;
     }
