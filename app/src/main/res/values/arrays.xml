@@ -33,4 +33,21 @@
         <item>Parfaite</item>
     </string-array>
 
+    <string-array name="size_types">
+        <item>-- choisir --</item>
+        <item>Infime (I)</item>
+        <item>Minuscule (Min)</item>
+        <item>Très petite (TP)</item>
+        <item>Petite (P)</item>
+        <item>Moyenne (M)</item>
+        <item>Grande (G) (haute)</item>
+        <item>Grande (G) (longue)</item>
+        <item>Très grande (TG) (haute)</item>
+        <item>Très grande (TG) (longue)</item>
+        <item>Gigantesque (Gig) (haute)</item>
+        <item>Gigantesque (Gig) (longue)</item>
+        <item>Colossale (C) (haute)</item>
+        <item>Colossale (C) (longue)</item>
+    </string-array>
+
 </resources>

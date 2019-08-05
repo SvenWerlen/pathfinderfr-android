@@ -3,6 +3,7 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.io.File;
@@ -53,6 +55,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -63,7 +66,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
-            FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener {
+        FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener,
+        FragmentInfosPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
     private static final String DIALOG_PICK_ABILITY   = "ability-picker";
@@ -71,6 +75,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     private static final String DIALOG_DELETE_ACTION  = "delete-action";
     private static final String DIALOG_PICK_NAME      = "name-picker";
     private static final String DIALOG_PICK_RACE      = "race-picker";
+    private static final String DIALOG_PICK_INFOS     = "infos-picker";
     private static final String DIALOG_PICK_CLASS     = "class-picker";
     private static final String DIALOG_PICK_HP        = "hitpoint-picker";
     private static final String DIALOG_PICK_SPEED     = "speed-picker";
@@ -227,6 +232,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
+        view.findViewById(R.id.sheet_main_otherpicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_classpicker).setVisibility(View.GONE);
 
         final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
@@ -606,6 +612,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             raceTv.setText(character.getRace().getName());
         }
 
+        // update infos
+        updateAdditionalInfos(view);
         updateClassPickers(view);
         updateModifsPickers(view);
 
@@ -628,6 +636,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     .findFragmentByTag(DIALOG_PICK_RACE);
             if (fragRace != null) {
                 fragRace.setListener(this);
+            }
+            FragmentInfosPicker fragInfos = (FragmentInfosPicker)getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_PICK_INFOS);
+            if (fragInfos != null) {
+                fragInfos.setListener(this);
             }
             FragmentClassPicker fragClass = (FragmentClassPicker)getActivity().getSupportFragmentManager()
                     .findFragmentByTag(DIALOG_PICK_CLASS);
@@ -756,6 +769,25 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         }
 
         return view;
+    }
+
+    private void updateAdditionalInfos(View view) {
+        TextView infosTv = view.findViewById(R.id.sheet_main_otherpicker);
+        Resources res = view.getResources();
+
+        StringBuffer buf = new StringBuffer();
+        if(character.getSex() > 0 && character.getSex() <= Character.SEX_F) {
+            buf.append(res.getStringArray(R.array.sex)[character.getSex()-1]).append(", ");
+        }
+        if(character.getAlignment() > 0 && character.getAlignment() <= Character.ALIGN_CE) {
+            buf.append(res.getStringArray(R.array.alignment)[character.getAlignment()-1]).append(", ");
+        }
+
+        if(buf.length() > 0) {
+            infosTv.setText(buf.substring(0, buf.length()-2));
+        } else {
+            infosTv.setText(res.getString(R.string.sheet_click_to_fill));
+        }
     }
 
     private void updateClassPickers(View view) {
@@ -1068,6 +1100,23 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 arguments.putLong(FragmentRacePicker.ARG_RACE_ID,  raceId);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_RACE);
+                return;
+            }
+            else if(v instanceof TextView && "infos".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INFOS);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentInfosPicker.newInstance(parent,
+                    parent.character.getAlignment(), parent.character.getDivinity(),
+                    parent.character.getOrigin(), parent.character.getSizeType(),
+                    parent.character.getSex(), parent.character.getAge(),
+                    parent.character.getHeight(), parent.character.getWeight(),
+                    parent.character.getHair(), parent.character.getEyes(),
+                    parent.character.getLanguages());
+                newFragment.show(ft, DIALOG_PICK_INFOS);
                 return;
             }
             else if(v instanceof TextView && "class".equals(v.getTag())) {
@@ -1536,6 +1585,25 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(speed));
         // update sheet
         updateSheet(getView());
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onSaveInfos(int alignment, String divinity, String origin, int sizeType, int sex, int age, int height, int weight, String hair, String eyes, String lang) {
+        character.setAlignment(alignment);
+        character.setDivinity(divinity == null || divinity.length() == 0 ? null : divinity);
+        character.setOrigin(origin == null || origin.length() == 0 ? null : origin);
+        character.setSizeType(sizeType);
+        character.setSex(sex);
+        character.setAge(age);
+        character.setWeight(weight);
+        character.setHeight(height);
+        character.setHair(hair == null || hair.length() == 0 ? null : hair);
+        character.setEyes(eyes == null || eyes.length() == 0 ? null : eyes);
+        character.setLanguages(lang == null || lang.length() == 0 ? null : lang);
+        // update sheet
+        updateAdditionalInfos(getView());
         // store changes
         characterDBUpdate();
     }

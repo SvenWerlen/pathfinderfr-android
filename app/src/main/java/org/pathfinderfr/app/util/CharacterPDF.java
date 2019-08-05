@@ -48,7 +48,6 @@ public class CharacterPDF {
     private static final Style STYLE_TEXT_TOTAL;
     private static final Style STYLE_LABEL_TOP;
     private static final Style STYLE_LABEL_BOTTOM;
-    private PdfFont FONT_BOLD;
 
     private static final String TEXT_LONG_TEST = "Ceci est un vraiment long texte pour tester dans les champs qui font vraiment plus que 100 charactères de long";
 
@@ -65,12 +64,6 @@ public class CharacterPDF {
         this.character = character;
         this.skills = skills;
         this.weapons = weapons;
-
-        try {
-            FONT_BOLD = PdfFontFactory.createRegisteredFont(StandardFonts.HELVETICA_BOLD);
-        } catch (IOException e) {
-            FONT_BOLD = null;
-        }
     }
 
     public Cell createHeader(String text) {
@@ -102,9 +95,7 @@ public class CharacterPDF {
                 .setFixedLeading(6)
                 .setPaddingTop(2)
                 .setTextAlignment(TextAlignment.CENTER);
-        if(FONT_BOLD != null) {
-            p.setFont(FONT_BOLD);
-        }
+        p.setBold();
         return p;
     }
 
@@ -159,7 +150,7 @@ public class CharacterPDF {
                     .setTextAlignment(TextAlignment.CENTER));
         }
         if(total) {
-            c.setFont(FONT_BOLD);
+            c.setBold();
         }
         return c;
     }
@@ -465,7 +456,7 @@ public class CharacterPDF {
                 .setTextAlignment(TextAlignment.CENTER)
                 .setFixedLeading(8);
         if(total) {
-            p.setFont(FONT_BOLD);
+            p.setBold();
         }
         return p;
     }

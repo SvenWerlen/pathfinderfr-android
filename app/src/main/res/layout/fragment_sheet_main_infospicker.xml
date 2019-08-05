@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HACK to force fill the screen (minHeight, minWidth) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:minHeight="1000dp"
+    android:minWidth="1000dp"
+    android:padding="10dp">
+
+    <ScrollView
+        android:id="@+id/choose_race_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="@string/sheet_other_title" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="italic"
+                android:textSize="12sp"
+                android:text="@string/sheet_other_description" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_alignment" />
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+                <TableRow>
+                    <TextView
+                        android:id="@+id/sheet_other_LB"
+                        android:text="@string/LB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="1"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_NB"
+                        android:text="@string/NB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="2"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_CB"
+                        android:text="@string/CB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="3"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/sheet_other_LN"
+                        android:text="@string/LN"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="4"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_N"
+                        android:text="@string/N"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="5"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_CN"
+                        android:text="@string/CN"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="6"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/sheet_other_LM"
+                        android:text="@string/LM"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="7"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_NM"
+                        android:text="@string/NM"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="8"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/sheet_other_CM"
+                        android:text="@string/CM"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/text_box"
+                        android:padding="4dp"
+                        android:tag="9"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_divinity" />
+
+            <EditText
+                android:id="@+id/sheet_other_divinity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@drawable/text_box"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLength="30"
+                android:gravity="end"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_origin" />
+
+            <EditText
+                android:id="@+id/sheet_other_origin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@drawable/text_box"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLength="30"
+                android:gravity="end"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_size" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sheet_other_size_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:prompt="@string/sheet_other_size"
+                android:entries="@array/size_types">
+
+            </android.support.v7.widget.AppCompatSpinner>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="start">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_sex" />
+
+                <TextView
+                    android:id="@+id/sheet_other_sex_m"
+                    android:text="@string/sheet_other_sex_m"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/text_box"
+                    android:padding="4dp"
+                    android:tag="M"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/sheet_other_sex_f"
+                    android:text="@string/sheet_other_sex_f"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/text_box"
+                    android:padding="4dp"
+                    android:tag="F"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_age" />
+
+                <EditText
+                    android:id="@+id/sheet_other_age"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="3"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_age_unit" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_height" />
+
+                <EditText
+                    android:id="@+id/sheet_other_height"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="3"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_height_unit" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_weight" />
+
+                <EditText
+                    android:id="@+id/sheet_other_weight"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="3"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:width="80dp"
+                    android:text="@string/sheet_other_weight_unit" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_hair" />
+
+            <EditText
+                android:id="@+id/sheet_other_hair"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@drawable/text_box"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLength="10"
+                android:gravity="end"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_eyes" />
+
+            <EditText
+                android:id="@+id/sheet_other_eyes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@drawable/text_box"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLength="10"
+                android:gravity="end"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/sheet_other_lang" />
+
+            <EditText
+                android:id="@+id/sheet_other_lang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@drawable/text_box"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/colorBlack"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLength="200"
+                android:gravity="end"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/save"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/colorWhite"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

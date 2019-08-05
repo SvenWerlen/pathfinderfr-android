@@ -253,6 +253,30 @@
     <string name="sheet_race_example_name">Nom de la race</string>
     <string name="sheet_race_example_details">Détails de la race</string>
 
+    <!-- Character other -->
+    <string name="sheet_other">Infos:</string>
+    <string name="sheet_click_to_fill">Compléter</string>
+    <string name="sheet_other_title">Informations complétentaires:</string>
+    <string name="sheet_other_description">Les informations de cette section n\'ont pas d\'influence
+        directe mais permettent d\'enrichir la feuille de personnage (format PDF pour impression).
+    </string>
+    <string name="sheet_other_alignment">Alignement</string>
+    <string name="sheet_other_divinity">Divinité</string>
+    <string name="sheet_other_origin">Origine</string>
+    <string name="sheet_other_size">Catégorie de taille</string>
+    <string name="sheet_other_sex">Sexe:</string>
+    <string name="sheet_other_sex_m">Homme</string>
+    <string name="sheet_other_sex_f">Femme</string>
+    <string name="sheet_other_age">Age:</string>
+    <string name="sheet_other_age_unit">ans</string>
+    <string name="sheet_other_height">Taille:</string>
+    <string name="sheet_other_height_unit">cm</string>
+    <string name="sheet_other_weight">Poids:</string>
+    <string name="sheet_other_weight_unit">kg</string>
+    <string name="sheet_other_hair">Cheveux</string>
+    <string name="sheet_other_eyes">Yeux</string>
+    <string name="sheet_other_lang">Langues</string>
+
     <!-- Character classes -->
     <string name="sheet_classes">Classe(s):</string>
     <string name="sheet_class_example_name">Nom de la classe</string>
@@ -550,5 +574,32 @@
     <string name="home_item_conditions">États</string>
     <string name="home_item_update">Màj données</string>
 
+    <!-- Strings related to additional infos -->
+    <string name="LB">Loyal Bon</string>
+    <string name="NB">Neutre Bon</string>
+    <string name="CB">Chaotique Bon</string>
+    <string name="LN">Loyal Neutre</string>
+    <string name="N">Neutre</string>
+    <string name="CN">Chaotique Neutre</string>
+    <string name="LM">Loyal Mauvais</string>
+    <string name="NM">Neutre Mauvais</string>
+    <string name="CM">Chaotique Mauvais</string>
+    <string-array name="alignment">
+        <item>LB</item>
+        <item>NB</item>
+        <item>CB</item>
+        <item>LN</item>
+        <item>N</item>
+        <item>CN</item>
+        <item>LM</item>
+        <item>NM</item>
+        <item>CM</item>
+    </string-array>
+    <string-array name="sex">
+        <item>Homme</item>
+        <item>Femme</item>
+    </string-array>
+
 </resources>
+
 
