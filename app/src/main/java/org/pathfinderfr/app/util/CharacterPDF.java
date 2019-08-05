@@ -480,9 +480,9 @@ public class CharacterPDF {
         table.addCell(createCell("Total", TextAlignment.LEFT, 1, 1, 0, 0).add(createValue(String.valueOf(character.getHitpoints()),true)));
         table.addCell(createCell("RD", TextAlignment.LEFT, 1, 1, 0, 0));
         table.addCell(createCell("Blessures/Points de vie actuels", TextAlignment.LEFT, 1, 3, 0, 0).setBorder(Border.NO_BORDER).setPaddingTop(5));
-        table.addCell(createCell("", TextAlignment.LEFT, 1, 3, 120, 40));
+        table.addCell(createCell(String.valueOf(character.getHitpoints()), TextAlignment.LEFT, 1, 3, 120, 40));
         table.addCell(createCell("Dégâts non-létaux", TextAlignment.LEFT, 1, 3, 0, 0).setBorder(Border.NO_BORDER).setPaddingTop(5));
-        table.addCell(createCell("", TextAlignment.LEFT, 1, 3, 120, 20));
+        table.addCell(createCell(String.valueOf(character.getHitpointsTemp()), TextAlignment.LEFT, 1, 3, 120, 20));
         return table;
     }
 

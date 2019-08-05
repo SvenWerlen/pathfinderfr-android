@@ -3,8 +3,6 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,12 +26,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.itextpdf.io.image.ImageDataFactory;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.ItemDetailActivity;
-import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
@@ -44,22 +39,18 @@ import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
-import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
-import org.pathfinderfr.app.util.CharacterPDF;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.Triplet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -375,6 +366,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_hitpoints));}
         });
         view.findViewById(R.id.hitpoint_value).setOnClickListener(listener);
+        view.findViewById(R.id.other_hptemp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_hitpointstemp));}
+        });
+        view.findViewById(R.id.hitpointtemp_value).setOnClickListener(listener);
 
         // SPEED
         view.findViewById(R.id.other_speed).setOnClickListener(new View.OnClickListener() {
@@ -720,6 +716,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.armorclass_value), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_hp), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.hitpoint_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_hptemp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.hitpointtemp_value), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_mag), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.magicresistance_value), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.other_speed), minHeight, scale);
@@ -878,14 +876,16 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
     private void updateSheetSummary(View view) {
         final String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.sheet.summary");
+        final String templatePVt = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.sheet.summary.hptemp");
         Skill perc = (Skill)DBHelper.getInstance(view.getContext()).fetchEntityByName("Perception", SkillFactory.getInstance());
+        String pvTemp = (character.getHitpointsTemp() > 0 ? String.format(templatePVt, character.getHitpointsTemp()): "");
         String text = String.format(template,
                 character.getName(),
                 character.getRaceName(), character.getClassNames(),
                 character.getInitiative(), character.getSkillTotalBonus(perc),
                 character.getArmorClass(),
                 character.getArmorClassDetails(),
-                character.getHitpoints(),
+                character.getHitpoints(), pvTemp,
                 character.getSavingThrowsReflexesTotal(),
                 character.getSavingThrowsFortitudeTotal(),
                 character.getSavingThrowsWillTotal(),
@@ -927,6 +927,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)view.findViewById(R.id.ability_cha_modif)).setText(String.valueOf(character.getCharismaModif()));
 
         ((TextView)view.findViewById(R.id.hitpoint_value)).setText(String.valueOf(character.getHitpoints()));
+        ((TextView)view.findViewById(R.id.hitpointtemp_value)).setText(String.valueOf(character.getHitpointsTemp()));
         ((TextView)view.findViewById(R.id.speed_value)).setText(String.valueOf(character.getSpeed()));
 
         TextView initiative = view.findViewById(R.id.initiative_value);
@@ -1132,7 +1133,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
-                DialogFragment newFragment = FragmentHitPointsPicker.newInstance(parent, parent.character.getHitpoints());
+                DialogFragment newFragment = FragmentHitPointsPicker.newInstance(parent, parent.character.getHitpoints(), parent.character.getHitpointsTemp());
 
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
@@ -1513,9 +1514,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onSaveHP(int value) {
+    public void onSaveHP(int value, int valueTemp) {
         character.setHitpoints(value);
+        character.setHitpointsTemp(valueTemp);
         ((TextView)getView().findViewById(R.id.hitpoint_value)).setText(String.valueOf(value));
+        ((TextView)getView().findViewById(R.id.hitpointtemp_value)).setText(String.valueOf(valueTemp));
         // update sheet
         updateSheet(getView());
         // store changes

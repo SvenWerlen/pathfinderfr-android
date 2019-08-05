@@ -297,6 +297,8 @@
     <string name="sheet_magicresistance">Résistance magie</string>
     <string name="sheet_hp">PV</string>
     <string name="sheet_hitpoints">Points de vie</string>
+    <string name="sheet_hptemp">PVt</string>
+    <string name="sheet_hitpointstemp">Points de vie temporaires</string>
     <string name="sheet_sp">VD</string>
     <string name="sheet_speed">Vitesse de déplacement</string>
     <string name="sheet_saving">Sauv.</string>
@@ -340,11 +342,13 @@
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
 
     <!-- Hit points -->
-    <string name="sheet_hitpoints_title">Point de vie:</string>
+    <string name="sheet_hitpoints_title">Points de vie:</string>
     <string name="sheet_hitpoints_description">Il s\'agit ici du nombre total de points de vie du personnage.
         L\'application ne permet pas d\'effectuer les passages de niveau et lancer les dés. Saisissez donc
         ci-dessous le nombre de points de vie maximum du personnage.
     </string>
+    <string name="sheet_hitpoints_label_hp">PV:</string>
+    <string name="sheet_hitpoints_label_temp">PV temp.:</string>
 
     <!-- Speed -->
     <string name="sheet_speed_title">Vitesse de déplacement:</string>

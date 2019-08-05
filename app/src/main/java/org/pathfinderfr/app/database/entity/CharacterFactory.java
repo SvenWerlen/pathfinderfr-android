@@ -35,6 +35,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ALTTRAITS   = "alttraits";
     private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
+    private static final String COLUMN_HPTEMP      = "hitpointstemp";
     private static final String COLUMN_SPEED       = "speed";
     private static final String COLUMN_SPEED_ARMOR = "speedarmor";
     private static final String COLUMN_SPEED_DIG   = "speeddig";
@@ -92,7 +93,8 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s integer, %s integer, %s integer, " +                        // str, dex, con
                         "%s integer, %s integer, %s integer," +                         // int, wis, cha
                         "%s text, %s text, %s text, %s text, %s text, %s text," +       // skills, feats, features, traits, modifs, inventory
-                        "%s integer, %s integer, %s integer, %s integer, %s integer, %s integer," +  // hitpoints, speed (reg, armor, dig, fly, maneuver)
+                        "%s integer, %s integer, " +                                    // hitpoints, hitpointstemps
+                        "%s integer, %s integer, %s integer, %s integer, %s integer," + // speed (reg, armor, dig, fly, maneuver)
                         "%s text" +                                                     // languages
                         ")",
                 TABLENAME, COLUMN_ID,
@@ -104,7 +106,8 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
                 COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
-                COLUMN_HITPOINTS, COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
+                COLUMN_HITPOINTS, COLUMN_HPTEMP,
+                COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
                 COLUMN_LANG);
         return query;
     }
@@ -165,6 +168,7 @@ public class CharacterFactory extends DBEntityFactory {
      */
     public List<String> getQueriesUpgradeV18() {
         List<String> changes = new ArrayList<>();
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_HPTEMP));
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_PLAYER));
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_ALIGNMENT));
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_DIVINITY));
@@ -204,6 +208,7 @@ public class CharacterFactory extends DBEntityFactory {
         contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getAbilityValue(Character.ABILITY_CHARISMA, false));
 
         contentValues.put(CharacterFactory.COLUMN_HITPOINTS, c.getHitpoints());
+        contentValues.put(CharacterFactory.COLUMN_HPTEMP, c.getHitpointsTemp());
         contentValues.put(CharacterFactory.COLUMN_SPEED, c.getSpeed());
 
         // race is stored using format <raceId>:<raceName>
@@ -374,6 +379,7 @@ public class CharacterFactory extends DBEntityFactory {
         c.setCharisma(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
 
         c.setHitpoints(extractValueAsInt(resource, CharacterFactory.COLUMN_HITPOINTS));
+        c.setHitpointsTemp(extractValueAsInt(resource, CharacterFactory.COLUMN_HPTEMP));
         c.setSpeed(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED));
 
         // fill race

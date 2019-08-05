@@ -702,6 +702,38 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/other_hptemp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_margin="2dp"
+                            android:background="@color/colorPrimary"
+                            android:padding="4dp"
+                            android:text="@string/sheet_hptemp"
+                            android:textColor="@color/colorWhite"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/hitpointtemp_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginHorizontal="2dp"
+                            android:layout_marginVertical="2dp"
+                            android:background="@drawable/text_box"
+                            android:padding="4dp"
+                            android:tag="hitpoints"
+                            android:text="@string/sheet_other_value"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimaryDark"></TextView>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
                             android:id="@+id/other_speed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

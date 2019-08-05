@@ -105,7 +105,7 @@ public class Character extends DBEntity {
     List<RaceAlternateTrait> traits;
     List<CharacterModif> modifs;
     List<InventoryItem> invItems;
-    int hitpoints;
+    int hitpoints, hitpointsTemp;
     int speed;
 
     // infos additionnelles
@@ -314,6 +314,14 @@ public class Character extends DBEntity {
 
     public void setHitpoints(int hitpoints) {
         this.hitpoints = hitpoints;
+    }
+
+    public int getHitpointsTemp() {
+        return hitpointsTemp;
+    }
+
+    public void setHitpointsTemp(int hitpointsTemp) {
+        this.hitpointsTemp = hitpointsTemp;
     }
 
     public int getSpeed() {

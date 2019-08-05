@@ -59,6 +59,7 @@ public class CharacterPDFTest {
         c.setSpeedFly(10);
         c.setSpeedManeuverability(Character.SPEED_MANEUV_AVERAGE);
         c.setHitpoints(125);
+        c.setHitpointsTemp(25);
         c.setSkillRank(1, 3);
 
         c.setAlignment(Character.ALIGN_CN);

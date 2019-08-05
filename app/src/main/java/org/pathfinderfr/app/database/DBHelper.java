@@ -66,9 +66,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 throw new IllegalArgumentException("Cannot create new DBHelper instance without context!");
             }
             instance = new DBHelper(context);
-            //SQLiteDatabase db = instance.getWritableDatabase();
-            //db.execSQL("DROP TABLE " + MagicItemFactory.getInstance().getTableName());
-            //db.execSQL(MagicItemFactory.getInstance().getQueryCreateTable());
+//            SQLiteDatabase db = instance.getWritableDatabase();
+//            db.execSQL("ALTER TABLE characters ADD COLUMN hitpointstemp integer;");
         }
         return instance;
     }

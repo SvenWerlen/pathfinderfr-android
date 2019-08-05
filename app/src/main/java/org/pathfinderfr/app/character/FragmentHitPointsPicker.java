@@ -22,18 +22,22 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
 
     public static int MAX_HITPOINTS = 999;
     private int hitpoints;
+    private int hitpointsTemp;
     private FragmentHitPointsPicker.OnFragmentInteractionListener mListener;
 
     public FragmentHitPointsPicker() {
         // Required empty public constructor
     }
 
-    public static FragmentHitPointsPicker newInstance(FragmentHitPointsPicker.OnFragmentInteractionListener listener, int hitpoints) {
+    public static FragmentHitPointsPicker newInstance(FragmentHitPointsPicker.OnFragmentInteractionListener listener, int hitpoints, int hitpointsTemp) {
 
         FragmentHitPointsPicker fragment = new FragmentHitPointsPicker();
         hitpoints = Math.max(0, hitpoints);             // min
         hitpoints = Math.min(MAX_HITPOINTS, hitpoints); // max
         fragment.hitpoints = hitpoints;
+        hitpointsTemp = Math.max(0, hitpointsTemp);             // min
+        hitpointsTemp = Math.min(MAX_HITPOINTS, hitpointsTemp); // max
+        fragment.hitpointsTemp = hitpointsTemp;
         fragment.setListener(listener);
         return fragment;
     }
@@ -54,6 +58,10 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
         EditText edit = rootView.findViewById(R.id.sheet_hp_value);
         edit.setText(String.valueOf(hitpoints));
         edit.setSelection(0, edit.getText().toString().length());
+
+        // set value and select all
+        EditText editTemp = rootView.findViewById(R.id.sheet_hp_temp_value);
+        editTemp.setText(String.valueOf(hitpointsTemp));
 
         ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
@@ -80,8 +88,15 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
                 hp = Math.max(0, hp);             // min
                 hp = Math.min(MAX_HITPOINTS, hp); // max
             } catch (NumberFormatException e) {}
-            if(mListener != null && hp != hitpoints) {
-                mListener.onSaveHP(hp);
+            EditText editTemp = getView().findViewById(R.id.sheet_hp_temp_value);
+            int hpTemp = 0;
+            try {
+                hpTemp = Integer.parseInt(editTemp.getText().toString());
+                hpTemp = Math.max(0, hpTemp);             // min
+                hpTemp = Math.min(MAX_HITPOINTS, hpTemp); // max
+            } catch (NumberFormatException e) {}
+            if(mListener != null && (hp != hitpoints || hpTemp != hitpointsTemp)) {
+                mListener.onSaveHP(hp, hpTemp);
             }
             dismiss();
             return;
@@ -89,7 +104,7 @@ public class FragmentHitPointsPicker extends DialogFragment implements View.OnCl
     }
 
     public interface OnFragmentInteractionListener {
-        void onSaveHP(int value);
+        void onSaveHP(int value, int valueTemp);
     }
 }
 
