@@ -36,9 +36,6 @@ import java.util.List;
 
 public class CharacterPDF {
 
-    private Character character;
-    private List<DBEntity> skills;
-    private List<Weapon> weapons;
     private static final int LOGO_WIDTH = 185;
     private static final int STATS_CELL_SPACING = 3;
     private static final int STATS_CELL_WIDTH = 22;
@@ -48,8 +45,14 @@ public class CharacterPDF {
     private static final Style STYLE_TEXT_TOTAL;
     private static final Style STYLE_LABEL_TOP;
     private static final Style STYLE_LABEL_BOTTOM;
+    private static final Color COLOR_LIGHT_GRAY;
 
     private static final String TEXT_LONG_TEST = "Ceci est un vraiment long texte pour tester dans les champs qui font vraiment plus que 100 charactères de long";
+
+    private Character character;
+    private List<DBEntity> skills;
+    private List<Weapon> weapons;
+    private Options options;
 
     static {
         STYLE_CELL_DEFAULT = new Style().setFontSize(8);
@@ -58,12 +61,19 @@ public class CharacterPDF {
         STYLE_TEXT_TOTAL = new Style().setFontSize(10);
         STYLE_LABEL_TOP = new Style().setFontSize(8);
         STYLE_LABEL_BOTTOM = new Style().setFontSize(4);
+        COLOR_LIGHT_GRAY = new DeviceRgb(230, 230, 230);
     }
 
-    public CharacterPDF(Character character, List<DBEntity> skills, List<Weapon> weapons) {
+    public static class Options {
+        public boolean printInkSaving = false;
+        public boolean printLogo = true;
+    }
+
+    public CharacterPDF(Options options, Character character, List<DBEntity> skills, List<Weapon> weapons) {
         this.character = character;
         this.skills = skills;
         this.weapons = weapons;
+        this.options = options;
     }
 
     public Cell createHeader(String text) {
@@ -120,8 +130,8 @@ public class CharacterPDF {
                 .setMargin(0)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
-                .setBackgroundColor(ColorConstants.BLACK)
-                .setFontColor(ColorConstants.WHITE)
+                .setBackgroundColor(options.printInkSaving ? COLOR_LIGHT_GRAY : ColorConstants.BLACK)
+                .setFontColor(options.printInkSaving ? ColorConstants.BLACK : ColorConstants.WHITE)
                 .add(createLabelTop(text1.toUpperCase()))
                 .add(createLabelBottom(text2.toUpperCase()));
     }
@@ -547,7 +557,7 @@ public class CharacterPDF {
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
         table.addCell(createValueCell(character.getArmorClassContact()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
-        table.addCell(new Cell(1,7).setBorder(Border.NO_BORDER).setPadding(0).setVerticalAlignment(VerticalAlignment.MIDDLE).setBackgroundColor(ColorConstants.BLACK).add(createLabel("Pris au dépourvu", "Classe d'armure")));
+        table.addCell(new Cell(1,7).setPadding(0).setVerticalAlignment(VerticalAlignment.MIDDLE).setBackgroundColor(ColorConstants.BLACK).add(createLabel("Pris au dépourvu", "Classe d'armure")));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
         table.addCell(createValueCell(character.getArmorClassFlatFooted()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(0).setMargin(0));
@@ -722,8 +732,8 @@ public class CharacterPDF {
                 .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(170));
         table.addCell(createHeader("").setMinHeight(5));
         table.addCell(createHeader(""));
-        table.addCell(createLabel("","Bonus à l'attaque").setMinWidth(58));
-        table.addCell(createLabel("","Critique").setMinWidth(45));
+        table.addCell(createLabel("","Bonus à l'attaque").setMinWidth(58).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Critique").setMinWidth(45).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
 
         table.addCell(createInfoText(w == null ? "" : w.getName(), 3, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
         String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString() : character.getAttackBonusMeleeAsString());
@@ -747,8 +757,9 @@ public class CharacterPDF {
     }
 
     public Cell createCheckBox(boolean checked) {
+        Color checkedBgd = options.printInkSaving ? ColorConstants.GRAY : ColorConstants.BLACK;
         return new Cell().setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.MIDDLE)
-                .add(new Paragraph().setBackgroundColor(checked ? ColorConstants.BLACK: ColorConstants.WHITE)
+                .add(new Paragraph().setBackgroundColor(checked ? checkedBgd: ColorConstants.WHITE)
                 .setMinHeight(6).setMinWidth(6)
                 .setBorder(new SolidBorder(1)));
     }
@@ -769,10 +780,9 @@ public class CharacterPDF {
         table.addCell(createHeader(""));
         table.addCell(createHeader("Mod. divers"));
         int idx = 0;
-        Color gray =  new DeviceRgb(230, 230, 230);
         for(DBEntity skill : skills) {
             if(skill instanceof Skill) {
-                Color backgnd = idx++ % 2 == 0 ? gray : ColorConstants.WHITE;
+                Color backgnd = idx++ % 2 == 0 ? COLOR_LIGHT_GRAY : ColorConstants.WHITE;
                 Skill s = (Skill)skill;
                 String name = s.getName() + ( s.requiresTraining() ? "*" : "" );
                 name = name.replaceAll("Connaissances", "Conn." );
@@ -813,10 +823,18 @@ public class CharacterPDF {
         document.setMargins(20, 20,20,20);
 
         // show logo
-        document.add((new Image(logo)).setWidth(LOGO_WIDTH));
-        document.add(new Paragraph("Feuille de Personnage")
-                .addStyle(STYLE_CELL_DEFAULT)
-               .setFixedPosition(70, 760, 100));
+        if(options.printLogo) {
+            document.add((new Image(logo)).setWidth(LOGO_WIDTH));
+            document.add(new Paragraph("Feuille de Personnage")
+                    .addStyle(STYLE_CELL_DEFAULT)
+                    .setFixedPosition(70, 760, 100));
+        } else {
+            document.add(new Paragraph("")
+                    .addStyle(STYLE_CELL_DEFAULT)
+                    .setHeight(60)
+                    .setFixedPosition(22, 760, 200)
+                    .setBorder(new SolidBorder(0.5f)));
+        }
 
         document.add(createSectionStats());
         document.add(createSectionInfos());

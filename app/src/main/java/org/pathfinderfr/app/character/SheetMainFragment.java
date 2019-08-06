@@ -481,7 +481,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 act.showTooltip(cmbTooltipTitle,String.format(cmbTooltipContent,
                         bonus,
                         character.getStrengthModif(),
-                        character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
+                        character.getSizeModifierManeuver(), // size
                         generateOtherBonusText(character, Character.MODIF_COMBAT_CMB, tooltipModif), // other
                         character.getCombatManeuverBonus()));
             }
@@ -504,7 +504,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         bonus,
                         character.getStrengthModif(),
                         character.getDexterityModif(),
-                        character.getRaceSize() == Character.SIZE_SMALL ? -1 : 0, // size
+                        character.getSizeModifierManeuver(), // size
                         generateOtherBonusText(character, Character.MODIF_COMBAT_CMD, tooltipModif), // other
                         character.getCombatManeuverDefense()));
             }
@@ -779,9 +779,26 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if(character.getSex() > 0 && character.getSex() <= Character.SEX_F) {
             buf.append(res.getStringArray(R.array.sex)[character.getSex()-1]).append(", ");
         }
+        if(character.getAge() > 0) {
+            buf.append(String.format(res.getString(R.string.summary_age), character.getAge())).append(", ");
+        }
         if(character.getAlignment() > 0 && character.getAlignment() <= Character.ALIGN_CE) {
             buf.append(res.getStringArray(R.array.alignment)[character.getAlignment()-1]).append(", ");
         }
+        if(character.getSizeType() > 0 && character.getSizeType() <= Character.SIZE_COLO_LONG) {
+            String sizeName = res.getStringArray(R.array.size_types)[character.getSizeType()];
+            int idxB = sizeName.indexOf('(');
+            int idxE = sizeName.indexOf(')');
+            if(idxB > 0 && idxE > 0) {
+                buf.append(String.format(res.getString(R.string.size_type), sizeName.substring(idxB + 1, idxE))).append(", ");
+            }
+        }
+//        if(character.getHeight() > 0) {
+//            buf.append(String.format(res.getString(R.string.summary_height), character.getHeight())).append(", ");
+//        }
+//        if(character.getWeight() > 0) {
+//            buf.append(String.format(res.getString(R.string.summary_weight), character.getWeight())).append(", ");
+//        }
 
         if(buf.length() > 0) {
             infosTv.setText(buf.substring(0, buf.length()-2));
@@ -1591,6 +1608,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
     @Override
     public void onSaveInfos(int alignment, String divinity, String origin, int sizeType, int sex, int age, int height, int weight, String hair, String eyes, String lang) {
+        boolean refresh = sizeType != character.getSizeType();
         character.setAlignment(alignment);
         character.setDivinity(divinity == null || divinity.length() == 0 ? null : divinity);
         character.setOrigin(origin == null || origin.length() == 0 ? null : origin);
@@ -1604,6 +1622,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         character.setLanguages(lang == null || lang.length() == 0 ? null : lang);
         // update sheet
         updateAdditionalInfos(getView());
+        if(refresh) {
+            updateSheet(getView());
+        }
         // store changes
         characterDBUpdate();
     }

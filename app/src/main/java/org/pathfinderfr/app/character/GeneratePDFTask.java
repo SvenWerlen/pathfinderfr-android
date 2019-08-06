@@ -27,6 +27,7 @@ public class GeneratePDFTask extends AsyncTask<GeneratePDFTask.Input, Void, Void
         List<DBEntity> skills;
         ImageData logo;
         FileOutputStream stream;
+        CharacterPDF.Options options;
     };
 
     private IDataUI caller;
@@ -59,7 +60,7 @@ public class GeneratePDFTask extends AsyncTask<GeneratePDFTask.Input, Void, Void
 
         // save character to cache directory
         try {
-            new CharacterPDF(input.character, input.skills, input.character.getInventoryWeapons()).generatePDF(input.stream, input.logo);
+            new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons()).generatePDF(input.stream, input.logo);
         } catch (Exception e) {
             errorMessage = e.getMessage();
             return null;

@@ -114,6 +114,8 @@
     </string>
     <string name="generatepdf_start">Générer PDF</string>
     <string name="generatepdf_inprogress">en cours…</string>
+    <string name="generatepdf_option_inksaving">Économie d\'encre</string>
+    <string name="generatepdf_option_logo">Afficher logo</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>
@@ -584,21 +586,10 @@
     <string name="LM">Loyal Mauvais</string>
     <string name="NM">Neutre Mauvais</string>
     <string name="CM">Chaotique Mauvais</string>
-    <string-array name="alignment">
-        <item>LB</item>
-        <item>NB</item>
-        <item>CB</item>
-        <item>LN</item>
-        <item>N</item>
-        <item>CN</item>
-        <item>LM</item>
-        <item>NM</item>
-        <item>CM</item>
-    </string-array>
-    <string-array name="sex">
-        <item>Homme</item>
-        <item>Femme</item>
-    </string-array>
+    <string name="size_type">Taille %s</string>
+    <string name="summary_age">%d ans</string>
+    <string name="summary_height">%d cm</string>
+    <string name="summary_weight">%d kg</string>
 
 </resources>
 

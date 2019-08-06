@@ -50,4 +50,21 @@
         <item>Colossale (C) (longue)</item>
     </string-array>
 
+    <string-array name="alignment">
+        <item>LB</item>
+        <item>NB</item>
+        <item>CB</item>
+        <item>LN</item>
+        <item>N</item>
+        <item>CN</item>
+        <item>LM</item>
+        <item>NM</item>
+        <item>CM</item>
+    </string-array>
+
+    <string-array name="sex">
+        <item>Homme</item>
+        <item>Femme</item>
+    </string-array>
+
 </resources>

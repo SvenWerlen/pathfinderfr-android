@@ -202,7 +202,10 @@ public class CharacterPDFTest {
 
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);
-        (new CharacterPDF(c, skills, weapons)).generatePDF(fos, ImageDataFactory.create(logoPath));
+        CharacterPDF.Options opts = new CharacterPDF.Options();
+        opts.printInkSaving = true;
+        opts.printLogo = false;
+        (new CharacterPDF(opts, c, skills, weapons)).generatePDF(fos, ImageDataFactory.create(logoPath));
         fos.close();
     }
 }

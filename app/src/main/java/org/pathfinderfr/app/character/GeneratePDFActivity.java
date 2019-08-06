@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.itextpdf.io.image.ImageDataFactory;
@@ -86,6 +87,10 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                             input.logo = ImageDataFactory.create(logo.toByteArray());
                             input.skills = skills;
                             input.stream = stream;
+                            input.options = new CharacterPDF.Options();
+                            input.options.printInkSaving = ((CheckBox)findViewById(R.id.option_inksaving)).isChecked();
+                            input.options.printLogo = ((CheckBox)findViewById(R.id.option_logo)).isChecked();
+                            SheetMainFragment.initializeCharacterModifsStates(v.getContext(), input.character);
                             taskInProgress.execute(input);
                         }
                     } catch( Exception exc ) {

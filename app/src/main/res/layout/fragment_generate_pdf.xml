@@ -23,10 +23,34 @@
             style="?android:attr/textAppearanceSmall"
             android:text="@string/generatepdf_message" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="bottom">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="30dp">
+
+                <CheckBox
+                    android:id="@+id/option_inksaving"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generatepdf_option_inksaving"
+                    android:layout_marginTop="15dp"/>
+
+                <CheckBox
+                    android:id="@+id/option_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generatepdf_option_logo"
+                    android:checked="true"/>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/generatePDFButton"
@@ -40,7 +64,7 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <ScrollView android:id="@+id/textAreaScroller"
             android:layout_width="fill_parent"
