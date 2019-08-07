@@ -303,7 +303,7 @@ public class CharacterFactory extends DBEntityFactory {
             contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, "");
         }
 
-        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
+        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1LinkTo>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif2LinkTo>
         // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
         // (assuming that modif ids won't change during data import)
         if(c.getModifsCount() > 0) {
@@ -315,7 +315,9 @@ public class CharacterFactory extends DBEntityFactory {
                     value.append(modif.getModif(i).second).append(',');
                 }
                 value.deleteCharAt(value.length()-1).append(':');
-                value.append(modif.getIcon()).append('#');
+                value.append(modif.getIcon()).append(':');
+                value.append(modif.getLinkToWeapon());
+                value.append('#');
             }
             value.deleteCharAt(value.length()-1);
             Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
@@ -549,39 +551,6 @@ public class CharacterFactory extends DBEntityFactory {
             }
         }
 
-        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>#<modif2Source>:<modif2Bonuses>:<modif2Icon>
-        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
-        // (assuming that modif ids won't change during data import)
-        // fill modifs
-        String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
-        if(modifsValue != null && modifsValue.length() > 0) {
-            for(String modif : modifsValue.split("#")) {
-                String[] modElements = modif.split(":");
-                if(modElements != null && modElements.length == 3) {
-                    String source = modElements[0];
-                    String icon = modElements[2];
-                    List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
-                    for (String bonusVal : modElements[1].split(",")) {
-                        String[] bonusElements = bonusVal.split("\\|");
-                        if (bonusElements != null && bonusElements.length == 2) {
-                            try {
-                                Integer bonusIdx = Integer.parseInt(bonusElements[0]);
-                                Integer bonusValue = Integer.parseInt(bonusElements[1]);
-                                bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
-                            } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
-                            }
-                        }
-                    }
-                    Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon);
-                    if (toAdd.isValid()) {
-                        c.addModif(toAdd);
-                    }
-                }
-            }
-        }
-
         // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
         String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
         Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
@@ -609,6 +578,40 @@ public class CharacterFactory extends DBEntityFactory {
                     Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, objId);
                     if (toAdd.isValid()) {
                         c.addInventoryItem(toAdd);
+                    }
+                }
+            }
+        }
+
+        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1Linkto>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif1Linkto>
+        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
+        // (assuming that modif ids won't change during data import)
+        // fill modifs
+        String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
+        if(modifsValue != null && modifsValue.length() > 0) {
+            for(String modif : modifsValue.split("#")) {
+                String[] modElements = modif.split(":");
+                if(modElements != null && modElements.length >= 3) {
+                    String source = modElements[0];
+                    String icon = modElements[2];
+                    int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
+                    List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
+                    for (String bonusVal : modElements[1].split(",")) {
+                        String[] bonusElements = bonusVal.split("\\|");
+                        if (bonusElements != null && bonusElements.length == 2) {
+                            try {
+                                Integer bonusIdx = Integer.parseInt(bonusElements[0]);
+                                Integer bonusValue = Integer.parseInt(bonusElements[1]);
+                                bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
+                            } catch (NumberFormatException nfe) {
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
+                            }
+                        }
+                    }
+                    Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
+                    if (toAdd.isValid()) {
+                        c.addModif(toAdd);
                     }
                 }
             }

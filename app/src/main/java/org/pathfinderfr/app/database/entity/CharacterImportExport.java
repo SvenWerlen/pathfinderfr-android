@@ -45,6 +45,7 @@ public class CharacterImportExport {
     private static final String YAML_MODIFS        = "Modifs";
     private static final String YAML_MODIF_SOURCE  = "Source";
     private static final String YAML_MODIF_ICON    = "Icône";
+    private static final String YAML_MODIF_LINKTO  = "LinkTo";
     private static final String YAML_MODIF_BONUS   = "Bonus";
     private static final String YAML_BONUS_ID      = "Id";
     private static final String YAML_BONUS_VALUE   = "Valeur";
@@ -169,6 +170,7 @@ public class CharacterImportExport {
             Map<String, Object> modifObj = new LinkedHashMap();
             modifObj.put(YAML_MODIF_SOURCE, modif.getSource());
             modifObj.put(YAML_MODIF_ICON, modif.getIcon());
+            modifObj.put(YAML_MODIF_LINKTO, modif.getLinkToWeapon());
             List<Map> bonuses = new ArrayList<>();
             for(int idx = 0; idx < modif.getModifCount(); idx++) {
                 Map<String, Object> bonus = new LinkedHashMap();
@@ -455,6 +457,11 @@ public class CharacterImportExport {
                                     errors.add(ERROR_MODIF_ICON_NOTFOUND);
                                     continue;
                                 }
+                                int linkTo = 0;
+                                if(values.containsKey(YAML_MODIF_LINKTO)) {
+                                    linkTo = Integer.parseInt(values.get(YAML_MODIF_LINKTO).toString());
+                                }
+
                                 Object bonus = values.get(YAML_MODIF_BONUS);
                                 List<Pair<Integer,Integer>> bonusList = new ArrayList<>();
                                 if(bonus instanceof List) {
@@ -473,7 +480,7 @@ public class CharacterImportExport {
                                         }
                                     }
                                 }
-                                c.addModif(new Character.CharacterModif(source, bonusList, icon));
+                                c.addModif(new Character.CharacterModif(source, bonusList, icon, linkTo));
                             }
                         }
                     }

@@ -43,15 +43,19 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public static final float ZOOM_FACTOR = 1.5f;
 
-    public static final String ARG_MODIF_IDX    = "arg_modifIdx";
-    public static final String ARG_MODIF_SOURCE = "arg_modifSource";
-    public static final String ARG_MODIF_IDS    = "arg_modifIds";
-    public static final String ARG_MODIF_VALS   = "arg_modifVals";
-    public static final String ARG_MODIF_ICON   = "arg_modifIcon";
+    public static final String ARG_MODIF_IDX     = "arg_modifIdx";
+    public static final String ARG_MODIF_SOURCE  = "arg_modifSource";
+    public static final String ARG_MODIF_IDS     = "arg_modifIds";
+    public static final String ARG_MODIF_VALS    = "arg_modifVals";
+    public static final String ARG_MODIF_ICON    = "arg_modifIcon";
+    public static final String ARG_MODIF_LINKTO  = "arg_modifLinkTo";
+    public static final String ARG_MODIF_WEAPONS = "arg_modifWeapons";
 
     private FragmentModifPicker.OnFragmentInteractionListener mListener;
     private Integer selectedModif;
     private ImageView selectedIcon;
+    private int selectedWeapon;
+    private ArrayList<String> weapons;
 
     private List<LinearLayout> modifs;
     private Character.CharacterModif initial;
@@ -208,7 +212,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     public void setListener(OnFragmentInteractionListener listener) {
         mListener = listener;
     }
-    public void setInitial(Character.CharacterModif modif) { initial = modif; }
 
 
     /**
@@ -228,8 +231,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         super.onCreate(savedInstanceState);
 
         // initialize from params
-        if(getArguments().containsKey(ARG_MODIF_IDX)) {
-            modifIdx = getArguments().getInt(ARG_MODIF_IDX);
+        if(getArguments() != null && getArguments().containsKey(ARG_MODIF_IDX)) {
+            modifIdx = getArguments().getInt(ARG_MODIF_IDX, -1);
             String source = getArguments().getString(ARG_MODIF_SOURCE);
             List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
@@ -238,9 +241,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
             }
+            int linkTo = getArguments().getInt(ARG_MODIF_LINKTO);
             if(modifIds != null && modifVals != null) {
-                initial = new Character.CharacterModif(source, modifs, icon);
+                initial = new Character.CharacterModif(source, modifs, icon, linkTo);
             }
+        }
+
+        if(getArguments() != null) {
+            weapons = getArguments().getStringArrayList(ARG_MODIF_WEAPONS);
         }
 
         // restore values that were selected
@@ -253,9 +261,11 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
             }
+            int linkTo = savedInstanceState.getInt(ARG_MODIF_LINKTO);
             if(modifIds != null && modifVals != null) {
-                initial = new Character.CharacterModif(source, modifs, icon);
+                initial = new Character.CharacterModif(source, modifs, icon, linkTo);
             }
+            weapons = savedInstanceState.getStringArrayList(ARG_MODIF_WEAPONS);
         }
     }
 
@@ -319,7 +329,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             list.add(new StringWithTag(skill.getName(), Character.MODIF_SKILL + (int)skill.getId()));
         }
 
-        ArrayAdapter<StringWithTag> dataAdapter = new ArrayAdapter<StringWithTag>(this.getContext(),
+        ArrayAdapter<StringWithTag> dataAdapter = new ArrayAdapter<>(this.getContext(),
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
@@ -391,7 +401,33 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         EditText source = rootView.findViewById(R.id.sheet_modifs_source);
         source.setFilters(new InputFilter[] { filter });
 
+        // weapon list
+        AppCompatSpinner wSpinner = rootView.findViewById(R.id.sheet_modifs_spinner_weapon);
+        List<StringWithTag> listWeapons = new ArrayList<>();
+        listWeapons.add(new StringWithTag(getResources().getString(R.string.sheet_modifs_linkto_nothing), 0));
+        if(weapons != null) {
+            for(String w : weapons) {
+                listWeapons.add(new StringWithTag(w, 0));
+            }
+        }
+        ArrayAdapter<StringWithTag> dataAdapterWeapons = new ArrayAdapter<>(this.getContext(),
+                android.R.layout.simple_spinner_item, listWeapons);
+        dataAdapterWeapons.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        wSpinner.setAdapter(dataAdapterWeapons);
+        wSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedWeapon = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedWeapon = 0;
+            }
+        });
+
         // initialize form if required
+        rootView.findViewById(R.id.sheet_modifs_linkto_weapon).setVisibility(View.GONE);
         if(initial != null) {
             source.setText(initial.getSource());
             // icon has already been highlighted
@@ -399,9 +435,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 Pair<Integer,Integer> modif = initial.getModif(i);
                 addBonusLine(rootView, modif.first, modif.second);
             }
-        } else {
-            rootView.findViewById(R.id.modifs_delete).setVisibility(View.GONE);
+            // link to weapon
+            if(initial.getLinkToWeapon() > 0 && initial.getLinkToWeapon() <= weapons.size()) {
+                wSpinner.setSelection(initial.getLinkToWeapon());
+            }
         }
+
+        rootView.findViewById(R.id.modifs_delete).setVisibility(modifIdx >= 0 ? View.VISIBLE : View.GONE);
 
         source.requestFocus();
         if(initial==null) {
@@ -423,6 +463,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     }
 
     private void addBonusLine(View view, int modifId, int bonus) {
+        final View linktoView = view.findViewById(R.id.sheet_modifs_linkto_weapon);
         final TextView bonusTextExample = view.findViewById(R.id.sheet_modifs_bonus_example);
         final ImageView bonusRemoveExample = view.findViewById(R.id.sheet_modifs_remove);
         final String bonusTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.modif");
@@ -431,15 +472,36 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         bonusText.setText(String.format(bonusTemplate, getModifText(modifId), bonus));
         ImageView bonusRemove = FragmentUtil.copyExampleImageFragment(bonusRemoveExample);
         final LinearLayout layout = new LinearLayout(getContext());
-        layout.setTag(new Pair<Integer,Integer>(modifId, bonus));
+        layout.setTag(new Pair<>(modifId, bonus));
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         layout.addView(bonusText);
         layout.addView(bonusRemove);
+
+        if(modifId == Character.MODIF_COMBAT_ATT_MELEE || modifId == Character.MODIF_COMBAT_ATT_RANGED) {
+            linktoView.setVisibility(View.VISIBLE);
+        }
+
         bonusRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout.setVisibility(View.GONE);
+                // hide "linkto" section if no bonus related to bonus attack anymore
+                boolean hide = true;
+                for(View m : modifs) {
+                    if(m.getVisibility() == View.GONE) {
+                        continue;
+                    }
+                    Pair<Integer,Integer> pair = (Pair<Integer,Integer>)m.getTag();
+                    if(pair.first == Character.MODIF_COMBAT_ATT_MELEE || pair.first == Character.MODIF_COMBAT_ATT_RANGED) {
+                        hide = false;
+                        break;
+                    }
+                }
+                if(hide) {
+                    linktoView.setVisibility(View.GONE);
+                    selectedWeapon = 0;
+                }
             }
         });
         ((LinearLayout)view.findViewById(R.id.sheet_modifs_bonuses)).addView(layout);
@@ -485,9 +547,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             if(mListener != null) {
                 if(modifIdx >= 0) {
                     mListener.onModifUpdated(modifIdx,
-                            new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
+                            new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString(), selectedWeapon));
                 } else {
-                    mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString()));
+                    mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString(), selectedWeapon));
                 }
             }
             dismiss();
@@ -569,6 +631,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(ARG_MODIF_IDX, modifIdx);
         // store already typed source
         String text = ((EditText)getView().findViewById(R.id.sheet_modifs_source)).getText().toString();
         outState.putString(ARG_MODIF_SOURCE, text);
@@ -588,6 +651,10 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // store icon selection
         if(selectedIcon != null) {
             outState.putString(ARG_MODIF_ICON, selectedIcon.getTag().toString());
+        }
+        // store weapon list
+        if(weapons != null && weapons.size() > 0) {
+            outState.putStringArrayList(ARG_MODIF_WEAPONS, weapons);
         }
     }
 }

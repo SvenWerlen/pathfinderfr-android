@@ -297,6 +297,12 @@
         Si vous souhaitez faire ajouter des icônes, veuillez effectuer une demande sur https://github.com/SvenWerlen/pathfinderfr-android/issues .
     </string>
     <string name="sheet_modifs_bonus">Bonus / malus:</string>
+    <string name="sheet_modifs_linkto">Relier à une arme:</string>
+    <string name="sheet_modifs_about_linkto">Si vous reliez la modification à une arme, le bonus
+        d\'attaque ne s\'appliquera que pour cette arme (visible uniquement sur la feuille de
+        personnage au format PDF). Tous les autres bonus s\'appliqueront normalement.
+    </string>
+    <string name="sheet_modifs_linkto_nothing">Aucun lien</string>
     <string name="sheet_modifs_error_invalidchoice">Choix invalide!</string>
     <string name="sheet_modifs_error_invalidmodif">Bonus / malus doit être numérique et différent de 0</string>
     <string name="sheet_modifs_error_nosource">Veuillez saisir la source!</string>
@@ -306,7 +312,8 @@
     <string name="sheet_modifs_abilities">-- Caractéristiques --</string>
     <string name="sheet_modifs_saves">-- Jets de sauvegarde --</string>
     <string name="sheet_modifs_combat">-- Combat --</string>
-    <string name="sheet_modifs_pick">Sélectionner</string>
+    <string name="sheet_modifs_pick">Sélectionner un bonus</string>
+    <string name="sheet_modifs_pick_weapon">Sélectionner une arme</string>
     <string name="sheet_modifs_icon">Icône:</string>
     <string name="sheet_modifs_source">Source:</string>
     <string name="sheet_modifs_value">0</string>

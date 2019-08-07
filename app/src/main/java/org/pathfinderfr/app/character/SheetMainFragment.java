@@ -44,10 +44,10 @@ import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
-import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.io.File;
@@ -55,7 +55,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 /**
@@ -1188,6 +1187,12 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
 
                 Bundle arguments = new Bundle();
+                ArrayList<String> wParams = new ArrayList<>();
+                List<Weapon> weapons = parent.character.getInventoryWeapons();
+                for(Weapon w : weapons) {
+                    wParams.add(w.getName());
+                }
+                arguments.putStringArrayList(FragmentModifPicker.ARG_MODIF_WEAPONS, wParams);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_MODIFS);
                 return;
@@ -1368,6 +1373,14 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
                     arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
+                    arguments.putInt(FragmentModifPicker.ARG_MODIF_LINKTO, modif.getLinkToWeapon());
+
+                    ArrayList<String> wParams = new ArrayList<>();
+                    List<Weapon> weapons = parent.character.getInventoryWeapons();
+                    for(Weapon w : weapons) {
+                        wParams.add(w.getName());
+                    }
+                    arguments.putStringArrayList(FragmentModifPicker.ARG_MODIF_WEAPONS, wParams);
 
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_MODIFS);
@@ -1469,7 +1482,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_CHA, chaR));
             }
             String modifLabel = ConfigurationUtil.getInstance(getView().getContext()).getProperties().getProperty("ability.calc.modifs.title");
-            character.addModif(new Character.CharacterModif(modifLabel, modifs, "rollingdices", true));
+            character.addModif(new Character.CharacterModif(modifLabel, modifs, "rollingdices", 0,true));
         }
 
         // update modifs

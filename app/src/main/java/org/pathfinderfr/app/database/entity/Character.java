@@ -143,20 +143,24 @@ public class Character extends DBEntity {
         private String source;
         private List<Pair<Integer,Integer>> modifs;
         private String icon;
+        private int linkToWeapon;
         private boolean enabled;
-        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon) {
-            this(source, modifs, icon, false);
+        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, int linkToWeapon) {
+            this(source, modifs, icon, linkToWeapon, false);
         }
-        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, boolean enabled) {
+        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, int linkToWeapon, boolean enabled) {
             this.source = source;
             this.modifs = modifs;
             this.icon = icon;
             this.enabled = enabled;
+            this.linkToWeapon = linkToWeapon;
         }
         public String getSource() { return source; }
         public void setSource(String source) { this.source = source; }
         public int getModifCount() { return modifs == null ? 0 : modifs.size(); }
         public void setModifs(List<Pair<Integer,Integer>> modifs) { this.modifs = modifs; }
+        public void setLinkToWeapon(int linkToIdx) { this.linkToWeapon = linkToIdx; }
+        public int getLinkToWeapon() { return this.linkToWeapon; }
         public Pair<Integer,Integer> getModif(int index) { return index < 0 || index >= modifs.size() ? null : modifs.get(index); }
         public String getIcon() { return icon; }
         public void setIcon(String icon) { this.icon = icon; }
@@ -167,11 +171,13 @@ public class Character extends DBEntity {
             source = modif.source;
             modifs = modif.modifs;
             icon = modif.icon;
+            linkToWeapon = modif.linkToWeapon;
         }
     }
 
     // Helper to keep inventory
     public static class InventoryItem implements Comparable<InventoryItem> {
+        private int id; // only used for linktoweapon (modifs)
         private String name;
         private int weight;
         private long objectId; // reference to original object
@@ -185,6 +191,8 @@ public class Character extends DBEntity {
             this.weight = copy.weight;
             this.objectId = copy.objectId;
         }
+        public void setId(int id) { this.id = id; }
+        public int getId() { return id; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
         public int getWeight() { return weight; }
@@ -1223,7 +1231,7 @@ public class Character extends DBEntity {
         for(CharacterModif el : modifs) {
             for(Pair<Integer,Integer> m: el.modifs) {
                 if(m.first.longValue() == id.longValue()) {
-                    result.add(new CharacterModif(el.source, Arrays.asList(m), el.getIcon(), el.isEnabled()));
+                    result.add(new CharacterModif(el.source, Arrays.asList(m), el.getIcon(), el.getLinkToWeapon(), el.isEnabled()));
                     break;
                 }
             }
@@ -1250,20 +1258,61 @@ public class Character extends DBEntity {
         return modifs.get(idx);
     }
 
+    /**
+     * Modif linkToWeapon is based on weapon index in list
+     * Set indexes on items such it can be retrieved after inventory change
+     */
+    public void indexInventoryWeapons() {
+        int idx = 0;
+        for(InventoryItem el : invItems) {
+            if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
+                el.setId(++idx);
+            }
+        }
+    }
+
+    /**
+     * Modifies (when needed) linkToWeapon to link to right inventory
+     */
+    public void reindexModifLinks() {
+        for(CharacterModif modif : modifs) {
+            if(modif.linkToWeapon > 0) {
+                int link = modif.linkToWeapon; // reset in case reference not found
+                modif.linkToWeapon = 0;
+                int idx = 0;
+                for(InventoryItem el : invItems) {
+                    if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
+                        idx++;
+                    }
+                    if(el.getId() == link) {
+                        modif.linkToWeapon = idx;
+                    }
+                }
+            }
+        }
+    }
+
     public void addInventoryItem(InventoryItem item) {
+        indexInventoryWeapons();
         invItems.add(item);
         Collections.sort(invItems);
+        reindexModifLinks();
+
     }
 
     public void deleteInventoryItem(InventoryItem item) {
+        indexInventoryWeapons();
         invItems.remove(item);
+        reindexModifLinks();
     }
 
     public void deleteInventoryItem(int idx) {
         if(idx < 0 || idx >= invItems.size()) {
             return;
         }
+        indexInventoryWeapons();
         invItems.remove(idx);
+        reindexModifLinks();
     }
 
     public void modifyInventoryItem(int idx, InventoryItem item) {
