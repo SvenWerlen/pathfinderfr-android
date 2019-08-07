@@ -715,12 +715,26 @@ public class Character extends DBEntity {
      * @return bonus to be applied
      */
     public int getAdditionalBonus(int bonusId) {
+        return getAdditionalBonus(bonusId, 0);
+    }
+
+        /**
+         * @param bonusId bonusId for corresponding SavingThrows
+         * @return bonus to be applied
+         */
+    public int getAdditionalBonus(int bonusId, int linkToWeapon) {
         // check if modif is applied
         int bonus = 0;
         List<CharacterModif> modifs = getModifsForId(bonusId);
         // getModifsForId always returns 1 modification (matching the one being searched)
         for(CharacterModif mod : modifs) {
-            if(mod.isEnabled()) {
+            // special case for combat bonuses linked to weapons
+            if((bonusId == MODIF_COMBAT_ATT_MELEE || bonusId == MODIF_COMBAT_ATT_RANGED) && mod.getLinkToWeapon() > 0) {
+                if(linkToWeapon == mod.getLinkToWeapon()) {
+                    bonus += mod.getModif(0).second;
+                }
+            }
+            else if(mod.isEnabled()) {
                 bonus += mod.getModif(0).second;
             }
         }
@@ -792,16 +806,16 @@ public class Character extends DBEntity {
     /**
      * @return attack bonus (melee), as string
      */
-    public String getAttackBonusMeleeAsString() {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE);
+    public String getAttackBonusMeleeAsString(int weaponIdx) {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE, weaponIdx);
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
     }
 
     /**
      * @return attack bonus (melee)
      */
-    public int getAttackBestBonusMelee() {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE);
+    public int getAttackBestBonusMelee(int weaponIdx) {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE, weaponIdx);
         int bestBonus = getBaseAttackBonusBest();
         return bestBonus + addBonus + getStrengthModif();
     }
@@ -809,16 +823,16 @@ public class Character extends DBEntity {
     /**
      * @return attack bonus (range), as string
      */
-    public String getAttackBonusRangeAsString() {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED);
+    public String getAttackBonusRangeAsString(int weaponIdx) {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED, weaponIdx);
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
     }
 
     /**
      * @return attack bonus (melee)
      */
-    public int getAttackBestBonusRange() {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED);
+    public int getAttackBestBonusRange(int weaponIdx) {
+        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED, weaponIdx);
         int bestBonus = getBaseAttackBonusBest();
         return bestBonus + addBonus + getDexterityModif();
     }

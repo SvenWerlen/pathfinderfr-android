@@ -736,7 +736,7 @@ public class CharacterPDF {
         table.addCell(createLabel("","Critique").setMinWidth(45).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
 
         table.addCell(createInfoText(w == null ? "" : w.getName(), 3, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
-        String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString() : character.getAttackBonusMeleeAsString());
+        String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString(weaponIdx+1) : character.getAttackBonusMeleeAsString(weaponIdx+1));
         table.addCell(createInfoText(attackBonus, 1, TextAlignment.CENTER, true));
         table.addCell(createInfoText(w == null ? "" : w.getCritical(), 1, TextAlignment.CENTER, true));
         table.addCell(createLabel("","Type").setWidth(20));

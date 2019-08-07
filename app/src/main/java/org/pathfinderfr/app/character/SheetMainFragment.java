@@ -436,7 +436,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         text,
                         character.getStrengthModif(),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_MELEE, tooltipBabModif), // other
-                        character.getAttackBonusMeleeAsString()));
+                        character.getAttackBonusMeleeAsString(0)));
             }
         });
 
@@ -460,7 +460,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         text,
                         character.getDexterityModif(),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_RANGED, tooltipBabModif), // other
-                        character.getAttackBonusRangeAsString()));
+                        character.getAttackBonusRangeAsString(0)));
             }
         });
 
@@ -938,8 +938,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 character.getSavingThrowsFortitudeTotal(),
                 character.getSavingThrowsWillTotal(),
                 character.getSpeed(),
-                character.getAttackBonusMeleeAsString(),
-                character.getAttackBonusRangeAsString(),
+                character.getAttackBonusMeleeAsString(0),
+                character.getAttackBonusRangeAsString(0),
                 character.getStrength(),
                 character.getDexterity(),
                 character.getConstitution(),
@@ -1022,8 +1022,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         int[] bab = character.getBaseAttackBonus();
         baseAttackBonus.setText(character.getBaseAttackBonusAsString());
-        attackMeleeBonus.setText(character.getAttackBonusMeleeAsString());
-        attackDistanceBonus.setText(character.getAttackBonusRangeAsString());
+        attackMeleeBonus.setText(character.getAttackBonusMeleeAsString(0));
+        attackDistanceBonus.setText(character.getAttackBonusRangeAsString(0));
         combatManBonusTotal.setText(String.valueOf(character.getCombatManeuverBonus()));
         combatManBonusBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManBonusAbility.setText(String.valueOf(character.getStrengthModif()));
