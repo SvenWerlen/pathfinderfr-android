@@ -937,6 +937,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 character.getSavingThrowsReflexesTotal(),
                 character.getSavingThrowsFortitudeTotal(),
                 character.getSavingThrowsWillTotal(),
+                character.getSpeedAsMeters(),
                 character.getSpeed(),
                 character.getAttackBonusMeleeAsString(0),
                 character.getAttackBonusRangeAsString(0),

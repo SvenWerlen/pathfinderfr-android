@@ -332,6 +332,11 @@ public class Character extends DBEntity {
         this.hitpointsTemp = hitpointsTemp;
     }
 
+    public float getSpeedAsMeters() {
+        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        return 1.5f * (speed + bonus);
+    }
+
     public int getSpeed() {
         int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
         return speed + bonus;
