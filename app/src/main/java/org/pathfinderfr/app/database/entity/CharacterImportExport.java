@@ -129,7 +129,7 @@ public class CharacterImportExport {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put(YAML_NAME, c.getName());
         data.put(YAML_PLAYER, c.getPlayer());
-        data.put(YAML_SEX, CharacterPDF.size2Text(c.getSex()));
+        data.put(YAML_SEX, CharacterPDF.sex2text(c.getSex()));
         data.put(YAML_ALIGNMENT, CharacterPDF.alignment2Text(c.getAlignment()));
         data.put(YAML_DIVINITY, c.getDivinity());
         data.put(YAML_ORIGIN, c.getOrigin());

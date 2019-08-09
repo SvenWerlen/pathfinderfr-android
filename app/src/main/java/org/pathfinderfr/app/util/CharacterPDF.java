@@ -237,6 +237,7 @@ public class CharacterPDF {
     }
 
     public Cell createInfoText(String text, int colspan, TextAlignment align, boolean border) {
+        text = text == null ? "" : text;
         Cell c = new Cell(1, colspan)
                 .setPadding(0)
                 .setPaddingTop(3)

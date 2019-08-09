@@ -2,6 +2,7 @@ package org.pathfinderfr.app.character;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.itextpdf.io.image.ImageData;
 
@@ -63,6 +64,7 @@ public class GeneratePDFTask extends AsyncTask<GeneratePDFTask.Input, Void, Void
         try {
             new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons()).generatePDF(input.stream, input.logo);
         } catch (Throwable t) {
+            Log.w(GeneratePDFTask.class.getSimpleName(), "Error during PDF generation", t);
             errorMessage = StringUtil.getStackTrace(t);
             return null;
         } finally {
