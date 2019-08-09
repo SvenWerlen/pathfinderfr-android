@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Filters for magic items
+- 16 additonnal fields
+- PDF export of a character
+### Changed
+- When equipment is added to character, link to object is kept for future reference
+- A modification can be linked to a weapon (attack bonuses only)
 ### Fixed
 - Speed incorrectly showed in meters on character sheet overview
 

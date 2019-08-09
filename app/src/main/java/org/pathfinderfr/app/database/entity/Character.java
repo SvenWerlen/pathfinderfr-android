@@ -135,7 +135,6 @@ public class Character extends DBEntity {
         traits = new ArrayList<>();
         modifs = new ArrayList<>();
         invItems = new ArrayList<>();
-        sizeType = SIZE_MEDIUM;
     }
 
     // Helper to keep modifs

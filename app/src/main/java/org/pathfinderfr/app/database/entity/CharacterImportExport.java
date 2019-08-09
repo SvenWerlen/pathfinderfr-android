@@ -8,8 +8,11 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 
 import org.pathfinderfr.app.character.FragmentHitPointsPicker;
+import org.pathfinderfr.app.character.FragmentInfosPicker;
+import org.pathfinderfr.app.character.FragmentModifPicker;
 import org.pathfinderfr.app.character.FragmentSpeedPicker;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.util.CharacterPDF;
 import org.pathfinderfr.app.util.Pair;
 
 import java.io.BufferedInputStream;
@@ -23,39 +26,55 @@ import java.util.Map;
 
 public class CharacterImportExport {
 
-    private static final String YAML_NAME          = "Nom";
-    private static final String YAML_RACE          = "Race";
-    private static final String YAML_HP            = "PointsVie";
-    private static final String YAML_SPEED         = "Vitesse";
-    private static final String YAML_CLASSES       = "Classes";
-    private static final String YAML_ARCHETYPE     = "Archetype";
-    private static final String YAML_LEVEL         = "Niveau";
-    private static final String YAML_TRAITS        = "TraitsAlternatifs";
-    private static final String YAML_ABILITIES     = "Caracs";
-    private static final String YAML_ABILITY_STR   = "Force";
-    private static final String YAML_ABILITY_DEX   = "Dextérité";
-    private static final String YAML_ABILITY_CON   = "Constitution";
-    private static final String YAML_ABILITY_INT   = "Intelligence";
-    private static final String YAML_ABILITY_WIS   = "Sagesse";
-    private static final String YAML_ABILITY_CHA   = "Charisme";
-    private static final String YAML_SKILLS        = "Compétences";
-    private static final String YAML_RANK          = "Rang";
-    private static final String YAML_FEATS         = "Dons";
-    private static final String YAML_CLASSFEATURES = "Aptitudes";
-    private static final String YAML_MODIFS        = "Modifs";
-    private static final String YAML_MODIF_SOURCE  = "Source";
-    private static final String YAML_MODIF_ICON    = "Icône";
-    private static final String YAML_MODIF_LINKTO  = "LinkTo";
-    private static final String YAML_MODIF_BONUS   = "Bonus";
-    private static final String YAML_BONUS_ID      = "Id";
-    private static final String YAML_BONUS_VALUE   = "Valeur";
-    private static final String YAML_INVENTORY     = "Inventaire";
-    private static final String YAML_WEIGHT        = "Poids";
-    private static final String YAML_REFERENCE     = "Référence";
-    private static final String YAML_REF_TYPE_W    = "Arme";
-    private static final String YAML_REF_TYPE_A    = "Armure";
-    private static final String YAML_REF_TYPE_E    = "Équipement";
-    private static final String YAML_REF_TYPE_M    = "Objet magique";
+    private static final String YAML_NAME            = "Nom";
+    private static final String YAML_RACE            = "Race";
+    private static final String YAML_HP              = "PointsVie";
+    private static final String YAML_HP_TEMP         = "PointsVieTemp";
+    private static final String YAML_SPEED           = "Vitesse";
+    private static final String YAML_CLASSES         = "Classes";
+    private static final String YAML_ARCHETYPE       = "Archetype";
+    private static final String YAML_LEVEL           = "Niveau";
+    private static final String YAML_TRAITS          = "TraitsAlternatifs";
+    private static final String YAML_ABILITIES       = "Caracs";
+    private static final String YAML_ABILITY_STR     = "Force";
+    private static final String YAML_ABILITY_DEX     = "Dextérité";
+    private static final String YAML_ABILITY_CON     = "Constitution";
+    private static final String YAML_ABILITY_INT     = "Intelligence";
+    private static final String YAML_ABILITY_WIS     = "Sagesse";
+    private static final String YAML_ABILITY_CHA     = "Charisme";
+    private static final String YAML_SKILLS          = "Compétences";
+    private static final String YAML_RANK            = "Rang";
+    private static final String YAML_FEATS           = "Dons";
+    private static final String YAML_CLASSFEATURES   = "Aptitudes";
+    private static final String YAML_MODIFS          = "Modifs";
+    private static final String YAML_MODIF_SOURCE    = "Source";
+    private static final String YAML_MODIF_ICON      = "Icône";
+    private static final String YAML_MODIF_LINKTO    = "Lien";
+    private static final String YAML_MODIF_BONUS     = "Bonus";
+    private static final String YAML_BONUS_ID        = "Id";
+    private static final String YAML_BONUS_VALUE     = "Valeur";
+    private static final String YAML_INVENTORY       = "Inventaire";
+    private static final String YAML_WEIGHT          = "Poids";
+    private static final String YAML_REFERENCE       = "Référence";
+    private static final String YAML_REF_TYPE_W      = "Arme";
+    private static final String YAML_REF_TYPE_A      = "Armure";
+    private static final String YAML_REF_TYPE_E      = "Équipement";
+    private static final String YAML_REF_TYPE_M      = "Objet magique";
+    private static final String YAML_SPEED_ARMOR     = "VitesseAvecArmure";
+    private static final String YAML_SPEED_DIG       = "VitesseCreusement";
+    private static final String YAML_SPEED_FLY       = "VitesseVol";
+    private static final String YAML_SPEED_FLYM      = "VolManoeuvrabilité";
+    private static final String YAML_PLAYER          = "Joueur";
+    private static final String YAML_ALIGNMENT       = "Alignement";
+    private static final String YAML_DIVINITY        = "Divinité";
+    private static final String YAML_ORIGIN          = "Origine";
+    private static final String YAML_SIZETYPE        = "TypeTaille";
+    private static final String YAML_SEX             = "Sexe";
+    private static final String YAML_AGE             = "Âge";
+    private static final String YAML_HEIGHT          = "Taille";
+    private static final String YAML_HAIR            = "Cheveux";
+    private static final String YAML_EYES            = "Yeux";
+    private static final String YAML_LANG            = "Langues";
 
     public static final int ERROR_NAME_TOOLONG         = 1;
     public static final int ERROR_RACE_NOMATCH         = 2;
@@ -83,14 +102,37 @@ public class CharacterImportExport {
     public static final int ERROR_TRAIT_NOMATCH        = 24;
     public static final int ERROR_TRAITS_EXCEPTION     = 25;
     public static final int ERROR_INVENTORY_REFERENCE  = 26;
+    public static final int ERROR_PLAYER_TOOLONG       = 27;
+    public static final int ERROR_DIVINITY_TOOLONG     = 28;
+    public static final int ERROR_ORIGIN_TOOLONG       = 29;
+    public static final int ERROR_AGE_FORMAT           = 30;
+    public static final int ERROR_AGE_INVALID          = 31;
+    public static final int ERROR_HEIGHT_FORMAT        = 32;
+    public static final int ERROR_HEIGHT_INVALID       = 33;
+    public static final int ERROR_WEIGHT_FORMAT        = 34;
+    public static final int ERROR_WEIGHT_INVALID       = 35;
+    public static final int ERROR_HAIR_TOOLONG         = 36;
+    public static final int ERROR_EYES_TOOLONG         = 37;
+    public static final int ERROR_LANG_TOOLONG         = 38;
+
+
 
 
     public static String exportCharacterAsYML(Character c, Context ctx) {
         DBHelper dbHelper = DBHelper.getInstance(ctx);
 
+        if(c == null) {
+            return null;
+        }
+
         // basics
         Map<String, Object> data = new LinkedHashMap<>();
         data.put(YAML_NAME, c.getName());
+        data.put(YAML_PLAYER, c.getPlayer());
+        data.put(YAML_SEX, CharacterPDF.size2Text(c.getSex()));
+        data.put(YAML_ALIGNMENT, CharacterPDF.alignment2Text(c.getAlignment()));
+        data.put(YAML_DIVINITY, c.getDivinity());
+        data.put(YAML_ORIGIN, c.getOrigin());
         data.put(YAML_RACE, c.getRace() == null ? null : c.getRace().getName());
 
         // classes
@@ -129,8 +171,20 @@ public class CharacterImportExport {
         data.put(YAML_ABILITIES, abilities);
 
         // others
+        data.put(YAML_SIZETYPE, CharacterPDF.size2Text(c.getSizeType()));
+        data.put(YAML_AGE, c.getAge());
+        data.put(YAML_HEIGHT, c.getHeight());
+        data.put(YAML_WEIGHT, c.getWeight());
+        data.put(YAML_HAIR, c.getHair());
+        data.put(YAML_EYES, c.getEyes());
+        data.put(YAML_LANG, c.getLanguages());
         data.put(YAML_HP, c.getHitpoints());
+        data.put(YAML_HP_TEMP, c.getHitpointsTemp());
         data.put(YAML_SPEED, c.getBaseSpeed());
+        data.put(YAML_SPEED_ARMOR, c.getBaseSpeedWithArmor());
+        data.put(YAML_SPEED_DIG, c.getBaseSpeedDig());
+        data.put(YAML_SPEED_FLY, c.getBaseSpeedFly());
+        data.put(YAML_SPEED_FLYM, CharacterPDF.flyManeuverability2Text(c.getBaseSpeedFly(), c.getBaseSpeedManeuverability()));
 
         // skills
         List<Map> skills = new ArrayList();
@@ -232,6 +286,34 @@ public class CharacterImportExport {
         }
     }
 
+    public static String cleanText(String text, List<Integer> errors, int maxLen, int maxLenError) {
+        if(text != null && text.length() > maxLen) {
+            text = text.substring(0, maxLen);
+            errors.add(maxLenError);
+        }
+        if(text != null) {
+            text.replace('\n', ' ').replace('\r', ' ');
+        }
+        return text;
+    }
+
+    public static int cleanNumber(String text, List<Integer> errors, int maxValue, int maxValueError, int formatError) {
+        try {
+            String value = text;
+            if(value != null) {
+                int val = Integer.parseInt(value);
+                if(val >= 0 && val <= maxValue) {
+                    return val;
+                } else {
+                    errors.add(maxValueError);
+                }
+            }
+        } catch(NumberFormatException e) {
+            errors.add(formatError);
+        }
+        return 0;
+    }
+
 
     public static Pair<Character,List<Integer>> importCharacterAsYML(String yml, View view) {
         DBHelper dbHelper = DBHelper.getInstance(view.getContext());
@@ -243,16 +325,17 @@ public class CharacterImportExport {
             YamlReader reader = new YamlReader(yml);
             Map map = (Map) reader.read();
 
-            // name
-            String name = (String)map.get(YAML_NAME);
-            if(name != null && name.length() > 30) {
-                name = name.substring(0, 30);
-                errors.add(ERROR_NAME_TOOLONG);
+            c.setName(cleanText((String)map.get(YAML_NAME), errors, 30, ERROR_NAME_TOOLONG));
+            c.setPlayer(cleanText((String)map.get(YAML_PLAYER), errors, 30, ERROR_PLAYER_TOOLONG));
+            if(map.containsKey(YAML_SEX)) {
+                c.setSex(CharacterPDF.text2sex((String) map.get(YAML_SEX)));
             }
-            if(name != null) {
-                name.replace('\n', ' ').replace('\r', ' ');
+            if(map.containsKey(YAML_ALIGNMENT)) {
+                c.setAlignment(CharacterPDF.text2alignment((String)map.get(YAML_ALIGNMENT)));
             }
-            c.setName(name);
+            c.setDivinity(cleanText((String)map.get(YAML_DIVINITY), errors, 30, ERROR_DIVINITY_TOOLONG));
+            c.setOrigin(cleanText((String)map.get(YAML_ORIGIN), errors, 30, ERROR_ORIGIN_TOOLONG));
+
 
             // race
             String raceName = (String)map.get(YAML_RACE);
@@ -332,34 +415,57 @@ public class CharacterImportExport {
             }
 
             // hit points
-            try {
-                String hitpoint = (String)map.get(YAML_HP);
-                if(hitpoint != null) {
-                    int hp = Integer.parseInt(hitpoint);
-                    if(hp >= 0 && hp <= FragmentHitPointsPicker.MAX_HITPOINTS) {
-                        c.setHitpoints(hp);
-                    } else {
-                        errors.add(ERROR_HITPOINTS_INVALID);
-                    }
-                }
-            } catch(NumberFormatException e) {
-                errors.add(ERROR_HITPOINTS_FORMAT);
+            c.setHitpoints(cleanNumber((String)map.get(YAML_HP), errors,
+                    FragmentHitPointsPicker.MAX_HITPOINTS,
+                    ERROR_HITPOINTS_INVALID, ERROR_HITPOINTS_FORMAT));
+
+            // hit points temp
+            c.setHitpointsTemp(cleanNumber((String)map.get(YAML_HP_TEMP), errors,
+                    FragmentHitPointsPicker.MAX_HITPOINTS,
+                    ERROR_HITPOINTS_INVALID, ERROR_HITPOINTS_FORMAT));
+
+            // size type
+            if(map.containsKey(YAML_SIZETYPE)) {
+                c.setSizeType(CharacterPDF.text2Size((String)map.get(YAML_SIZETYPE)));
             }
 
+            // age
+            c.setAge(cleanNumber((String)map.get(YAML_AGE), errors,
+                    FragmentInfosPicker.MAX_VALUE,
+                    ERROR_AGE_INVALID, ERROR_AGE_FORMAT));
+
+            // height
+            c.setHeight(cleanNumber((String)map.get(YAML_HEIGHT), errors,
+                    FragmentInfosPicker.MAX_VALUE,
+                    ERROR_HEIGHT_INVALID, ERROR_HEIGHT_FORMAT));
+
+            // weight
+            c.setWeight(cleanNumber((String)map.get(YAML_WEIGHT), errors,
+                    FragmentInfosPicker.MAX_VALUE,
+                    ERROR_WEIGHT_INVALID, ERROR_WEIGHT_FORMAT));
+
+            c.setHair(cleanText((String)map.get(YAML_HAIR), errors, 10, ERROR_HAIR_TOOLONG));
+            c.setEyes(cleanText((String)map.get(YAML_EYES), errors, 10, ERROR_EYES_TOOLONG));
+            c.setLanguages(cleanText((String)map.get(YAML_LANG), errors, 200, ERROR_LANG_TOOLONG));
+
             // speed
-            try {
-                String speed = (String)map.get(YAML_SPEED);
-                if(speed != null) {
-                    int sp = Integer.parseInt(speed);
-                    if(sp >= 0 && sp <= FragmentSpeedPicker.MAX_SPEED) {
-                        c.setSpeed(sp);
-                    } else {
-                        errors.add(ERROR_SPEED_INVALID);
-                    }
-                }
-            } catch(NumberFormatException e) {
-                errors.add(ERROR_SPEED_FORMAT);
-            }
+            c.setSpeed(cleanNumber((String)map.get(YAML_SPEED), errors,
+                    FragmentSpeedPicker.MAX_SPEED,
+                    ERROR_SPEED_INVALID, ERROR_SPEED_FORMAT));
+
+            c.setSpeedWithArmor(cleanNumber((String)map.get(YAML_SPEED_ARMOR), errors,
+                    FragmentSpeedPicker.MAX_SPEED,
+                    ERROR_SPEED_INVALID, ERROR_SPEED_FORMAT));
+
+            c.setSpeedDig(cleanNumber((String)map.get(YAML_SPEED_DIG), errors,
+                    FragmentSpeedPicker.MAX_SPEED,
+                    ERROR_SPEED_INVALID, ERROR_SPEED_FORMAT));
+
+            c.setSpeedFly(cleanNumber((String)map.get(YAML_SPEED_FLY), errors,
+                    FragmentSpeedPicker.MAX_SPEED,
+                    ERROR_SPEED_INVALID, ERROR_SPEED_FORMAT));
+
+            c.setSpeedManeuverability(CharacterPDF.text2flyManeuverability((String)map.get(YAML_SPEED_FLYM)));
 
             // skills
             try {
@@ -433,6 +539,56 @@ public class CharacterImportExport {
                 errors.add(ERROR_FEATURES_EXCEPTION);
             }
 
+            // inventory (must be BEFORE modifs because of linkto)
+            try {
+                Object inventory = map.get(YAML_INVENTORY);
+                if (inventory instanceof List) {
+                    List<Object> fList = (List<Object>) inventory;
+                    for (Object f : fList) {
+                        if (f instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) f;
+                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_WEIGHT)) {
+                                String itemName = (String)values.get(YAML_NAME);
+                                int itemWeight = 0;
+                                long itemObjId = 0L;
+                                try {
+                                    itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
+                                } catch(NumberFormatException nfe) {
+                                    errors.add(ERROR_INVENTORY_FORMAT);
+                                }
+                                long objectId = 0L;
+                                if(values.containsKey(YAML_REFERENCE)) {
+                                    DBEntity object = null;
+                                    String reference = (String)values.get(YAML_REFERENCE);
+                                    if(reference.startsWith(YAML_REF_TYPE_W)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_W.length()+1), WeaponFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_WEAPONS + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_A)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_A.length()+1), ArmorFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_ARMORS + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_E)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_E.length()+1), EquipmentFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_EQUIPMENT + object.getId();
+                                    }
+                                    else if(reference.startsWith(YAML_REF_TYPE_M)) {
+                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_M.length()+1), MagicItemFactory.getInstance());
+                                        objectId = object == null ? 0L : DBHelper.IDX_MAGICITEM + object.getId();
+                                    }
+                                    if(object == null) {
+                                        errors.add(ERROR_INVENTORY_REFERENCE);
+                                    }
+                                }
+                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId));
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_INVENTORY_EXCEPTION);
+            }
+
             // modifs
             try {
                 Object modifs = map.get(YAML_MODIFS);
@@ -489,56 +645,6 @@ public class CharacterImportExport {
                 errors.add(ERROR_MODIFS_FORMAT);
             } catch(Exception e) {
                 errors.add(ERROR_MODIFS_EXCEPTION);
-            }
-
-            // inventory
-            try {
-                Object inventory = map.get(YAML_INVENTORY);
-                if (inventory instanceof List) {
-                    List<Object> fList = (List<Object>) inventory;
-                    for (Object f : fList) {
-                        if (f instanceof Map) {
-                            Map<String, Object> values = (Map<String, Object>) f;
-                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_WEIGHT)) {
-                                String itemName = (String)values.get(YAML_NAME);
-                                int itemWeight = 0;
-                                long itemObjId = 0L;
-                                try {
-                                    itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
-                                } catch(NumberFormatException nfe) {
-                                    errors.add(ERROR_INVENTORY_FORMAT);
-                                }
-                                long objectId = 0L;
-                                if(values.containsKey(YAML_REFERENCE)) {
-                                    DBEntity object = null;
-                                    String reference = (String)values.get(YAML_REFERENCE);
-                                    if(reference.startsWith(YAML_REF_TYPE_W)) {
-                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_W.length()+1), WeaponFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_WEAPONS + object.getId();
-                                    }
-                                    else if(reference.startsWith(YAML_REF_TYPE_A)) {
-                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_A.length()+1), ArmorFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_ARMORS + object.getId();
-                                    }
-                                    else if(reference.startsWith(YAML_REF_TYPE_E)) {
-                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_E.length()+1), EquipmentFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_EQUIPMENT + object.getId();
-                                    }
-                                    else if(reference.startsWith(YAML_REF_TYPE_M)) {
-                                        object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_M.length()+1), MagicItemFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_MAGICITEM + object.getId();
-                                    }
-                                    if(object == null) {
-                                        errors.add(ERROR_INVENTORY_REFERENCE);
-                                    }
-                                }
-                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId));
-                            }
-                        }
-                    }
-                }
-            } catch(Exception e) {
-                errors.add(ERROR_INVENTORY_EXCEPTION);
             }
 
             // racial alternate traits

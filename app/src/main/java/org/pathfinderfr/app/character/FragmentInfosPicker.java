@@ -21,6 +21,8 @@ import org.pathfinderfr.app.database.entity.Character;
 
 public class FragmentInfosPicker extends DialogFragment implements View.OnClickListener {
 
+    public static int MAX_VALUE = 999;
+
     public static final String ARG_ALIGN = "arg_align";
     public static final String ARG_SEX   = "arg_sex";
 

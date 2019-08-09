@@ -1,13 +1,9 @@
 package org.pathfinderfr.app.util;
 
-import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.PatternColor;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -29,7 +25,6 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Weapon;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -263,29 +258,77 @@ public class CharacterPDF {
     /**
      * Returns the french translation for the alignment
      */
-    public String alignment2Text(int alignment) {
+    public static String alignment2Text(int alignment) {
         switch(alignment) {
             case Character.ALIGN_LG: return "LB";
             case Character.ALIGN_NG: return "NB";
             case Character.ALIGN_CG: return "CB";
             case Character.ALIGN_LN: return "LN";
+            case Character.ALIGN_N: return "N";
             case Character.ALIGN_CN: return "CN";
             case Character.ALIGN_LE: return "LM";
             case Character.ALIGN_NE: return "NM";
             case Character.ALIGN_CE: return "CM";
-            default: return "N";
+            default: return null;
         }
     }
 
     /**
      * Returns the french translation for the alignment
      */
-    public String size2Text(int size) {
+    public static int text2alignment(String alignment) {
+        if(alignment == null) {
+            return 0;
+        }
+        switch(alignment) {
+            case "LB": return Character.ALIGN_LG;
+            case "NB": return Character.ALIGN_NG;
+            case "CB": return Character.ALIGN_CG;
+            case "LN": return Character.ALIGN_LN;
+            case "N": return Character.ALIGN_N;
+            case "CN": return Character.ALIGN_CN;
+            case "LM": return Character.ALIGN_LE;
+            case "NM": return Character.ALIGN_NE;
+            case "CM": return Character.ALIGN_CE;
+            default: return 0;
+        }
+    }
+
+    /**
+     * Returns the french translation for the sex
+     */
+    public static String sex2text(int sex) {
+        switch(sex) {
+            case Character.SEX_M: return "M";
+            case Character.SEX_F: return "F";
+            default: return null;
+        }
+    }
+
+    /**
+     * Returns the french translation for the sex
+     */
+    public static int text2sex(String sex) {
+        if(sex == null) {
+            return 0;
+        }
+        switch(sex) {
+            case "M": return Character.SEX_M;
+            case "F": return Character.SEX_F;
+            default: return 0;
+        }
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public static String size2Text(int size) {
         switch(size) {
             case Character.SIZE_FINE: return "I";
             case Character.SIZE_DIMINUTIVE: return "Min";
             case Character.SIZE_TINY: return "TP";
             case Character.SIZE_SMALL: return "P";
+            case Character.SIZE_MEDIUM: return "M";
             case Character.SIZE_LARGE_TALL: return "G";
             case Character.SIZE_LARGE_LONG: return "G";
             case Character.SIZE_HUGE_TALL: return "TG";
@@ -294,7 +337,32 @@ public class CharacterPDF {
             case Character.SIZE_GARG_LONG: return "Gig";
             case Character.SIZE_COLO_TALL: return "C";
             case Character.SIZE_COLO_LONG: return "C";
-            default: return "M";
+            default: return null;
+        }
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public static int text2Size(String size) {
+        if(size == null) {
+            return 0;
+        }
+        switch(size) {
+            case "I": return Character.SIZE_FINE;
+            case "Min": return Character.SIZE_DIMINUTIVE;
+            case "TP": return Character.SIZE_TINY;
+            case "P": return Character.SIZE_SMALL;
+            case "M": return Character.SIZE_MEDIUM;
+            case "G": return Character.SIZE_LARGE_TALL;
+            //case "G": return Character.SIZE_LARGE_LONG;
+            case "TG": return Character.SIZE_HUGE_TALL;
+            //case "TG": return Character.SIZE_HUGE_LONG;
+            case "Gig": return Character.SIZE_GARG_TALL;
+            //case "Gig": return Character.SIZE_GARG_LONG;
+            case "C": return Character.SIZE_COLO_TALL;
+            //case "C": return Character.SIZE_COLO_LONG;
+            default: return 0;
         }
     }
 
@@ -334,7 +402,7 @@ public class CharacterPDF {
 
         table.addCell(createInfoText(character.getRaceName(), 1));
         table.addCell(createInfoText(size2Text(character.getSizeType()), 1));
-        table.addCell(createInfoText(character.getSex() == Character.SEX_M ? "M" : "F", 1));
+        table.addCell(createInfoText(sex2text(character.getSex()), 1));
         table.addCell(createInfoText(String.format("%d ans", character.getAge()), 1));
         table.addCell(createInfoText(String.format("%d cm", character.getHeight()), 1));
         table.addCell(createInfoText(String.format("%d kg", character.getWeight()), 1));
@@ -354,9 +422,9 @@ public class CharacterPDF {
     /**
      * Returns the french translation for the alignment
      */
-    public String flyManeuverability2Text(int fly, int man) {
+    public static String flyManeuverability2Text(int fly, int man) {
         if(fly == 0 || man == 0) {
-            return "-";
+            return "";
         }
         switch(man) {
             case Character.SPEED_MANEUV_CLUMBSY: return "Déplorable";
@@ -364,6 +432,23 @@ public class CharacterPDF {
             case Character.SPEED_MANEUV_GOOD: return "Bonne";
             case Character.SPEED_MANEUV_PERFECT: return "Parfaite";
             default: return "Moyenne";
+        }
+    }
+
+    /**
+     * Returns the french translation for the alignment
+     */
+    public static int text2flyManeuverability(String man) {
+        if(man == null) {
+            return 0;
+        }
+        switch(man) {
+            case "Déplorable": return Character.SPEED_MANEUV_CLUMBSY;
+            case "Médiocre": return Character.SPEED_MANEUV_POOR;
+            case "Moyenne": return Character.SPEED_MANEUV_AVERAGE;
+            case "Bonne": return Character.SPEED_MANEUV_GOOD;
+            case "Parfaite": return Character.SPEED_MANEUV_PERFECT;
+            default: return 0;
         }
     }
 
