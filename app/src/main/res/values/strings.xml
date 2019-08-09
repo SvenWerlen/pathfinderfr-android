@@ -112,6 +112,10 @@
         ouvrez le document avec une visionneuse PDF. Vous pourrez ensuite l\'envoyer par courriel et
         l\'imprimer.
     </string>
+    <string name="generatepdf_warning">La version Android de votre appareil est ancienne! La
+        génération du PDF va probablement échouer avec un message d\'erreur!
+    </string>
+    <string name="generatepdf_error">Erreur lors de la génération du PDF:\n</string>
     <string name="generatepdf_start">Générer PDF</string>
     <string name="generatepdf_inprogress">en cours…</string>
     <string name="generatepdf_option_inksaving">Économie d\'encre</string>

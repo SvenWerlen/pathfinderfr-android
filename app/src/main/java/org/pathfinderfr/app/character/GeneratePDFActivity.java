@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -46,6 +47,10 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            findViewById(R.id.warningOldAPI).setVisibility(View.GONE);
         }
 
         final long characterId = getIntent().getLongExtra(GeneratePDFActivity.ARG_CHARACTER_ID, 0);
@@ -152,6 +157,7 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
     @Override
     public void onError(String errorMessage) {
         resetProgress();
-        ((TextView)findViewById(R.id.generatePDFInfos)).setText(errorMessage);
+        String error = getResources().getText(R.string.generatepdf_error).toString();
+        ((TextView)findViewById(R.id.generatePDFInfos)).setText(error + errorMessage);
     }
 }

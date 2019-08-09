@@ -10,6 +10,7 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.util.CharacterPDF;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.io.FileOutputStream;
 import java.util.List;
@@ -61,8 +62,8 @@ public class GeneratePDFTask extends AsyncTask<GeneratePDFTask.Input, Void, Void
         // save character to cache directory
         try {
             new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons()).generatePDF(input.stream, input.logo);
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
+        } catch (Throwable t) {
+            errorMessage = StringUtil.getStackTrace(t);
             return null;
         } finally {
             try {

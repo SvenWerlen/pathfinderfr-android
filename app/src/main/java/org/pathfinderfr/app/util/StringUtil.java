@@ -1,5 +1,7 @@
 package org.pathfinderfr.app.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -134,5 +136,12 @@ public class StringUtil {
             }
         } catch(Exception e) {}
         return 0;
+    }
+
+    public static String getStackTrace(Throwable t) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        return sw.toString(); // stack trace as a string
     }
 }

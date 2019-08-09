@@ -23,6 +23,15 @@
             style="?android:attr/textAppearanceSmall"
             android:text="@string/generatepdf_message" />
 
+        <TextView
+            android:id="@+id/warningOldAPI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:text="@string/generatepdf_warning"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorWarning"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,7 +87,8 @@
                 style="?android:attr/textAppearanceSmall"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/colorWarning"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textSize="8dp"/>
         </ScrollView>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
