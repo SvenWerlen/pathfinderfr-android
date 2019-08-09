@@ -87,7 +87,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s integer, %s text, %s text," +                      // player, alignment, divinity, origin
-                        "%s integer, %s integer, %s integer, %s integer," +             // sizeType, sex, age, height, weight
+                        "%s integer, %s integer, %s integer, %s integer, %s integer," + // sizeType, sex, age, height, weight
                         "%s text, %s text, " +                                          // hair, eyes
                         "%s text, %s text, " +                                          // race, classes
                         "%s integer, %s integer, %s integer, " +                        // str, dex, con
@@ -97,7 +97,8 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s integer, %s integer, %s integer, %s integer, %s integer," + // speed (reg, armor, dig, fly, maneuver)
                         "%s text" +                                                     // languages
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME,
+                COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_PLAYER, COLUMN_ALIGNMENT, COLUMN_DIVINITY, COLUMN_ORIGIN,
                 COLUMN_SIZETYPE, COLUMN_SEX, COLUMN_AGE, COLUMN_HEIGHT, COLUMN_WEIGHT,
