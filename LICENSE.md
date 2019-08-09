@@ -20,6 +20,7 @@ List of icons used in the application:
 * Favorites ([round-star.svg](https://game-icons.net/delapouite/originals/round-star.html)): icon made by Delapouite, http://delapouite.com
 * Characters ([id-card.svg](https://game-icons.net/delapouite/originals/id-card.html)): icon made by Delapouite, http://delapouite.com
 * Combat skills ([crossed-swords.svg](https://game-icons.net/lorc/originals/crossed-swords.html)): icon made by Lorc, http://lorcblog.blogspot.com
+_(many others have been added as modif icon)_
 
 Icons provided under the Creative Commons 3.0 BY or CC0.
 
@@ -34,7 +35,7 @@ Icons provided as Free for commercial use.
 ## Source code & Copying
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
@@ -43,5 +44,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
