@@ -698,6 +698,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
             FragmentUtil.adaptForFatFingers(nameTv, 0, scale);
             FragmentUtil.adaptForFatFingers(raceTv, 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_otherpicker), 0, scale);
             for (TextView tv : classPickers) {
                 FragmentUtil.adaptForFatFingers(tv, 0, scale);
             }
