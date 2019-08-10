@@ -5,7 +5,7 @@ the documentation is only available in french.
 
 ## Références rapides
 
-* Ci-dessous: gestion des données, catalogue (compétences, dons, sorts) et options
+* Ci-dessous: gestion des données, catalogue (compétences, dons, aptitudes, sorts, traits, ...) et options
 * [Personnages](characters.md): création et gestion d'une feuille de personnage
 
 ## Pré-requis: importer les données
@@ -22,6 +22,11 @@ extraites du site web [pathfinder-fr.org](http://www.pathfinder-fr.org).
 _Note: l'application va télécharger environ 3 Mb de données_ 
 
 ![Capture import de données](../images/02-loaddata_small.jpg)
+
+_La première mise à jour télécharge l'intégralité des données. Par la suite, vérifiez régulièrement
+ si de nouvelles mises à jour des données existent. L'application téléchargera uniquement les listes
+ pour lesquelles des mises à jour existent. Si vous voulez tout re-télécharger, cocher la case
+ "Forcer la mise à jour"._
 
 
 ## Visionner les listes
