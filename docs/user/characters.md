@@ -17,9 +17,10 @@ _NOTES: la liste des races et des classes est partielle (manuel des joueurs uniq
 
 Pour créer un personnage, il suffit d'accéder à "Personnages" à partir de la navigation. Si le menu n'apparaît pas, c'est que vous n'avez pas importé les données nécessaires (races et classes).
 La création du profil de base s'effectue par les étapes suivantes (illustrées dans les captures ci-après):
-* Choisir un race
-* Choisir une classe (et le niveau acquis dans cette classe). Il est possible de se multiclasser mais la limite de niveaux ne doit pas excéder 20.
-* Choisir les valeurs pour les caractéristiques. Cliquer simplement sur l'une des valeurs 10 et la changer telle que souhaitée.
+* Choisir une race
+* Choisir une classe (et le niveau acquis dans cette classe). Il est possible de se multiclasser mais la limite de niveaux ne doit pas excéder 20. Il est possible de sélectionner un archétype de classe. 
+* Choisir les valeurs pour les caractéristiques. Cliquer simplement sur l'une des valeurs 10 et la changer telle que souhaitée _(la calculatrice est également disponible pour ceux qui utilisent la méthode "Achat")_
+* Une multitude d'autres champs de saisie (nom, personnage, âge, sexe, alignement, etc.) sont disponibles. Ces valeurs sont utilisées pour l'extraction au format PDF.  
 
 ![Profil à la création](../images/characters/01-character-profile_small.jpg)
 ![Choisir une race](../images/characters/02-character-profile-chooserace_small.jpg)
