@@ -31,8 +31,8 @@ _La première mise à jour télécharge l'intégralité des données. Par la sui
 
 ## Visionner les listes
 
-Lorsque l'application dispose de données, la page d'accueil présentera les statistiques et la
-navigation latérale permettra d'accéder aux différentes rubriques (compétences, dons, sorts). 
+Lorsque l'application dispose de données, la page d'accueil présentera une icône pour chaque 
+rubrique. Celles-ci sont également disponibles dans la navigation latérale pour un accès rapide.
 
 * Cliquer sur une rubrique pour obtenir la liste des éléments correspondants
 * Cliquer sur un élément pour obtenir sa description
@@ -59,7 +59,7 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
  
  L'application permet également de filtrer les listes grâce à sa fonction de filtre (bouton dans le coin inférieur droit)
  
- * Le bouton de filtre est uniquement disponible dans la vue _liste_ et pour les _sorts_
+ * Le bouton de filtre est uniquement disponible dans la vue _liste_ et pour certaines listes (ex: sorts)
  * Décocher l'option _Tous_ et cocher les catégories souhaitées individuellement
  * Cliquer sur le bouton _Appliquer_ pour appliquer les filtres
  * Noter que le bouton change de couleur pour indiquer que des filtres sont actifs. 
@@ -77,4 +77,6 @@ navigation latérale permettra d'accéder aux différentes rubriques (compétenc
   * **Général | Afficher l'avertissement**: permet de désactiver l'avertissement (_disclaimer/copyright_) au bas de la page d'accueil.
   * **Général | Nom long dans les listes**: affiche un nom long dans les listes. Exemple: affiche le niveau du sort directement dans la liste. 
   * **Général | Détail des compétences, dons, sorts**: affiche le mode détaillé par défaut (voir ci-dessus). Recommandé!
+  * **Général | Agrandir espaces cliquables**: grossit les zones cliquables pour faciliter le "clic".
+  * **Général | Espacement vertical (listes)**: agrandit l'espacement entre deux lignes d'une liste pour réduire les erreurs de clic sur le mauvais élément.
   * **Sources de données**: permet d'activer/désactiver les sources de données avec lesquelles vous jouez. Par exemple, désactiver "Art de la magie" permet de masquer tous les sorts qui proviennent de cette extension.
