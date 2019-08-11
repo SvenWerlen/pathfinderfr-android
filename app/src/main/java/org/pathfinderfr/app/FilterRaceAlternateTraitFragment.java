@@ -15,11 +15,11 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Race;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
-import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
+import org.pathfinderfr.app.database.entity.Trait;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.RaceAlternateTraitFilter;
+import org.pathfinderfr.app.util.TraitFilter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public class FilterRaceAlternateTraitFragment extends DialogFragment implements 
 
     private List<CheckBox> cbRace;
 
-    private RaceAlternateTraitFilter filter;
+    private TraitFilter filter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,7 +60,7 @@ public class FilterRaceAlternateTraitFragment extends DialogFragment implements 
         return fragment;
     }
 
-    public void setFilter(RaceAlternateTraitFilter filter) {
+    public void setFilter(TraitFilter filter) {
         this.filter = filter;
     }
 
@@ -87,12 +87,12 @@ public class FilterRaceAlternateTraitFragment extends DialogFragment implements 
 
         DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
         String[] sources = PreferenceUtil.getSources(rootView.getContext());
-        List<DBEntity> traits = dbHelper.getAllEntities(RaceAlternateTraitFactory.getInstance(), sources);
+        List<DBEntity> traits = dbHelper.getAllEntities(TraitFactory.getInstance(), sources);
         List<DBEntity> races = dbHelper.getAllEntities(RaceFactory.getInstance(), sources);
 
         Set<Long> traitIds = new HashSet<>();
         for(DBEntity t : traits) {
-            traitIds.add(((RaceAlternateTrait)t).getRace().getId());
+            traitIds.add(((Trait)t).getRace().getId());
         }
 
         if(filter != null) {
@@ -187,6 +187,6 @@ public class FilterRaceAlternateTraitFragment extends DialogFragment implements 
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onApplyFilter(RaceAlternateTraitFilter filter);
+        void onApplyFilter(TraitFilter filter);
     }
 }

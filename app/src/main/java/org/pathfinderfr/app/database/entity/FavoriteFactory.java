@@ -112,8 +112,8 @@ public class FavoriteFactory extends DBEntityFactory {
             entity = new Equipment();
         } else if(MagicItemFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
             entity = new MagicItem();
-        } else if(RaceAlternateTraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
-            entity = new RaceAlternateTrait();
+        } else if(TraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId)) {
+            entity = new Trait();
         } else {
             return null;
         }

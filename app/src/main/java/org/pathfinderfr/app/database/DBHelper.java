@@ -10,7 +10,6 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
-import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -23,10 +22,8 @@ import org.pathfinderfr.app.database.entity.EntityFactories;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
-import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
-import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellClassLevel;
@@ -34,7 +31,6 @@ import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.VersionFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
-import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
@@ -187,7 +183,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         // version 14 introduced new table for race alternate traits
         if(oldVersion == 13) {
-            db.execSQL(RaceAlternateTraitFactory.getInstance().getQueryCreateTable());
+            db.execSQL(TraitFactory.getInstance().getQueryCreateTable());
             oldVersion = 14;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 14");
         }

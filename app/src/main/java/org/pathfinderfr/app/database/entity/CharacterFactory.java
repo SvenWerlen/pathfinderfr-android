@@ -290,9 +290,9 @@ public class CharacterFactory extends DBEntityFactory {
 
         // race alternate traits are stored using format <trait1Id>#<trait2Id>...
         // (assuming that traits ids won't change during data import)
-        if(c.getAlternateTraits().size() > 0) {
+        if(c.getTraits().size() > 0) {
             StringBuffer value = new StringBuffer();
-            for(RaceAlternateTrait trait : c.getAlternateTraits()) {
+            for(Trait trait : c.getTraits()) {
                 value.append(trait.getId()).append('#');
             }
             if(value.length() > 0) {
@@ -543,9 +543,9 @@ public class CharacterFactory extends DBEntityFactory {
                     traitIds[i] = Long.parseLong(traits[i]);
                 }
                 // retrieve all traits from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(traitIds, RaceAlternateTraitFactory.getInstance());
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(traitIds, TraitFactory.getInstance());
                 for(DBEntity e : list) {
-                    c.addAlternateTrait((RaceAlternateTrait)e);
+                    c.addTrait((Trait)e);
                 }
             } catch (NumberFormatException nfe) {
                 Log.e(CharacterFactory.class.getSimpleName(), "Stored trait '" + traitsValue + "' is invalid (NFE)!");

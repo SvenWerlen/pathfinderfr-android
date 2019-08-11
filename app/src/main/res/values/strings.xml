@@ -157,7 +157,7 @@
     <string name="classfeatures_class">Classe:</string>
     <string name="classfeatures_maxlevel">Niveau maximum:</string>
 
-    <!-- RaceAlternateTrait filters -->
+    <!-- Trait filters -->
     <string name="racealternatetrait_filter_all">Tous</string>
     <string name="racealternatetrait_race">Race:</string>
 

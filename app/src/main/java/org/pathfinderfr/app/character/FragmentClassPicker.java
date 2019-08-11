@@ -1,7 +1,6 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -17,29 +16,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.ItemDetailActivity;
-import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
-import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.Race;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
-import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

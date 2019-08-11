@@ -102,7 +102,7 @@ public class Character extends DBEntity {
     Map<Long,Integer> skills;
     List<Feat> feats;
     List<ClassFeature> features;
-    List<RaceAlternateTrait> traits;
+    List<Trait> traits;
     List<CharacterModif> modifs;
     List<InventoryItem> invItems;
     int hitpoints, hitpointsTemp;
@@ -955,35 +955,35 @@ public class Character extends DBEntity {
     /**
      * @return the list of traits (as a copy)
      */
-    public List<RaceAlternateTrait> getAlternateTraits() {
-        RaceAlternateTrait[] itemArray = new RaceAlternateTrait[traits.size()];
+    public List<Trait> getTraits() {
+        Trait[] itemArray = new Trait[traits.size()];
         itemArray = traits.toArray(itemArray);
-        List<RaceAlternateTrait> traits = Arrays.asList(itemArray);
+        List<Trait> traits = Arrays.asList(itemArray);
         final Collator collator = Collator.getInstance();
-        Collections.sort(traits, new Comparator<RaceAlternateTrait>() {
+        Collections.sort(traits, new Comparator<Trait>() {
             @Override
-            public int compare(RaceAlternateTrait t1, RaceAlternateTrait t2) {
+            public int compare(Trait t1, Trait t2) {
                 return collator.compare(t1.getName(), t1.getName());
             }
         });
         return traits;
     }
 
-    public String getAlternateTraitsAsString() {
-        List<RaceAlternateTrait> traits = getAlternateTraits();
+    public String getTraitsAsString() {
+        List<Trait> traits = getTraits();
         if(traits.size() == 0) {
             return "-";
         }
         StringBuffer buf = new StringBuffer();
-        for(RaceAlternateTrait f : traits) {
+        for(Trait f : traits) {
             buf.append(f.getName()).append(", ");
         }
         buf.delete(buf.length()-2, buf.length());
         return buf.toString();
     }
 
-    public boolean hasAlternateTrait(RaceAlternateTrait trait) {
-        for(RaceAlternateTrait t : traits) {
+    public boolean hasAlternateTrait(Trait trait) {
+        for(Trait t : traits) {
             if(t.getId() == trait.getId()) {
                 return true;
             }
@@ -991,13 +991,13 @@ public class Character extends DBEntity {
         return false;
     }
 
-    public void addAlternateTrait(RaceAlternateTrait trait) {
+    public void addTrait(Trait trait) {
         traits.add(trait);
     }
 
-    public boolean removeAlternateTrait(RaceAlternateTrait trait) {
-        RaceAlternateTrait found = null;
-        for(RaceAlternateTrait t : traits) {
+    public boolean removeTrait(Trait trait) {
+        Trait found = null;
+        for(Trait t : traits) {
             if(t.getId() == trait.getId()) {
                 found = t;
                 break;
@@ -1140,25 +1140,25 @@ public class Character extends DBEntity {
     }
 
     /**
-     * @param trait alternate trait
+     * @param trait trait
      * @return false if trait doesn't match race
      */
-    public boolean isValidRacialTrait(RaceAlternateTrait trait) {
+    public boolean isValidTrait(Trait trait) {
         if(race == null || trait == null) {
             return false;
         }
-        return trait.getRace().getId() == getRace().getId();
+        return trait.getRace() == null || trait.getRace().getId() == getRace().getId();
     }
 
     /**
-     * @param trait alternate trait
+     * @param trait trait
      * @return false if trait replaces/alters a trait that was already replaced/modified
      */
-    public boolean isDuplicatedRacialTrait(RaceAlternateTrait trait) {
+    public boolean isDuplicatedTrait(Trait trait) {
         if(race == null || trait == null) {
             return false;
         }
-        for(RaceAlternateTrait t : getAlternateTraits()) {
+        for(Trait t : getTraits()) {
             if(t.getId() == trait.getId()) {
                 continue;
             }
@@ -1187,9 +1187,9 @@ public class Character extends DBEntity {
      * @param name trait name
      * @return alternate trait if replaced, null otherwise
      */
-    public RaceAlternateTrait traitIsReplaced(String name) {
-        for(RaceAlternateTrait t : getAlternateTraits()) {
-            if(getRace() != null && getRace().getId() != t.getRace().getId()) {
+    public Trait traitIsReplaced(String name) {
+        for(Trait t : getTraits()) {
+            if(getRace() != null && (t.getRace() == null || getRace().getId() != t.getRace().getId())) {
                 continue;
             }
             for(String rep : t.getReplaces()) {
@@ -1206,9 +1206,9 @@ public class Character extends DBEntity {
      * @param name trait name
      * @return alternate trait if altered, null otherwise
      */
-    public RaceAlternateTrait traitIsAltered(String name) {
-        for(RaceAlternateTrait t : getAlternateTraits()) {
-            if(getRace() != null && getRace().getId() != t.getRace().getId()) {
+    public Trait traitIsAltered(String name) {
+        for(Trait t : getTraits()) {
+            if(getRace() != null && (t.getRace() == null || getRace().getId() != t.getRace().getId())) {
                 continue;
             }
             for(String rep : t.getAlters()) {

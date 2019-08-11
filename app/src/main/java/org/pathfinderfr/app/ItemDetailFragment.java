@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,7 @@ import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.Race;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
+import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
@@ -112,8 +111,8 @@ public class ItemDetailFragment extends Fragment {
             else if(mItem instanceof ClassFeature) {
                 isAddedToCharacter = character.hasClassFeature((ClassFeature) mItem);
             }
-            else if(mItem instanceof RaceAlternateTrait) {
-                isAddedToCharacter = character.hasAlternateTrait((RaceAlternateTrait) mItem);
+            else if(mItem instanceof Trait) {
+                isAddedToCharacter = character.hasAlternateTrait((Trait) mItem);
             }
         }
         ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
@@ -183,7 +182,7 @@ public class ItemDetailFragment extends Fragment {
         updateActionIcons(rootView);
 
 
-        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof RaceAlternateTrait
+        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof Trait
                 || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem) ) {
             addToCharacter.setVisibility(View.GONE);
         }
@@ -229,24 +228,24 @@ public class ItemDetailFragment extends Fragment {
                         }
                     }
                 }
-                else if(mItem instanceof RaceAlternateTrait) {
-                        RaceAlternateTrait trait = (RaceAlternateTrait)mItem;
+                else if(mItem instanceof Trait) {
+                        Trait trait = (Trait)mItem;
                         if(character.hasAlternateTrait(trait)) {
-                            character.removeAlternateTrait(trait);
+                            character.removeTrait(trait);
                             if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                                 message = String.format(getResources().getString(R.string.trait_removed_success),cName);
                                 success = true;
                             } else {
-                                character.addAlternateTrait(trait); // rollback
+                                character.addTrait(trait); // rollback
                                 message = getResources().getString(R.string.trait_removed_failed);
                             }
                         } else {
-                            character.addAlternateTrait(trait);
+                            character.addTrait(trait);
                             if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                                 message = String.format(getResources().getString(R.string.trait_added_success),cName);
                                 success = true;
                             } else {
-                                character.removeAlternateTrait(trait); // rollback
+                                character.removeTrait(trait); // rollback
                                 message = getResources().getString(R.string.trait_added_failed);
                             }
                         }

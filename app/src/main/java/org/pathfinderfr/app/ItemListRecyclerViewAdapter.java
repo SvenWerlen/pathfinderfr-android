@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.MagicItem;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
+import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Weapon;
@@ -140,7 +139,7 @@ public class ItemListRecyclerViewAdapter
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_equipment));
         } else if(entity instanceof MagicItem) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_magic));
-        } else if(entity instanceof RaceAlternateTrait) {
+        } else if(entity instanceof Trait) {
             icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_trait));
         } else if(entity instanceof Character) {
             // show icon for pined character

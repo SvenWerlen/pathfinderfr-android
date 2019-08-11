@@ -9,15 +9,11 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
 
 import org.pathfinderfr.app.character.FragmentHitPointsPicker;
 import org.pathfinderfr.app.character.FragmentInfosPicker;
-import org.pathfinderfr.app.character.FragmentModifPicker;
 import org.pathfinderfr.app.character.FragmentSpeedPicker;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.CharacterPDF;
 import org.pathfinderfr.app.util.Pair;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -263,7 +259,7 @@ public class CharacterImportExport {
 
         // racial traits
         List<Map> traits = new ArrayList();
-        for(RaceAlternateTrait t : c.getAlternateTraits()) {
+        for(Trait t : c.getTraits()) {
             Map<String, Object> traitObj = new LinkedHashMap();
             traitObj.put(YAML_NAME, t.getName());
             traitObj.put(YAML_RACE, t.getRace().getName());
@@ -647,9 +643,9 @@ public class CharacterImportExport {
                 errors.add(ERROR_MODIFS_EXCEPTION);
             }
 
-            // racial alternate traits
+            // traits
             try {
-                List<DBEntity> allTraits = dbHelper.getAllEntities(RaceAlternateTraitFactory.getInstance());
+                List<DBEntity> allTraits = dbHelper.getAllEntities(TraitFactory.getInstance());
                 Object traits = map.get(YAML_TRAITS);
                 if (traits instanceof List) {
                     List<Object> fList = (List<Object>) traits;
@@ -659,18 +655,18 @@ public class CharacterImportExport {
                             if(values.containsKey(YAML_NAME) && values.containsKey(YAML_RACE)) {
                                 String tName = values.get(YAML_NAME).toString();
                                 String rName = values.get(YAML_RACE).toString();
-                                RaceAlternateTrait trait = null;
+                                Trait trait = null;
                                 for(DBEntity t : allTraits) {
-                                    RaceAlternateTrait tObj = (RaceAlternateTrait)t;
+                                    Trait tObj = (Trait)t;
                                     if(tObj.getName().equals(tName) && tObj.getRace().getName().equals(rName)) {
-                                        trait = (RaceAlternateTrait)t;
+                                        trait = (Trait)t;
                                         break;
                                     }
                                 }
                                 if(trait == null) {
                                     errors.add(ERROR_TRAIT_NOMATCH);
                                 } else {
-                                    c.addAlternateTrait(trait);
+                                    c.addTrait(trait);
                                 }
                             }
                         }

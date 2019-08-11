@@ -23,7 +23,7 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
-import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
@@ -32,7 +32,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/Magic";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/traits";
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     private LoadDataTask loadTaskInProgress;
@@ -64,7 +64,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                             new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
                             new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
                             new Pair(SOURCE + "/data/class-archetypes.yml", ClassArchetypesFactory.getInstance()),
-                            new Pair(SOURCE + "/data/races-traits-alternatifs.yml", RaceAlternateTraitFactory.getInstance()),
+                            new Pair(SOURCE + "/data/races-traits-alternatifs.yml", TraitFactory.getInstance()),
                             new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
                             new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),
                             new Pair(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()),

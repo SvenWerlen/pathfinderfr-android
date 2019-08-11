@@ -44,13 +44,12 @@ import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
-import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
-import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
+import org.pathfinderfr.app.database.entity.Trait;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
@@ -60,14 +59,13 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
 import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.RaceAlternateTraitFilter;
+import org.pathfinderfr.app.util.TraitFilter;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -261,7 +259,7 @@ public class MainActivity extends AppCompatActivity
             selItem = navigationView.getMenu().findItem(R.id.nav_equipment);
         } else if(MagicItemFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_magic);
-        } else if(RaceAlternateTraitFactory.FACTORY_ID.equals(factoryId)) {
+        } else if(TraitFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_traits);
         } else {
             selItem = navigationView.getMenu().findItem(R.id.nav_home);
@@ -297,7 +295,7 @@ public class MainActivity extends AppCompatActivity
                 FilterRaceAlternateTraitFragment fragTraitFilter = (FilterRaceAlternateTraitFragment)fragment;
                 if (fragTraitFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                    fragTraitFilter.setFilter(new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
+                    fragTraitFilter.setFilter(new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
                 }
             } else if(fragment instanceof FilterMagicItemFragment) {
                 FilterMagicItemFragment fragMagicItemFilter = (FilterMagicItemFragment)fragment;
@@ -334,7 +332,7 @@ public class MainActivity extends AppCompatActivity
         long countEquipment = dbhelper.getCountEntities(EquipmentFactory.getInstance());
         long countMagic = dbhelper.getCountEntities(MagicItemFactory.getInstance());
         long countConditions = dbhelper.getCountEntities(ConditionFactory.getInstance());
-        long countTraits = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance());
+        long countTraits = dbhelper.getCountEntities(TraitFactory.getInstance());
 
         String welcomeText = "";
         if (countSkills == 0 && countFeats == 0 && countAbilities == 0 && countSpells == 0) {
@@ -592,13 +590,13 @@ public class MainActivity extends AppCompatActivity
             factoryId = MagicItemFactory.FACTORY_ID;
         } else if (id == R.id.nav_traits) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            RaceAlternateTraitFilter filter = new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));
+            TraitFilter filter = new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));
             filterActive = filter.hasAnyFilter();
             filterRaceAlternateTraits(filter);
             newEntities = new ArrayList<>(listFull);
-            totalCount = dbhelper.getCountEntities(RaceAlternateTraitFactory.getInstance(),
+            totalCount = dbhelper.getCountEntities(TraitFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
-            factoryId = RaceAlternateTraitFactory.FACTORY_ID;
+            factoryId = TraitFactory.FACTORY_ID;
         } else if (id == R.id.nav_magic_generator) {
             PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().remove(KEY_CUR_FACTORY).apply();
             Intent intent = new Intent(this, TreasureActivity.class);
@@ -628,7 +626,7 @@ public class MainActivity extends AppCompatActivity
             boolean filterEnabled = (SpellFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || ClassFeatureFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || EquipmentFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
-                    || RaceAlternateTraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
+                    || TraitFactory.FACTORY_ID.equalsIgnoreCase(factoryId)
                     || MagicItemFactory.FACTORY_ID.equalsIgnoreCase(factoryId));
             // reset activity
             findViewById(R.id.welcomeScroller).setVisibility(View.GONE);
@@ -724,10 +722,10 @@ public class MainActivity extends AppCompatActivity
             FilterClassFeaturesFragment newFragment = FilterClassFeaturesFragment.newInstance();
             newFragment.setFilter(new ClassFeatureFilter(prefs.getString(KEY_ABILITY_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
-        } else if(RaceAlternateTraitFactory.FACTORY_ID.equals(factory)) {
+        } else if(TraitFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             FilterRaceAlternateTraitFragment newFragment = FilterRaceAlternateTraitFragment.newInstance();
-            newFragment.setFilter(new RaceAlternateTraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
+            newFragment.setFilter(new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
         } else if(EquipmentFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -789,14 +787,14 @@ public class MainActivity extends AppCompatActivity
         filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
-    private void filterRaceAlternateTraits(RaceAlternateTraitFilter filter) {
+    private void filterRaceAlternateTraits(TraitFilter filter) {
         String[] sources = PreferenceUtil.getSources(getBaseContext());
-        List<DBEntity> raceTraits = dbhelper.getAllEntities(RaceAlternateTraitFactory.getInstance(),
+        List<DBEntity> raceTraits = dbhelper.getAllEntities(TraitFactory.getInstance(),
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
 
         listFull = new ArrayList<>();
         for(DBEntity e : raceTraits) {
-            RaceAlternateTrait t = (RaceAlternateTrait)e;
+            Trait t = (Trait)e;
             // check race
             if(!filter.hasFilterRace() || filter.isFilterRaceEnabled(t.getRace().getId())) {
                 listFull.add(e);
@@ -805,7 +803,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onApplyFilter(RaceAlternateTraitFilter filter) {
+    public void onApplyFilter(TraitFilter filter) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_TRAIT_FILTERS, filter.generatePreferences()).apply();
         filterRaceAlternateTraits(filter);

@@ -5,14 +5,14 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class RaceAlternateTraitFilter {
+public class TraitFilter {
 
     private HashSet<Long> filterRace;
 
-    public RaceAlternateTraitFilter(String preferences) {
+    public TraitFilter(String preferences) {
         filterRace = new HashSet<>();
 
-        Log.d(RaceAlternateTraitFilter.class.getSimpleName(), "Preferences: " + preferences );
+        Log.d(TraitFilter.class.getSimpleName(), "Preferences: " + preferences );
 
         // load preferences
         if(preferences != null) {

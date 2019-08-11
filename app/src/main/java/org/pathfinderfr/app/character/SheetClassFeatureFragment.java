@@ -29,10 +29,9 @@ import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
-import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
-import org.pathfinderfr.app.database.entity.RaceAlternateTrait;
-import org.pathfinderfr.app.database.entity.RaceAlternateTraitFactory;
+import org.pathfinderfr.app.database.entity.Trait;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
@@ -170,8 +169,8 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
                 String template;
                 // replaced or modified?
-                RaceAlternateTrait replacedBy = character.traitIsReplaced(t.getName());
-                RaceAlternateTrait alteredBy = character.traitIsAltered(t.getName());
+                Trait replacedBy = character.traitIsReplaced(t.getName());
+                Trait alteredBy = character.traitIsAltered(t.getName());
                 if(replacedBy == null && alteredBy == null) {
                     template =  ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.racetrait.name");
                 } else if(replacedBy != null) {
@@ -189,8 +188,8 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, character.getRace().getId());
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, RaceFactory.getInstance().getFactoryId());
                         // highlight if replaced or altered
-                        RaceAlternateTrait replacedBy = character.traitIsReplaced(t.getName());
-                        RaceAlternateTrait alteredBy = character.traitIsAltered(t.getName());
+                        Trait replacedBy = character.traitIsReplaced(t.getName());
+                        Trait alteredBy = character.traitIsAltered(t.getName());
                         if(replacedBy != null) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
                                     String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.replaced"),
@@ -213,8 +212,8 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         }
 
         // add all alternate traits
-        if(character.getAlternateTraits() != null) {
-            for (final RaceAlternateTrait t : character.getAlternateTraits()) {
+        if(character.getTraits() != null) {
+            for (final Trait t : character.getTraits()) {
 
                 TableRow row = new TableRow(view.getContext());
                 row.setMinimumHeight(height);
@@ -224,26 +223,32 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 // icon
                 ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
                 iconIv.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_item_icon_trait));
+                iconIv.setColorFilter(view.getResources().getColor(R.color.colorBlack));
                 row.addView(iconIv);
                 // name
                 TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
-                String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.racetrait.name");
-                nameTv.setText(String.format(template, t.getName(), t.getRace().getName()));
+                String templateRace = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.racetrait.name");
+                String templateOther = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.trait.name");
+                if(t.getRace() == null) {
+                    nameTv.setText(String.format(templateOther, t.getName()));
+                } else {
+                    nameTv.setText(String.format(templateRace, t.getName(), t.getRace().getName()));
+                }
                 nameTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Context context = SheetClassFeatureFragment.this.getContext();
                         Intent intent = new Intent(context, ItemDetailActivity.class);
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, t.getId());
-                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, RaceAlternateTraitFactory.getInstance().getFactoryId());
+                        intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, TraitFactory.getInstance().getFactoryId());
                         intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                         // highlight if invalid trait
-                        if(!character.isValidRacialTrait(t)) {
+                        if(!character.isValidTrait(t)) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
                                     String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.incompatible.race"), character.getRaceName()));
                         }
                         // highlight if duplicated traits
-                        if(character.isDuplicatedRacialTrait(t)) {
+                        if(character.isDuplicatedTrait(t)) {
                             intent.putExtra(ItemDetailFragment.ARG_ITEM_MESSAGE,
                                     String.format(ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("warning.trait.incompatible.duplicates")));
                         }
@@ -252,11 +257,11 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 });
 
                 // highlight if invalid trait
-                if(!character.isValidRacialTrait(t)) {
+                if(!character.isValidTrait(t)) {
                     nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
                 }
                 // highlight if duplicated traits
-                if(character.isDuplicatedRacialTrait(t)) {
+                if(character.isDuplicatedTrait(t)) {
                     nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
                 }
 

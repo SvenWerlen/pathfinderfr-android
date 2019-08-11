@@ -3,7 +3,7 @@ package org.pathfinderfr.app.database.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RaceAlternateTrait extends DBEntity {
+public class Trait extends DBEntity {
 
     // classfeature-specific
     private Race race;
@@ -13,7 +13,7 @@ public class RaceAlternateTrait extends DBEntity {
 
     @Override
     public DBEntityFactory getFactory() {
-        return RaceAlternateTraitFactory.getInstance();
+        return TraitFactory.getInstance();
     }
 
     @Override
@@ -25,7 +25,12 @@ public class RaceAlternateTrait extends DBEntity {
     public boolean isValid() {
         int repNum = replaces == null ? 0 : replaces.size();
         int altNum = alters == null ? 0 : alters.size();
-        return super.isValid() && race != null && (repNum + altNum > 0);
+        if(super.isValid() && name.startsWith("Trait")) {
+            return true;
+        } else {
+            System.out.println(name);
+            return super.isValid() && race != null && (repNum + altNum > 0);
+        }
     }
 
     public Race getRace() { return race; }
