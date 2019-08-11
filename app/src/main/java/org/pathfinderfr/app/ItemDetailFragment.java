@@ -112,7 +112,7 @@ public class ItemDetailFragment extends Fragment {
                 isAddedToCharacter = character.hasClassFeature((ClassFeature) mItem);
             }
             else if(mItem instanceof Trait) {
-                isAddedToCharacter = character.hasAlternateTrait((Trait) mItem);
+                isAddedToCharacter = character.hasTrait((Trait) mItem);
             }
         }
         ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
@@ -230,7 +230,7 @@ public class ItemDetailFragment extends Fragment {
                 }
                 else if(mItem instanceof Trait) {
                         Trait trait = (Trait)mItem;
-                        if(character.hasAlternateTrait(trait)) {
+                        if(character.hasTrait(trait)) {
                             character.removeTrait(trait);
                             if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                                 message = String.format(getResources().getString(R.string.trait_removed_success),cName);

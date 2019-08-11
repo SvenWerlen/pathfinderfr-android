@@ -982,7 +982,7 @@ public class Character extends DBEntity {
         return buf.toString();
     }
 
-    public boolean hasAlternateTrait(Trait trait) {
+    public boolean hasTrait(Trait trait) {
         for(Trait t : traits) {
             if(t.getId() == trait.getId()) {
                 return true;
