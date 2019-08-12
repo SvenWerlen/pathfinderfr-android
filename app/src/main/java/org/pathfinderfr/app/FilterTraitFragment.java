@@ -132,6 +132,7 @@ public class FilterTraitFragment extends DialogFragment implements View.OnClickL
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_faith), 0));
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_magic), 0));
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_social), 0));
+        listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_campaign), 0));
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_race), 0));
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_region), 0));
         listTypes.add(new StringWithTag(getResources().getString(R.string.trait_filter_type_religion), 0));

@@ -203,7 +203,6 @@ public class TraitFactory extends DBEntityFactory {
         if(trait.getAlters().size()>0) {
             buf.append(generateItemDetail(templateItem, YAML_ALTERS, trait.getAlters()));
         }
-        buf.append(generateItemDetail(templateItem, YAML_DESC, trait.getDescription()));
         return String.format(templateList,buf.toString());
     }
 }

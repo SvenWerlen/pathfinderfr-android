@@ -23,12 +23,11 @@ public class Trait extends DBEntity {
 
     @Override
     public boolean isValid() {
-        int repNum = replaces == null ? 0 : replaces.size();
-        int altNum = alters == null ? 0 : alters.size();
+        int repNum = getReplaces().size();
+        int altNum = getAlters().size();
         if(super.isValid() && name.startsWith("Trait")) {
             return true;
         } else {
-            System.out.println(name);
             return super.isValid() && race != null && (repNum + altNum > 0);
         }
     }

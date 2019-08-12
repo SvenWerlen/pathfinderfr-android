@@ -167,6 +167,7 @@
     <string name="trait_filter_type_faith">De foi</string>
     <string name="trait_filter_type_magic">De magie</string>
     <string name="trait_filter_type_social">Sociaux</string>
+    <string name="trait_filter_type_campaign">De campagne</string>
     <string name="trait_filter_type_race">De race</string>
     <string name="trait_filter_type_region">Régional</string>
     <string name="trait_filter_type_religion">Religieux</string>

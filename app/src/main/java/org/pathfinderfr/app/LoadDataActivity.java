@@ -64,7 +64,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                             new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
                             new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
                             new Pair(SOURCE + "/data/class-archetypes.yml", ClassArchetypesFactory.getInstance()),
-                            new Pair(SOURCE + "/data/races-traits-alternatifs.yml", TraitFactory.getInstance()),
+                            new Pair(SOURCE + "/data/traits.yml", TraitFactory.getInstance()),
                             new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
                             new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),
                             new Pair(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()),
