@@ -63,7 +63,7 @@
     <string name="navigation_item_home">Accueil</string>
     <string name="navigation_item_favorites">Favoris</string>
     <string name="navigation_item_sheets">Personnages</string>
-    <string name="navigation_item_traits">Traits alternatifs</string>
+    <string name="navigation_item_traits">Traits</string>
     <string name="navigation_item_skills">Compétences</string>
     <string name="navigation_item_feats">Dons</string>
     <string name="navigation_item_abilities">Aptitudes</string>
@@ -158,8 +158,18 @@
     <string name="classfeatures_maxlevel">Niveau maximum:</string>
 
     <!-- Trait filters -->
-    <string name="racealternatetrait_filter_all">Tous</string>
-    <string name="racealternatetrait_race">Race:</string>
+    <string name="trait_filter_all">Tous</string>
+    <string name="trait_filter_race">Traits raciaux alternatifs</string>
+    <string name="trait_filter_character">Traits de personnage</string>
+    <string name="trait_filter_character_all">Tous</string>
+    <string name="trait_filter_type_all">Tous</string>
+    <string name="trait_filter_type_combat">De combat</string>
+    <string name="trait_filter_type_faith">De foi</string>
+    <string name="trait_filter_type_magic">De magie</string>
+    <string name="trait_filter_type_social">Sociaux</string>
+    <string name="trait_filter_type_race">De race</string>
+    <string name="trait_filter_type_region">Régional</string>
+    <string name="trait_filter_type_religion">Religieux</string>
 
     <!-- Equipment filters -->
     <string name="equipment_filter_all">Tous</string>

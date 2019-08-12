@@ -47,6 +47,10 @@ public class Trait extends DBEntity {
         replaces.add(traitName);
     }
 
+    public boolean isAltRacialTrait() {
+        return getAlters().size() + getReplaces().size() > 0;
+    }
+
     public List<String> getAlters() {
         return alters == null ? new ArrayList<String>() :  new ArrayList<String>(alters);
     }

@@ -7,45 +7,49 @@
     android:scrollbars="vertical"
     android:theme="@style/AppTheme.NoActionBar">
 
-    <com.wefika.flowlayout.FlowLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="start|top"
         android:padding="20dp">
 
-        <TextView
-            android:id="@+id/labelRace"
-            android:layout_width="match_parent"
+        <CheckBox
+            android:id="@+id/traitRace"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/racealternatetrait_race"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:checked="true"
+            android:text="@string/trait_filter_race" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/trait_race_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog">
+
+        </android.support.v7.widget.AppCompatSpinner>
+
+        <CheckBox
+            android:id="@+id/traitCharacter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:checked="true"
+            android:text="@string/trait_filter_character" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/trait_character_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog">
+
+        </android.support.v7.widget.AppCompatSpinner>
 
         <com.wefika.flowlayout.FlowLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/flowRace"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|top">
-
-            <CheckBox
-                android:id="@+id/raceAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:checked="true"
-                android:text="@string/racealternatetrait_filter_all" />
-
-        </com.wefika.flowlayout.FlowLayout>
-
-        <com.wefika.flowlayout.FlowLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/flowActions"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="start|top">
 
@@ -69,6 +73,6 @@
 
         </com.wefika.flowlayout.FlowLayout>
 
-    </com.wefika.flowlayout.FlowLayout>
+    </LinearLayout>
 
 </ScrollView>

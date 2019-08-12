@@ -34,13 +34,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.character.CharacterSheetActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
-import org.pathfinderfr.app.database.entity.ClassFeature;
-import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EntityFactories;
@@ -48,21 +49,20 @@ import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
-import org.pathfinderfr.app.database.entity.Trait;
-import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
+import org.pathfinderfr.app.database.entity.Trait;
+import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
 import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.TraitFilter;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.StringUtil;
-import org.pathfinderfr.app.character.CharacterSheetActivity;
+import org.pathfinderfr.app.util.TraitFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,7 +72,7 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, FilterSpellFragment.OnFragmentInteractionListener,
         FilterClassFeaturesFragment.OnFragmentInteractionListener, FilterEquipmentFragment.OnFragmentInteractionListener,
-        FilterRaceAlternateTraitFragment.OnFragmentInteractionListener, FilterMagicItemFragment.OnFragmentInteractionListener {
+        FilterTraitFragment.OnFragmentInteractionListener, FilterMagicItemFragment.OnFragmentInteractionListener {
 
     // preference for showing long or short name
     private static final String PREF_SHOW_NAMELONG    = "general_list_namelong";
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
     public static final String KEY_ABILITY_FILTERS = "filter_classfeatures";
-    public static final String KEY_TRAIT_FILTERS = "filter_racetraits";
+    public static final String KEY_TRAIT_FILTERS = "filter_traits";
     public static final String KEY_EQUIPMENT_FILTERS = "filter_equipment";
     public static final String KEY_MAGICITEM_FILTERS = "filter_magicitems";
 
@@ -291,8 +291,8 @@ public class MainActivity extends AppCompatActivity
                             getResources().getString(R.string.home_item_armors),
                             getResources().getString(R.string.home_item_weapons)));
                 }
-            } else if(fragment instanceof FilterRaceAlternateTraitFragment) {
-                FilterRaceAlternateTraitFragment fragTraitFilter = (FilterRaceAlternateTraitFragment)fragment;
+            } else if(fragment instanceof FilterTraitFragment) {
+                FilterTraitFragment fragTraitFilter = (FilterTraitFragment)fragment;
                 if (fragTraitFilter != null) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     fragTraitFilter.setFilter(new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
@@ -592,7 +592,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             TraitFilter filter = new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null));
             filterActive = filter.hasAnyFilter();
-            filterRaceAlternateTraits(filter);
+            filterTraits(filter);
             newEntities = new ArrayList<>(listFull);
             totalCount = dbhelper.getCountEntities(TraitFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources) ;
@@ -724,7 +724,7 @@ public class MainActivity extends AppCompatActivity
             newFragment.show(ft, DIALOG_FILTER);
         } else if(TraitFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            FilterRaceAlternateTraitFragment newFragment = FilterRaceAlternateTraitFragment.newInstance();
+            FilterTraitFragment newFragment = FilterTraitFragment.newInstance();
             newFragment.setFilter(new TraitFilter(prefs.getString(KEY_TRAIT_FILTERS, null)));
             newFragment.show(ft, DIALOG_FILTER);
         } else if(EquipmentFactory.FACTORY_ID.equals(factory)) {
@@ -787,16 +787,15 @@ public class MainActivity extends AppCompatActivity
         filterButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), filterButtonId));
     }
 
-    private void filterRaceAlternateTraits(TraitFilter filter) {
+    private void filterTraits(TraitFilter filter) {
         String[] sources = PreferenceUtil.getSources(getBaseContext());
         List<DBEntity> raceTraits = dbhelper.getAllEntities(TraitFactory.getInstance(),
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
 
         listFull = new ArrayList<>();
         for(DBEntity e : raceTraits) {
-            Trait t = (Trait)e;
             // check race
-            if(!filter.hasFilterRace() || filter.isFilterRaceEnabled(t.getRace().getId())) {
+            if(filter.isTraitVisible((Trait)e)) {
                 listFull.add(e);
             }
         }
@@ -806,7 +805,7 @@ public class MainActivity extends AppCompatActivity
     public void onApplyFilter(TraitFilter filter) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString(MainActivity.KEY_TRAIT_FILTERS, filter.generatePreferences()).apply();
-        filterRaceAlternateTraits(filter);
+        filterTraits(filter);
         applySearch();
 
         // change icon if filter applied
