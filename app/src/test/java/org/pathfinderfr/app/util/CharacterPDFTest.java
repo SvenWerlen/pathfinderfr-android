@@ -3,6 +3,7 @@ package org.pathfinderfr.app.util;
 import com.itextpdf.io.image.ImageDataFactory;
 
 import org.junit.Test;
+import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
@@ -77,59 +78,59 @@ public class CharacterPDFTest {
 
 
 
-        Character.CharacterModif modif = new Character.CharacterModif("Race", new ArrayList<Pair<Integer, Integer>>(), "-", true);
+        Character.CharacterModif modif = new Character.CharacterModif("Race", new ArrayList<Pair<Integer, Integer>>(), "-", 0,true);
         c.addModif(modif);
 
         List<Pair<Integer, Integer>> modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_ARMOR, 7));
-        modif = new Character.CharacterModif("Armure de plates", modifs, "-", true);
+        modif = new Character.CharacterModif("Armure de plates", modifs, "-",  0,true);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_SHIELD, 2));
-        modif = new Character.CharacterModif("Écu", modifs, "-", true);
+        modif = new Character.CharacterModif("Écu", modifs, "-",  0,true);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_NATURAL, 3));
-        modif = new Character.CharacterModif("Peau d'écorce", modifs, "-", true);
+        modif = new Character.CharacterModif("Peau d'écorce", modifs, "-",  0,true);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_PARADE, 1));
-        modif = new Character.CharacterModif("Bracelets", modifs, "-", true);
+        modif = new Character.CharacterModif("Bracelets", modifs, "-",  0,true);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC, -2));
-        modif = new Character.CharacterModif("Bague", modifs, "-", true);
+        modif = new Character.CharacterModif("Bague", modifs, "-",  0,true);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_REF, 1));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_FOR, 2));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_WIL, 3));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-", false);
+        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
         c.addModif(modif);
 
         modifs = new ArrayList<Pair<Integer, Integer>>();
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_MAG, 1));
         modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_INI, 2));
-        modif = new Character.CharacterModif("Objet combat", modifs, "-", true);
+        modif = new Character.CharacterModif("Objet combat", modifs, "-",  0,true);
         c.addModif(modif);
 
 
@@ -200,12 +201,23 @@ public class CharacterPDFTest {
         w.setType("T");
         weapons.add(w);
 
+        List<Armor> armors = new ArrayList<>();
+        Armor a = new Armor();
+        a.setName("Armure de cuir en peau de dragon");
+        a.setCost("10 po");
+        a.setBonus("+2");
+        a.setBonusDexMax("+6");
+        a.setMalus("0");
+        a.setCastFail("10%");
+        a.setWeight("7,5 kg");
+        armors.add(a);
+
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);
         CharacterPDF.Options opts = new CharacterPDF.Options();
-        opts.printInkSaving = true;
-        opts.printLogo = false;
-        (new CharacterPDF(opts, c, skills, weapons)).generatePDF(fos, ImageDataFactory.create(logoPath));
+        opts.printInkSaving = false;
+        opts.printLogo = true;
+        (new CharacterPDF(opts, c, skills, weapons, armors)).generatePDF(fos, ImageDataFactory.create(logoPath));
         fos.close();
     }
 }

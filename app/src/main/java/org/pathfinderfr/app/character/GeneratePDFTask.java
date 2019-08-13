@@ -62,7 +62,7 @@ public class GeneratePDFTask extends AsyncTask<GeneratePDFTask.Input, Void, Void
 
         // save character to cache directory
         try {
-            new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons()).generatePDF(input.stream, input.logo);
+            new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons(), null).generatePDF(input.stream, input.logo);
         } catch (Throwable t) {
             Log.w(GeneratePDFTask.class.getSimpleName(), "Error during PDF generation", t);
             errorMessage = StringUtil.getStackTrace(t);

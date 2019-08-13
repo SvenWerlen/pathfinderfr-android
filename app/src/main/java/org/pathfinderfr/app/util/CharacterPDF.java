@@ -10,6 +10,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -20,6 +21,7 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
+import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -47,6 +49,7 @@ public class CharacterPDF {
     private Character character;
     private List<DBEntity> skills;
     private List<Weapon> weapons;
+    private List<Armor> armors;
     private Options options;
 
     static {
@@ -64,10 +67,11 @@ public class CharacterPDF {
         public boolean printLogo = true;
     }
 
-    public CharacterPDF(Options options, Character character, List<DBEntity> skills, List<Weapon> weapons) {
+    public CharacterPDF(Options options, Character character, List<DBEntity> skills, List<Weapon> weapons, List<Armor> armors) {
         this.character = character;
         this.skills = skills;
         this.weapons = weapons;
+        this.armors = armors;
         this.options = options;
     }
 
@@ -842,6 +846,39 @@ public class CharacterPDF {
         return table;
     }
 
+
+    public Table createSectionArmors() {
+        Table table = new Table(7);
+        //table.setFixedPosition(left, bottom, 0);
+        table.addCell(createLabel("Protections", "", 2,1)
+                .setBorderTop(Border.NO_BORDER)
+                .setBorderLeft(Border.NO_BORDER)
+                .setBorderRight(Border.NO_BORDER)
+                .setBorderTopLeftRadius(new BorderRadius(5))
+                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(170));
+        table.addCell(createHeader("",1,6).setMinHeight(5));
+        table.addCell(createLabel("","Bonus").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Type").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Pénalité").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Échec de sorts").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Poids").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+        table.addCell(createLabel("","Propriétés").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
+
+        for(int i=0; i<5; i++) {
+            Armor armor = armors == null || i >= armors.size() ? new Armor() : armors.get(i);
+            table.addCell(createInfoText(armor.getName(), 1, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
+            table.addCell(createInfoText(armor.getBonus(), 1, TextAlignment.CENTER, true));
+            table.addCell(createInfoText("", 1, TextAlignment.CENTER, true));
+            table.addCell(createInfoText(armor.getMalus(), 1, TextAlignment.CENTER, true));
+            table.addCell(createInfoText(armor.getCastFail(), 1, TextAlignment.CENTER, true));
+            table.addCell(createInfoText(armor.getWeight(), 1, TextAlignment.CENTER, true));
+            table.addCell(createInfoText("", 1, TextAlignment.CENTER, true));
+
+        }
+
+        return table;
+    }
+
     public Cell createCheckBox(boolean checked) {
         Color checkedBgd = options.printInkSaving ? ColorConstants.GRAY : ColorConstants.BLACK;
         return new Cell().setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -921,7 +958,6 @@ public class CharacterPDF {
                     .setFixedPosition(22, 760, 200)
                     .setBorder(new SolidBorder(0.5f)));
         }
-
         document.add(createSectionStats());
         document.add(createSectionInfos());
         document.add(createSectionHitpoints());
@@ -937,6 +973,10 @@ public class CharacterPDF {
         document.add(createSectionWeapon(21,50, 4));
         document.add(createSectionSkills());
         document.add(createSectionOthers());
+        document.add(new AreaBreak());
+
+        // page 2
+        document.add(createSectionArmors());
 
         document.close();
     }
