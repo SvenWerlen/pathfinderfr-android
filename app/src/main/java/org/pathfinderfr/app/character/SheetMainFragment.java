@@ -895,6 +895,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             final String itemName = item.getName();
             final int itemWeight = item.getWeight();
             final long itemReference = item.getObjectId();
+            final String itemInfos = item.getInfos();
             row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -911,6 +912,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, itemName);
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, itemWeight);
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, itemReference);
+                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, itemInfos);
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 }

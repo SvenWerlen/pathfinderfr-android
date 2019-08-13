@@ -51,6 +51,7 @@ public class CharacterImportExport {
     private static final String YAML_BONUS_VALUE     = "Valeur";
     private static final String YAML_INVENTORY       = "Inventaire";
     private static final String YAML_WEIGHT          = "Poids";
+    private static final String YAML_AMMO            = "Munitions";
     private static final String YAML_REFERENCE       = "Référence";
     private static final String YAML_REF_TYPE_W      = "Arme";
     private static final String YAML_REF_TYPE_A      = "Armure";
@@ -252,6 +253,9 @@ public class CharacterImportExport {
                         itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_M + " " + e.getName());
                     }
                 }
+            }
+            if(item.getInfos() != null && item.getInfos().length() > 0) {
+                itemObj.put(YAML_AMMO, item.getInfos());
             }
             inventory.add(itemObj);
         }
@@ -535,7 +539,7 @@ public class CharacterImportExport {
                 errors.add(ERROR_FEATURES_EXCEPTION);
             }
 
-            // inventory (must be BEFORE modifs because of linkto)
+            // inventory (must be imported BEFORE modifs because of linkto)
             try {
                 Object inventory = map.get(YAML_INVENTORY);
                 if (inventory instanceof List) {
@@ -546,7 +550,6 @@ public class CharacterImportExport {
                             if(values.containsKey(YAML_NAME) && values.containsKey(YAML_WEIGHT)) {
                                 String itemName = (String)values.get(YAML_NAME);
                                 int itemWeight = 0;
-                                long itemObjId = 0L;
                                 try {
                                     itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
                                 } catch(NumberFormatException nfe) {
@@ -576,7 +579,7 @@ public class CharacterImportExport {
                                         errors.add(ERROR_INVENTORY_REFERENCE);
                                     }
                                 }
-                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId));
+                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId, (String)values.get(YAML_AMMO)));
                             }
                         }
                     }

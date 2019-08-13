@@ -123,6 +123,39 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/sheet_inventory_item_infos_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:gravity="start">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_inventory_item_ammo" />
+
+                <EditText
+                    android:id="@+id/sheet_inventory_item_infos"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:singleLine="true"
+                    android:maxLength="20"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="start"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

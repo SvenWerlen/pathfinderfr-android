@@ -429,7 +429,8 @@
     <string name="sheet_inventory_item_name">Descriptif:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_reference">Référence:</string>
-    <string name="sheet_inventory_item_reference_example">Épée longue</string>
+    <string name="sheet_inventory_item_reference_example">Arc long</string>
+    <string name="sheet_inventory_item_ammo">Munitions:</string>
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
 

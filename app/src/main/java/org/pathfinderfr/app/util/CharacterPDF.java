@@ -831,7 +831,7 @@ public class CharacterPDF {
         table.addCell(createLabel("","Dégâts", 1,2));
         table.addCell(createInfoText(w == null ? "" : w.getType(), 1, TextAlignment.CENTER, true).setMinHeight(15));
         table.addCell(createInfoText(w == null ? "" : w.getRangeInMeters(), 1, TextAlignment.CENTER, true));
-        table.addCell(createInfoText(w == null ? "" : (w.isRanged() ? "" : "-"), 1, TextAlignment.CENTER, true));
+        table.addCell(createInfoText(w == null ? "" : (w.isRanged() ? stringMax(w.getDescription(), 20) : "-"), 1, TextAlignment.CENTER, true));
         String damage = w == null ? "" : w.getDamageForSize(character.getSizeType());
         int damageBonus = w == null ? 0 : w.getDamageBonus(character.getStrengthModif());
         if(damageBonus != 0) {

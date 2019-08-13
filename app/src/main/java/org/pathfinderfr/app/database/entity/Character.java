@@ -180,15 +180,21 @@ public class Character extends DBEntity {
         private String name;
         private int weight;
         private long objectId; // reference to original object
-        public InventoryItem(String name, int weight, long objectId) {
+        private String infos; // additional info (ex: ammo)
+        public InventoryItem(String name, int weight, long objectId, String infos) {
             this.name = name;
             this.weight = weight;
             this.objectId = objectId;
+            this.infos = infos;
         }
         public InventoryItem(InventoryItem copy) {
+            set(copy);
+        }
+        public void set(InventoryItem copy) {
             this.name = copy.name;
             this.weight = copy.weight;
             this.objectId = copy.objectId;
+            this.infos = copy.infos;
         }
         public void setId(int id) { this.id = id; }
         public int getId() { return id; }
@@ -197,6 +203,7 @@ public class Character extends DBEntity {
         public int getWeight() { return weight; }
         public void setWeight(int weight) { this.weight = weight; }
         public long getObjectId() { return this.objectId; }
+        public String getInfos() { return this.infos; }
         public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
 
         @Override
@@ -1337,10 +1344,11 @@ public class Character extends DBEntity {
         if(idx < 0 || idx >= invItems.size() || !item.isValid()) {
             return;
         }
+        indexInventoryWeapons();
         InventoryItem selItem = invItems.get(idx);
-        selItem.setName(item.getName());
-        selItem.setWeight(item.getWeight());
+        selItem.set(item);
         Collections.sort(invItems);
+        reindexModifLinks();
     }
 
     /**
@@ -1367,6 +1375,7 @@ public class Character extends DBEntity {
                     Weapon w = (Weapon)entity;
                     if(!w.isAmmo()) {
                         w.setName(el.getName());
+                        w.setDescription(el.getInfos());
                         result.add(w);
                     }
                 }

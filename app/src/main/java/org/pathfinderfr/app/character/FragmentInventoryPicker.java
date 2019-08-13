@@ -30,6 +30,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.SkillFactory;
+import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
@@ -45,6 +46,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     public static final String ARG_INVENTORY_NAME   = "arg_inventoryName";
     public static final String ARG_INVENTORY_WEIGHT = "arg_inventoryWeight";
     public static final String ARG_INVENTORY_OBJID = "arg_inventoryObjectId";
+    public static final String ARG_INVENTORY_INFOS = "arg_inventoryInfos";
 
     private FragmentInventoryPicker.OnFragmentInteractionListener mListener;
 
@@ -83,7 +85,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             String itemName = getArguments().getString(ARG_INVENTORY_NAME);
             Integer itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
             Long itemObjectId = getArguments().getLong(ARG_INVENTORY_OBJID);
-            initial = new Character.InventoryItem(itemName, itemWeight, itemObjectId);
+            String itemInfos = getArguments().getString(ARG_INVENTORY_INFOS);
+            initial = new Character.InventoryItem(itemName, itemWeight, itemObjectId, itemInfos);
         }
 
         // restore values that were selected
@@ -122,6 +125,11 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         EditText itemName = rootView.findViewById(R.id.sheet_inventory_item_name);
         itemName.setFilters(new InputFilter[] { filter, new InputFilter.LengthFilter(35) });
 
+        EditText itemInfos = rootView.findViewById(R.id.sheet_inventory_item_infos);
+        itemInfos.setFilters(new InputFilter[] { filter, new InputFilter.LengthFilter(20) });
+
+        rootView.findViewById(R.id.sheet_inventory_item_infos_section).setVisibility(View.GONE);
+
         // initialize form if required
         if(initial != null) {
             itemName.setText(initial.getName());
@@ -131,6 +139,13 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 if(e != null) {
                     ((TextView)rootView.findViewById(R.id.sheet_inventory_reference)).setText(e.getName());
                     rootView.findViewById(R.id.sheet_inventory_reference_section).setVisibility(View.VISIBLE);
+                }
+                if(e instanceof Weapon) {
+                    Weapon w = (Weapon)e;
+                    if(w.isRanged()) {
+                        rootView.findViewById(R.id.sheet_inventory_item_infos_section).setVisibility(View.VISIBLE);
+                    }
+                    itemInfos.setText(initial.getInfos());
                 }
             }
         } else {
@@ -168,10 +183,13 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         else if(v.getId() == R.id.inventory_item_ok) {
             String itemName = null;
             Integer itemWeight = null;
+            String itemInfos = null;
+            itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
             try {
-                itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
                 itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
             } catch(NumberFormatException nfe) {}
+            itemInfos = ((EditText) getView().findViewById(R.id.sheet_inventory_item_infos)).getText().toString();
+
 
             if(itemName == null || itemName.length() < 3) {
                 Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_name), Toast.LENGTH_SHORT);
@@ -187,7 +205,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 t.show();
             }
             else {
-                Character.InventoryItem item = new Character.InventoryItem(itemName, itemWeight, initial == null ? 0L : initial.getObjectId());
+                Character.InventoryItem item = new Character.InventoryItem(itemName, itemWeight, initial == null ? 0L : initial.getObjectId(), itemInfos);
                 if(mListener != null) {
                     if(invIdx >= 0) {
                         mListener.onUpdateItem(invIdx, item);
