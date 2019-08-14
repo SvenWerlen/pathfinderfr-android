@@ -241,7 +241,7 @@ public class CharacterImportExport {
             itemObj.put(YAML_NAME, item.getName());
             itemObj.put(YAML_WEIGHT, item.getWeight());
             if(item.getObjectId() > 0) {
-                DBEntity e = dbHelper.fetchObjectEntity(item.getObjectId());
+                DBEntity e = dbHelper.fetchObjectEntity(item);
                 if(e != null) {
                     if(e instanceof Weapon) {
                         itemObj.put(YAML_REFERENCE, YAML_REF_TYPE_W + " " + e.getName());
@@ -561,19 +561,19 @@ public class CharacterImportExport {
                                     String reference = (String)values.get(YAML_REFERENCE);
                                     if(reference.startsWith(YAML_REF_TYPE_W)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_W.length()+1), WeaponFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_WEAPONS + object.getId();
+                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_WEAPONS + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_A)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_A.length()+1), ArmorFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_ARMORS + object.getId();
+                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_ARMORS + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_E)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_E.length()+1), EquipmentFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_EQUIPMENT + object.getId();
+                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_EQUIPMENT + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_M)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_M.length()+1), MagicItemFactory.getInstance());
-                                        objectId = object == null ? 0L : DBHelper.IDX_MAGICITEM + object.getId();
+                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_MAGICITEM + object.getId();
                                     }
                                     if(object == null) {
                                         errors.add(ERROR_INVENTORY_REFERENCE);

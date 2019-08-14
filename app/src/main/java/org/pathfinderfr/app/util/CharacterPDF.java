@@ -21,6 +21,7 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
@@ -29,6 +30,7 @@ import org.pathfinderfr.app.database.entity.Weapon;
 
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterPDF {
@@ -43,6 +45,7 @@ public class CharacterPDF {
     private static final Style STYLE_LABEL_TOP;
     private static final Style STYLE_LABEL_BOTTOM;
     private static final Color COLOR_LIGHT_GRAY;
+    private static final DecimalFormat WEIGHT_FORMAT = new DecimalFormat("0.#");
 
     private static final String TEXT_LONG_TEST = "Ceci est un vraiment long texte pour tester dans les champs qui font vraiment plus que 100 charactères de long";
 
@@ -65,6 +68,8 @@ public class CharacterPDF {
     public static class Options {
         public boolean printInkSaving = false;
         public boolean printLogo = true;
+        public boolean showWeaponsInInventory = false;
+        public boolean showArmorsInInventory = false;
     }
 
     public CharacterPDF(Options options, Character character, List<DBEntity> skills, List<Weapon> weapons, List<Armor> armors) {
@@ -158,6 +163,34 @@ public class CharacterPDF {
             c.add((new Paragraph(value))
                     .setTextAlignment(TextAlignment.CENTER));
         }
+        if(total) {
+            c.setBold();
+        }
+        return c;
+    }
+
+    public Cell createWeightCell(int value, boolean total) {
+        Cell c = new Cell()
+                .setPadding(0)
+                .setPaddingRight(3)
+                .setMargin(0)
+                .addStyle(total ? STYLE_TEXT_TOTAL : STYLE_CELL_DEFAULT)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        String weight = "";
+        if(total) {
+            weight = String.format("%d", Math.round(value / 1000f));
+        }
+        else if (value >= 1000) {
+            weight = WEIGHT_FORMAT.format(value / 1000f) + " kg";
+        } else if(value > 0) {
+            weight = String.format("%d g", value);
+        } else {
+            weight = "-";
+        }
+
+        c.add((new Paragraph(weight))
+                    .setTextAlignment(TextAlignment.RIGHT));
         if(total) {
             c.setBold();
         }
@@ -940,6 +973,48 @@ public class CharacterPDF {
     }
 
 
+    public Table createSectionInventory() {
+        Table table = new Table(2);
+        table.setFixedPosition(21, 200, 0);
+        //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+        table.addCell(createLabel("Équipement", "", 1,2).setMinWidth(180).setMinHeight(12));
+        table.addCell(createHeader("Objet",TextAlignment.CENTER).setMinWidth(150));
+        table.addCell(createHeader("Poids").setMinWidth(30));
+
+        int totalWeight = 0;
+        List<Character.InventoryItem> items = new ArrayList<>();
+        for(Character.InventoryItem item : character.getInventoryItems()) {
+            boolean add = true;
+            if(item.isWeapon()) {
+                add = options.showWeaponsInInventory;
+            } else if(item.isArmor()) {
+                add = options.showArmorsInInventory;
+            }
+
+            if(add) {
+                items.add(item);
+            }
+            totalWeight += item.getWeight();
+        }
+
+        for(int i = 0; i<34; i++) {
+            if(i < items.size()) {
+                Character.InventoryItem item = items.get(i);
+                table.addCell(createInfoText(item.getName(), 1, TextAlignment.LEFT, true).setPaddingBottom(2).setPaddingLeft(3));
+                table.addCell(createWeightCell(item.getWeight(), false));
+            } else {
+                table.addCell(createInfoText("", 1, TextAlignment.LEFT, true));
+                table.addCell(new Cell());
+            }
+        }
+        table.addCell(createLabel("Poids total (kg)", "", 1,1));
+        table.addCell(createWeightCell(totalWeight, true));
+        return table;
+    }
+
+
     public void generatePDF(OutputStream output, ImageData logo) {
         PdfDocument pdf = new PdfDocument(new PdfWriter(output));
         Document document = new Document(pdf);
@@ -977,7 +1052,9 @@ public class CharacterPDF {
 
         // page 2
         document.add(createSectionArmors());
+        document.add(createSectionInventory());
 
         document.close();
     }
 }
+

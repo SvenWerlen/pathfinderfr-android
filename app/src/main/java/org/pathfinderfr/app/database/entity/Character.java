@@ -176,6 +176,11 @@ public class Character extends DBEntity {
 
     // Helper to keep inventory
     public static class InventoryItem implements Comparable<InventoryItem> {
+        public static final long IDX_WEAPONS = 0L;
+        public static final long IDX_ARMORS = 1000000L;
+        public static final long IDX_EQUIPMENT = 2000000L;
+        public static final long IDX_MAGICITEM = 3000000L;
+
         private int id; // only used for linktoweapon (modifs)
         private String name;
         private int weight;
@@ -205,6 +210,11 @@ public class Character extends DBEntity {
         public long getObjectId() { return this.objectId; }
         public String getInfos() { return this.infos; }
         public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
+        public boolean isNotLinked() { return objectId <= 0; }
+        public boolean isWeapon() { return objectId > IDX_WEAPONS && objectId < IDX_ARMORS; }
+        public boolean isArmor() { return objectId > IDX_ARMORS && objectId < IDX_EQUIPMENT; }
+        public boolean isEquipment() { return objectId > IDX_EQUIPMENT && objectId < IDX_MAGICITEM; }
+        public boolean isMagicItem() { return objectId > IDX_MAGICITEM; }
 
         @Override
         public int compareTo(InventoryItem item) {
@@ -1290,7 +1300,7 @@ public class Character extends DBEntity {
     public void indexInventoryWeapons() {
         int idx = 0;
         for(InventoryItem el : invItems) {
-            if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
+            if(el.isWeapon()) {
                 el.setId(++idx);
             }
         }
@@ -1306,7 +1316,7 @@ public class Character extends DBEntity {
                 modif.linkToWeapon = 0;
                 int idx = 0;
                 for(InventoryItem el : invItems) {
-                    if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
+                    if(el.isWeapon()) {
                         idx++;
                     }
                     if(el.getId() == link) {
@@ -1369,8 +1379,8 @@ public class Character extends DBEntity {
         List<Weapon> result = new ArrayList<>();
         DBHelper helper = DBHelper.getInstance(null);
         for(InventoryItem el : invItems) {
-            if(el.getObjectId() > DBHelper.IDX_WEAPONS && el.getObjectId() < DBHelper.IDX_ARMORS) {
-                DBEntity entity = helper.fetchObjectEntity(el.getObjectId());
+            if(el.isWeapon()) {
+                DBEntity entity = helper.fetchObjectEntity(el);
                 if(entity instanceof Weapon) {
                     Weapon w = (Weapon)entity;
                     if(!w.isAmmo()) {
@@ -1404,3 +1414,4 @@ public class Character extends DBEntity {
         return weight;
     }
 }
+

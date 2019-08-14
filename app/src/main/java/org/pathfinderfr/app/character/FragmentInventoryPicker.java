@@ -135,7 +135,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             itemName.setText(initial.getName());
             itemWeight.setText(String.valueOf(initial.getWeight()));
             if(initial.getObjectId() > 0) {
-                DBEntity e = DBHelper.getInstance(rootView.getContext()).fetchObjectEntity(initial.getObjectId());
+                DBEntity e = DBHelper.getInstance(rootView.getContext()).fetchObjectEntity(initial);
                 if(e != null) {
                     ((TextView)rootView.findViewById(R.id.sheet_inventory_reference)).setText(e.getName());
                     rootView.findViewById(R.id.sheet_inventory_reference_section).setVisibility(View.VISIBLE);
@@ -226,7 +226,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             return;
         }
         else if(v.getId() == R.id.sheet_inventory_reference_section) {
-            DBEntity object = DBHelper.getInstance(v.getContext()).fetchObjectEntity(initial.getObjectId());
+            DBEntity object = DBHelper.getInstance(v.getContext()).fetchObjectEntity(initial);
             if(object != null) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ItemDetailActivity.class);

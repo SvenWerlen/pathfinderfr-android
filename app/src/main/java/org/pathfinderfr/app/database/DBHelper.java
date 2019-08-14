@@ -51,11 +51,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper instance;
 
-    public static final long IDX_WEAPONS = 0L;
-    public static final long IDX_ARMORS = 1000000L;
-    public static final long IDX_EQUIPMENT = 2000000L;
-    public static final long IDX_MAGICITEM = 3000000L;
-
     public static synchronized DBHelper getInstance(Context context) {
         if(instance == null) {
             if(context == null) {
@@ -326,21 +321,22 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * @param id unique ID of the object to be fetched
+     * @param item to be converted into weapon, armor, etc.
      * @return the entity as object (assuming that it will always be found)
      */
-    public DBEntity fetchObjectEntity(long id) {
-        if(id <= 0) {
+    public DBEntity fetchObjectEntity(Character.InventoryItem item) {
+        if(item.isNotLinked()) {
             return null;
-        } else if(id <= IDX_ARMORS) {
-            return fetchEntity(id -IDX_WEAPONS, WeaponFactory.getInstance());
-        } else if(id <= IDX_EQUIPMENT) {
-            return fetchEntity(id -IDX_ARMORS, ArmorFactory.getInstance());
-        } else if(id <= IDX_MAGICITEM) {
-            return fetchEntity(id -IDX_EQUIPMENT, EquipmentFactory.getInstance());
-        } else {
-            return fetchEntity(id -IDX_MAGICITEM, MagicItemFactory.getInstance());
+        } else if(item.isWeapon()) {
+            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_WEAPONS, WeaponFactory.getInstance());
+        } else if(item.isArmor()) {
+            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_ARMORS, ArmorFactory.getInstance());
+        } else if(item.isEquipment()) {
+            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_EQUIPMENT, EquipmentFactory.getInstance());
+        } else if(item.isMagicItem()) {
+            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_MAGICITEM, MagicItemFactory.getInstance());
         }
+        return null;
     }
 
     /**

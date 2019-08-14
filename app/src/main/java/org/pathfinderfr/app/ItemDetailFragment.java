@@ -275,7 +275,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Weapon) {
                     Weapon w = (Weapon)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(w.getName(), w.getWeightInGrams(), DBHelper.IDX_WEAPONS + w.getId(), null));
+                    character.addInventoryItem(new Character.InventoryItem(w.getName(), w.getWeightInGrams(), Character.InventoryItem.IDX_WEAPONS + w.getId(), null));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.weapon_added_success), cName);
                         success = true;
@@ -284,7 +284,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Armor) {
                     Armor a = (Armor)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(a.getName(), a.getWeightInGrams(), DBHelper.IDX_ARMORS + a.getId(), null));
+                    character.addInventoryItem(new Character.InventoryItem(a.getName(), a.getWeightInGrams(), Character.InventoryItem.IDX_ARMORS + a.getId(), null));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.armor_added_success), cName);
                         success = true;
@@ -293,7 +293,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof Equipment) {
                     Equipment e = (Equipment)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(e.getName(), e.getWeightInGrams(), DBHelper.IDX_EQUIPMENT + e.getId(), null));
+                    character.addInventoryItem(new Character.InventoryItem(e.getName(), e.getWeightInGrams(), Character.InventoryItem.IDX_EQUIPMENT + e.getId(), null));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.equipment_added_success), cName);
                         success = true;
@@ -302,7 +302,7 @@ public class ItemDetailFragment extends Fragment {
                     }
                 } else if (mItem instanceof MagicItem) {
                     MagicItem m = (MagicItem)mItem;
-                    character.addInventoryItem(new Character.InventoryItem(m.getName(), m.getWeightInGrams(), DBHelper.IDX_MAGICITEM + m.getId(), null));
+                    character.addInventoryItem(new Character.InventoryItem(m.getName(), m.getWeightInGrams(), Character.InventoryItem.IDX_MAGICITEM + m.getId(), null));
                     if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                         message = String.format(getResources().getString(R.string.magicitem_added_success), cName);
                         success = true;

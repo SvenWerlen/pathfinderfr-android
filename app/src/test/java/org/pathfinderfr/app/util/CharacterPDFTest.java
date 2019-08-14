@@ -182,6 +182,7 @@ public class CharacterPDFTest {
         w.setRange("30 m (20 c)");
         w.setType("P");
         weapons.add(w);
+        c.addInventoryItem(new Character.InventoryItem("Arc long", 1500, Character.InventoryItem.IDX_WEAPONS + 5, null));
 
         w = new Weapon();
         w.setName("Arc court composite");
@@ -191,6 +192,7 @@ public class CharacterPDFTest {
         w.setRange("20 m (15 c)");
         w.setType("P");
         weapons.add(w);
+        c.addInventoryItem(new Character.InventoryItem("Arc long composite", 1500, Character.InventoryItem.IDX_WEAPONS + 5, null));
 
         w = new Weapon();
         w.setName("Hache d'armes");
@@ -200,6 +202,8 @@ public class CharacterPDFTest {
         w.setRange("--");
         w.setType("T");
         weapons.add(w);
+        c.addInventoryItem(new Character.InventoryItem("Hache d'armes", 3000, Character.InventoryItem.IDX_WEAPONS + 5, null));
+
 
         List<Armor> armors = new ArrayList<>();
         Armor a = new Armor();
@@ -211,12 +215,20 @@ public class CharacterPDFTest {
         a.setCastFail("10%");
         a.setWeight("7,5 kg");
         armors.add(a);
+        c.addInventoryItem(new Character.InventoryItem("Armure de cuir en peau de dragon", 7500, Character.InventoryItem.IDX_ARMORS + 5, null));
+
+
+        c.addInventoryItem(new Character.InventoryItem("Corde en chanvre, 15 m", 5000, 0, null));
+        c.addInventoryItem(new Character.InventoryItem("Cadenas (bon)", 500, 0, null));
+        c.addInventoryItem(new Character.InventoryItem("1234567890 1234567890 1234567890 123", 1250, 0, null));
+
 
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);
         CharacterPDF.Options opts = new CharacterPDF.Options();
         opts.printInkSaving = false;
         opts.printLogo = true;
+        opts.showWeaponsInInventory = true;
         (new CharacterPDF(opts, c, skills, weapons, armors)).generatePDF(fos, ImageDataFactory.create(logoPath));
         fos.close();
     }
