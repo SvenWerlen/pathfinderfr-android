@@ -1394,6 +1394,26 @@ public class Character extends DBEntity {
         return result;
     }
 
+    /**
+     * @return the list of inventory items which are weapons
+     */
+    public List<Armor> getInventoryArmors() {
+        List<Armor> result = new ArrayList<>();
+        DBHelper helper = DBHelper.getInstance(null);
+        for(InventoryItem el : invItems) {
+            if(el.isArmor()) {
+                DBEntity entity = helper.fetchObjectEntity(el);
+                if(entity instanceof Armor) {
+                    Armor a = (Armor)entity;
+                    a.setName(el.getName());
+                    a.setDescription(el.getInfos());
+                    result.add(a);
+                }
+            }
+        }
+        return result;
+    }
+
     public String getInventoryAsString() {
         if(invItems.size() == 0) {
             return "-";

@@ -10,9 +10,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
@@ -21,10 +19,10 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Weapon;
 
@@ -40,12 +38,14 @@ public class CharacterPDF {
     private static final int STATS_CELL_WIDTH = 22;
     private static final Style STYLE_CELL_DEFAULT;
     private static final Style STYLE_HEADER;
+    private static final Style STYLE_XP;
     private static final Style STYLE_TEXT;
     private static final Style STYLE_TEXT_TOTAL;
     private static final Style STYLE_LABEL_TOP;
     private static final Style STYLE_LABEL_BOTTOM;
     private static final Color COLOR_LIGHT_GRAY;
     private static final DecimalFormat WEIGHT_FORMAT = new DecimalFormat("0.#");
+    private static final DecimalFormat BIGNUM_FORMAT = new DecimalFormat("###,###");
 
     private static final String TEXT_LONG_TEST = "Ceci est un vraiment long texte pour tester dans les champs qui font vraiment plus que 100 charactères de long";
 
@@ -59,6 +59,7 @@ public class CharacterPDF {
         STYLE_CELL_DEFAULT = new Style().setFontSize(8);
         STYLE_HEADER = new Style().setFontSize(4).setFontColor(ColorConstants.DARK_GRAY);
         STYLE_TEXT = new Style().setFontSize(8);
+        STYLE_XP = new Style().setFontSize(14);
         STYLE_TEXT_TOTAL = new Style().setFontSize(10);
         STYLE_LABEL_TOP = new Style().setFontSize(8);
         STYLE_LABEL_BOTTOM = new Style().setFontSize(4);
@@ -174,6 +175,7 @@ public class CharacterPDF {
                 .setPadding(0)
                 .setPaddingRight(3)
                 .setMargin(0)
+                .setMinHeight(13)
                 .addStyle(total ? STYLE_TEXT_TOTAL : STYLE_CELL_DEFAULT)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
@@ -185,6 +187,8 @@ public class CharacterPDF {
             weight = WEIGHT_FORMAT.format(value / 1000f) + " kg";
         } else if(value > 0) {
             weight = String.format("%d g", value);
+        } else if(value < 0) {
+            weight = "";
         } else {
             weight = "-";
         }
@@ -194,6 +198,30 @@ public class CharacterPDF {
         if(total) {
             c.setBold();
         }
+        return c;
+    }
+
+    public Cell createValueGold(int value) {
+        Cell c = new Cell()
+                .setPadding(0)
+                .setMargin(0)
+                .addStyle(STYLE_CELL_DEFAULT)
+                .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        c.add((new Paragraph(BIGNUM_FORMAT.format(value)))
+                .setTextAlignment(TextAlignment.RIGHT));
+        return c;
+    }
+
+    public Cell createValueExperience(int value, TextAlignment align) {
+        Cell c = new Cell()
+                .setPadding(0)
+                .setMargin(0)
+                .addStyle(STYLE_XP)
+                .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        c.add((new Paragraph(BIGNUM_FORMAT.format(value)))
+                .setTextAlignment(align));
         return c;
     }
 
@@ -888,7 +916,7 @@ public class CharacterPDF {
                 .setBorderLeft(Border.NO_BORDER)
                 .setBorderRight(Border.NO_BORDER)
                 .setBorderTopLeftRadius(new BorderRadius(5))
-                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(170));
+                .setBorderTopRightRadius(new BorderRadius(5)).setMinWidth(128));
         table.addCell(createHeader("",1,6).setMinHeight(5));
         table.addCell(createLabel("","Bonus").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
         table.addCell(createLabel("","Type").setMinWidth(30).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
@@ -979,8 +1007,8 @@ public class CharacterPDF {
         //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setVerticalBorderSpacing(0);
         table.setHorizontalBorderSpacing(0);
-        table.addCell(createLabel("Équipement", "", 1,2).setMinWidth(180).setMinHeight(12));
-        table.addCell(createHeader("Objet",TextAlignment.CENTER).setMinWidth(150));
+        table.addCell(createLabel("Équipement", "", 1,2).setMinWidth(150).setMinHeight(12));
+        table.addCell(createHeader("Objet",TextAlignment.CENTER).setMinWidth(120));
         table.addCell(createHeader("Poids").setMinWidth(30));
 
         int totalWeight = 0;
@@ -999,20 +1027,138 @@ public class CharacterPDF {
             totalWeight += item.getWeight();
         }
 
-        for(int i = 0; i<34; i++) {
+        for(int i = 0; i<35; i++) {
+            String itemName = "";
+            int itemWeight = -1;
             if(i < items.size()) {
                 Character.InventoryItem item = items.get(i);
-                table.addCell(createInfoText(item.getName(), 1, TextAlignment.LEFT, true).setPaddingBottom(2).setPaddingLeft(3));
-                table.addCell(createWeightCell(item.getWeight(), false));
-            } else {
-                table.addCell(createInfoText("", 1, TextAlignment.LEFT, true));
-                table.addCell(new Cell());
+                itemName = stringMax(item.getName(),25);
+                itemWeight = item.getWeight();
             }
+            table.addCell(createInfoText(itemName, 1, TextAlignment.LEFT, true).setPaddingBottom(0).setPaddingTop(0).setPaddingLeft(3));
+            table.addCell(createWeightCell(itemWeight, false));
         }
         table.addCell(createLabel("Poids total (kg)", "", 1,1));
         table.addCell(createWeightCell(totalWeight, true));
         return table;
     }
+
+    public static float[] getLoad(int strength) {
+        if(strength < 0) {
+            return new float[] { 0, 0, 0};
+        }
+        switch(strength) {
+            case 1: return new float[] { 1.5f, 3, 5 };
+            case 2: return new float[] { 3, 6.5f, 10 };
+            case 3: return new float[] { 5, 10, 15 };
+            case 4: return new float[] { 6.5f, 13, 20 };
+            case 5: return new float[] { 8, 16.5f, 25 };
+            case 6: return new float[] { 10, 20, 30 };
+            case 7: return new float[] { 11.5f, 23, 35 };
+            case 8: return new float[] { 13, 26.5f, 40 };
+            case 9: return new float[] { 15, 30, 45 };
+            case 10: return new float[] { 16.5f, 33, 50 };
+            case 11: return new float[] { 19, 38, 57.5f };
+            case 12: return new float[] { 21.5f, 43, 65 };
+            case 13: return new float[] { 25, 50, 75 };
+            case 14: return new float[] { 29, 58, 87.5f };
+            case 15: return new float[] { 33, 66.5f, 100 };
+            case 16: return new float[] { 38, 76.5f, 115 };
+            case 17: return new float[] { 43, 86.5f, 130 };
+            case 18: return new float[] { 50, 100, 150 };
+            case 19: return new float[] { 58, 116.5f, 175 };
+            case 20: return new float[] { 66.5f, 133, 200 };
+            case 21: return new float[] { 76.5f, 153, 230 };
+            case 22: return new float[] { 86.5f, 173, 260 };
+            case 23: return new float[] { 100, 200, 300 };
+            case 24: return new float[] { 116.5f, 233, 350 };
+            case 25: return new float[] { 133, 266.5f, 400 };
+            case 26: return new float[] { 153, 306.5f, 460 };
+            case 27: return new float[] { 173, 346.5f, 520 };
+            case 28: return new float[] { 200, 400, 600 };
+            case 29: return new float[] { 233, 466.5f, 700 };
+        }
+        float[] result = getLoad(strength-10);
+        return new float[] { result[0] * 4, result[1] * 4, result[2] * 4};
+    }
+
+    public Table createSectionWeights() {
+        Table table = new Table(4);
+        table.setMinWidth(155);
+        table.setFixedPosition(18, 140, 0);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(STATS_CELL_SPACING);
+        table.setHorizontalBorderSpacing(STATS_CELL_SPACING);
+        float loads[] = getLoad(character.getStrength());
+        table.addCell(createInfo("Charge légère",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[0])));
+        table.addCell(createInfo("Porter au-dessus de la tête",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[2])));
+        table.addCell(createInfo("Charge intermédiaire",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[1])));
+        table.addCell(createInfo("Décoller du sol",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[2]*2)));
+        table.addCell(createInfo("Charge lourde",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[2])));
+        table.addCell(createInfo("Pousser ou tirer",1).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        table.addCell(createValueCell(Math.round(loads[2]*5)));
+
+        return table;
+    }
+
+
+    public Table createSectionRichness() {
+        Table table = new Table(3);
+        table.setFixedPosition(21, 50, 0);
+        table.setBorder(new SolidBorder(1));
+        //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+        table.addCell(createLabel("Richesses", "", 1,3).setMinWidth(143).setMinHeight(12));
+        table.addCell(createHeader("PC", TextAlignment.RIGHT).setPadding(5));
+        table.addCell(createValueGold(1).setBorder(Border.NO_BORDER).setMinWidth(30));
+        table.addCell(new Cell().setMinWidth(103).setBorder(Border.NO_BORDER));
+        table.addCell(createHeader("PA", TextAlignment.RIGHT).setPadding(5));
+        table.addCell(createValueGold(21).setBorder(Border.NO_BORDER));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER));
+        table.addCell(createHeader("PO", TextAlignment.RIGHT).setPadding(5));
+        table.addCell(createValueGold(133000).setBorder(Border.NO_BORDER));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER));
+        table.addCell(createHeader("PP", TextAlignment.RIGHT).setPadding(5));
+        table.addCell(createValueGold(11).setBorder(Border.NO_BORDER));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER));
+
+        return table;
+    }
+
+    public Table createSectionFeatsAndFeatures() {
+        Table table = new Table(1);
+        table.setFixedPosition(190, 100, 0);
+        //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+        table.addCell(createLabel("Dons et capacités", "", 1,1).setMinWidth(200).setMinHeight(12));
+        List<Feat> feats = character.getFeats();
+        for(int i=0; i<35; i++) {
+            String text = i < feats.size() ? feats.get(i).getName(): "";
+            table.addCell(createInfoText(text,1).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
+        }
+        return table;
+    }
+
+    public Table createSectionExperience() {
+        Table table = new Table(2);
+        table.setFixedPosition(190, 50, 0);
+        //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(0);
+        table.setHorizontalBorderSpacing(0);
+        table.addCell(createLabel("Points d'expérience", "", 1,1).setMinWidth(155).setMinHeight(12));
+        table.addCell(createLabel("Niveau", "", 1,1).setMinWidth(40).setMinHeight(12));
+        table.addCell(createValueExperience(21578, TextAlignment.RIGHT).setPaddingRight(5));
+        table.addCell(createValueExperience(5, TextAlignment.CENTER));
+        return table;
+    }
+
 
 
     public void generatePDF(OutputStream output, ImageData logo) {
@@ -1021,6 +1167,7 @@ public class CharacterPDF {
         document.setMargins(20, 20,20,20);
 
         // show logo
+        /*
         if(options.printLogo) {
             document.add((new Image(logo)).setWidth(LOGO_WIDTH));
             document.add(new Paragraph("Feuille de Personnage")
@@ -1049,10 +1196,15 @@ public class CharacterPDF {
         document.add(createSectionSkills());
         document.add(createSectionOthers());
         document.add(new AreaBreak());
+        */
 
         // page 2
         document.add(createSectionArmors());
         document.add(createSectionInventory());
+        document.add(createSectionWeights());
+        document.add(createSectionRichness());
+        document.add(createSectionFeatsAndFeatures());
+        document.add(createSectionExperience());
 
         document.close();
     }

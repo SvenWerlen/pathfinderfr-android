@@ -8,6 +8,7 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Weapon;
@@ -222,6 +223,34 @@ public class CharacterPDFTest {
         c.addInventoryItem(new Character.InventoryItem("Cadenas (bon)", 500, 0, null));
         c.addInventoryItem(new Character.InventoryItem("1234567890 1234567890 1234567890 123", 1250, 0, null));
 
+        for(int i = 1; i<= 40; i++) {
+            c.addInventoryItem(new Character.InventoryItem(String.format("Fill %02d", i), 100, 0, null));
+        }
+
+        Feat f = new Feat();
+        f.setName("Tours de magie ou oraisons supplémentaires");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Derviche dimensionnel");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Manœuvres dimensionnelles");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Savant dimensionnel");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Aisance");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Déplacement acrobatique");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Pas léger");
+        c.addFeat(f);
+        f = new Feat();
+        f.setName("Déplacement mystique");
+        c.addFeat(f);
 
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);
