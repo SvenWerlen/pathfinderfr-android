@@ -66,7 +66,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
         FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener,
-        FragmentInfosPicker.OnFragmentInteractionListener {
+        FragmentInfosPicker.OnFragmentInteractionListener, FragmentMoneyPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
     private static final String DIALOG_PICK_ABILITY   = "ability-picker";
@@ -79,6 +79,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     private static final String DIALOG_PICK_HP        = "hitpoint-picker";
     private static final String DIALOG_PICK_SPEED     = "speed-picker";
     private static final String DIALOG_PICK_MODIFS    = "modifs-picker";
+    private static final String DIALOG_PICK_MONEY     = "money-picker";
     private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
 
     private Character character;
@@ -595,6 +596,28 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
         });
 
+        // MONEY
+        view.findViewById(R.id.money_cp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_money_cupperpieces));}
+        });
+        view.findViewById(R.id.money_sp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_money_silverpieces));}
+        });
+        view.findViewById(R.id.money_gp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_money_goldpieces));}
+        });
+        view.findViewById(R.id.money_pp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_money_platinepieces));}
+        });
+        view.findViewById(R.id.money_cp_value).setOnClickListener(listener);
+        view.findViewById(R.id.money_sp_value).setOnClickListener(listener);
+        view.findViewById(R.id.money_gp_value).setOnClickListener(listener);
+        view.findViewById(R.id.money_pp_value).setOnClickListener(listener);
+
         // update name
         TextView nameTv = view.findViewById(R.id.sheet_main_namepicker);
         if(character.getName() != null) {
@@ -1035,6 +1058,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         combatManDefenseBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManDefenseAbility.setText(String.valueOf(character.getStrengthModif()+character.getDexterityModif()));
 
+        ((TextView)view.findViewById(R.id.money_cp_value)).setText(String.valueOf(character.getMoneyCP()));
+        ((TextView)view.findViewById(R.id.money_sp_value)).setText(String.valueOf(character.getMoneySP()));
+        ((TextView)view.findViewById(R.id.money_gp_value)).setText(String.valueOf(character.getMoneyGP()));
+        ((TextView)view.findViewById(R.id.money_pp_value)).setText(String.valueOf(character.getMoneyPP()));
+
         updateSheetSummary(view);
     }
 
@@ -1233,6 +1261,23 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 Bundle arguments = new Bundle();
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_SPEED);
+                return;
+            }
+            else if(v instanceof TextView && "money".equals(v.getTag())) {
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_MONEY);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentMoneyPicker.newInstance(parent,
+                        parent.character.getMoneyCP(),
+                        parent.character.getMoneySP(),
+                        parent.character.getMoneyGP(),
+                        parent.character.getMoneyPP());
+                Bundle arguments = new Bundle();
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_PICK_MONEY);
                 return;
             }
 
@@ -1644,6 +1689,18 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if(refresh) {
             updateSheet(getView());
         }
+        // store changes
+        characterDBUpdate();
+    }
+
+    @Override
+    public void onSaveMoney(int cp, int sp, int gp, int pp) {
+        character.setMoneyCP(cp);
+        character.setMoneySP(sp);
+        character.setMoneyGP(gp);
+        character.setMoneyPP(pp);
+        // update sheet
+        updateSheet(getView());
         // store changes
         characterDBUpdate();
     }

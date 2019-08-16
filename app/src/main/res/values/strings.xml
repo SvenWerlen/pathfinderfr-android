@@ -389,6 +389,15 @@
     <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
     <string name="sheet_att_dist">Dist</string>
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
+    <string name="sheet_money_cp">PC</string>
+    <string name="sheet_money_cupperpieces">Pièces de cuivre</string>
+    <string name="sheet_money_sp">PA</string>
+    <string name="sheet_money_silverpieces">Pièces d\'argent</string>
+    <string name="sheet_money_gp">PO</string>
+    <string name="sheet_money_goldpieces">Pièces d\'or</string>
+    <string name="sheet_money_pp">PP</string>
+    <string name="sheet_money_platinepieces">Pièces de platine</string>
+
 
     <!-- Hit points -->
     <string name="sheet_hitpoints_title">Points de vie:</string>
@@ -415,6 +424,12 @@
     <string name="sheet_speed_dig">Creusement:</string>
     <string name="sheet_speed_fly">Vol:</string>
     <string name="sheet_speed_fly_maneuver">Manœuvrabilité:</string>
+
+    <!-- Money -->
+    <string name="sheet_money_title">Richesses:</string>
+    <string name="sheet_money_description">Les valeurs ci-dessous sont utilisées lors de la
+        génération de la feuille de personnage au format PDF.
+    </string>
 
     <!-- Inventory -->
     <string name="sheet_main_inventory_example_label_name">Inventaire</string>

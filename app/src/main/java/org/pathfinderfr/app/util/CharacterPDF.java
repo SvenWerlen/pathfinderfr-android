@@ -10,7 +10,9 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
@@ -1116,16 +1118,16 @@ public class CharacterPDF {
         table.setHorizontalBorderSpacing(0);
         table.addCell(createLabel("Richesses", "", 1,3).setMinWidth(143).setMinHeight(12));
         table.addCell(createHeader("PC", TextAlignment.RIGHT).setPadding(5));
-        table.addCell(createValueGold(1).setBorder(Border.NO_BORDER).setMinWidth(30));
+        table.addCell(createValueGold(character.getMoneyCP()).setBorder(Border.NO_BORDER).setMinWidth(30));
         table.addCell(new Cell().setMinWidth(103).setBorder(Border.NO_BORDER));
         table.addCell(createHeader("PA", TextAlignment.RIGHT).setPadding(5));
-        table.addCell(createValueGold(21).setBorder(Border.NO_BORDER));
+        table.addCell(createValueGold(character.getMoneySP()).setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createHeader("PO", TextAlignment.RIGHT).setPadding(5));
-        table.addCell(createValueGold(133000).setBorder(Border.NO_BORDER));
+        table.addCell(createValueGold(character.getMoneyGP()).setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createHeader("PP", TextAlignment.RIGHT).setPadding(5));
-        table.addCell(createValueGold(11).setBorder(Border.NO_BORDER));
+        table.addCell(createValueGold(character.getMoneyPP()).setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
 
         return table;
@@ -1154,8 +1156,8 @@ public class CharacterPDF {
         table.setHorizontalBorderSpacing(0);
         table.addCell(createLabel("Points d'expérience", "", 1,1).setMinWidth(155).setMinHeight(12));
         table.addCell(createLabel("Niveau", "", 1,1).setMinWidth(40).setMinHeight(12));
-        table.addCell(createValueExperience(21578, TextAlignment.RIGHT).setPaddingRight(5));
-        table.addCell(createValueExperience(5, TextAlignment.CENTER));
+        table.addCell(createValueExperience(character.getExperience(), TextAlignment.RIGHT).setPaddingRight(5));
+        table.addCell(createValueExperience(character.getLevel(), TextAlignment.CENTER));
         return table;
     }
 
@@ -1167,7 +1169,6 @@ public class CharacterPDF {
         document.setMargins(20, 20,20,20);
 
         // show logo
-        /*
         if(options.printLogo) {
             document.add((new Image(logo)).setWidth(LOGO_WIDTH));
             document.add(new Paragraph("Feuille de Personnage")
@@ -1196,7 +1197,6 @@ public class CharacterPDF {
         document.add(createSectionSkills());
         document.add(createSectionOthers());
         document.add(new AreaBreak());
-        */
 
         // page 2
         document.add(createSectionArmors());

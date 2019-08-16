@@ -9,6 +9,7 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
 
 import org.pathfinderfr.app.character.FragmentHitPointsPicker;
 import org.pathfinderfr.app.character.FragmentInfosPicker;
+import org.pathfinderfr.app.character.FragmentMoneyPicker;
 import org.pathfinderfr.app.character.FragmentSpeedPicker;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.CharacterPDF;
@@ -605,16 +606,16 @@ public class CharacterImportExport {
             if (money instanceof Map) {
                 Map<String, Object> pieces = (Map<String, Object>) money;
                 if (pieces.containsKey(YAML_CP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_CP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_CP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_SP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_SP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_SP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_GP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_GP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_GP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_PP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_PP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_PP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
             }
 

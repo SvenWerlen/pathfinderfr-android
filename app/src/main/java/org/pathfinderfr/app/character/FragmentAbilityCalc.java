@@ -279,6 +279,15 @@ public class FragmentAbilityCalc extends DialogFragment implements View.OnClickL
             FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.sheet_calc_quick_skills_simple), 0, scale);
             FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.sheet_calc_quick_skills_heroic), 0, scale);
 
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_cp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_cp_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_sp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_sp_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_gp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_gp_value), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_pp), minHeight, scale);
+            FragmentUtil.adaptForFatFingers((TextView) rootView.findViewById(R.id.money_pp_value), minHeight, scale);
+
         }
 
         return rootView;
