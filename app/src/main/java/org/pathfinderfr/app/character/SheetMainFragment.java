@@ -1130,6 +1130,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 }
                 ft.addToBackStack(null);
                 DialogFragment newFragment = FragmentInfosPicker.newInstance(parent,
+                    parent.character.getExperience(),
                     parent.character.getAlignment(), parent.character.getDivinity(),
                     parent.character.getOrigin(), parent.character.getSizeType(),
                     parent.character.getSex(), parent.character.getAge(),
@@ -1624,8 +1625,9 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     }
 
     @Override
-    public void onSaveInfos(int alignment, String divinity, String origin, int sizeType, int sex, int age, int height, int weight, String hair, String eyes, String lang) {
+    public void onSaveInfos(int xp, int alignment, String divinity, String origin, int sizeType, int sex, int age, int height, int weight, String hair, String eyes, String lang) {
         boolean refresh = sizeType != character.getSizeType();
+        character.setExperience(xp);
         character.setAlignment(alignment);
         character.setDivinity(divinity == null || divinity.length() == 0 ? null : divinity);
         character.setOrigin(origin == null || origin.length() == 0 ? null : origin);

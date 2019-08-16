@@ -38,6 +38,39 @@
                 android:textSize="12sp"
                 android:text="@string/sheet_other_description" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:width="150dp"
+                    android:text="@string/sheet_other_xp" />
+
+                <EditText
+                    android:id="@+id/sheet_other_xp"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@drawable/text_box"
+                    android:maxLength="8"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/colorBlack"
+                    android:inputType="numberSigned"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

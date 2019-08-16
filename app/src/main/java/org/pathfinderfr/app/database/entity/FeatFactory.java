@@ -14,7 +14,7 @@ public class FeatFactory extends DBEntityFactory {
     public static final String FACTORY_ID        = "FEATS";
 
     private static final String TABLENAME         = "feats";
-    private static final String COLUMN_SUMMARY   = "summary";
+    private static final String COLUMN_SUMMARY    = "summary";
     private static final String COLUMN_CATEGORY   = "category";
     private static final String COLUMN_CONDITIONS = "conditions";
     private static final String COLUMN_ADVANTAGE  = "advantage";
@@ -109,6 +109,7 @@ public class FeatFactory extends DBEntityFactory {
         contentValues.put(FeatFactory.COLUMN_ADVANTAGE, feat.getAdvantage());
         contentValues.put(FeatFactory.COLUMN_SPECIAL, feat.getSpecial());
         contentValues.put(FeatFactory.COLUMN_NORMAL, feat.getNormal());
+        contentValues.put(FeatFactory.COLUMN_SUMMARY, feat.getSummary());
         return contentValues;
     }
 
@@ -128,6 +129,7 @@ public class FeatFactory extends DBEntityFactory {
         feat.setAdvantage(extractValue(resource,FeatFactory.COLUMN_ADVANTAGE));
         feat.setSpecial(extractValue(resource,FeatFactory.COLUMN_SPECIAL));
         feat.setNormal(extractValue(resource,FeatFactory.COLUMN_NORMAL));
+        feat.setSummary(extractValue(resource,FeatFactory.COLUMN_SUMMARY));
         return feat;
     }
 
@@ -144,6 +146,7 @@ public class FeatFactory extends DBEntityFactory {
         feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE));
         feat.setSpecial((String)attributes.get(YAML_SPECIAL));
         feat.setNormal((String)attributes.get(YAML_NORMAL));
+        feat.setSummary((String)attributes.get(YAML_SUMMARY));
         return feat.isValid() ? feat : null;
     }
 

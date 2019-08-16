@@ -277,6 +277,7 @@
     <string name="sheet_other_description">Les informations de cette section n\'ont pas d\'influence
         directe mais permettent d\'enrichir la feuille de personnage (format PDF pour impression).
     </string>
+    <string name="sheet_other_xp">Points d\'expérience</string>
     <string name="sheet_other_alignment">Alignement</string>
     <string name="sheet_other_divinity">Divinité</string>
     <string name="sheet_other_origin">Origine</string>

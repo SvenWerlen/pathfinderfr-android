@@ -39,6 +39,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
     private String hair;
     private String eyes;
     private String lang;
+    private int xp;
 
     private FragmentInfosPicker.OnFragmentInteractionListener mListener;
 
@@ -47,7 +48,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
         // Required empty public constructor
     }
 
-    public static FragmentInfosPicker newInstance(FragmentInfosPicker.OnFragmentInteractionListener listener,
+    public static FragmentInfosPicker newInstance(FragmentInfosPicker.OnFragmentInteractionListener listener, int xp,
                                                   int alignment, String divinity, String origin, int sizeType, int sex, int age, int height, int weight, String hair, String eyes, String lang) {
 
         FragmentInfosPicker fragment = new FragmentInfosPicker();
@@ -63,6 +64,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
         fragment.hair = hair;
         fragment.eyes = eyes;
         fragment.lang = lang;
+        fragment.xp = xp;
         fragment.setListener(listener);
         return fragment;
     }
@@ -102,6 +104,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
         rootView.findViewById(R.id.sheet_other_sex_f).setOnClickListener(this);
 
         // set value
+        ((EditText)rootView.findViewById(R.id.sheet_other_xp)).setText(String.valueOf(xp));
         ((EditText)rootView.findViewById(R.id.sheet_other_divinity)).setText(divinity);
         ((EditText)rootView.findViewById(R.id.sheet_other_origin)).setText(origin);
         ((EditText)rootView.findViewById(R.id.sheet_other_age)).setText(String.valueOf(age));
@@ -205,6 +208,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
             return;
         }
         else if(v.getId() == R.id.ok) {
+            xp = Math.max(0, getValueFromEditText(getView(), R.id.sheet_other_xp));
             divinity =  ((TextView)getView().findViewById(R.id.sheet_other_divinity)).getText().toString();
             origin =  ((TextView)getView().findViewById(R.id.sheet_other_origin)).getText().toString();
             age = getValueFromEditText(getView(), R.id.sheet_other_age);
@@ -213,7 +217,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
             hair =  ((TextView)getView().findViewById(R.id.sheet_other_hair)).getText().toString();
             eyes =  ((TextView)getView().findViewById(R.id.sheet_other_eyes)).getText().toString();
             lang =  ((TextView)getView().findViewById(R.id.sheet_other_lang)).getText().toString();
-            mListener.onSaveInfos(alignment, divinity, origin, sizeType, sex, age, height, weight, hair, eyes, lang);
+            mListener.onSaveInfos(xp, alignment, divinity, origin, sizeType, sex, age, height, weight, hair, eyes, lang);
             dismiss();
             return;
         } else if (v.getTag() != null) {
@@ -234,7 +238,7 @@ public class FragmentInfosPicker extends DialogFragment implements View.OnClickL
     }
 
     public interface OnFragmentInteractionListener {
-        void onSaveInfos(int alignment, String divinity, String origin, int sizeType, int sex,
+        void onSaveInfos(int xp, int alignment, String divinity, String origin, int sizeType, int sex,
                          int age, int height, int weight, String hair, String eyes, String lang);
     }
 
