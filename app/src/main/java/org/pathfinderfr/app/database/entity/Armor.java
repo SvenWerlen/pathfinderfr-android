@@ -16,6 +16,7 @@ public class Armor extends DBEntity {
     private String speed9;
     private String speed6;
     private String weight;
+    private String category;
 
 
     @Override
@@ -40,7 +41,6 @@ public class Armor extends DBEntity {
     public String getCost() {
         return cost;
     }
-
     public void setCost(String cost) {
         this.cost = cost;
     }
@@ -48,7 +48,6 @@ public class Armor extends DBEntity {
     public String getBonus() {
         return bonus;
     }
-
     public void setBonus(String bonus) {
         this.bonus = bonus;
     }
@@ -56,7 +55,6 @@ public class Armor extends DBEntity {
     public String getBonusDexMax() {
         return bonusDexMax;
     }
-
     public void setBonusDexMax(String bonusDexMax) {
         this.bonusDexMax = bonusDexMax;
     }
@@ -64,7 +62,6 @@ public class Armor extends DBEntity {
     public String getMalus() {
         return malus;
     }
-
     public void setMalus(String malus) {
         this.malus = malus;
     }
@@ -72,7 +69,6 @@ public class Armor extends DBEntity {
     public String getCastFail() {
         return castFail;
     }
-
     public void setCastFail(String castFail) {
         this.castFail = castFail;
     }
@@ -80,7 +76,6 @@ public class Armor extends DBEntity {
     public String getSpeed9() {
         return speed9;
     }
-
     public void setSpeed9(String speed9) {
         this.speed9 = speed9;
     }
@@ -88,7 +83,6 @@ public class Armor extends DBEntity {
     public String getSpeed6() {
         return speed6;
     }
-
     public void setSpeed6(String speed6) {
         this.speed6 = speed6;
     }
@@ -96,12 +90,17 @@ public class Armor extends DBEntity {
     public String getWeight() {
         return weight;
     }
-
     public int getWeightInGrams() {
         return StringUtil.parseWeight(weight);
     }
-
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

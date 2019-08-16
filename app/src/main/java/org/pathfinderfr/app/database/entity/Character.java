@@ -107,6 +107,7 @@ public class Character extends DBEntity {
     List<InventoryItem> invItems;
     int hitpoints, hitpointsTemp;
     int speed;
+    List<Spell> spells;
 
     // infos additionnelles
     String player;
@@ -125,6 +126,10 @@ public class Character extends DBEntity {
     int speedFly;
     int speedFlyManeuv;
     String languages;
+    int experience;
+
+    // money
+    int moneyCP, moneySP, moneyGP, moneyPP;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
@@ -135,6 +140,7 @@ public class Character extends DBEntity {
         traits = new ArrayList<>();
         modifs = new ArrayList<>();
         invItems = new ArrayList<>();
+        spells = new ArrayList<>();
     }
 
     // Helper to keep modifs
@@ -311,6 +317,17 @@ public class Character extends DBEntity {
     public void setEyes(String eyes) { this.eyes = eyes; }
     public String getLanguages() { return languages; }
     public void setLanguages(String languages) { this.languages = languages; }
+    public int getExperience() { return experience; }
+    public void setExperience(int experience) { this.experience = experience; }
+    public int getMoneyCP() { return moneyCP; }
+    public void setMoneyCP(int value) { this.moneyCP = value; }
+    public int getMoneySP() { return moneySP; }
+    public void setMoneySP(int value) { this.moneySP = value; }
+    public int getMoneyGP() { return moneyGP; }
+    public void setMoneyGP(int value) { this.moneyGP = value; }
+    public int getMoneyPP() { return moneyPP; }
+    public void setMoneyPP(int value) { this.moneyPP = value; }
+
 
     /**
      * @param abilityId ability identifier
@@ -1081,6 +1098,44 @@ public class Character extends DBEntity {
         }
         if(found != null) {
             feats.remove(found);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the list of spells (as a copy)
+     */
+    public List<Spell> getSpells() {
+        Spell[] itemArray = new Spell[spells.size()];
+        itemArray = spells.toArray(itemArray);
+        List<Spell> spells = Arrays.asList(itemArray);
+        return spells;
+    }
+
+    public boolean hasSpell(Spell spell) {
+        for(Spell f : spells) {
+            if(f.getId() == spell.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addSpell(Spell spell) {
+        spells.add(spell);
+    }
+
+    public boolean removeSpell(Spell spell) {
+        Spell found = null;
+        for(Spell s : spells) {
+            if(s.getId() == spell.getId()) {
+                found = s;
+                break;
+            }
+        }
+        if(found != null) {
+            spells.remove(found);
             return true;
         }
         return false;

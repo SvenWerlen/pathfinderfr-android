@@ -47,7 +47,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 18;
+    public static final int DATABASE_VERSION = 19;
 
     private static DBHelper instance;
 
@@ -210,6 +210,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.execSQL(q);
             }
             oldVersion = 18;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 18");
+        }
+        // version 19 introduced 6 new columns on character, 1 new column on feat, 1 new column on armor (for PDF)
+        if(oldVersion == 18) {
+            db.execSQL(ArmorFactory.getInstance().getQueryUpgradeV19());
+            db.execSQL(FeatFactory.getInstance().getQueryUpgradeV19());
+            List<String> queries = CharacterFactory.getInstance().getQueriesUpgradeV19();
+            for(String q : queries) {
+                db.execSQL(q);
+            }
+            oldVersion = 19;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 18");
         }
     }

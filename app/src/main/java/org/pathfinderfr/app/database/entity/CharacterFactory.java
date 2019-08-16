@@ -54,6 +54,12 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_HAIR        = "hair";
     private static final String COLUMN_EYES        = "eyes";
     private static final String COLUMN_LANG        = "languages";
+    private static final String COLUMN_CP          = "cp";  // money (cupper)
+    private static final String COLUMN_SP          = "sp";  // money (silver)
+    private static final String COLUMN_GP          = "gp";  // money (gold)
+    private static final String COLUMN_PP          = "pp";  // money (platin)
+    private static final String COLUMN_XP          = "xp";  // experience
+    private static final String COLUMN_SPELLS      = "spells";
 
 
     private static CharacterFactory instance;
@@ -95,7 +101,8 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text, %s text, %s text, %s text, %s text," +       // skills, feats, features, traits, modifs, inventory
                         "%s integer, %s integer, " +                                    // hitpoints, hitpointstemps
                         "%s integer, %s integer, %s integer, %s integer, %s integer," + // speed (reg, armor, dig, fly, maneuver)
-                        "%s text" +                                                     // languages
+                        "%s integer, %s integer, %s integer, %s integer," +             // money (cp, sp, gp, pp)
+                        "%s text, %s integer, %s text" +                                // languages, xp, spells
                         ")",
                 TABLENAME,
                 COLUMN_ID,
@@ -109,7 +116,8 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
                 COLUMN_HITPOINTS, COLUMN_HPTEMP,
                 COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
-                COLUMN_LANG);
+                COLUMN_CP, COLUMN_SP, COLUMN_GP, COLUMN_PP,
+                COLUMN_LANG, COLUMN_XP, COLUMN_SPELLS);
         return query;
     }
 
@@ -186,6 +194,20 @@ public class CharacterFactory extends DBEntityFactory {
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_FLY));
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SPEED_FLYM));
         changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_LANG));
+        return changes;
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v18 to v19
+     */
+    public List<String> getQueriesUpgradeV19() {
+        List<String> changes = new ArrayList<>();
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_CP));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SP));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_GP));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_PP));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_XP));
+        changes.add(String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_SPELLS));
         return changes;
     }
 
@@ -364,6 +386,26 @@ public class CharacterFactory extends DBEntityFactory {
         contentValues.put(CharacterFactory.COLUMN_HAIR, c.getHair());
         contentValues.put(CharacterFactory.COLUMN_EYES, c.getEyes());
         contentValues.put(CharacterFactory.COLUMN_LANG, c.getLanguages());
+        // new fields for PDF
+        contentValues.put(CharacterFactory.COLUMN_CP, c.getMoneyCP());
+        contentValues.put(CharacterFactory.COLUMN_SP, c.getMoneySP());
+        contentValues.put(CharacterFactory.COLUMN_GP, c.getMoneyGP());
+        contentValues.put(CharacterFactory.COLUMN_PP, c.getMoneyPP());
+        contentValues.put(CharacterFactory.COLUMN_XP, c.getExperience());
+
+        // spells are stored using format <spell1Id>#<spell2Id>...
+        // (assuming that spell ids won't change during data import)
+        if(c.getSpells().size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for(Spell spell : c.getSpells()) {
+                value.append(spell.getId()).append('#');
+            }
+            value.deleteCharAt(value.length()-1);
+            Log.d(CharacterFactory.class.getSimpleName(), "Spells: " + value.toString());
+            contentValues.put(CharacterFactory.COLUMN_SPELLS, value.toString());
+        } else {
+            contentValues.put(CharacterFactory.COLUMN_SPELLS, "");
+        }
 
         return contentValues;
     }
@@ -644,6 +686,32 @@ public class CharacterFactory extends DBEntityFactory {
         c.setHair(extractValue(resource, CharacterFactory.COLUMN_HAIR));
         c.setEyes(extractValue(resource, CharacterFactory.COLUMN_EYES));
         c.setLanguages(extractValue(resource, CharacterFactory.COLUMN_LANG));
+        // new fields for PDF
+        c.setMoneyCP(extractValueAsInt(resource, CharacterFactory.COLUMN_CP));
+        c.setMoneySP(extractValueAsInt(resource, CharacterFactory.COLUMN_SP));
+        c.setMoneyGP(extractValueAsInt(resource, CharacterFactory.COLUMN_GP));
+        c.setMoneyPP(extractValueAsInt(resource, CharacterFactory.COLUMN_PP));
+        c.setExperience(extractValueAsInt(resource, CharacterFactory.COLUMN_XP));
+
+        // fill spells
+        String spellsValue = extractValue(resource, CharacterFactory.COLUMN_SPELLS);
+        Log.d(CharacterFactory.class.getSimpleName(), "Spells found: " + spellsValue);
+        if(spellsValue != null && spellsValue.length() > 0) {
+            String[] spells = spellsValue.split("#");
+            long[] spellIds = new long[spells.length];
+            try {
+                for(int i = 0; i < spells.length; i++) {
+                    spellIds[i] = Long.parseLong(spells[i]);
+                }
+                // retrieve all feats from DB
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(spellIds, SpellFactory.getInstance());
+                for(DBEntity e : list) {
+                    c.addSpell((Spell)e);
+                }
+            } catch (NumberFormatException nfe) {
+                Log.e(CharacterFactory.class.getSimpleName(), "Stored spell '" + spellsValue + "' is invalid (NFE)!");
+            }
+        }
 
         return c;
     }
