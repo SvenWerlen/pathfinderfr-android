@@ -16,6 +16,7 @@ import org.pathfinderfr.app.util.Pair;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,14 @@ public class CharacterImportExport {
     private static final String YAML_HAIR            = "Cheveux";
     private static final String YAML_EYES            = "Yeux";
     private static final String YAML_LANG            = "Langues";
+    private static final String YAML_MONEY           = "Richesses";
+    private static final String YAML_CP              = "pc";
+    private static final String YAML_SP              = "pa";
+    private static final String YAML_GP              = "po";
+    private static final String YAML_PP              = "pp";
+    private static final String YAML_XP              = "Expérience";
+    private static final String YAML_SPELLS          = "Sorts";
+
 
     public static final int ERROR_NAME_TOOLONG         = 1;
     public static final int ERROR_RACE_NOMATCH         = 2;
@@ -111,8 +120,12 @@ public class CharacterImportExport {
     public static final int ERROR_HAIR_TOOLONG         = 36;
     public static final int ERROR_EYES_TOOLONG         = 37;
     public static final int ERROR_LANG_TOOLONG         = 38;
-
-
+    public static final int ERROR_XP_FORMAT            = 39;
+    public static final int ERROR_XP_INVALID           = 40;
+    public static final int ERROR_SPELL_NOMATCH        = 41;
+    public static final int ERROR_SPELLS_EXCEPTION     = 42;
+    public static final int ERROR_MONEY_FORMAT         = 43;
+    public static final int ERROR_MONEY_INVALID        = 44;
 
 
     public static String exportCharacterAsYML(Character c, Context ctx) {
@@ -168,6 +181,7 @@ public class CharacterImportExport {
         data.put(YAML_ABILITIES, abilities);
 
         // others
+        data.put(YAML_XP, c.getExperience());
         data.put(YAML_SIZETYPE, CharacterPDF.size2Text(c.getSizeType()));
         data.put(YAML_AGE, c.getAge());
         data.put(YAML_HEIGHT, c.getHeight());
@@ -215,16 +229,25 @@ public class CharacterImportExport {
         }
         data.put(YAML_CLASSFEATURES, features);
 
+        // spells
+        List<Map> spells = new ArrayList();
+        for(Spell s : c.getSpells()) {
+            Map<String, Object> spellObj = new LinkedHashMap();
+            spellObj.put(YAML_NAME, s.getName());
+            spells.add(spellObj);
+        }
+        data.put(YAML_SPELLS, spells);
+
         // modifs
-        List<Map> modifs = new ArrayList();
+        List<Map> modifs = new ArrayList<>();
         for(Character.CharacterModif modif : c.getModifs()) {
-            Map<String, Object> modifObj = new LinkedHashMap();
+            Map<String, Object> modifObj = new LinkedHashMap<>();
             modifObj.put(YAML_MODIF_SOURCE, modif.getSource());
             modifObj.put(YAML_MODIF_ICON, modif.getIcon());
             modifObj.put(YAML_MODIF_LINKTO, modif.getLinkToWeapon());
             List<Map> bonuses = new ArrayList<>();
             for(int idx = 0; idx < modif.getModifCount(); idx++) {
-                Map<String, Object> bonus = new LinkedHashMap();
+                Map<String, Object> bonus = new LinkedHashMap<>();
                 bonus.put(YAML_BONUS_ID, modif.getModif(idx).first);
                 bonus.put(YAML_BONUS_VALUE, modif.getModif(idx).second);
                 bonuses.add(bonus);
@@ -233,6 +256,14 @@ public class CharacterImportExport {
             modifs.add(modifObj);
         }
         data.put(YAML_MODIFS, modifs);
+
+        // money
+        Map<String, Object> money = new LinkedHashMap<>();
+        money.put(YAML_CP, c.getMoneyCP());
+        money.put(YAML_SP, c.getMoneySP());
+        money.put(YAML_GP, c.getMoneyGP());
+        money.put(YAML_PP, c.getMoneyPP());
+        data.put(YAML_MONEY, money);
 
         // inventory
         List<Map> inventory = new ArrayList();
@@ -266,7 +297,9 @@ public class CharacterImportExport {
         for(Trait t : c.getTraits()) {
             Map<String, Object> traitObj = new LinkedHashMap();
             traitObj.put(YAML_NAME, t.getName());
-            traitObj.put(YAML_RACE, t.getRace().getName());
+            if(t.getRace() != null) {
+                traitObj.put(YAML_RACE, t.getRace().getName());
+            }
             traits.add(traitObj);
         }
         data.put(YAML_TRAITS, traits);
@@ -424,6 +457,11 @@ public class CharacterImportExport {
                     FragmentHitPointsPicker.MAX_HITPOINTS,
                     ERROR_HITPOINTS_INVALID, ERROR_HITPOINTS_FORMAT));
 
+            // experience
+            c.setExperience(cleanNumber((String)map.get(YAML_XP), errors,
+                    99999999,
+                    ERROR_XP_INVALID, ERROR_XP_FORMAT));
+
             // size type
             if(map.containsKey(YAML_SIZETYPE)) {
                 c.setSizeType(CharacterPDF.text2Size((String)map.get(YAML_SIZETYPE)));
@@ -516,6 +554,29 @@ public class CharacterImportExport {
                 errors.add(ERROR_FEATS_EXCEPTION);
             }
 
+            // spells
+            try {
+                Object spells = map.get(YAML_SPELLS);
+                if (spells instanceof List) {
+                    List<Object> sList = (List<Object>) spells;
+                    for (Object s : sList) {
+                        if (s instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) s;
+                            if(values.containsKey(YAML_NAME)) {
+                                Spell spell = (Spell)dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), SpellFactory.getInstance());
+                                if(spell == null) {
+                                    errors.add(ERROR_SPELL_NOMATCH);
+                                } else {
+                                    c.addSpell(spell);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                errors.add(ERROR_SPELLS_EXCEPTION);
+            }
+
             // classfeatures
             try {
                 Object features = map.get(YAML_CLASSFEATURES);
@@ -537,6 +598,24 @@ public class CharacterImportExport {
                 }
             } catch(Exception e) {
                 errors.add(ERROR_FEATURES_EXCEPTION);
+            }
+
+            // money
+            Object money = map.get(YAML_MONEY);
+            if (money instanceof Map) {
+                Map<String, Object> pieces = (Map<String, Object>) money;
+                if (pieces.containsKey(YAML_CP)) {
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_CP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                }
+                if (pieces.containsKey(YAML_SP)) {
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_SP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                }
+                if (pieces.containsKey(YAML_GP)) {
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_GP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                }
+                if (pieces.containsKey(YAML_PP)) {
+                    c.setMoneyCP(cleanNumber((String)map.get(YAML_PP), errors, 999999, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                }
             }
 
             // inventory (must be imported BEFORE modifs because of linkto)
@@ -661,7 +740,7 @@ public class CharacterImportExport {
                                 Trait trait = null;
                                 for(DBEntity t : allTraits) {
                                     Trait tObj = (Trait)t;
-                                    if(tObj.getName().equals(tName) && tObj.getRace().getName().equals(rName)) {
+                                    if(tObj.getName().equals(tName) && ((tObj.getRace() == null && rName == null) || (tObj.getRace().getName().equals(rName)))) {
                                         trait = (Trait)t;
                                         break;
                                     }
