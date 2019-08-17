@@ -5,14 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.2.1] - 2019-08-17
+### Fixed
+- Missing PDF options (2nd page)
+- Money (fields not on the same line)
+
+## [3.2.0] - 2019-08-17
+### Changed
+- Chosen spells (per character)
 ### Added
 - Traits (base, campaign, race, region, religion)
+- Money (cp, sp, gp, pp)
+- Global value
+- PDF export of a character (2nd page)
+- Experience
 
 ## [3.1.0] - 2019-08-09
 ### Added
 - Filters for magic items
 - 16 additonnal fields
-- PDF export of a character
+- PDF export of a character (1st page)
 ### Changed
 - When equipment is added to character, link to object is kept for future reference
 - A modification can be linked to a weapon (attack bonuses only)
