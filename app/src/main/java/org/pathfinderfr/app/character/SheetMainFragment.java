@@ -48,6 +48,7 @@ import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.io.File;
@@ -789,6 +790,8 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_ability), minHeight, scale);
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add), 0, scale);
+
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_money_total_value), 0, scale);
         }
 
         return view;
@@ -917,6 +920,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             final int itemIdx = rowId;
             final String itemName = item.getName();
             final int itemWeight = item.getWeight();
+            final long itemPrice = item.getPrice();
             final long itemReference = item.getObjectId();
             final String itemInfos = item.getInfos();
             row.setOnClickListener(new View.OnClickListener() {
@@ -934,6 +938,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_IDX, itemIdx);
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, itemName);
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, itemWeight);
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, itemPrice);
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, itemReference);
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, itemInfos);
                     newFragment.setArguments(arguments);
@@ -946,6 +951,21 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         int totalWeight = (int)Math.ceil(character.getInventoryTotalWeight()/1000d);
         ((TextView)view.findViewById(R.id.sheet_inventory_item_totalweight)).setText(totalWeight + "kg");
         updateSheetSummary(view);
+        updateMoneyValue(view);
+    }
+
+    private void updateMoneyValue(View view) {
+        long total = 0;
+        for(Character.InventoryItem item : character.getInventoryItems()) {
+            total += item.getPrice();
+        }
+        total += character.getMoneyCP();
+        total += character.getMoneySP() * 10;
+        total += character.getMoneyGP() * 100;
+        total += character.getMoneyPP() * 1000;
+
+        String text = StringUtil.cost2String(total);
+        ((TextView)view.findViewById(R.id.sheet_main_money_total_value)).setText(text);
     }
 
     private void updateSheetSummary(View view) {
@@ -1701,6 +1721,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         character.setMoneyPP(pp);
         // update sheet
         updateSheet(getView());
+        updateMoneyValue(getView());
         // store changes
         characterDBUpdate();
     }

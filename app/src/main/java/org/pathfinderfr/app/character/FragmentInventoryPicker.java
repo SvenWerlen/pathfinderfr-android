@@ -42,11 +42,12 @@ import java.util.List;
 
 public class FragmentInventoryPicker extends DialogFragment implements View.OnClickListener {
 
-    public static final String ARG_INVENTORY_IDX   = "arg_inventoryIdx";
+    public static final String ARG_INVENTORY_IDX    = "arg_inventoryIdx";
     public static final String ARG_INVENTORY_NAME   = "arg_inventoryName";
     public static final String ARG_INVENTORY_WEIGHT = "arg_inventoryWeight";
-    public static final String ARG_INVENTORY_OBJID = "arg_inventoryObjectId";
-    public static final String ARG_INVENTORY_INFOS = "arg_inventoryInfos";
+    public static final String ARG_INVENTORY_PRICE  = "arg_inventoryPrice";
+    public static final String ARG_INVENTORY_OBJID  = "arg_inventoryObjectId";
+    public static final String ARG_INVENTORY_INFOS  = "arg_inventoryInfos";
 
     private FragmentInventoryPicker.OnFragmentInteractionListener mListener;
 
@@ -84,9 +85,10 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             invIdx = getArguments().getInt(ARG_INVENTORY_IDX);
             String itemName = getArguments().getString(ARG_INVENTORY_NAME);
             Integer itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
+            Long itemPrice = getArguments().getLong(ARG_INVENTORY_PRICE);
             Long itemObjectId = getArguments().getLong(ARG_INVENTORY_OBJID);
             String itemInfos = getArguments().getString(ARG_INVENTORY_INFOS);
-            initial = new Character.InventoryItem(itemName, itemWeight, itemObjectId, itemInfos);
+            initial = new Character.InventoryItem(itemName, itemWeight, itemPrice, itemObjectId, itemInfos);
         }
 
         // restore values that were selected
@@ -102,7 +104,9 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_sheet_inventorypicker, container, false);
         final EditText itemWeight = rootView.findViewById(R.id.sheet_inventory_item_weight);
-        itemWeight.setFilters(new InputFilter[]{new InputFilter.LengthFilter(5)});
+        itemWeight.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
+        final EditText itemPrice = rootView.findViewById(R.id.sheet_inventory_item_price);
+        itemPrice.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
 
         rootView.findViewById(R.id.sheet_inventory_reference_section).setVisibility(View.GONE);
         rootView.findViewById(R.id.sheet_inventory_reference_section).setOnClickListener(this);
@@ -134,6 +138,17 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         if(initial != null) {
             itemName.setText(initial.getName());
             itemWeight.setText(String.valueOf(initial.getWeight()));
+            long price = initial.getPrice();
+            if(price % 100 == 0) {
+                ((AppCompatSpinner)rootView.findViewById(R.id.sheet_inventory_item_price_unit)).setSelection(2);
+                itemPrice.setText(String.valueOf(initial.getPrice()/100));
+            } else if(price % 10 == 0) {
+                ((AppCompatSpinner)rootView.findViewById(R.id.sheet_inventory_item_price_unit)).setSelection(1);
+                itemPrice.setText(String.valueOf(initial.getPrice()/10));
+            } else {
+                itemPrice.setText(String.valueOf(initial.getPrice()));
+            }
+
             if(initial.getObjectId() > 0) {
                 DBEntity e = DBHelper.getInstance(rootView.getContext()).fetchObjectEntity(initial);
                 if(e != null) {
@@ -149,6 +164,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 }
             }
         } else {
+            ((AppCompatSpinner)rootView.findViewById(R.id.sheet_inventory_item_price_unit)).setSelection(2);
             rootView.findViewById(R.id.inventory_item_delete).setVisibility(View.GONE);
         }
 
@@ -183,13 +199,22 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         else if(v.getId() == R.id.inventory_item_ok) {
             String itemName = null;
             Integer itemWeight = null;
+            Integer itemPrice = null;
             String itemInfos = null;
             itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
             try {
                 itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
             } catch(NumberFormatException nfe) {}
+            try {
+                itemPrice = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_price)).getText().toString());
+            } catch(NumberFormatException nfe) {}
             itemInfos = ((EditText) getView().findViewById(R.id.sheet_inventory_item_infos)).getText().toString();
-
+            int idx = ((AppCompatSpinner)getView().findViewById(R.id.sheet_inventory_item_price_unit)).getSelectedItemPosition();
+            if(idx == 1) { // silver
+                itemPrice *= 10;
+            } else if(idx == 2) { // gold
+                itemPrice *= 100;
+            }
 
             if(itemName == null || itemName.length() < 3) {
                 Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_name), Toast.LENGTH_SHORT);
@@ -203,9 +228,15 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 v.getLocationOnScreen(xy);
                 t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
                 t.show();
+            } else if(itemPrice == null) {
+                Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_price), Toast.LENGTH_SHORT);
+                int[] xy = new int[2];
+                v.getLocationOnScreen(xy);
+                t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
+                t.show();
             }
             else {
-                Character.InventoryItem item = new Character.InventoryItem(itemName, itemWeight, initial == null ? 0L : initial.getObjectId(), itemInfos);
+                Character.InventoryItem item = new Character.InventoryItem(itemName, itemWeight, itemPrice, initial == null ? 0L : initial.getObjectId(), itemInfos);
                 if(mListener != null) {
                     if(invIdx >= 0) {
                         mListener.onUpdateItem(invIdx, item);

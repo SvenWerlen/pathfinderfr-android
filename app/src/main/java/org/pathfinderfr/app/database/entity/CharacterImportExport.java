@@ -53,6 +53,7 @@ public class CharacterImportExport {
     private static final String YAML_BONUS_VALUE     = "Valeur";
     private static final String YAML_INVENTORY       = "Inventaire";
     private static final String YAML_WEIGHT          = "Poids";
+    private static final String YAML_PRICE           = "Prix";
     private static final String YAML_AMMO            = "Munitions";
     private static final String YAML_REFERENCE       = "Référence";
     private static final String YAML_REF_TYPE_W      = "Arme";
@@ -272,6 +273,7 @@ public class CharacterImportExport {
             Map<String, Object> itemObj = new LinkedHashMap();
             itemObj.put(YAML_NAME, item.getName());
             itemObj.put(YAML_WEIGHT, item.getWeight());
+            itemObj.put(YAML_PRICE, item.getPrice());
             if(item.getObjectId() > 0) {
                 DBEntity e = dbHelper.fetchObjectEntity(item);
                 if(e != null) {
@@ -606,16 +608,16 @@ public class CharacterImportExport {
             if (money instanceof Map) {
                 Map<String, Object> pieces = (Map<String, Object>) money;
                 if (pieces.containsKey(YAML_CP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_CP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyCP(cleanNumber((String)pieces.get(YAML_CP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_SP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_SP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneySP(cleanNumber((String)pieces.get(YAML_SP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_GP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_GP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyGP(cleanNumber((String)pieces.get(YAML_GP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
                 if (pieces.containsKey(YAML_PP)) {
-                    c.setMoneyCP(cleanNumber((String)map.get(YAML_PP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
+                    c.setMoneyPP(cleanNumber((String)pieces.get(YAML_PP), errors, FragmentMoneyPicker.MAX_MONEY, ERROR_MONEY_INVALID, ERROR_MONEY_FORMAT));
                 }
             }
 
@@ -634,6 +636,14 @@ public class CharacterImportExport {
                                     itemWeight = Integer.parseInt((String)values.get(YAML_WEIGHT));
                                 } catch(NumberFormatException nfe) {
                                     errors.add(ERROR_INVENTORY_FORMAT);
+                                }
+                                int itemPrice = 0;
+                                if(values.containsKey(YAML_PRICE)) {
+                                    try {
+                                        itemPrice = Integer.parseInt((String) values.get(YAML_PRICE));
+                                    } catch (NumberFormatException nfe) {
+                                        errors.add(ERROR_INVENTORY_FORMAT);
+                                    }
                                 }
                                 long objectId = 0L;
                                 if(values.containsKey(YAML_REFERENCE)) {
@@ -659,7 +669,7 @@ public class CharacterImportExport {
                                         errors.add(ERROR_INVENTORY_REFERENCE);
                                     }
                                 }
-                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, objectId, (String)values.get(YAML_AMMO)));
+                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, itemPrice, objectId, (String)values.get(YAML_AMMO)));
                             }
                         }
                     }
@@ -735,9 +745,9 @@ public class CharacterImportExport {
                     for (Object f : fList) {
                         if (f instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) f;
-                            if(values.containsKey(YAML_NAME) && values.containsKey(YAML_RACE)) {
+                            if(values.containsKey(YAML_NAME)) {
                                 String tName = values.get(YAML_NAME).toString();
-                                String rName = values.get(YAML_RACE).toString();
+                                String rName = values.containsKey(YAML_RACE) ? values.get(YAML_RACE).toString() : null;
                                 Trait trait = null;
                                 for(DBEntity t : allTraits) {
                                     Trait tObj = (Trait)t;

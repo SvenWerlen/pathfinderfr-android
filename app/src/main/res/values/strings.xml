@@ -430,6 +430,8 @@
     <string name="sheet_money_description">Les valeurs ci-dessous sont utilisées lors de la
         génération de la feuille de personnage au format PDF.
     </string>
+    <string name="sheet_money_total_title">Richesses (valeur totale):</string>
+    <string name="sheet_money_total_value">130 po, 5 pa, 3 pc</string>
 
     <!-- Inventory -->
     <string name="sheet_main_inventory_example_label_name">Inventaire</string>
@@ -444,11 +446,14 @@
     <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments sont toujours triés par ordre alphabétique. Vous pouvez aussi ajouter une arme ou une armure à partir du catalogue.</string>
     <string name="sheet_inventory_item_name">Descriptif:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
+    <string name="sheet_inventory_item_price">Valeur (prix):</string>
+    <string name="sheet_inventory_item_price_unit">Unité de prix</string>
     <string name="sheet_inventory_item_reference">Référence:</string>
     <string name="sheet_inventory_item_reference_example">Arc long</string>
     <string name="sheet_inventory_item_ammo">Munitions:</string>
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
+    <string name="sheet_inventory_error_price">Veuiller spécifier un prix/valeur (ou inscrire "0")!</string>
 
     <!-- Skills -->
     <string name="sheet_skills_example_label_name">Compétences</string>

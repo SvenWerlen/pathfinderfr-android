@@ -221,7 +221,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.execSQL(q);
             }
             oldVersion = 19;
-            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 18");
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 19");
         }
     }
 

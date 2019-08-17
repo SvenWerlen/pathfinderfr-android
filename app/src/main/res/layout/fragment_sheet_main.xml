@@ -1569,6 +1569,29 @@
 
         </TableLayout>
 
+        <com.wefika.flowlayout.FlowLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="start|top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp"
+                android:text="@string/sheet_money_total_title" />
+
+            <TextView
+                android:id="@+id/sheet_main_money_total_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="@dimen/sheet_font_text_links"
+                android:text="@string/sheet_money_total_value" />
+
+        </com.wefika.flowlayout.FlowLayout>
         </LinearLayout>
 
 

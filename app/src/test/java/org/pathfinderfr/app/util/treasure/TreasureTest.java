@@ -2,6 +2,7 @@ package org.pathfinderfr.app.util.treasure;
 
 import org.junit.Test;
 import org.pathfinderfr.app.treasure.TreasureTable;
+import org.pathfinderfr.app.treasure.TreasureUtil;
 
 public class TreasureTest {
 
@@ -23,6 +24,5 @@ public class TreasureTest {
         table = new TreasureTable();
         table.addRow(text);
         System.out.println(table);
-
     }
 }

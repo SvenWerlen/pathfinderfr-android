@@ -190,11 +190,13 @@ public class Character extends DBEntity {
         private int id; // only used for linktoweapon (modifs)
         private String name;
         private int weight;
+        private long price;
         private long objectId; // reference to original object
         private String infos; // additional info (ex: ammo)
-        public InventoryItem(String name, int weight, long objectId, String infos) {
+        public InventoryItem(String name, int weight, long price, long objectId, String infos) {
             this.name = name;
             this.weight = weight;
+            this.price = price;
             this.objectId = objectId;
             this.infos = infos;
         }
@@ -204,6 +206,7 @@ public class Character extends DBEntity {
         public void set(InventoryItem copy) {
             this.name = copy.name;
             this.weight = copy.weight;
+            this.price = copy.price;
             this.objectId = copy.objectId;
             this.infos = copy.infos;
         }
@@ -213,6 +216,8 @@ public class Character extends DBEntity {
         public void setName(String name) { this.name = name; }
         public int getWeight() { return weight; }
         public void setWeight(int weight) { this.weight = weight; }
+        public long getPrice() { return price; }
+        public void setPrice(long price) { this.price = price; }
         public long getObjectId() { return this.objectId; }
         public String getInfos() { return this.infos; }
         public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
@@ -1474,6 +1479,18 @@ public class Character extends DBEntity {
             return "-";
         }
         StringBuffer buf = new StringBuffer();
+        if(moneyPP > 0) {
+            buf.append(moneyPP).append(" pp, ");
+        }
+        if(moneyGP > 0) {
+            buf.append(moneyGP).append(" po, ");
+        }
+        if(moneySP > 0) {
+            buf.append(moneyGP).append(" pa, ");
+        }
+        if(moneyCP > 0) {
+            buf.append(moneyGP).append(" pc, ");
+        }
         for(InventoryItem el : invItems) {
             buf.append(el.getName()).append(", ");
         }

@@ -122,4 +122,27 @@ public class StringUtilTest {
         assertEquals(0, StringUtil.parseWeight(null));
         assertEquals(0, StringUtil.parseWeight(""));
     }
+
+    @Test
+    public void string2Cost() {
+        assertEquals(11000L, StringUtil.string2Cost("110 po") );
+        assertEquals(1000000, StringUtil.string2Cost("10 000 po"));
+        assertEquals(1100L, StringUtil.string2Cost("110 pa"));
+        assertEquals(110L, StringUtil.string2Cost("110 pc"));
+        assertEquals(0L, StringUtil.string2Cost("-"));
+        assertEquals(1L, StringUtil.string2Cost("1 pc-20 po"));
+        assertEquals(0L, StringUtil.string2Cost("+10 po"));
+        assertEquals(0L, StringUtil.string2Cost("spécial"));
+    }
+
+    @Test
+    public void cost2String() {
+        assertEquals("5 pc", StringUtil.cost2String(5L));
+        assertEquals("6 pa, 5 pc", StringUtil.cost2String(65L));
+        assertEquals("6 pa", StringUtil.cost2String(60L));
+        assertEquals("12 po, 6 pa, 5 pc", StringUtil.cost2String(1265L));
+        assertEquals("12 po, 6 pa", StringUtil.cost2String(1260L));
+        assertEquals("12 po", StringUtil.cost2String(1200L));
+        assertEquals("12 000 po", StringUtil.cost2String(1200000L));
+    }
 }

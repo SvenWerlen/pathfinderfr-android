@@ -4,8 +4,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -136,6 +139,53 @@ public class StringUtil {
             }
         } catch(Exception e) {}
         return 0;
+    }
+
+    /**
+     * Converts a string such "Cost" as value
+     * @return
+     */
+    public static long string2Cost(String txt) {
+        // remove space ("10 000 po" => "10000po")
+        txt = txt.replace(" ", "");
+        Pattern pattern = Pattern.compile("^(\\d*)p([cao])");
+        Matcher matcher = pattern.matcher(txt);
+        if (matcher.find()) {
+            try {
+                int value = Integer.parseInt(matcher.group(1));
+                switch(matcher.group(2)) {
+                    case "c": return value;
+                    case "a": return value*10;
+                    case "o": return value*100;
+                }
+            } catch(NumberFormatException nfe) {}
+        }
+        return 0;
+    }
+
+    /**
+     * Returns a value (total money) as text representation
+     * @param total
+     * @return
+     */
+    public static String cost2String(long total) {
+        String text = "";
+
+        long po = total/100;
+        long pa = (total-po*100)/10;
+        long pc = total % 10;
+
+        if(po > 0) {
+            NumberFormat df = DecimalFormat.getInstance(Locale.CANADA_FRENCH);
+            text += df.format(po) + " po";
+        }
+        if(pa > 0) {
+            text += (text.length() > 0 ? ", " : "") + String.format("%d pa", pa);
+        }
+        if(pc > 0) {
+            text += (text.length() > 0 ? ", " : "") + String.format("%d pc", pc);
+        }
+        return text;
     }
 
     public static String getStackTrace(Throwable t) {

@@ -67,4 +67,11 @@
         <item>Femme</item>
     </string-array>
 
+    <string-array name="price_unit">
+        <item>pc</item>
+        <item>pa</item>
+        <item>po</item>
+    </string-array>
+
+
 </resources>

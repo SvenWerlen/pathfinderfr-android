@@ -954,7 +954,11 @@ public class CharacterPDF {
             Armor armor = armors == null || i >= armors.size() ? new Armor() : armors.get(i);
             table.addCell(createInfoText(armor.getName(), 1, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
             table.addCell(createInfoText(armor.getBonus(), 1, TextAlignment.CENTER, true));
-            table.addCell(createInfoText("", 1, TextAlignment.CENTER, true));
+            String category = armor.getCategory() == null ? "" : armor.getCategory();
+            if(category.length() >= 4) {
+                category = category.substring(0,4);
+            }
+            table.addCell(createInfoText(stringMax(category, 4), 1, TextAlignment.CENTER, true));
             table.addCell(createInfoText(armor.getMalus(), 1, TextAlignment.CENTER, true));
             table.addCell(createInfoText(armor.getCastFail(), 1, TextAlignment.CENTER, true));
             table.addCell(createInfoText(armor.getWeight(), 1, TextAlignment.CENTER, true));

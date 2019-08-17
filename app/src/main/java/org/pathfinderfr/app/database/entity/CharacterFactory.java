@@ -374,10 +374,9 @@ public class CharacterFactory extends DBEntityFactory {
                 for (Character.InventoryItem item : inventory) {
                     value.append(item.getName()).append('|');
                     value.append(item.getWeight()).append('|');
-                    value.append(item.getObjectId());
-                    if (item.getInfos() != null && item.getInfos().length() > 0) {
-                        value.append('|').append(item.getInfos());
-                    }
+                    value.append(item.getObjectId()).append('|');
+                    value.append(item.getInfos() != null ? item.getInfos() : "").append('|');
+                    value.append(item.getPrice());
                     value.append('#');
                 }
                 value.deleteCharAt(value.length() - 1);
@@ -647,8 +646,17 @@ public class CharacterFactory extends DBEntityFactory {
                     if(itemElements.length >= 4) {
                         infos = itemElements[3];
                     }
+                    // item cost was introduced later
+                    int price = 0;
+                    if(itemElements.length >= 5) {
+                        try {
+                            price = Integer.parseInt(itemElements[4]);
+                        } catch (NumberFormatException nfe) {
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
+                        }
+                    }
 
-                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, objId, infos);
+                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
                     if (toAdd.isValid()) {
                         c.addInventoryItem(toAdd);
                     }
