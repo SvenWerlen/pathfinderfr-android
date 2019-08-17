@@ -36,6 +36,7 @@ import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -306,7 +307,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
     public void onRanksSelected(long skillId, int rank) {
         // update character
         character.setSkillRank(skillId, rank);
-        if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+        if(DBHelper.getInstance(getContext()).updateEntity(character, new HashSet<Integer>(Arrays.asList(CharacterFactory.FLAG_SKILLS)))) {
             // update view
             TextView rankTv = getView().findViewWithTag("SKILL-RANK-" + skillId);
             TextView totalTv = getView().findViewWithTag("SKILL-TOTAL-" + skillId);

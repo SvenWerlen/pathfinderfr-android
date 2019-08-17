@@ -10,6 +10,7 @@ import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class DBEntityFactory {
 
@@ -104,6 +105,17 @@ public abstract class DBEntityFactory {
      * @return ContentValues filled with values from entity
      */
     public abstract ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity);
+
+    /**
+     * Generates the content values required for inserting the entity into the database.
+     * @param flags indicates which parts to update
+     *
+     * @return ContentValues filled with values from entity
+     */
+    public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity, @NonNull Set<Integer> flags) {
+        // when flags are not implemented => generate all
+        return generateContentValuesFromEntity(entity);
+    }
 
     /**
      * Generates an entity based on given cursor

@@ -23,11 +23,14 @@ import com.itextpdf.layout.property.VerticalAlignment;
 
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
 
@@ -326,7 +329,7 @@ public class CharacterPDF {
         return c;
     }
 
-    public Cell createFeatureText(String text) {
+    public Cell createFeatureText(String text, boolean title) {
         text = text == null ? "" : text;
         Cell c = new Cell()
                 .setPadding(0)
@@ -337,6 +340,9 @@ public class CharacterPDF {
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .add((new Paragraph(text).setTextAlignment(TextAlignment.LEFT).setFixedLeading(9)));
         c.setBorder(Border.NO_BORDER);
+        if(title) {
+            c.setBold();
+        }
         return c;
     }
 
@@ -1208,7 +1214,8 @@ public class CharacterPDF {
 
             for (int i = 0; i < 27; i++) {
                 Object element = i < entities.size() ? entities.get(i) : null;
-                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBorderBottom(new SolidBorder(1)).setPaddingTop(4).setPaddingBottom(4).setMinHeight(13).setPaddingLeft(2));
+                String text = getTextFromTraitFeatFeature(element);
+                table.addCell(createFeatureText(stringMax(text,50), false).setBorderBottom(new SolidBorder(1)).setPaddingTop(4).setPaddingBottom(4).setMinHeight(13).setPaddingLeft(2));
             }
         }
         // normal display
@@ -1221,7 +1228,8 @@ public class CharacterPDF {
 
             for (int i = 0; i < 42; i++) {
                 Object element = i < entities.size() ? entities.get(i) : null;
-                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
+                String text = getTextFromTraitFeatFeature(element);
+                table.addCell(createFeatureText(stringMax(text,50), false).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
             }
         }
         // dense display
@@ -1235,7 +1243,84 @@ public class CharacterPDF {
             for (int i = 0; i < 66; i++) {
                 Color backgnd = i % 2 == 1 ? COLOR_LIGHT_GRAY : ColorConstants.WHITE;
                 Object element = i < entities.size() ? entities.get(i) : null;
-                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBackgroundColor(backgnd).setMinHeight(9).setPaddingLeft(2));
+                String text = getTextFromTraitFeatFeature(element);
+                table.addCell(createFeatureText(stringMax(text,50), false).setBackgroundColor(backgnd).setMinHeight(9).setPaddingLeft(2));
+            }
+        }
+        return table;
+    }
+
+
+    public Table createSectionSpells() {
+        Table table;
+        List<Triplet<Class, ClassArchetype,Integer>> spellClasses = new ArrayList<>();
+        for(int i=0; i<character.getClassesCount(); i++) {
+            SpellFilter filter = new SpellFilter(null);
+            Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
+            filter.addFilterClass(classLvl.first.getId());
+            Class.Level lvl = classLvl.first.getLevel(classLvl.third);
+            if(lvl != null && lvl.getMaxSpellLvl() > 0) {
+                filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
+                spellClasses.add(classLvl);
+            }
+        }
+
+        SpellTable sTable = new SpellTable(spellClasses);
+        for(Spell s : character.getSpells()) {
+            sTable.addSpell(s);
+        }
+
+        List<String> spellTexts = new ArrayList<>();
+        for(SpellTable.SpellLevel lvl : sTable.getLevels()) {
+            spellTexts.add("Niveau " + lvl.getLevel());
+            for(SpellTable.SpellAndClass s : lvl.getSpells()) {
+                String school = s.getSpell().getSchool();
+                if(school != null && school.length() > 3) {
+                    school = school.substring(0,3);
+                    school = String.valueOf(school.charAt(0)).toUpperCase() + school.substring(1);
+                } else {
+                    school = "   ";
+                }
+                spellTexts.add(String.format("[%s] %s", school, s.getSpell().getName()));
+            }
+            spellTexts.add("");
+        }
+
+
+        // normal display
+        if(spellTexts.size() <= 34) {
+            table = new Table(1);
+            table.setFixedPosition(410, 55, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("Sorts", "", 1,1).setMinWidth(155).setMinHeight(12));
+
+            for (int i = 0; i < 34; i++) {
+                String text = i < spellTexts.size() ? spellTexts.get(i) : "";
+                table.addCell(createFeatureText(stringMax(text,40), text.startsWith("Niveau")).setBorderBottom(new SolidBorder(1)).setPaddingTop(4).setPaddingBottom(4).setMinHeight(13).setPaddingLeft(2));
+            }
+        } else if(spellTexts.size() <= 54) {
+            table = new Table(1);
+            table.setFixedPosition(410, 55, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("Sorts", "", 1,1).setMinWidth(155).setMinHeight(12));
+
+            for (int i = 0; i < 54; i++) {
+                String text = i < spellTexts.size() ? spellTexts.get(i) : "";
+                table.addCell(createFeatureText(stringMax(text,40), text.startsWith("Niveau")).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
+            }
+        } else {
+            table = new Table(1);
+            table.setFixedPosition(410, 55, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("Sorts", "", 1,1).setMinWidth(155).setMinHeight(12));
+
+            for (int i = 0; i < 84; i++) {
+                Color backgnd = i % 2 == 1 ? COLOR_LIGHT_GRAY : ColorConstants.WHITE;
+                String text = i < spellTexts.size() ? spellTexts.get(i) : "";
+                table.addCell(createFeatureText(stringMax(text,40), text.startsWith("Niveau")).setBackgroundColor(backgnd).setMinHeight(9).setPaddingLeft(2));
             }
         }
         return table;
@@ -1298,6 +1383,7 @@ public class CharacterPDF {
         document.add(createSectionRichness());
         document.add(createSectionFeatsAndFeatures());
         document.add(createSectionExperience());
+        document.add(createSectionSpells());
 
         document.close();
     }

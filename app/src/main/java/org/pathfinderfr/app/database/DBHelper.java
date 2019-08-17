@@ -252,6 +252,19 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates the entity (partially) into the database
+     *
+     * @param entity entity instance
+     * @return true if update succeeded
+     */
+    public boolean updateEntity(DBEntity entity, Set<Integer> flags) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = entity.getFactory().generateContentValuesFromEntity(entity, flags);
+        long rowId = db.update(entity.getFactory().getTableName(), contentValues, DBEntityFactory.COLUMN_ID + "=" + entity.getId(), null);
+        return rowId > 0;
+    }
+
+    /**
      * Inserts the favorite into the database
      *
      * @param entity entity instance

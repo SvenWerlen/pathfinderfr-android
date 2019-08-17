@@ -134,7 +134,7 @@
                     android:layout_height="20dp"
                     android:layout_gravity="end|center"
                     android:paddingEnd="5dp"
-                    app:srcCompat="@drawable/ic_link_favorite" />
+                    app:srcCompat="@drawable/ic_item_icon_sheet" />
 
             </TableRow>
 

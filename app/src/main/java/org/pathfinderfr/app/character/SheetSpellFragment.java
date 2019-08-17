@@ -46,6 +46,7 @@ import org.pathfinderfr.app.util.Triplet;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,9 +98,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
      *
      * @param spells list of spells to be rendered
      * @param spellClasses character's classes that have spells
-     * @param favorites list of favorites
+     * @param chosen list of chosen spells
      * @param ctx context for rendering
-     * @param curLevel level to be considered
      * @param height row height
      * @param filterOnlyFav is favorite filter enabled?
      * @param colorEnabled color for favorite (when enabled)
@@ -113,10 +113,9 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
     private static int generateTableRows(
             List<SpellTable.SpellAndClass> spells,
             List<Triplet<Class, ClassArchetype,Integer>> spellClasses,
-            Set<Long> favorites,
+            Set<Long> chosen,
             Context ctx,
             int startIdx,
-            int curLevel,
             int height,
             boolean filterOnlyFav,
             int colorEnabled,
@@ -147,13 +146,13 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             rowSpell.addView(spellTv);
             // favorite icon
             final ImageView spellFavTv = FragmentUtil.copyExampleImageFragment(exampleFav);
-            spellFavTv.setImageResource(R.drawable.ic_link_favorite);
+            spellFavTv.setImageResource(R.drawable.ic_item_icon_sheet);
             spellFavTv.setTag(spell.getSpell().getId());
             if (filterOnlyFav) {
                 spellFavTv.setVisibility(View.INVISIBLE);
             } else {
-                boolean isFav = favorites.contains(spell.getSpell().getId());
-                spellFavTv.setColorFilter(isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                boolean isSel =  chosen.contains(spell.getSpell().getId());
+                spellFavTv.setColorFilter(isSel ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
                 spellFavTv.setOnClickListener(favListener);
                 spellTv.setTag(spell.getSpell().getId());
             }
@@ -203,12 +202,10 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         boolean filterOnlyFav = prefs.getBoolean(FragmentSpellFilter.KEY_SPELLFILTER_FAV, false);
         int filterMode = prefs.getInt(FragmentSpellFilter.KEY_SPELLFILTER_MODE, FragmentSpellFilter.SPELLFILTER_MODE_SCHOOL);
 
-        Set<Long> favorites = null;
-        favorites = new HashSet<>();
-        for(DBEntity e : DBHelper.getInstance(view.getContext()).getAllEntities(FavoriteFactory.getInstance())) {
-            if(e instanceof Spell) {
-                favorites.add(e.getId());
-            }
+        Set<Long> chosenSpells = null;
+        chosenSpells = new HashSet<>();
+        for(Spell spell : character.getSpells()) {
+            chosenSpells.add(spell.getId());
         }
 
         // check if filters have been applied
@@ -236,7 +233,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         SpellTable sTable = new SpellTable(spellClasses);
         for(Spell entity : spells) {
             // only add if favorite (or filtering disabled)
-            if(!filterOnlyFav || favorites.contains(entity.getId())) {
+            if(!filterOnlyFav || chosenSpells.contains(entity.getId())) {
                 sTable.addSpell((Spell) entity);
             }
         }
@@ -284,10 +281,9 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                     rowId = generateTableRows(
                             school.getSpells(),
                             spellClasses,
-                            favorites,
+                            chosenSpells,
                             view.getContext(),
                             rowId,
-                            level.getLevel(),
                             height,
                             filterOnlyFav,
                             colorEnabled,
@@ -306,10 +302,9 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                 rowId = generateTableRows(
                         level.getSpells(),
                         spellClasses,
-                        favorites,
+                        chosenSpells,
                         view.getContext(),
                         rowId,
-                        level.getLevel(),
                         height,
                         filterOnlyFav,
                         colorEnabled,
@@ -378,15 +373,16 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
 
             long spellId = (Long) v.getTag();
             if (spellId > 0) {
+                boolean isSelected = character.hasSpell(spellId);
                 DBHelper dbHelper = DBHelper.getInstance(getContext());
-                boolean isFav = dbHelper.isFavorite(SpellFactory.FACTORY_ID, spellId);
                 DBEntity entity = (Spell) dbHelper.fetchEntity(spellId, SpellFactory.getInstance());
-                if (isFav && entity != null) {
-                    dbHelper.deleteFavorite(entity);
+                if (isSelected && entity != null) {
+                    character.removeSpell((Spell)entity);
                 } else if (entity != null) {
-                    dbHelper.insertFavorite(entity);
+                    character.addSpell((Spell)entity);
                 }
-                ((ImageView) v).setColorFilter(!isFav ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+                dbHelper.updateEntity(character, new HashSet<Integer>(Arrays.asList(CharacterFactory.FLAG_SPELLS)));
+                ((ImageView) v).setColorFilter(!isSelected ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
             }
         }
     }

@@ -127,7 +127,6 @@ public class SpellTable {
 
         @Override
         public int compareTo(SpellSchool o) {
-            Collator collator = Collator.getInstance();
             return Collator.getInstance().compare(schoolName,o.getSchoolName());
         }
     }

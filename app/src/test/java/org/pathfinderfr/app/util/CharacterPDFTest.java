@@ -1,31 +1,43 @@
 package org.pathfinderfr.app.util;
 
+import android.util.Log;
+
 import com.itextpdf.io.image.ImageDataFactory;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
-import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Log.class})
 public class CharacterPDFTest {
 
     public static int skillId;
+
+    @Before
+    public void init() {
+        PowerMockito.mockStatic(Log.class);
+    }
 
     public static Skill createSkill(String name, String ability, boolean trainingReq) {
         Skill s = new Skill();
@@ -48,11 +60,11 @@ public class CharacterPDFTest {
         c.setCharisma(16);
         c.setName("Lana");
         Class cl = new Class();
-        cl.setName("Barbare");
+        cl.setName("Barde");
         cl.getSkills().add("Acrobatie");
-        cl.getLevels().add(new Class.Level(1, new int[]{1}, 0,2,0,0));
-        cl.getLevels().add(new Class.Level(2, new int[]{2}, 0,3,0,0));
-        cl.getLevels().add(new Class.Level(7, new int[]{7, 2}, 2,5,2,0));
+        cl.getLevels().add(new Class.Level(1, new int[]{1}, 0,2,0,2));
+        cl.getLevels().add(new Class.Level(2, new int[]{2}, 0,3,0,3));
+        cl.getLevels().add(new Class.Level(7, new int[]{7, 2}, 2,5,2,4));
         c.addOrSetClass(cl, null, 7);
         Race r = new Race();
         r.setName("Humain");
@@ -284,6 +296,36 @@ public class CharacterPDFTest {
         cf.setLevel(2);
         cf.setName("Érudition (Ext)");
         c.addClassFeature(cf);
+
+        Spell s = new Spell();
+        s.setName("Convocation d'instrument");
+        s.setLevel("Bar 2");
+        s.setId(2);
+        s.setSchool("Invocation");
+        c.addSpell(s);
+
+        s = new Spell();
+        s.setId(0);
+        s.setName("Aspect de fée hantée");
+        s.setLevel("Bar 0");
+        s.setSchool("Invocation");
+        c.addSpell(s);
+
+        s = new Spell();
+        s.setId(1);
+        s.setName("Abondance de munitions - très long texte à couper");
+        s.setLevel("Bar 1");
+        s.setSchool("Expiration");
+        c.addSpell(s);
+
+        for(int i = 0; i<50; i++) {
+            s = new Spell();
+            s.setId(i+10);
+            s.setName("Sort " + i);
+            s.setLevel("Bar 3");
+            s.setSchool("Test");
+            c.addSpell(s);
+        }
 
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);

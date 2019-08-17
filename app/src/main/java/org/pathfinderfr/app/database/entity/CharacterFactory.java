@@ -61,6 +61,10 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_XP          = "xp";  // experience
     private static final String COLUMN_SPELLS      = "spells";
 
+    public static final Integer FLAG_ALL = 1;
+    public static final Integer FLAG_SKILLS = 2;
+    public static final Integer FLAG_SPELLS = 3;
+
 
     private static CharacterFactory instance;
 
@@ -213,198 +217,215 @@ public class CharacterFactory extends DBEntityFactory {
 
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
+        Set<Integer> flags = new HashSet<Integer>();
+        flags.add(FLAG_ALL);
+        return generateContentValuesFromEntity(entity, flags);
+    }
+
+    @Override
+    public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity, Set<Integer> flags) {
+
         if (!(entity instanceof Character)) {
             return null;
         }
         Character c = (Character) entity;
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CharacterFactory.COLUMN_NAME, c.getName());
-        contentValues.put(CharacterFactory.COLUMN_DESC, c.getDescription());
-        contentValues.put(CharacterFactory.COLUMN_REFERENCE, c.getReference()); // there is no reference
-        contentValues.put(CharacterFactory.COLUMN_SOURCE, c.getSource());       // there is no source
 
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_STR, c.getAbilityValue(Character.ABILITY_STRENGH, false));
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_DEX, c.getAbilityValue(Character.ABILITY_DEXTERITY, false));
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_CON, c.getAbilityValue(Character.ABILITY_CONSTITUTION, false));
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_INT, c.getAbilityValue(Character.ABILITY_INTELLIGENCE, false));
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_WIS, c.getAbilityValue(Character.ABILITY_WISDOM, false));
-        contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getAbilityValue(Character.ABILITY_CHARISMA, false));
+        if(flags.contains(FLAG_ALL)) {
+            contentValues.put(CharacterFactory.COLUMN_NAME, c.getName());
+            contentValues.put(CharacterFactory.COLUMN_DESC, c.getDescription());
+            contentValues.put(CharacterFactory.COLUMN_REFERENCE, c.getReference()); // there is no reference
+            contentValues.put(CharacterFactory.COLUMN_SOURCE, c.getSource());       // there is no source
 
-        contentValues.put(CharacterFactory.COLUMN_HITPOINTS, c.getHitpoints());
-        contentValues.put(CharacterFactory.COLUMN_HPTEMP, c.getHitpointsTemp());
-        contentValues.put(CharacterFactory.COLUMN_SPEED, c.getSpeed());
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_STR, c.getAbilityValue(Character.ABILITY_STRENGH, false));
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_DEX, c.getAbilityValue(Character.ABILITY_DEXTERITY, false));
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_CON, c.getAbilityValue(Character.ABILITY_CONSTITUTION, false));
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_INT, c.getAbilityValue(Character.ABILITY_INTELLIGENCE, false));
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_WIS, c.getAbilityValue(Character.ABILITY_WISDOM, false));
+            contentValues.put(CharacterFactory.COLUMN_ABILITY_CHA, c.getAbilityValue(Character.ABILITY_CHARISMA, false));
 
-        // race is stored using format <raceId>:<raceName>
-        // (class names must be kept for to be able to migrate data if IDs changes during import)
-        if(c.getRace() != null) {
-            String value = c.getRace().getId() + ":" + c.getRace().getName();
-            contentValues.put(CharacterFactory.COLUMN_RACE, value);
-            Log.d(CharacterFactory.class.getSimpleName(), "Race: " + value);
-        }
+            contentValues.put(CharacterFactory.COLUMN_HITPOINTS, c.getHitpoints());
+            contentValues.put(CharacterFactory.COLUMN_HPTEMP, c.getHitpointsTemp());
+            contentValues.put(CharacterFactory.COLUMN_SPEED, c.getSpeed());
 
-        // classes are stored using format <class1Id>:<class1Name>:<class1Level>#<class2Id>:<class2Name>:<class2Level>
-        // (class names must be kept for to be able to migrate data if IDs changes during import)
-        if(c.getClassesCount() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(int i=0; i<c.getClassesCount(); i++) {
-                Triplet<Class, ClassArchetype, Integer> cl = c.getClass(i);
-                value.append(cl.first.id).append(':');
-                value.append(cl.first.name).append(':');
-                value.append(cl.third).append(':');
-                if(cl.second != null) {
-                    value.append(c.getClass(i).second.id);
+            // race is stored using format <raceId>:<raceName>
+            // (class names must be kept for to be able to migrate data if IDs changes during import)
+            if (c.getRace() != null) {
+                String value = c.getRace().getId() + ":" + c.getRace().getName();
+                contentValues.put(CharacterFactory.COLUMN_RACE, value);
+                Log.d(CharacterFactory.class.getSimpleName(), "Race: " + value);
+            }
+
+            // classes are stored using format <class1Id>:<class1Name>:<class1Level>#<class2Id>:<class2Name>:<class2Level>
+            // (class names must be kept for to be able to migrate data if IDs changes during import)
+            if (c.getClassesCount() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (int i = 0; i < c.getClassesCount(); i++) {
+                    Triplet<Class, ClassArchetype, Integer> cl = c.getClass(i);
+                    value.append(cl.first.id).append(':');
+                    value.append(cl.first.name).append(':');
+                    value.append(cl.third).append(':');
+                    if (cl.second != null) {
+                        value.append(c.getClass(i).second.id);
+                    }
+                    if (i + 1 != c.getClassesCount()) {
+                        value.append('#');
+                    }
                 }
-                if(i+1 != c.getClassesCount()) {
-                    value.append('#');
+                Log.d(CharacterFactory.class.getSimpleName(), "Classes: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_CLASSES, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_CLASSES, "");
+            }
+        }
+
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SKILLS)) {
+            // skills are stored using format <skill1Id>:<ranks>#<skill2Id>:<ranks>#...
+            // (assuming that skill ids won't change during data import)
+            if (c.getSkills().size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Long skillId : c.getSkills()) {
+                    value.append(skillId).append(':').append(c.getSkillRank(skillId)).append('#');
                 }
+                value.deleteCharAt(value.length() - 1);
+                Log.d(CharacterFactory.class.getSimpleName(), "Skills: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_SKILLS, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_SKILLS, "");
             }
-            Log.d(CharacterFactory.class.getSimpleName(), "Classes: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_CLASSES, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_CLASSES, "");
         }
 
-        // skills are stored using format <skill1Id>:<ranks>#<skill2Id>:<ranks>#...
-        // (assuming that skill ids won't change during data import)
-        if(c.getSkills().size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(Long skillId : c.getSkills()) {
-                value.append(skillId).append(':').append(c.getSkillRank(skillId)).append('#');
-            }
-            value.deleteCharAt(value.length()-1);
-            Log.d(CharacterFactory.class.getSimpleName(), "Skills: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_SKILLS, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_SKILLS, "");
-        }
-
-        // feats are stored using format <feat1Id>#<feat2Id>...
-        // (assuming that feat ids won't change during data import)
-        if(c.getFeats().size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(Feat feat : c.getFeats()) {
-                value.append(feat.getId()).append('#');
-            }
-            value.deleteCharAt(value.length()-1);
-            Log.d(CharacterFactory.class.getSimpleName(), "Feats: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_FEATS, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_FEATS, "");
-        }
-
-        // class features are stored using format <feat1Id>#<feat2Id>...
-        // (assuming that class features ids won't change during data import)
-        if(c.getClassFeatures().size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(ClassFeature feat : c.getClassFeatures()) {
-                if(!feat.isAuto()) {
+        if(flags.contains(FLAG_ALL)) {
+            // feats are stored using format <feat1Id>#<feat2Id>...
+            // (assuming that feat ids won't change during data import)
+            if (c.getFeats().size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Feat feat : c.getFeats()) {
                     value.append(feat.getId()).append('#');
                 }
-            }
-            if(value.length() > 0) {
                 value.deleteCharAt(value.length() - 1);
+                Log.d(CharacterFactory.class.getSimpleName(), "Feats: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_FEATS, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_FEATS, "");
             }
-            Log.d(CharacterFactory.class.getSimpleName(), "Class features: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_CLFEATURES, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_CLFEATURES, "");
-        }
 
-        // race alternate traits are stored using format <trait1Id>#<trait2Id>...
-        // (assuming that traits ids won't change during data import)
-        if(c.getTraits().size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(Trait trait : c.getTraits()) {
-                value.append(trait.getId()).append('#');
+            // class features are stored using format <feat1Id>#<feat2Id>...
+            // (assuming that class features ids won't change during data import)
+            if (c.getClassFeatures().size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (ClassFeature feat : c.getClassFeatures()) {
+                    if (!feat.isAuto()) {
+                        value.append(feat.getId()).append('#');
+                    }
+                }
+                if (value.length() > 0) {
+                    value.deleteCharAt(value.length() - 1);
+                }
+                Log.d(CharacterFactory.class.getSimpleName(), "Class features: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_CLFEATURES, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_CLFEATURES, "");
             }
-            if(value.length() > 0) {
+
+            // race alternate traits are stored using format <trait1Id>#<trait2Id>...
+            // (assuming that traits ids won't change during data import)
+            if (c.getTraits().size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Trait trait : c.getTraits()) {
+                    value.append(trait.getId()).append('#');
+                }
+                if (value.length() > 0) {
+                    value.deleteCharAt(value.length() - 1);
+                }
+                Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, "");
+            }
+
+            // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1LinkTo>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif2LinkTo>
+            // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
+            // (assuming that modif ids won't change during data import)
+            if (c.getModifsCount() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Character.CharacterModif modif : c.getModifs()) {
+                    value.append(modif.getSource()).append(':');
+                    for (int i = 0; i < modif.getModifCount(); i++) {
+                        value.append(modif.getModif(i).first).append('|');
+                        value.append(modif.getModif(i).second).append(',');
+                    }
+                    value.deleteCharAt(value.length() - 1).append(':');
+                    value.append(modif.getIcon()).append(':');
+                    value.append(modif.getLinkToWeapon());
+                    value.append('#');
+                }
                 value.deleteCharAt(value.length() - 1);
+                Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
             }
-            Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, "");
-        }
 
-        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1LinkTo>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif2LinkTo>
-        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
-        // (assuming that modif ids won't change during data import)
-        if(c.getModifsCount() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(Character.CharacterModif modif : c.getModifs()) {
-                value.append(modif.getSource()).append(':');
-                for(int i = 0; i<modif.getModifCount(); i++) {
-                    value.append(modif.getModif(i).first).append('|');
-                    value.append(modif.getModif(i).second).append(',');
+            // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
+            List<Character.InventoryItem> inventory = c.getInventoryItems();
+            if (inventory.size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Character.InventoryItem item : inventory) {
+                    value.append(item.getName()).append('|');
+                    value.append(item.getWeight()).append('|');
+                    value.append(item.getObjectId());
+                    if (item.getInfos() != null && item.getInfos().length() > 0) {
+                        value.append('|').append(item.getInfos());
+                    }
+                    value.append('#');
                 }
-                value.deleteCharAt(value.length()-1).append(':');
-                value.append(modif.getIcon()).append(':');
-                value.append(modif.getLinkToWeapon());
-                value.append('#');
+                value.deleteCharAt(value.length() - 1);
+                Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
             }
-            value.deleteCharAt(value.length()-1);
-            Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
+
+            // new 16 fields for PDF
+            contentValues.put(CharacterFactory.COLUMN_SPEED_ARMOR, c.getSpeedWithArmor());
+            contentValues.put(CharacterFactory.COLUMN_SPEED_DIG, c.getBaseSpeedDig());
+            contentValues.put(CharacterFactory.COLUMN_SPEED_FLY, c.getBaseSpeedFly());
+            contentValues.put(CharacterFactory.COLUMN_SPEED_FLYM, c.getBaseSpeedManeuverability());
+            contentValues.put(CharacterFactory.COLUMN_PLAYER, c.getPlayer());
+            contentValues.put(CharacterFactory.COLUMN_ALIGNMENT, c.getAlignment());
+            contentValues.put(CharacterFactory.COLUMN_DIVINITY, c.getDivinity());
+            contentValues.put(CharacterFactory.COLUMN_ORIGIN, c.getOrigin());
+            contentValues.put(CharacterFactory.COLUMN_SIZETYPE, c.getSizeType());
+            contentValues.put(CharacterFactory.COLUMN_SEX, c.getSex());
+            contentValues.put(CharacterFactory.COLUMN_AGE, c.getAge());
+            contentValues.put(CharacterFactory.COLUMN_HEIGHT, c.getHeight());
+            contentValues.put(CharacterFactory.COLUMN_WEIGHT, c.getWeight());
+            contentValues.put(CharacterFactory.COLUMN_HAIR, c.getHair());
+            contentValues.put(CharacterFactory.COLUMN_EYES, c.getEyes());
+            contentValues.put(CharacterFactory.COLUMN_LANG, c.getLanguages());
+            // new fields for PDF
+            contentValues.put(CharacterFactory.COLUMN_CP, c.getMoneyCP());
+            contentValues.put(CharacterFactory.COLUMN_SP, c.getMoneySP());
+            contentValues.put(CharacterFactory.COLUMN_GP, c.getMoneyGP());
+            contentValues.put(CharacterFactory.COLUMN_PP, c.getMoneyPP());
+            contentValues.put(CharacterFactory.COLUMN_XP, c.getExperience());
         }
 
-        // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
-        List<Character.InventoryItem> inventory = c.getInventoryItems();
-        if(inventory.size() > 0 ) {
-            StringBuffer value = new StringBuffer();
-            for(Character.InventoryItem item : inventory) {
-                value.append(item.getName()).append('|');
-                value.append(item.getWeight()).append('|');
-                value.append(item.getObjectId());
-                if(item.getInfos() != null && item.getInfos().length() > 0) {
-                    value.append('|').append(item.getInfos());
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SPELLS)) {
+            // spells are stored using format <spell1Id>#<spell2Id>...
+            // (assuming that spell ids won't change during data import)
+            if (c.getSpells().size() > 0) {
+                StringBuffer value = new StringBuffer();
+                for (Spell spell : c.getSpells()) {
+                    value.append(spell.getId()).append('#');
                 }
-                value.append('#');
+                value.deleteCharAt(value.length() - 1);
+                Log.d(CharacterFactory.class.getSimpleName(), "Spells: " + value.toString());
+                contentValues.put(CharacterFactory.COLUMN_SPELLS, value.toString());
+            } else {
+                contentValues.put(CharacterFactory.COLUMN_SPELLS, "");
             }
-            value.deleteCharAt(value.length()-1);
-            Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
-        }
-
-        // new 16 fields for PDF
-        contentValues.put(CharacterFactory.COLUMN_SPEED_ARMOR, c.getSpeedWithArmor());
-        contentValues.put(CharacterFactory.COLUMN_SPEED_DIG, c.getBaseSpeedDig());
-        contentValues.put(CharacterFactory.COLUMN_SPEED_FLY, c.getBaseSpeedFly());
-        contentValues.put(CharacterFactory.COLUMN_SPEED_FLYM, c.getBaseSpeedManeuverability());
-        contentValues.put(CharacterFactory.COLUMN_PLAYER, c.getPlayer());
-        contentValues.put(CharacterFactory.COLUMN_ALIGNMENT, c.getAlignment());
-        contentValues.put(CharacterFactory.COLUMN_DIVINITY, c.getDivinity());
-        contentValues.put(CharacterFactory.COLUMN_ORIGIN, c.getOrigin());
-        contentValues.put(CharacterFactory.COLUMN_SIZETYPE, c.getSizeType());
-        contentValues.put(CharacterFactory.COLUMN_SEX, c.getSex());
-        contentValues.put(CharacterFactory.COLUMN_AGE, c.getAge());
-        contentValues.put(CharacterFactory.COLUMN_HEIGHT, c.getHeight());
-        contentValues.put(CharacterFactory.COLUMN_WEIGHT, c.getWeight());
-        contentValues.put(CharacterFactory.COLUMN_HAIR, c.getHair());
-        contentValues.put(CharacterFactory.COLUMN_EYES, c.getEyes());
-        contentValues.put(CharacterFactory.COLUMN_LANG, c.getLanguages());
-        // new fields for PDF
-        contentValues.put(CharacterFactory.COLUMN_CP, c.getMoneyCP());
-        contentValues.put(CharacterFactory.COLUMN_SP, c.getMoneySP());
-        contentValues.put(CharacterFactory.COLUMN_GP, c.getMoneyGP());
-        contentValues.put(CharacterFactory.COLUMN_PP, c.getMoneyPP());
-        contentValues.put(CharacterFactory.COLUMN_XP, c.getExperience());
-
-        // spells are stored using format <spell1Id>#<spell2Id>...
-        // (assuming that spell ids won't change during data import)
-        if(c.getSpells().size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for(Spell spell : c.getSpells()) {
-                value.append(spell.getId()).append('#');
-            }
-            value.deleteCharAt(value.length()-1);
-            Log.d(CharacterFactory.class.getSimpleName(), "Spells: " + value.toString());
-            contentValues.put(CharacterFactory.COLUMN_SPELLS, value.toString());
-        } else {
-            contentValues.put(CharacterFactory.COLUMN_SPELLS, "");
         }
 
         return contentValues;

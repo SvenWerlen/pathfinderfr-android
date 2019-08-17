@@ -1113,9 +1113,9 @@ public class Character extends DBEntity {
         return spells;
     }
 
-    public boolean hasSpell(Spell spell) {
+    public boolean hasSpell(long spellId) {
         for(Spell f : spells) {
-            if(f.getId() == spell.getId()) {
+            if(f.getId() == spellId) {
                 return true;
             }
         }
