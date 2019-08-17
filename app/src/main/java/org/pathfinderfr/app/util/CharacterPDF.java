@@ -23,9 +23,12 @@ import com.itextpdf.layout.property.VerticalAlignment;
 
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
 
 import java.io.OutputStream;
@@ -320,6 +323,20 @@ public class CharacterPDF {
             c.setBorderRight(Border.NO_BORDER);
             c.setBorderTop(Border.NO_BORDER);
         }
+        return c;
+    }
+
+    public Cell createFeatureText(String text) {
+        text = text == null ? "" : text;
+        Cell c = new Cell()
+                .setPadding(0)
+                .setMargin(0)
+                .addStyle(STYLE_TEXT)
+                .setMinHeight(10)
+                .setHorizontalAlignment(HorizontalAlignment.LEFT)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .add((new Paragraph(text).setTextAlignment(TextAlignment.LEFT).setFixedLeading(9)));
+        c.setBorder(Border.NO_BORDER);
         return c;
     }
 
@@ -1133,17 +1150,93 @@ public class CharacterPDF {
         return table;
     }
 
+    public String getTextFromTraitFeatFeature(Object element) {
+        String text = "";
+        if(element instanceof Feat) {
+            Feat f = (Feat)element;
+            text = String.format("[D] %s", f.getName());
+        } else if(element instanceof Race.Trait) {
+            Race.Trait t = (Race.Trait)element;
+            text = String.format("[T] %s (%s)", t.getName(), character.getRaceName());
+            if(character.traitIsAltered(t.getName()) != null) {
+                text += " (!)";
+            }
+        } else if(element instanceof Trait) {
+            Trait t = (Trait)element;
+            if(t.getRace() == null) {
+                text = String.format("[T] %s", t.getName());
+            } else {
+                text = String.format("[T] %s (%s)", t.getName(), t.getRace().getName());
+            }
+        }  else if(element instanceof ClassFeature) {
+            ClassFeature f = (ClassFeature)element;
+            text = String.format("[C] %s %d: %s", f.getClass_().getShortName(), f.getLevel(), f.getNameLong());
+        }
+        return text;
+    }
+
     public Table createSectionFeatsAndFeatures() {
-        Table table = new Table(1);
-        table.setFixedPosition(190, 100, 0);
-        //table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-        table.setVerticalBorderSpacing(0);
-        table.setHorizontalBorderSpacing(0);
-        table.addCell(createLabel("Dons et capacités", "", 1,1).setMinWidth(200).setMinHeight(12));
-        List<Feat> feats = character.getFeats();
-        for(int i=0; i<35; i++) {
-            String text = i < feats.size() ? feats.get(i).getName(): "";
-            table.addCell(createInfoText(text,1).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
+        Table table;
+        List<Object> entities = new ArrayList<>();
+
+        // racial traits
+        for(Race.Trait t : character.getRace().getTraits()) {
+            if(character.traitIsReplaced(t.getName()) == null) {
+                entities.add(t);
+            }
+        }
+        // traits (racial and regular)
+        for(Trait t : character.getTraits()) {
+            entities.add(t);
+        }
+        // feats
+        for(Feat f : character.getFeats()) {
+            entities.add(f);
+        }
+        // class features
+        for(ClassFeature cl : character.getClassFeatures()) {
+            entities.add(cl);
+        }
+
+        // normal display
+        if(entities.size() <=27) {
+            table = new Table(1);
+            table.setFixedPosition(190, 100, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("[T]raits, [D]ons et [C]apacités", "", 1,1).setMinWidth(200).setMinHeight(12));
+
+            for (int i = 0; i < 27; i++) {
+                Object element = i < entities.size() ? entities.get(i) : null;
+                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBorderBottom(new SolidBorder(1)).setPaddingTop(4).setPaddingBottom(4).setMinHeight(13).setPaddingLeft(2));
+            }
+        }
+        // normal display
+        else if(entities.size() <=42) {
+            table = new Table(1);
+            table.setFixedPosition(190, 106, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("[T]raits, [D]ons et [C]apacités", "", 1,1).setMinWidth(200).setMinHeight(12));
+
+            for (int i = 0; i < 42; i++) {
+                Object element = i < entities.size() ? entities.get(i) : null;
+                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBorderBottom(new SolidBorder(1)).setMinHeight(13).setPaddingLeft(2));
+            }
+        }
+        // dense display
+        else {
+            table = new Table(1);
+            table.setFixedPosition(190, 100, 0);
+            table.setVerticalBorderSpacing(0);
+            table.setHorizontalBorderSpacing(0);
+            table.addCell(createLabel("[T]raits, [D]ons et [C]apacités", "", 1,1).setMinWidth(200).setMinHeight(12));
+
+            for (int i = 0; i < 66; i++) {
+                Color backgnd = i % 2 == 1 ? COLOR_LIGHT_GRAY : ColorConstants.WHITE;
+                Object element = i < entities.size() ? entities.get(i) : null;
+                table.addCell(createFeatureText(getTextFromTraitFeatFeature(element)).setBackgroundColor(backgnd).setMinHeight(9).setPaddingLeft(2));
+            }
         }
         return table;
     }

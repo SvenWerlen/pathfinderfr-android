@@ -178,7 +178,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 } else {
                     template =  ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.racetrait.altered.name");
                 }
-                nameTv.setText(String.format(template, t.getName(), character.getRace().getName()));
+                nameTv.setText(String.format(template, t.getName(), character.getRaceName()));
 
                 nameTv.setOnClickListener(new View.OnClickListener() {
                     @Override

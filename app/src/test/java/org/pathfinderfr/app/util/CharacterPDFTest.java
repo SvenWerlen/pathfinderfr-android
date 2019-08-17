@@ -7,10 +7,12 @@ import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
 import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
+import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
 
 import java.io.File;
@@ -227,11 +229,26 @@ public class CharacterPDFTest {
             c.addInventoryItem(new Character.InventoryItem(String.format("Fill %02d", i), 100, 0, null));
         }
 
+        c.getRace().getTraits().add(new Race.Trait("Taille moyenne",""));
+        c.getRace().getTraits().add(new Race.Trait("Vitesse normale",""));
+        c.getRace().getTraits().add(new Race.Trait("Don en bonus",""));
+        c.getRace().getTraits().add(new Race.Trait("Compétent",""));
+        c.getRace().getTraits().add(new Race.Trait("Langues supplémentaires",""));
+
+        Trait t = new Trait();
+        t.setName("Trait de combat: Courageux");
+        c.addTrait(t);
+        t = new Trait();
+        t.setName("Trait de foi: Érudit du Grand Au-Delà");
+        c.addTrait(t);
+
         Feat f = new Feat();
         f.setName("Tours de magie ou oraisons supplémentaires");
+        f.setSummary("Gain de 2 tours de magie ou oraisons connus");
         c.addFeat(f);
         f = new Feat();
         f.setName("Derviche dimensionnel");
+        f.setSummary("Pendant une action complexe, le personnage peut lancer porte dimensionnelle ou utiliser pas chassé par une action rapide");
         c.addFeat(f);
         f = new Feat();
         f.setName("Manœuvres dimensionnelles");
@@ -251,6 +268,22 @@ public class CharacterPDFTest {
         f = new Feat();
         f.setName("Déplacement mystique");
         c.addFeat(f);
+
+        for(int i = 0; i < 20; i++) {
+            c.addFeat(f);
+        }
+
+        ClassFeature cf = new ClassFeature();
+        cf.setClass(cl);
+        cf.setLevel(1);
+        cf.setName("Armes et armures");
+        c.addClassFeature(cf);
+
+        cf = new ClassFeature();
+        cf.setClass(cl);
+        cf.setLevel(2);
+        cf.setName("Érudition (Ext)");
+        c.addClassFeature(cf);
 
         File file = new File("/tmp/test.pdf");
         FileOutputStream fos = new FileOutputStream(file);

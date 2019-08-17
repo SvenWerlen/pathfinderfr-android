@@ -146,7 +146,7 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
         int height = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, lineHeight, view.getResources().getDisplayMetrics());
 
-        // add all skills
+        // add all feats
         int rowId = 0;
         feats = new ArrayList<>();
 
