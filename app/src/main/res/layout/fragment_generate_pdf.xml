@@ -33,45 +33,37 @@
             android:textColor="@color/colorWarning"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:gravity="bottom">
+            android:orientation="vertical"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="10dp">
 
-            <LinearLayout
+            <CheckBox
+                android:id="@+id/option_inksaving"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="30dp">
+                android:text="@string/generatepdf_option_inksaving"
+                android:layout_marginTop="15dp"/>
 
-                <CheckBox
-                    android:id="@+id/option_inksaving"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generatepdf_option_inksaving"
-                    android:layout_marginTop="15dp"/>
+            <CheckBox
+                android:id="@+id/option_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_logo"
+                android:checked="true"/>
 
-                <CheckBox
-                    android:id="@+id/option_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generatepdf_option_logo"
-                    android:checked="true"/>
+            <CheckBox
+                android:id="@+id/option_show_weapons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_showweapons" />
 
-                <CheckBox
-                    android:id="@+id/option_show_weapons"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generatepdf_option_showweapons" />
-
-                <CheckBox
-                    android:id="@+id/option_show_armors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generatepdf_option_showarmors" />
-
-            </LinearLayout>
+            <CheckBox
+                android:id="@+id/option_show_armors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_showarmors" />
 
             <Button
                 android:id="@+id/generatePDFButton"
