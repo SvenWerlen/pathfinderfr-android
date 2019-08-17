@@ -1280,165 +1280,171 @@
                     </TableRow>
                 </TableLayout>
 
-                <TableLayout
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="10dp">
+                    android:orientation="horizontal">
+                    
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp">
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/money_cp"
+                        <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:padding="4dp"
-                            android:text="@string/sheet_money_cp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
+                            android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/money_cp_value"
+                            <TextView
+                                android:id="@+id/money_cp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_margin="2dp"
+                                android:background="@color/colorPrimary"
+                                android:padding="4dp"
+                                android:text="@string/sheet_money_cp"
+                                android:textColor="@color/colorWhite"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/money_cp_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_marginHorizontal="2dp"
+                                android:layout_marginVertical="2dp"
+                                android:background="@drawable/text_box"
+                                android:minWidth="40dp"
+                                android:padding="4dp"
+                                android:tag="money"
+                                android:text="@string/sheet_other_value"
+                                android:textAlignment="center"
+                                android:textColor="@color/colorBlack" />
+
+                        </TableRow>
+                    </TableLayout>
+
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp">
+
+                        <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:minWidth="40dp"
-                            android:padding="4dp"
-                            android:tag="money"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
+                            android:layout_height="match_parent">
 
-                    </TableRow>
-                </TableLayout>
+                            <TextView
+                                android:id="@+id/money_sp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_margin="2dp"
+                                android:background="@color/colorPrimary"
+                                android:padding="4dp"
+                                android:text="@string/sheet_money_sp"
+                                android:textColor="@color/colorWhite"
+                                android:textStyle="bold" />
 
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="10dp">
+                            <TextView
+                                android:id="@+id/money_sp_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_marginHorizontal="2dp"
+                                android:layout_marginVertical="2dp"
+                                android:background="@drawable/text_box"
+                                android:minWidth="40dp"
+                                android:padding="4dp"
+                                android:tag="money"
+                                android:text="@string/sheet_other_value"
+                                android:textAlignment="center"
+                                android:textColor="@color/colorBlack" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        </TableRow>
+                    </TableLayout>
 
-                        <TextView
-                            android:id="@+id/money_sp"
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp">
+
+                        <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:padding="4dp"
-                            android:text="@string/sheet_money_sp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
+                            android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/money_sp_value"
+                            <TextView
+                                android:id="@+id/money_gp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_margin="2dp"
+                                android:background="@color/colorPrimary"
+                                android:padding="4dp"
+                                android:text="@string/sheet_money_gp"
+                                android:textColor="@color/colorWhite"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/money_gp_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_marginHorizontal="2dp"
+                                android:layout_marginVertical="2dp"
+                                android:background="@drawable/text_box"
+                                android:minWidth="40dp"
+                                android:padding="4dp"
+                                android:tag="money"
+                                android:text="@string/sheet_other_value"
+                                android:textAlignment="center"
+                                android:textColor="@color/colorBlack" />
+
+                        </TableRow>
+                    </TableLayout>
+
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp">
+
+                        <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:minWidth="40dp"
-                            android:padding="4dp"
-                            android:tag="money"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
+                            android:layout_height="match_parent">
 
-                    </TableRow>
-                </TableLayout>
+                            <TextView
+                                android:id="@+id/money_pp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_margin="2dp"
+                                android:background="@color/colorPrimary"
+                                android:padding="4dp"
+                                android:text="@string/sheet_money_pp"
+                                android:textColor="@color/colorWhite"
+                                android:textStyle="bold" />
 
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="10dp">
+                            <TextView
+                                android:id="@+id/money_pp_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_marginHorizontal="2dp"
+                                android:layout_marginVertical="2dp"
+                                android:background="@drawable/text_box"
+                                android:minWidth="40dp"
+                                android:padding="4dp"
+                                android:tag="money"
+                                android:text="@string/sheet_other_value"
+                                android:textAlignment="center"
+                                android:textColor="@color/colorBlack" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/money_gp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:padding="4dp"
-                            android:text="@string/sheet_money_gp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/money_gp_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:minWidth="40dp"
-                            android:padding="4dp"
-                            android:tag="money"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/money_pp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:padding="4dp"
-                            android:text="@string/sheet_money_pp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/money_pp_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:minWidth="40dp"
-                            android:padding="4dp"
-                            android:tag="money"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-                </TableLayout>
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
 
             </com.wefika.flowlayout.FlowLayout>
 

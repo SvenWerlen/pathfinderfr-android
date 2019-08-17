@@ -120,6 +120,8 @@
     <string name="generatepdf_inprogress">en cours…</string>
     <string name="generatepdf_option_inksaving">Économie d\'encre</string>
     <string name="generatepdf_option_logo">Afficher logo</string>
+    <string name="generatepdf_option_showweapons">Lister armes dans l\'inventaire</string>
+    <string name="generatepdf_option_showarmors">Lister armures dans l\'inventaire</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>
