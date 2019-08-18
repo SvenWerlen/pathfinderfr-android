@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.3] - 2019-08-18
+### Added
+- Modif damages (close/ranged)
+
 ## [3.2.2] - 2019-08-18
 ### Changed
 - "Generate PDF" button after the options
