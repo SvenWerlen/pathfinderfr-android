@@ -317,7 +317,7 @@
     <string name="sheet_modifs_bonus">Bonus / malus:</string>
     <string name="sheet_modifs_linkto">Relier à une arme:</string>
     <string name="sheet_modifs_about_linkto">Si vous reliez la modification à une arme, le bonus
-        d\'attaque ne s\'appliquera que pour cette arme (visible uniquement sur la feuille de
+        d\'attaque et de dégâts ne s\'appliquera que pour cette arme (visible uniquement sur la feuille de
         personnage au format PDF). Tous les autres bonus s\'appliqueront normalement.
     </string>
     <string name="sheet_modifs_linkto_nothing">Aucun lien</string>
@@ -391,6 +391,8 @@
     <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
     <string name="sheet_att_dist">Dist</string>
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
+    <string name="sheet_damage_melee">Bonus de dégâts (au corps-à-corps)</string>
+    <string name="sheet_damage_distance">Bonus de dégâts (à distance)</string>
     <string name="sheet_money_cp">PC</string>
     <string name="sheet_money_cupperpieces">Pièces de cuivre</string>
     <string name="sheet_money_sp">PA</string>

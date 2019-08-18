@@ -181,7 +181,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
             case Character.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
             case Character.MODIF_COMBAT_ATT_MELEE: return getResources().getString(R.string.sheet_attack_melee);
+            case Character.MODIF_COMBAT_DAM_MELEE: return getResources().getString(R.string.sheet_damage_melee);
             case Character.MODIF_COMBAT_ATT_RANGED: return getResources().getString(R.string.sheet_attack_distance);
+            case Character.MODIF_COMBAT_DAM_RANGED: return getResources().getString(R.string.sheet_damage_distance);
             case Character.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
             case Character.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
             default:
@@ -318,7 +320,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         //list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
         list.add(getStringWithTag(Character.MODIF_COMBAT_SPEED));
         list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_MELEE));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_DAM_MELEE));
         list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_RANGED));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_DAM_RANGED));
         list.add(getStringWithTag(Character.MODIF_COMBAT_CMB));
         list.add(getStringWithTag(Character.MODIF_COMBAT_CMD));
         // Skills
@@ -478,7 +482,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         layout.addView(bonusText);
         layout.addView(bonusRemove);
 
-        if(modifId == Character.MODIF_COMBAT_ATT_MELEE || modifId == Character.MODIF_COMBAT_ATT_RANGED) {
+        if(modifId == Character.MODIF_COMBAT_ATT_MELEE || modifId == Character.MODIF_COMBAT_ATT_RANGED
+            || modifId == Character.MODIF_COMBAT_DAM_MELEE || modifId == Character.MODIF_COMBAT_DAM_RANGED) {
             linktoView.setVisibility(View.VISIBLE);
         }
 
@@ -493,7 +498,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                         continue;
                     }
                     Pair<Integer,Integer> pair = (Pair<Integer,Integer>)m.getTag();
-                    if(pair.first == Character.MODIF_COMBAT_ATT_MELEE || pair.first == Character.MODIF_COMBAT_ATT_RANGED) {
+                    if(pair.first == Character.MODIF_COMBAT_ATT_MELEE || pair.first == Character.MODIF_COMBAT_ATT_RANGED
+                        || pair.first == Character.MODIF_COMBAT_DAM_MELEE || pair.first == Character.MODIF_COMBAT_DAM_RANGED) {
                         hide = false;
                         break;
                     }

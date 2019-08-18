@@ -922,11 +922,7 @@ public class CharacterPDF {
         table.addCell(createInfoText(w == null ? "" : w.getType(), 1, TextAlignment.CENTER, true).setMinHeight(15));
         table.addCell(createInfoText(w == null ? "" : w.getRangeInMeters(), 1, TextAlignment.CENTER, true));
         table.addCell(createInfoText(w == null ? "" : (w.isRanged() ? stringMax(w.getDescription(), 20) : "-"), 1, TextAlignment.CENTER, true));
-        String damage = w == null ? "" : w.getDamageForSize(character.getSizeType());
-        int damageBonus = w == null ? 0 : w.getDamageBonus(character.getStrengthModif());
-        if(damageBonus != 0) {
-            damage = String.format("%s %+d", damage, damageBonus);
-        }
+        String damage = w == null ? "" : character.getDamage(w, weaponIdx+1);
         table.addCell(createInfoText(damage, 2, TextAlignment.CENTER, true));
 
         return table;

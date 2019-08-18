@@ -92,6 +92,8 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_ATT_RANGED = 32;
     public static final int MODIF_COMBAT_CMB = 33;
     public static final int MODIF_COMBAT_CMD = 34;
+    public static final int MODIF_COMBAT_DAM_MELEE = 35;
+    public static final int MODIF_COMBAT_DAM_RANGED = 36;
 
     public static final int MODIF_SKILL = 200;
 
@@ -772,7 +774,8 @@ public class Character extends DBEntity {
         // getModifsForId always returns 1 modification (matching the one being searched)
         for(CharacterModif mod : modifs) {
             // special case for combat bonuses linked to weapons
-            if((bonusId == MODIF_COMBAT_ATT_MELEE || bonusId == MODIF_COMBAT_ATT_RANGED) && mod.getLinkToWeapon() > 0) {
+            if((bonusId == MODIF_COMBAT_ATT_MELEE || bonusId == MODIF_COMBAT_ATT_RANGED
+                || bonusId == MODIF_COMBAT_DAM_MELEE || bonusId == MODIF_COMBAT_DAM_RANGED) && mod.getLinkToWeapon() > 0) {
                 if(linkToWeapon == mod.getLinkToWeapon()) {
                     bonus += mod.getModif(0).second;
                 }
@@ -862,6 +865,35 @@ public class Character extends DBEntity {
         int bestBonus = getBaseAttackBonusBest();
         return bestBonus + addBonus + getStrengthModif();
     }
+
+    /**
+     * @return damage bonus
+     */
+    public int getBonusDamage(Weapon w, int weaponIdx) {
+        if(w == null) {
+            return 0;
+        }
+        int bonus = w.getDamageBonus(getStrengthModif());
+        bonus += getAdditionalBonus(w.isRanged() ? MODIF_COMBAT_DAM_RANGED : MODIF_COMBAT_DAM_MELEE, weaponIdx);;
+        return bonus;
+    }
+
+    /**
+     * @return damage as string
+     */
+    public String getDamage(Weapon w, int weaponIdx) {
+        if(w == null) {
+            return "";
+        }
+        String baseDamage = w.getDamageForSize(getSizeType());
+        int damBonus = getBonusDamage(w, weaponIdx);
+        if(damBonus == 0) {
+            return baseDamage;
+        } else {
+            return String.format("%s %+d", baseDamage, damBonus);
+        }
+    }
+
 
     /**
      * @return attack bonus (range), as string
