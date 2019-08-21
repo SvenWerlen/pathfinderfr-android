@@ -3,21 +3,21 @@ package org.pathfinderfr.app.database.entity;
 public class EntityFactories {
 
     public static final DBEntityFactory[] FACTORIES = new DBEntityFactory[] {
-            SkillFactory.getInstance(),
-            FeatFactory.getInstance(),
-            ClassFeatureFactory.getInstance(),
-            SpellFactory.getInstance(),
-            FavoriteFactory.getInstance(),
-            RaceFactory.getInstance(),
-            ClassFactory.getInstance(),
-            CharacterFactory.getInstance(),
-            ConditionFactory.getInstance(),
-            WeaponFactory.getInstance(),
             ArmorFactory.getInstance(),
-            EquipmentFactory.getInstance(),
-            TraitFactory.getInstance(),
+            CharacterFactory.getInstance(),
             ClassArchetypesFactory.getInstance(),
-            MagicItemFactory.getInstance()
+            ClassFactory.getInstance(),
+            ClassFeatureFactory.getInstance(),
+            ConditionFactory.getInstance(),
+            EquipmentFactory.getInstance(),
+            FavoriteFactory.getInstance(),
+            FeatFactory.getInstance(),
+            MagicItemFactory.getInstance(),
+            RaceFactory.getInstance(),
+            SkillFactory.getInstance(),
+            SpellFactory.getInstance(),
+            TraitFactory.getInstance(),
+            WeaponFactory.getInstance()
     };
 
 

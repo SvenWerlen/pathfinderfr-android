@@ -204,10 +204,14 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
             try {
                 itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
-            } catch(NumberFormatException nfe) {}
+            } catch(NumberFormatException nfe) {
+                itemWeight = 0;
+            }
             try {
                 itemPrice = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_price)).getText().toString());
-            } catch(NumberFormatException nfe) {}
+            } catch(NumberFormatException nfe) {
+                itemPrice = 0;
+            }
             itemInfos = ((EditText) getView().findViewById(R.id.sheet_inventory_item_infos)).getText().toString();
             int idx = ((AppCompatSpinner)getView().findViewById(R.id.sheet_inventory_item_price_unit)).getSelectedItemPosition();
             if(idx == 1) { // silver
@@ -216,19 +220,19 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 itemPrice *= 100;
             }
 
-            if(itemName == null || itemName.length() < 3) {
+            if(itemName.length() < 3) {
                 Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_name), Toast.LENGTH_SHORT);
                 int[] xy = new int[2];
                 v.getLocationOnScreen(xy);
                 t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
                 t.show();
-            } else if(itemWeight == null) {
+            } else if(itemWeight < 0) {
                 Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_weight), Toast.LENGTH_SHORT);
                 int[] xy = new int[2];
                 v.getLocationOnScreen(xy);
                 t.setGravity(Gravity.TOP|Gravity.LEFT, xy[0], xy[1]);
                 t.show();
-            } else if(itemPrice == null) {
+            } else if(itemPrice < 0) {
                 Toast t = Toast.makeText(v.getContext(), getView().getResources().getString(R.string.sheet_inventory_error_price), Toast.LENGTH_SHORT);
                 int[] xy = new int[2];
                 v.getLocationOnScreen(xy);
