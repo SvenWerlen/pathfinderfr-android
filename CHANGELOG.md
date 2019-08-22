@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.4] - 2019-08-20
+### Fixed
+- Crash on DB upgrade
+- Crash on adding inventory items without specifying weight or value
+
 ## [3.2.3] - 2019-08-18
 ### Added
 - Modif damages (close/ranged)

@@ -3,6 +3,7 @@ package org.pathfinderfr.app.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -69,11 +70,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for (DBEntityFactory f : EntityFactories.FACTORIES) {
-            db.execSQL(f.getQueryCreateTable());
+        for(DBEntityFactory fact : EntityFactories.FACTORIES) {
+            executeNoFail(db, fact.getQueryCreateTable());
         }
-        // create version table
-        db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
+        executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateTable());
+        executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+        executeNoFail(db, VersionFactory.getInstance().getQueryCreateTable());
     }
 
     public void clear() {
@@ -98,108 +100,106 @@ public class DBHelper extends SQLiteOpenHelper {
         // version 2 introduced a new column "source" in some tables (feats and spells)
         // version 2 also merged columns "target" and "area" but data will be kept until next reload
         if(oldVersion == 1) {
-            db.execSQL(FeatFactory.getInstance().getQueryUpgradeV2());
-            db.execSQL(SpellFactory.getInstance().getQueryUpgradeV2());
+            executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV2());
+            executeNoFail(db, SpellFactory.getInstance().getQueryUpgradeV2());
             oldVersion = 2;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 2");
         }
         // version 3 introduced new entities (races, classes and characters)
         if(oldVersion == 2) {
-            db.execSQL(RaceFactory.getInstance().getQueryCreateTable());
-            db.execSQL(ClassFactory.getInstance().getQueryCreateTable());
-            db.execSQL(CharacterFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, RaceFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ClassFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryCreateTable());
             oldVersion = 3;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 3");
         }
         // version 4 introduced new column on character for modifs
         if(oldVersion == 3) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV4());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV4());
             oldVersion = 4;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 4");
         }
         // version 5 introduced new column on character for hitpoints
         if(oldVersion == 4) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV5());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV5());
             oldVersion = 5;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 5");
         }
         // version 6 introduced new column on character for speed
         if(oldVersion == 5) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV6());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV6());
             oldVersion = 6;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 6");
         }
         // version 7 introduced new table for spell filtering optimization
         if(oldVersion == 6) {
-            db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateTable());
-            db.execSQL(SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+            executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateIndex());
             oldVersion = 7;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 7");
         }
         // version 8 introduced new entities (abilities)
         if(oldVersion == 7) {
-            db.execSQL(ClassFeatureFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ClassFeatureFactory.getInstance().getQueryCreateTable());
             oldVersion = 8;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 8");
         }
         // version 9 introduced new column on character for class features
         if(oldVersion == 8) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV9());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV9());
             oldVersion = 9;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 9");
         }
         // version 10 introduced new table for versions
         if(oldVersion == 9) {
-            db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 10;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 10");
         }
         // version 11 introduced new tables for conditions, weapons and armors
         // fixes version table not created!
         if(oldVersion == 10) {
-            db.execSQL(ConditionFactory.getInstance().getQueryCreateTable());
-            db.execSQL(WeaponFactory.getInstance().getQueryCreateTable());
-            db.execSQL(ArmorFactory.getInstance().getQueryCreateTable());
-            db.execSQL(VersionFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ConditionFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, WeaponFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ArmorFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, VersionFactory.getInstance().getQueryCreateTable());
             oldVersion = 11;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 11");
         }
         // version 12 introduced new column on character for inventory
         if(oldVersion == 11) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV12());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV12());
             oldVersion = 12;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 12");
         }
         // version 13 introduced new table for equipment
         if(oldVersion == 12) {
-            db.execSQL(EquipmentFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, EquipmentFactory.getInstance().getQueryCreateTable());
             oldVersion = 13;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 13");
         }
         // version 14 introduced new table for race alternate traits
         if(oldVersion == 13) {
-            db.execSQL(TraitFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, TraitFactory.getInstance().getQueryCreateTable());
             oldVersion = 14;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 14");
         }
         // version 15 introduced new column on character for alternate traits
         if(oldVersion == 14) {
-            db.execSQL(CharacterFactory.getInstance().getQueryUpgradeV15());
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV15());
             oldVersion = 15;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 15");
         }
         // version 16 introduced new table for archetypes and new column on classfeatures for archetypes
         if(oldVersion == 15) {
-            try { // was upgraded with previous version due to bug => ignore any error (duplicate column)
-                db.execSQL(ClassArchetypesFactory.getInstance().getQueryCreateTable());
-                db.execSQL(ClassFeatureFactory.getInstance().getQueryUpgradeV16());
-            } catch(Exception e) {}
+            executeNoFail(db, ClassArchetypesFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ClassFeatureFactory.getInstance().getQueryUpgradeV16());
             oldVersion = 16;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 16");
         }
         // version 17 introduced new table for magic item
         if(oldVersion == 16) {
-            db.execSQL(MagicItemFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, MagicItemFactory.getInstance().getQueryCreateTable());
             oldVersion = 17;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 17");
         }
@@ -207,21 +207,61 @@ public class DBHelper extends SQLiteOpenHelper {
         if(oldVersion == 17) {
             List<String> queries = CharacterFactory.getInstance().getQueriesUpgradeV18();
             for(String q : queries) {
-                db.execSQL(q);
+                executeNoFail(db, q);
             }
             oldVersion = 18;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 18");
         }
         // version 19 introduced 6 new columns on character, 1 new column on feat, 1 new column on armor (for PDF)
         if(oldVersion == 18) {
-            db.execSQL(ArmorFactory.getInstance().getQueryUpgradeV19());
-            db.execSQL(FeatFactory.getInstance().getQueryUpgradeV19());
+            executeNoFail(db, ArmorFactory.getInstance().getQueryUpgradeV19());
+            executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV19());
             List<String> queries = CharacterFactory.getInstance().getQueriesUpgradeV19();
             for(String q : queries) {
-                db.execSQL(q);
+                executeNoFail(db, q);
             }
             oldVersion = 19;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 19");
+        }
+    }
+
+    /**
+     * Execute create tables & upgrades in case something went wrong in previous versions
+     */
+    public void checkDatabase() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // create table (if not exists)
+        onCreate(db);
+
+        // upgrade tables (if required)
+        executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV2());
+        executeNoFail(db, SpellFactory.getInstance().getQueryUpgradeV2());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV4());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV5());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV6());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV9());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV12());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV15());
+        executeNoFail(db, ClassFeatureFactory.getInstance().getQueryUpgradeV16());
+        for(String q : CharacterFactory.getInstance().getQueriesUpgradeV18()) {
+            executeNoFail(db, q);
+        }
+        executeNoFail(db, ArmorFactory.getInstance().getQueryUpgradeV19());
+        executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV19());
+        for(String q : CharacterFactory.getInstance().getQueriesUpgradeV19()) {
+            executeNoFail(db, q);
+        }
+    }
+
+    /**
+     * Executes a sql query without throwing exceptions
+     * @param sql sql query
+     */
+    public void executeNoFail(SQLiteDatabase db, String sql) {
+        try {
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            Log.d(DBHelper.class.getSimpleName(), "NoFail: " + e.getMessage());
         }
     }
 

@@ -127,6 +127,9 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
         Integer[] count = new Integer[sources.length];
 
+        // check database (just in case)
+        dbHelper.checkDatabase();
+
         // retrieve versions
         Map<String,Integer> versions = getLatestVersion();
         if(versions == null) {

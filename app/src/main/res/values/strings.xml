@@ -82,7 +82,9 @@
     <!-- Strings related to load data -->
     <string name="loaddata_message">En cliquant sur le bouton ci-dessous, l\'application va procéder
         au téléchargement des données depuis internet et les insérer dans la base de données locale.
-        Vous pourrez alors utiliser l\'application sans besoin de connexion à Internet.
+        Vous pourrez alors utiliser l\'application sans besoin de connexion à Internet. Le processus
+        va également effectuer quelques vérifications sur la base de données et corriger d\'éventuels
+        problème s\'il y en a.
     </string>
     <string name="loaddata_optimisation">Indexation des sorts en cours. Le processus
         peut prendre plusieurs minutes en fonction de la performance de votre appareil. Ne peut être
