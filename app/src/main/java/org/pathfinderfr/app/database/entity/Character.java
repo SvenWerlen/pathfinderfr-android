@@ -795,21 +795,15 @@ public class Character extends DBEntity {
         if(classes == null || classes.size() == 0) {
             return null;
         }
-        List<Integer> bab = new ArrayList<>();
+        int maxBonus = addBonus;
         for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
             for(Class.Level lvl: cl.first.getLevels()) {
                 if(lvl.getLvl() == cl.third) {
                     int[] bonus = lvl.getBaseAttackBonus();
-                    if(bonus != null) {
-                        for(int i=0; i<bonus.length; i++) {
-                            if(i>=bab.size()) {
-                                bab.add(bonus[i] + addBonus);
-                            } else {
-                                bab.set(i, bab.get(i) + bonus[i]);
-                            }
-                        }
+                    if(bonus != null && bonus.length > 0) {
+                        maxBonus += bonus[0];
                     }
                     found = true;
                     break;
@@ -819,6 +813,13 @@ public class Character extends DBEntity {
                 Log.w(Character.class.getSimpleName(), String.format("Couldn't find base attack bonus (bab) for %s and level %d", cl.first.getName(), cl.third));
             }
         }
+        // build list
+        List<Integer> bab = new ArrayList<>();
+        while(maxBonus > 0) {
+            bab.add(maxBonus);
+            maxBonus -= 5;
+        }
+
         // convert to int[]
         int[] result = new int[bab.size()];
         for(int i=0; i<bab.size(); i++) {
