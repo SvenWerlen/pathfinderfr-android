@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.5] - 2019-08-22
+### Fixed
+- Invalid BAB computation
+### Added
+- Class level for max spell level as modif
+
 ## [3.2.4] - 2019-08-20
 ### Fixed
 - Crash on DB upgrade
