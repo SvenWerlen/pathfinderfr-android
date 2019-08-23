@@ -179,6 +179,8 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sheet_spells, container, false);
 
+        SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
+
         // references
         TableLayout table = view.findViewById(R.id.sheet_spells_table);
         TextView exampleLevel = view.findViewById(R.id.sheet_spells_example_level);
@@ -223,6 +225,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
             filter.addFilterClass(classLvl.first.getId());
             Class.Level lvl = classLvl.first.getLevel(classLvl.third);
+            lvl.setMaxSpellLvl(lvl.getMaxSpellLvl()+character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
             if(lvl != null && lvl.getMaxSpellLvl() > 0) {
                 filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
                 spellClasses.add(classLvl);

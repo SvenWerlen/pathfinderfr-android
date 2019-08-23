@@ -82,6 +82,7 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_MAG = 23;
     public static final int MODIF_COMBAT_HP = 24; // not supported
     public static final int MODIF_COMBAT_SPEED = 25;
+    public static final int MODIF_COMBAT_MAG_LVL = 123;
 
     public static final int MODIF_COMBAT_AC_ARMOR = 26;
     public static final int MODIF_COMBAT_AC_SHIELD = 27;

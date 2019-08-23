@@ -1259,6 +1259,7 @@ public class CharacterPDF {
             Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
             filter.addFilterClass(classLvl.first.getId());
             Class.Level lvl = classLvl.first.getLevel(classLvl.third);
+            lvl.setMaxSpellLvl(lvl.getMaxSpellLvl()+character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
             if(lvl != null && lvl.getMaxSpellLvl() > 0) {
                 filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
                 spellClasses.add(classLvl);

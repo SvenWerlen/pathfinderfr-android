@@ -348,6 +348,7 @@
     <string name="sheet_armorclass">Classe d\'armure</string>
     <string name="sheet_mag">MAG</string>
     <string name="sheet_magicresistance">Résistance magie</string>
+    <string name="sheet_magiclevel">Niveaux dans la classe de lanceur de sorts</string>
     <string name="sheet_hp">PV</string>
     <string name="sheet_hitpoints">Points de vie</string>
     <string name="sheet_hptemp">PVt</string>

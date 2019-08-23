@@ -178,6 +178,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_COMBAT_AC_NATURAL: return getResources().getString(R.string.sheet_armorclass_natural);
             case Character.MODIF_COMBAT_AC_PARADE: return getResources().getString(R.string.sheet_armorclass_parade);
             case Character.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
+            case Character.MODIF_COMBAT_MAG_LVL: return getResources().getString(R.string.sheet_magiclevel);
             case Character.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
             case Character.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
             case Character.MODIF_COMBAT_ATT_MELEE: return getResources().getString(R.string.sheet_attack_melee);
@@ -317,6 +318,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Character.MODIF_COMBAT_AC_PARADE));
         list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
         list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
+        list.add(getStringWithTag(Character.MODIF_COMBAT_MAG_LVL));
         //list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
         list.add(getStringWithTag(Character.MODIF_COMBAT_SPEED));
         list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_MELEE));
