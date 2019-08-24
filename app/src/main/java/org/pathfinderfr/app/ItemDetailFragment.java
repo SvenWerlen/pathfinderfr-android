@@ -254,9 +254,7 @@ public class ItemDetailFragment extends Fragment {
                 } else if (mItem instanceof ClassFeature) {
                     ClassFeature classFeature = (ClassFeature)mItem;
 
-                    if(classFeature.isAuto()) {
-                        message = getResources().getString(R.string.ability_auto);
-                    } else if(character.hasClassFeature(classFeature)) {
+                    if(character.hasClassFeature(classFeature)) {
                         character.removeClassFeature(classFeature);
                         if(DBHelper.getInstance(getContext()).updateEntity(character)) {
                             message = String.format(getResources().getString(R.string.ability_removed_success),cName);

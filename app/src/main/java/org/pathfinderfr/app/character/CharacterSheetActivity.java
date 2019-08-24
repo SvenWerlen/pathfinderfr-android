@@ -24,7 +24,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.List;
 
-public class CharacterSheetActivity extends AppCompatActivity {
+public class CharacterSheetActivity extends AppCompatActivity implements SheetClassFeatureFragment.Callbacks {
 
     public static final String SELECTED_CHARACTER_ID        = "characterId";
 
@@ -222,5 +222,10 @@ public class CharacterSheetActivity extends AppCompatActivity {
         } else {
             ((BottomNavigationView) findViewById(R.id.sheet_navigation)).setSelectedItemId(R.id.sheet_home);
         }
+    }
+
+    @Override
+    public void onRefreshRequest() {
+        showFragment(SheetClassFeatureFragment.newInstance(character.getId()));
     }
 }

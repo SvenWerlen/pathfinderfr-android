@@ -1213,8 +1213,12 @@ public class Character extends DBEntity {
         return false;
     }
 
-    public void addClassFeature(ClassFeature feature) {
-        features.add(feature);
+    public boolean addClassFeature(ClassFeature feature) {
+        if(!features.contains(feature)) {
+            features.add(feature);
+            return true;
+        }
+        return false;
     }
 
     @Override

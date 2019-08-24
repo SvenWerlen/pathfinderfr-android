@@ -68,36 +68,68 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TableLayout
-            android:id="@+id/sheet_classfeatures_table"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:stretchColumns="1"
-            android:shrinkColumns="1">
+            android:orientation="vertical">
+            <TableLayout
+                android:id="@+id/sheet_classfeatures_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:stretchColumns="1"
+                android:shrinkColumns="1">
 
-            <TableRow
-                android:id="@+id/sheet_classfeatures_row"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                <TableRow
+                    android:id="@+id/sheet_classfeatures_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/sheet_classfeatures_example_icon"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_gravity="start|center"
-                    android:layout_marginLeft="5dp"
-                    app:srcCompat="@drawable/ic_item_icon_feat" />
+                    <ImageView
+                        android:id="@+id/sheet_classfeatures_example_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginLeft="5dp"
+                        app:srcCompat="@drawable/ic_item_icon_feat" />
+
+                    <TextView
+                        android:id="@+id/sheet_classfeatures_example_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sheet_classfeatures_example_name" />
+
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <TextView
-                    android:id="@+id/sheet_classfeatures_example_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sheet_classfeatures_example_name" />
+                    android:text="@string/sheet_classfeatures_batch_add" />
 
-            </TableRow>
+                <Button
+                    android:id="@+id/classfeatures_add_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="300dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:text="@string/sheet_classfeatures_base"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/colorWhite"
+                    android:layout_margin="10dp" />
 
-        </TableLayout>
+            </LinearLayout>
+        </LinearLayout>
 
     </ScrollView>
 </LinearLayout>

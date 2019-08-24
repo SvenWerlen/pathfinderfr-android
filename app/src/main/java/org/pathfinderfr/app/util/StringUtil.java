@@ -69,6 +69,14 @@ public class StringUtil {
         return listToString(values, sep, null);
     }
 
+    public static final String listToString(Integer[] values, String sep) {
+        List<String> list = new ArrayList<>();
+        for(Integer i : values) {
+            list.add(String.valueOf(i));
+        }
+        return listToString(list, sep);
+    }
+
     public static final String listToString(int[] values, String sep) {
         String[] list = new String[values.length];
         for(int i = 0; i<values.length; i++) {

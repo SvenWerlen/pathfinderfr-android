@@ -315,9 +315,7 @@ public class CharacterFactory extends DBEntityFactory {
             if (c.getClassFeatures().size() > 0) {
                 StringBuffer value = new StringBuffer();
                 for (ClassFeature feat : c.getClassFeatures()) {
-                    if (!feat.isAuto()) {
-                        value.append(feat.getId()).append('#');
-                    }
+                    value.append(feat.getId()).append('#');
                 }
                 if (value.length() > 0) {
                     value.deleteCharAt(value.length() - 1);
@@ -560,42 +558,21 @@ public class CharacterFactory extends DBEntityFactory {
         // fill class features
         String featuresValue = extractValue(resource, CharacterFactory.COLUMN_CLFEATURES);
         Log.d(CharacterFactory.class.getSimpleName(), "Class features found: " + featuresValue);
-
-        String[] feats = new String[0];
         if(featuresValue != null && featuresValue.length() > 0) {
-            feats = featuresValue.split("#");
-        }
-        Set<Long> featIds = new HashSet<>();
-        Map<Long,Integer> classes = new HashMap<>();
-        Set<Long> archetypes = new HashSet<>();
-        try {
-            for(int i = 0; i < feats.length; i++) {
-                featIds.add(Long.parseLong(feats[i]));
-            }
-            for(int i = 0; i < c.getClassesCount(); i++) {
-                Triplet<Class,ClassArchetype,Integer> level = c.getClass(i);
-                classes.put(level.first.getId(), level.third);
-                if(level.second != null) {
-                    archetypes.add(level.second.getId());
+            String[] feats = featuresValue.split("#");
+            long[] featIds = new long[feats.length];
+            try {
+                for(int i = 0; i < feats.length; i++) {
+                    featIds[i] = Long.parseLong(feats[i]);
                 }
-            }
-            // retrieve all class features from DB
-            List<DBEntity> list = DBHelper.getInstance(null).getAllEntities(ClassFeatureFactory.getInstance());
-            for(DBEntity e : list) {
-                ClassFeature cFeat = (ClassFeature) e;
-                // add all automatic class features matching level and archetype
-                if(cFeat.isAuto() && classes.containsKey(cFeat.getClass_().getId())
-                        && (cFeat.getClassArchetype() == null || archetypes.contains(cFeat.getClassArchetype().getId()))
-                        && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
+                // retrieve all class features from DB
+                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, ClassFeatureFactory.getInstance());
+                for(DBEntity e : list) {
                     c.addClassFeature((ClassFeature) e);
                 }
-                // add all added class features (even if not matching class)
-                if(featIds.contains(cFeat.getId())) {
-                    c.addClassFeature((ClassFeature) e);
-                }
+            } catch (NumberFormatException nfe) {
+                Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
             }
-        } catch (NumberFormatException nfe) {
-            Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
         }
 
         // fill race alternate traits

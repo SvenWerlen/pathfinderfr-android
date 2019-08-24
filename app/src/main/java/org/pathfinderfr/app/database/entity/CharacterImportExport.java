@@ -222,9 +222,6 @@ public class CharacterImportExport {
         // class features
         List<Map> features = new ArrayList();
         for(ClassFeature f : c.getClassFeatures()) {
-            if(f.isAuto()) {
-                continue;
-            }
             Map<String, Object> featObj = new LinkedHashMap();
             featObj.put(YAML_NAME, f.getName());
             features.add(featObj);

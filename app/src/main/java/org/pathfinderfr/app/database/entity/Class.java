@@ -67,6 +67,7 @@ public class Class extends DBEntity {
     }
 
     public Level getLevel(int lvl) {
+        lvl = Math.min(lvl, 20); // maximum 20
         for(Level l : levels) {
             if(l.getLvl() == lvl) {
                 return l;

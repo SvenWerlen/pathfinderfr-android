@@ -1,10 +1,12 @@
 package org.pathfinderfr.app.character;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,7 +28,10 @@ import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Race;
@@ -36,17 +41,21 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.StringUtil;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
 /**
  * Feat tab on character sheet
  */
-public class SheetClassFeatureFragment extends Fragment implements FragmentClassFeatureFilter.OnFragmentInteractionListener {
+public class SheetClassFeatureFragment extends Fragment implements FragmentClassFeatureFilter.OnFragmentInteractionListener, View.OnClickListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
     private static final String DIALOG_CLASSFEATURE_FILTER = "classfeatures-filter";
@@ -57,8 +66,14 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     private List<TableRow> traits;
     private List<Pair<TableRow, ClassFeature>> features;
 
+    private Callbacks mCallbacks;
+
     public SheetClassFeatureFragment() {
         // Required empty public constructor
+    }
+
+    public interface Callbacks {
+        void onRefreshRequest();
     }
 
     /**
@@ -78,6 +93,15 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             characterId = getArguments().getLong(ARG_CHARACTER_ID);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Activities containing this fragment must implement its callbacks
+        if(context instanceof Callbacks) {
+            mCallbacks = (Callbacks) context;
         }
     }
 
@@ -143,12 +167,15 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         TextView messageAdd = view.findViewById(R.id.sheet_classfeatures_add);
         exampleIcon.setColorFilter(view.getResources().getColor(R.color.colorBlack));
 
+        view.findViewById(R.id.classfeatures_add_batch).setOnClickListener(this);
+
         // determine size
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         int lineHeight = Integer.parseInt(prefs.getString(MainActivity.PREF_LINEHEIGHT, "0"));
         int height = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, lineHeight, view.getResources().getDisplayMetrics());
         int rowId = 0;
+
 
         // add all traits
         traits = new ArrayList<>();
@@ -351,5 +378,58 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     @Override
     public void onFilterApplied() {
         applyFilters(getView());
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        if(v.getId() == R.id.classfeatures_add_batch) {
+            List<DBEntity> features = DBHelper.getInstance(getContext()).getAllEntities(ClassFeatureFactory.getInstance());
+            Map<Long,Integer> classes = new HashMap<>();
+            Set<Long> archetypes = new HashSet<>();
+            Set<Integer> completedLevel = new HashSet<>();
+            Set<Integer> addedLevel = new HashSet<>();
+            for(ClassFeature cf : character.getClassFeatures()) {
+                completedLevel.add(cf.getLevel());
+            }
+            for(int i = 0; i < character.getClassesCount(); i++) {
+                Triplet<Class, ClassArchetype,Integer> level = character.getClass(i);
+                classes.put(level.first.getId(), level.third);
+                if(level.second != null) {
+                    archetypes.add(level.second.getId());
+                }
+            }
+            // add all automatic class features matching level and archetype
+            for(DBEntity f : features) {
+                ClassFeature cFeat = (ClassFeature)f;
+                if (cFeat.isAuto() && classes.containsKey(cFeat.getClass_().getId())
+                        && (cFeat.getClassArchetype() == null || archetypes.contains(cFeat.getClassArchetype().getId()))
+                        && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
+                    // in order to avoid previously removed abilities to reappear, only add if no ability exist for that level
+                    if(!completedLevel.contains(cFeat.getLevel())) {
+                        if(character.addClassFeature(cFeat)) {
+                            addedLevel.add(cFeat.getLevel());
+                        }
+                    }
+                }
+            }
+            // something was added?
+            if(addedLevel.size() > 0) {
+                DBHelper.getInstance(getContext()).updateEntity(character);
+                if (mCallbacks != null) {
+                    mCallbacks.onRefreshRequest();
+                }
+
+                Integer[] levels = addedLevel.toArray(new Integer[addedLevel.size()]);
+                String text = String.format(getResources().getString(R.string.sheet_classfeatures_batch_message), StringUtil.listToString(levels, ", "));
+                Snackbar.make(getView(), text,
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            } else {
+                Snackbar.make(getView(), String.format(getResources().getString(R.string.sheet_classfeatures_batch_error)),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        }
+
+
     }
 }
