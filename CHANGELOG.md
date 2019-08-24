@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.3.0] - 2019-08-24
+### Fixed
+- Invalid BAB computation
+### Changed
+- Classfeature management for characters
+- Ability to add/remove a class skill (only if not already provided)
+
 ## [3.2.5] - 2019-08-22
 ### Fixed
 - Invalid BAB computation
