@@ -280,12 +280,19 @@ public class CharacterFactory extends DBEntityFactory {
         }
 
         if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SKILLS)) {
-            // skills are stored using format <skill1Id>:<ranks>#<skill2Id>:<ranks>#...
+            // skills are stored using format <skill1Id>:<ranks>:<isclassskill>#<skill2Id>:<ranks>:<isclassskill>#...
             // (assuming that skill ids won't change during data import)
             if (c.getSkills().size() > 0) {
                 StringBuffer value = new StringBuffer();
                 for (Long skillId : c.getSkills()) {
-                    value.append(skillId).append(':').append(c.getSkillRank(skillId)).append('#');
+                    Skill skill = (Skill)DBHelper.getInstance(null).fetchEntity(skillId, SkillFactory.getInstance());
+                    if(skill != null) {
+                        value.append(skillId).append(':').append(c.getSkillRank(skillId));
+                        if (!c.isClassSkillByDefault(skill) && c.isClassSkill(skill)) {
+                            value.append(':').append(Boolean.TRUE);
+                        }
+                        value.append('#');
+                    }
                 }
                 value.deleteCharAt(value.length() - 1);
                 Log.d(CharacterFactory.class.getSimpleName(), "Skills: " + value.toString());
@@ -523,11 +530,17 @@ public class CharacterFactory extends DBEntityFactory {
             String[] skills = skillsValue.split("#");
             for(String skill : skills) {
                 String[] skillDetails = skill.split(":");
-                if (skillDetails != null && skillDetails.length == 2) {
+                if (skillDetails.length >= 2) {
                     try {
                         long skillId = Long.parseLong(skillDetails[0]);
                         int ranks = Integer.parseInt(skillDetails[1]);
                         c.setSkillRank(skillId, ranks);
+                        if(skillDetails.length >= 3) {
+                            DBEntity entity = DBHelper.getInstance(null).fetchEntity(skillId, SkillFactory.getInstance());
+                            if(entity != null) {
+                                c.setClassSkill((Skill)entity, Boolean.valueOf(skillDetails[2]));
+                            }
+                        }
                     } catch (NumberFormatException nfe) {
                         Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + skill + "' is invalid (NFE)!");
                     }

@@ -49,6 +49,11 @@
     <string name="equipment_added_failed">Échec de l\'ajout de l\'équipement au personnage!</string>
     <string name="magicitem_added_success">Objet magique ajouté à %s avec succès!</string>
     <string name="magicitem_added_failed">Échec de l\'ajout de l\'objet magique au personnage!</string>
+    <string name="skill_added_auto">Cette compétence de classe ne peut être retirée car elle est obtenue grâce à l\'une de vos classes!</string>
+    <string name="skill_added_success">Compétence de classe ajoutée à %s avec succès!</string>
+    <string name="skill_removed_success">Compétence de classe retirée à %s avec succès!</string>
+    <string name="skill_added_failed">Échec lors de l\'ajout de la compétence de classe!</string>
+    <string name="skill_removed_failed">Échec lors du retrait de la compétence de classe!</string>
 
     <!-- Strings related to Toolbar -->
     <string name="toolbar_search">Saisir du texte pour filtrer...</string>

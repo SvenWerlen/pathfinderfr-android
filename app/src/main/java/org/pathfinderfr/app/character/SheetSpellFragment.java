@@ -369,6 +369,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
                 Intent intent = new Intent(getContext(), ItemDetailActivity.class);
                 intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, spellId);
                 intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, SpellFactory.FACTORY_ID);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                 getContext().startActivity(intent);
             }
         } else if(v instanceof ImageView && v.getTag() != null) {

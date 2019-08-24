@@ -32,6 +32,7 @@ import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.MagicItem;
 import org.pathfinderfr.app.database.entity.Race;
+import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
 import org.pathfinderfr.app.treasure.TreasureUtil;
@@ -116,9 +117,16 @@ public class ItemDetailFragment extends Fragment {
             else if(mItem instanceof Trait) {
                 isAddedToCharacter = character.hasTrait((Trait) mItem);
             }
+            else if(mItem instanceof Skill) {
+                isAddedToCharacter = character.isClassSkill((Skill)mItem);
+            }
         }
         ImageView addToCharacter = (ImageView)view.findViewById(R.id.actionAddToCharacter);
-        addToCharacter.getBackground().setColorFilter(isAddedToCharacter ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+        if(addToCharacter.getBackground() != null) {
+            addToCharacter.getBackground().setColorFilter(isAddedToCharacter ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+        } else {
+            addToCharacter.setImageResource(isAddedToCharacter ? R.drawable.ic_checked : R.drawable.ic_unchecked);
+        }
 
         ImageView addFavorite = (ImageView)view.findViewById(R.id.actionFavorite);
         addFavorite.getBackground().setColorFilter(isFavorite ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
@@ -185,8 +193,19 @@ public class ItemDetailFragment extends Fragment {
 
 
         if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof Trait
-                || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem) ) {
+                || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem || mItem instanceof Skill) ) {
             addToCharacter.setVisibility(View.GONE);
+        }
+
+        if(mItem instanceof Skill) {
+            Skill sk = (Skill)mItem;
+            if(character != null && character.isClassSkill(sk)) {
+                addToCharacter.setImageResource(R.drawable.ic_checked);
+                addToCharacter.setBackground(null);
+            } else {
+                addToCharacter.setImageResource(R.drawable.ic_unchecked);
+                addToCharacter.setBackground(null);
+            }
         }
 
         if(mItem == null || mItem instanceof Race) {
@@ -308,6 +327,25 @@ public class ItemDetailFragment extends Fragment {
                         success = true;
                     } else {
                         message = getResources().getString(R.string.magicitem_added_failed);
+                    }
+                } else if (mItem instanceof Skill) {
+                    Skill sk = (Skill)mItem;
+                    if(character.isClassSkillByDefault(sk)) {
+                        message = getResources().getString(R.string.skill_added_auto);
+                    } else if(character.isClassSkill(sk)) {
+                        if(character.setClassSkill(sk, false) && DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = String.format(getResources().getString(R.string.skill_removed_success), cName);
+                            success = true;
+                        } else {
+                            message = getResources().getString(R.string.skill_removed_failed);
+                        }
+                    } else {
+                        if(character.setClassSkill(sk, true) && DBHelper.getInstance(getContext()).updateEntity(character)) {
+                            message = String.format(getResources().getString(R.string.skill_added_success), cName);
+                            success = true;
+                        } else {
+                            message = getResources().getString(R.string.skill_added_failed);
+                        }
                     }
                 }
                 // update list if currently viewing character

@@ -101,7 +101,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
         int rowId = 0;
         for(Pair<TableRow,Skill> entry : skills) {
-            if(filterOnlyClass && !character.isClassSkill(entry.second.getName())) {
+            if(filterOnlyClass && !character.isClassSkill(entry.second)) {
                 entry.first.setVisibility(View.GONE);
                 continue;
             } else if (filterOnlyRank && character.getSkillRank(entry.second.getId()) == 0) {
@@ -170,7 +170,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             final Skill skill = (Skill)entity;
             int abilityMod = character.getSkillAbilityMod(skill);
             int rank = character.getSkillRank(skill.getId());
-            int classSkillBonus = (rank > 0 && character.isClassSkill(skill.getName())) ? 3 : 0;
+            int classSkillBonus = (rank > 0 && character.isClassSkill(skill)) ? 3 : 0;
             int addBonus = character.getAdditionalBonus(Character.MODIF_SKILL + (int)skill.getId());
             int total = abilityMod + rank + classSkillBonus + addBonus;
 
@@ -181,7 +181,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
             // icon
             ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
-            if(character.isClassSkill(skill.getName())) {
+            if(character.isClassSkill(skill)) {
                 iconIv.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_checked));
             }
             iconIv.setColorFilter(exampleName.getCurrentTextColor());
@@ -199,6 +199,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, skill.getId());
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, skill.getFactory().getFactoryId());
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, character.getId());
                     context.startActivity(intent);
                 }
             });
@@ -217,7 +218,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                     int rank = character.getSkillRank(skill.getId());
                     int total = character.getSkillTotalBonus(skill);
                     String classSkillText = "";
-                    if(character.isClassSkill(skill.getName()) && rank > 0) {
+                    if(character.isClassSkill(skill) && rank > 0) {
                         classSkillText = skillTooltipClassSkill;
                     }
                     ((CharacterSheetActivity)getActivity()).showTooltip(

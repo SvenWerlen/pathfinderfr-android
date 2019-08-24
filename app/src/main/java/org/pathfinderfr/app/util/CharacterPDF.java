@@ -995,7 +995,7 @@ public class CharacterPDF {
                 Skill s = (Skill)skill;
                 String name = s.getName() + ( s.requiresTraining() ? "*" : "" );
                 name = name.replaceAll("Connaissances", "Conn." );
-                table.addCell(createCheckBox(character.isClassSkill(s.getName())).setBackgroundColor(backgnd));
+                table.addCell(createCheckBox(character.isClassSkill(s)).setBackgroundColor(backgnd));
                 table.addCell(createInfoText(name,1).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd).setPaddingBottom(2).setPaddingLeft(1));
                 table.addCell(createValueCell(character.getSkillTotalBonus(s),true).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd));
                 table.addCell(createInfoText(s.getAbilityId(),1, TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBackgroundColor(backgnd).setMinWidth(20).setPaddingBottom(2));

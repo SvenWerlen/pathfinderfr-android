@@ -102,7 +102,7 @@ public class Character extends DBEntity {
     int[] abilities;
     Race race;
     List<Triplet<Class,ClassArchetype,Integer>> classes;
-    Map<Long,Integer> skills;
+    Map<Long,CSkill> skills;
     List<Feat> feats;
     List<ClassFeature> features;
     List<Trait> traits;
@@ -144,6 +144,19 @@ public class Character extends DBEntity {
         modifs = new ArrayList<>();
         invItems = new ArrayList<>();
         spells = new ArrayList<>();
+    }
+
+    public static class CSkill {
+        private Long skillId;         // reference to skill
+        private int rank;             // current rank
+        private boolean isClassSkill; // manually added class skill
+        public CSkill(long skillId, int rank) { this.skillId = skillId; this.rank = rank; isClassSkill = false;}
+        public Long getSkillId() { return skillId; }
+        public void setSkillId(Long skillId) { this.skillId = skillId; }
+        public int getRank() { return rank; }
+        public void setRank(int rank) { this.rank = rank; }
+        public boolean isClassSkill() { return isClassSkill; }
+        public void setClassSkill(boolean classSkill) { isClassSkill = classSkill; }
     }
 
     // Helper to keep modifs
@@ -945,13 +958,10 @@ public class Character extends DBEntity {
      */
     public boolean setSkillRank(long skillId, int rank) {
         if(!skills.containsKey(skillId) && rank > 0) {
-            skills.put(skillId, rank);
+            skills.put(skillId, new CSkill(skillId, rank));
             return true;
-        } else if(skills.containsKey(skillId) && rank == 0) {
-            skills.remove(skillId);
-            return true;
-        } else if(skills.containsKey(skillId) && skills.get(skillId) != rank) {
-            skills.put(skillId, rank);
+        } else if(skills.containsKey(skillId) && skills.get(skillId).getRank() != rank) {
+            skills.get(skillId).setRank(rank);
             return true;
         }
         return false;
@@ -959,7 +969,7 @@ public class Character extends DBEntity {
 
     public int getSkillRank(long skillId) {
         if(skills.containsKey(skillId)) {
-            return skills.get(skillId);
+            return skills.get(skillId).getRank();
         } else {
             return 0;
         }
@@ -1001,7 +1011,7 @@ public class Character extends DBEntity {
         }
         int rank = getSkillRank(skill.getId());
         int abilityMod = getSkillAbilityMod(skill);
-        int classSkill = (rank > 0 && isClassSkill(skill.getName())) ? 3 : 0;
+        int classSkill = (rank > 0 && isClassSkill(skill)) ? 3 : 0;
         int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
         return rank + abilityMod + classSkill + bonus;
     }
@@ -1011,18 +1021,49 @@ public class Character extends DBEntity {
             return 0;
         }
         int rank = getSkillRank(skill.getId());
-        int classSkill = (rank > 0 && isClassSkill(skill.getName())) ? 3 : 0;
+        int classSkill = (rank > 0 && isClassSkill(skill)) ? 3 : 0;
         int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
         return classSkill + bonus;
     }
 
-    public boolean isClassSkill(String skillName) {
+    public boolean isClassSkillByDefault(Skill skill) {
+        return isClassSkill(skill, true);
+    }
+
+    public boolean isClassSkill(Skill skill) {
+        return isClassSkill(skill, false);
+    }
+
+    public boolean isClassSkill(Skill skill, boolean byDefault) {
+        if(skill == null) {
+            return false;
+        }
+        // forced by player
+        if(!byDefault && skills.containsKey(skill.getId()) && skills.get(skill.getId()).isClassSkill()) {
+            return true;
+        }
         for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
-            if(cl.first.getSkills().contains(skillName)) {
+            if(cl.first.getSkills().contains(skill.getName())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean setClassSkill(Skill skill, boolean value) {
+        if(isClassSkillByDefault(skill)) {
+            return false;
+        } else {
+            if(skills.containsKey(skill.getId())) {
+                skills.get(skill.getId()).setClassSkill(value);
+                return true;
+            } else {
+                CSkill sk = new CSkill(skill.getId(), 0);
+                sk.setClassSkill(value);
+                skills.put(skill.getId(), sk);
+                return true;
+            }
+        }
     }
 
     /**
