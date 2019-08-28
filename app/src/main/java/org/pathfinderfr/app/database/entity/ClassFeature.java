@@ -8,6 +8,7 @@ public class ClassFeature extends DBEntity {
     private String conditions;
     private Class class_;
     private ClassArchetype archetype;
+    private ClassFeature linkedTo;
     private boolean auto;
     private int level;
 
@@ -15,6 +16,22 @@ public class ClassFeature extends DBEntity {
     @Override
     public DBEntityFactory getFactory() {
         return ClassFeatureFactory.getInstance();
+    }
+
+    @Override
+    public String getNameShort() {
+        String name = getName();
+        // remove (infos)
+        int idx = name.indexOf("(");
+        if( idx > 0) {
+            name = name.substring(0, idx).trim();
+        }
+        // remove (category:)
+        idx = name.indexOf(":");
+        if( idx > 0) {
+            name = name.substring(idx+1).trim();
+        }
+        return name;
     }
 
     @Override
@@ -51,4 +68,7 @@ public class ClassFeature extends DBEntity {
 
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }
+
+    public ClassFeature getLinkedTo() { return linkedTo; }
+    public void setLinkedTo(ClassFeature linkedTo) { this.linkedTo = linkedTo; }
 }

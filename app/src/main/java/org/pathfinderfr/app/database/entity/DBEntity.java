@@ -27,6 +27,7 @@ public abstract class DBEntity implements Serializable, Comparable<DBEntity> {
         this.name = name;
     }
 
+    public String getNameShort() { return name; }
     public String getNameLong() { return name; }
 
     public String getDescription() {

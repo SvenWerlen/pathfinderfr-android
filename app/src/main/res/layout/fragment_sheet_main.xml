@@ -94,7 +94,7 @@
                 android:id="@+id/sheet_main_namepicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:tag="name"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/sheet_font_text_links"

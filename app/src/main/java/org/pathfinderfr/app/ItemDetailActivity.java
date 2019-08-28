@@ -4,19 +4,22 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.DBEntity;
 
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
  */
-public class ItemDetailActivity extends AppCompatActivity {
+public class ItemDetailActivity extends AppCompatActivity implements ItemDetailFragment.Callbacks {
 
     private final static String PREF_SHOWDETAILS = "general_showdetails";
     private boolean showDetails;
@@ -98,5 +101,21 @@ public class ItemDetailActivity extends AppCompatActivity {
         if(appBarLayout != null) {
             outState.putString(KEY_TOOLBAR_TITLE, appBarLayout.getTitle().toString());
         }
+    }
+
+    @Override
+    public void onRefreshRequest() {
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Bundle arguments = new Bundle();
+        arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
+        arguments.putLong(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, 0));
+        arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
+        arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
+        arguments.putString(ItemDetailFragment.ARG_ITEM_MESSAGE, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_MESSAGE));
+        ItemDetailFragment fragment = new ItemDetailFragment();
+        fragment.setArguments(arguments);
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.item_detail_container, fragment);
+        transaction.commit();
     }
 }

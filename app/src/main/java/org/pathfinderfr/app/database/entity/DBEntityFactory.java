@@ -126,6 +126,18 @@ public abstract class DBEntityFactory {
     public abstract DBEntity generateEntity(@NonNull final Cursor resource);
 
     /**
+     * Generates an entity based on given cursor
+     * @param flags indicates which parts to load
+     *
+     * @param resource cursor pointing to DB resource
+     * @return a new instance of the entity filled according to data from DB
+     */
+    public DBEntity generateEntity(@NonNull final Cursor resource, @NonNull Set<Integer> flags) {
+        // when flags are not implemented => generate all
+        return generateEntity(resource);
+    }
+
+    /**
      * Generates an entity based on a map (build from YAML file)
      *
      * @param attributes map with all attributes for that entry/entity

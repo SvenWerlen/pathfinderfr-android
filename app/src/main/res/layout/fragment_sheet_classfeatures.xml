@@ -77,8 +77,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:stretchColumns="1"
-                android:shrinkColumns="1">
+                android:stretchColumns="2"
+                android:shrinkColumns="2">
 
                 <TableRow
                     android:id="@+id/sheet_classfeatures_row"
@@ -97,38 +97,84 @@
                         android:id="@+id/sheet_classfeatures_example_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
                         android:text="@string/sheet_classfeatures_example_name" />
+
+                    <ImageView
+                        android:id="@+id/sheet_classfeatures_example_linked"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="1dp"
+                        app:srcCompat="@drawable/ic_link" />
 
                 </TableRow>
 
             </TableLayout>
 
-            <LinearLayout
+
+            <com.wefika.flowlayout.FlowLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:gravity="start|top">
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
                     android:text="@string/sheet_classfeatures_batch_add" />
 
-                <Button
+                <TextView
                     android:id="@+id/classfeatures_add_batch"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxWidth="300dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:text="@string/sheet_classfeatures_base"
-                    android:background="@drawable/rounded_button"
-                    android:textColor="@color/colorWhite"
-                    android:layout_margin="10dp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:tag="name"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_classfeatures_batch_add_base" />
 
-            </LinearLayout>
+            </com.wefika.flowlayout.FlowLayout>
+
+            <com.wefika.flowlayout.FlowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:gravity="start|top">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:text="@string/sheet_classfeatures_batch_del" />
+
+                <TextView
+                    android:id="@+id/classfeatures_del_batch_base"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:tag="name"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_classfeatures_batch_del_base" />
+
+                <TextView
+                    android:id="@+id/classfeatures_del_batch_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:tag="name"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_classfeatures_batch_del_all" />
+
+            </com.wefika.flowlayout.FlowLayout>
         </LinearLayout>
 
     </ScrollView>

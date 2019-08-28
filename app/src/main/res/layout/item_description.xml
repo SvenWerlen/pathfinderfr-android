@@ -36,6 +36,13 @@
             android:background="@drawable/ic_item_icon_sheet" />
 
         <ImageButton
+            android:id="@+id/actionLink"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_link" />
+
+        <ImageButton
             android:id="@+id/actionFavorite"
             android:layout_width="25dp"
             android:layout_height="25dp"

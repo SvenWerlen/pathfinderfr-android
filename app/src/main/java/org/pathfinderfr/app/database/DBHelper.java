@@ -295,6 +295,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * Updates the entity (partially) into the database
      *
      * @param entity entity instance
+     * @param flags data to be updated
      * @return true if update succeeded
      */
     public boolean updateEntity(DBEntity entity, Set<Integer> flags) {
@@ -380,6 +381,26 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         res.moveToFirst();
         DBEntity entity = factory.generateEntity(res);
+        res.close();
+        return entity;
+    }
+
+    /**
+     * @param id unique ID of the entity to be fetched
+     * @param factory factory corresponding to the element (skill, feet, spell, etc.)
+     * @param flags data to be fetched
+     * @return the entity as object (assuming that it will always be found)
+     */
+    public DBEntity fetchEntity(long id, DBEntityFactory factory, Set<Integer> flags) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchById(id), null );
+        // not found?
+        if(res.getCount()<1) {
+            res.close();
+            return null;
+        }
+        res.moveToFirst();
+        DBEntity entity = factory.generateEntity(res, flags);
         res.close();
         return entity;
     }

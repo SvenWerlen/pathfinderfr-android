@@ -26,6 +26,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private static final String YAML_DESC         = "Description";
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_SOURCE       = "Source";
+    private static final String YAML_LINKED_TO    = "Lié à";
     private static final String YAML_CLASS        = "Classe";
     private static final String YAML_ARCHETYPE    = "Archétype";
     private static final String YAML_CONDITIONS   = "Conditions";
@@ -214,6 +215,9 @@ public class ClassFeatureFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_().getName()));
         if(classFeature.getClassArchetype() != null) {
             buf.append(generateItemDetail(templateItem, YAML_ARCHETYPE, classFeature.getClassArchetype().getName()));
+        }
+        if(classFeature.getLinkedTo() != null) {
+            buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedTo().getNameShort()));
         }
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, classFeature.getConditions()));

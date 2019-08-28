@@ -1,6 +1,7 @@
 package org.pathfinderfr.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,7 +10,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,8 @@ import android.widget.TextView;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
+import org.pathfinderfr.app.character.FragmentRacePicker;
+import org.pathfinderfr.app.character.SheetClassFeatureFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.ClassFeature;
@@ -39,6 +44,8 @@ import org.pathfinderfr.app.treasure.TreasureUtil;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
 
 /**
@@ -47,21 +54,29 @@ import java.util.Properties;
  * in two-pane mode (on tablets) or a {@link ItemDetailActivity}
  * on handsets.
  */
-public class ItemDetailFragment extends Fragment {
+public class ItemDetailFragment extends Fragment implements FragmentLinkedFeaturePicker.OnFragmentInteractionListener {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
-    public static final String ARG_ITEM_FACTORY_ID = "item_factoryid";
-    public static final String ARG_ITEM_SHOWDETAILS = "item_showdetails";
-    public static final String ARG_ITEM_SEL_CHARACTER = "item_selected";
-    public static final String ARG_ITEM_MESSAGE = "item_message";
+    public static final String ARG_ITEM_ID             = "item_id";
+    public static final String ARG_ITEM_FACTORY_ID     = "item_factoryid";
+    public static final String ARG_ITEM_SHOWDETAILS    = "item_showdetails";
+    public static final String ARG_ITEM_SEL_CHARACTER  = "item_selected";
+    public static final String ARG_ITEM_MESSAGE        = "item_message";
+
+    private static final String DIALOG_PICK_LINKED_BY  = "link-picker";
 
     private Properties templates = new Properties();
 
     private String text;
     private WebView content;
+
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onRefreshRequest();
+    }
 
     /**
      * The item that this view is presenting
@@ -76,6 +91,15 @@ public class ItemDetailFragment extends Fragment {
      */
     public ItemDetailFragment() {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Activities containing this fragment must implement its callbacks
+        if(context instanceof ItemDetailFragment.Callbacks) {
+            mCallbacks = (ItemDetailFragment.Callbacks) context;
+        }
     }
 
     @Override
@@ -128,6 +152,18 @@ public class ItemDetailFragment extends Fragment {
             addToCharacter.setImageResource(isAddedToCharacter ? R.drawable.ic_checked : R.drawable.ic_unchecked);
         }
 
+        boolean isLinkedTo = false;
+        if(mItem != null && (character != null)) {
+            for(ClassFeature cf : character.getClassFeatures()) {
+                if (cf.getId() == mItem.getId()) {
+                    isLinkedTo = cf.getLinkedTo() != null;
+                    break;
+                }
+            }
+        }
+        ImageView linkedTo = (ImageView)view.findViewById(R.id.actionLink);
+        linkedTo.getBackground().setColorFilter(isLinkedTo ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
+
         ImageView addFavorite = (ImageView)view.findViewById(R.id.actionFavorite);
         addFavorite.getBackground().setColorFilter(isFavorite ? colorEnabled : colorDisabled, PorterDuff.Mode.SRC_ATOP);
     }
@@ -149,6 +185,16 @@ public class ItemDetailFragment extends Fragment {
         }
         if(characterId != 0) {
             character = (Character)dbHelper.fetchEntity(characterId,CharacterFactory.getInstance());
+
+            // replace mItem with class feature from character (in order to get linkedTo details)
+            if(character != null && mItem instanceof ClassFeature) {
+                for(ClassFeature cf : character.getClassFeatures()) {
+                    if(cf.getId() == mItem.getId()) {
+                        mItem = cf;
+                        break;
+                    }
+                }
+            }
         }
 
         // Show the content as text in a TextView.
@@ -166,17 +212,25 @@ public class ItemDetailFragment extends Fragment {
                 if (mItem.getDescription() == null) {
                     showDetails = true;
                     text = "";
-                } else {
-                    text = mItem.getDescription().replaceAll("\n", "<br />");
                 }
 
                 if (showDetails) {
                     String detail = mItem.getFactory().generateDetails(mItem,
                             templates.getProperty("template.spell.details"),
                             templates.getProperty("template.spell.detail"));
-                    text = detail.replaceAll("\n", "<br />") + String.format(
-                            templates.getProperty("template.spell.description"), text);
+                    text = detail + String.format(templates.getProperty("template.spell.description"), mItem.getDescription());
 
+                    if(mItem instanceof ClassFeature) {
+                        ClassFeature cf = (ClassFeature)mItem;
+                        if(cf.getLinkedTo() != null) {
+                            String subtitle = String.format(templates.getProperty("template.details.subtitle"), cf.getLinkedTo().getName());
+                            String detailLinked = cf.getLinkedTo().getFactory().generateDetails(cf.getLinkedTo(),
+                                    templates.getProperty("template.spell.details"),
+                                    templates.getProperty("template.spell.detail"));
+                            text += subtitle + detailLinked + String.format(templates.getProperty("template.spell.description"), cf.getLinkedTo().getDescription());
+                        }
+                    }
+                    text = text.replaceAll("\n", "<br />");
                 }
                 text = "<div class=\"main\">" + text  + "</div>";
             }
@@ -187,6 +241,7 @@ public class ItemDetailFragment extends Fragment {
 
         ImageView externalLink = (ImageView)rootView.findViewById(R.id.actionExternalLink);
         ImageView addToCharacter = (ImageView)rootView.findViewById(R.id.actionAddToCharacter);
+        ImageView linkedTo = (ImageView)rootView.findViewById(R.id.actionLink);
         ImageView addFavorite = (ImageView)rootView.findViewById(R.id.actionFavorite);
         TextView message = (TextView)rootView.findViewById(R.id.item_alert_message);
         updateActionIcons(rootView);
@@ -195,6 +250,10 @@ public class ItemDetailFragment extends Fragment {
         if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof Trait
                 || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem || mItem instanceof Skill) ) {
             addToCharacter.setVisibility(View.GONE);
+        }
+
+        if(mItem == null || character == null || !(mItem instanceof ClassFeature) ) {
+            linkedTo.setVisibility(View.GONE);
         }
 
         if(mItem instanceof Skill) {
@@ -358,6 +417,30 @@ public class ItemDetailFragment extends Fragment {
             }
         });
 
+        // Add to character
+        linkedTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(character == null || mItem == null) {
+                    return;
+                }
+                FragmentTransaction ft = ItemDetailFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = ItemDetailFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_LINKED_BY);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = FragmentLinkedFeaturePicker.newInstance(ItemDetailFragment.this);
+
+                Bundle arguments = new Bundle();
+                arguments.putLong(FragmentLinkedFeaturePicker.ARG_CHARACTER_ID, character.getId());
+                arguments.putLong(FragmentLinkedFeaturePicker.ARG_FEATURE_ID, mItem.getId());
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_PICK_LINKED_BY);
+                return;
+            }
+        });
+
         // Add to favorites
         addFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -387,7 +470,7 @@ public class ItemDetailFragment extends Fragment {
                     String curViewFactoryId = PreferenceManager.getDefaultSharedPreferences(
                             getView().getContext()).getString(MainActivity.KEY_CUR_FACTORY, null);
 
-                    if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId) || CharacterFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
+                    if (FavoriteFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId) || CharacterFactory.FACTORY_ID.equalsIgnoreCase(curViewFactoryId)) {
                         PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
                                 .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
                     }
@@ -435,5 +518,52 @@ public class ItemDetailFragment extends Fragment {
         text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + text;
         content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
         content.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onLink(ClassFeature targetLink) {
+        if(!(mItem instanceof ClassFeature) || character == null) {
+            return;
+        }
+        ClassFeature source = null;
+        for(ClassFeature cf : character.getClassFeatures()) {
+            if(cf.getId() == mItem.getId()) {
+                source = cf;
+                break;
+            }
+        }
+        // not found??
+        if(source == null) {
+            return;
+        }
+
+        // reset original link (if any)
+        if(source.getLinkedTo() != null) {
+            source.getLinkedTo().setLinkedTo(null);
+        }
+        // find target
+        ClassFeature target = null;
+        if(targetLink != null) {
+            for (ClassFeature cf : character.getClassFeatures()) {
+                if (cf.getId() == targetLink.getId()) {
+                    target = cf;
+                    break;
+                }
+            }
+        }
+        source.setLinkedTo(target);
+        if(target != null) {
+            target.setLinkedTo(source);
+        }
+        if(DBHelper.getInstance(getContext()).updateEntity(character, new HashSet<>(Arrays.asList(CharacterFactory.FLAG_FEATURES)))) {
+            updateActionIcons(getView());
+
+            if (mCallbacks != null) {
+                mCallbacks.onRefreshRequest();
+            }
+
+            PreferenceManager.getDefaultSharedPreferences(getView().getContext()).edit()
+                    .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true).apply();
+        }
     }
 }

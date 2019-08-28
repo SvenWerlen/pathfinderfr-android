@@ -16,7 +16,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -163,11 +165,14 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         TableLayout table = view.findViewById(R.id.sheet_classfeatures_table);
         ImageView exampleIcon = view.findViewById(R.id.sheet_classfeatures_example_icon);
         TextView exampleName = view.findViewById(R.id.sheet_classfeatures_example_name);
+        ImageView exampleLinked = view.findViewById(R.id.sheet_classfeatures_example_linked);
         view.findViewById(R.id.sheet_classfeatures_row).setVisibility(View.GONE);
         TextView messageAdd = view.findViewById(R.id.sheet_classfeatures_add);
         exampleIcon.setColorFilter(view.getResources().getColor(R.color.colorBlack));
 
         view.findViewById(R.id.classfeatures_add_batch).setOnClickListener(this);
+        view.findViewById(R.id.classfeatures_del_batch_all).setOnClickListener(this);
+        view.findViewById(R.id.classfeatures_del_batch_base).setOnClickListener(this);
 
         // determine size
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -305,6 +310,11 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         features = new ArrayList<>();
         for(final ClassFeature classfeature : character.getClassFeatures()) {
 
+            // skip non-auto and linked features
+            if(!classfeature.isAuto() && classfeature.getLinkedTo() != null) {
+                continue;
+            }
+
             TableRow row = new TableRow(view.getContext());
             row.setMinimumHeight(height);
             row.setGravity(Gravity.CENTER_VERTICAL);
@@ -315,8 +325,17 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             row.addView(iconIv);
             // name
             TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
-            String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
-            nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameLong()));
+            if(classfeature.isAuto()) {
+                if(classfeature.getLinkedTo() == null) {
+                    String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
+                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameShort()));
+                } else {
+                    String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name.linkedTo");
+                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getName(), classfeature.getLinkedTo().getNameShort()));
+                }
+            } else {
+                nameTv.setText(classfeature.getName());
+            }
             // highlight if invalid level or class
             if(!character.isValidClassFeature(classfeature)) {
                 nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
@@ -332,7 +351,16 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                     context.startActivity(intent);
                 }
             });
-            row.addView(nameTv);
+            // linkedTo => show icon
+            if(classfeature.getLinkedTo() != null) {
+                ImageView linkedTo = FragmentUtil.copyExampleImageFragment(exampleLinked);
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.addView(nameTv);
+                layout.addView(linkedTo);
+                row.addView(layout);
+            } else {
+                row.addView(nameTv);
+            }
 
             // add to table
             table.addView(row);
@@ -429,7 +457,18 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         }
-
-
+        else if(v.getId() == R.id.classfeatures_del_batch_all || v.getId() == R.id.classfeatures_del_batch_base) {
+            character.removeClasseFeatures(v.getId() == R.id.classfeatures_del_batch_base);
+            if (mCallbacks != null) {
+                mCallbacks.onRefreshRequest();
+            }
+            if(DBHelper.getInstance(getContext()).updateEntity(character)) {
+                Snackbar.make(getView(), getResources().getString(R.string.sheet_classfeatures_batch_del_message),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            } else {
+                Snackbar.make(getView(), getResources().getString(R.string.sheet_classfeatures_batch_del_error),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        }
     }
 }

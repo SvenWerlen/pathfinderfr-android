@@ -61,10 +61,10 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_XP          = "xp";  // experience
     private static final String COLUMN_SPELLS      = "spells";
 
-    public static final Integer FLAG_ALL = 1;
-    public static final Integer FLAG_SKILLS = 2;
-    public static final Integer FLAG_SPELLS = 3;
-
+    public static final Integer FLAG_ALL      = 1;
+    public static final Integer FLAG_SKILLS   = 2;
+    public static final Integer FLAG_SPELLS   = 3;
+    public static final Integer FLAG_FEATURES = 4;
 
     private static CharacterFactory instance;
 
@@ -316,13 +316,19 @@ public class CharacterFactory extends DBEntityFactory {
             } else {
                 contentValues.put(CharacterFactory.COLUMN_FEATS, "");
             }
+        }
 
-            // class features are stored using format <feat1Id>#<feat2Id>...
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_FEATURES)) {
+            // class features are stored using format <feat1Id>:<linked1To>#<feat2Id>:<linked2To>...
             // (assuming that class features ids won't change during data import)
             if (c.getClassFeatures().size() > 0) {
                 StringBuffer value = new StringBuffer();
                 for (ClassFeature feat : c.getClassFeatures()) {
-                    value.append(feat.getId()).append('#');
+                    value.append(feat.getId());
+                    if(feat.getLinkedTo() != null) {
+                        value.append(':').append(feat.getLinkedTo().getId());
+                    }
+                    value.append('#');
                 }
                 if (value.length() > 0) {
                     value.deleteCharAt(value.length() - 1);
@@ -332,7 +338,9 @@ public class CharacterFactory extends DBEntityFactory {
             } else {
                 contentValues.put(CharacterFactory.COLUMN_CLFEATURES, "");
             }
+        }
 
+        if(flags.contains(FLAG_ALL)) {
             // race alternate traits are stored using format <trait1Id>#<trait2Id>...
             // (assuming that traits ids won't change during data import)
             if (c.getTraits().size() > 0) {
@@ -437,6 +445,13 @@ public class CharacterFactory extends DBEntityFactory {
 
     @Override
     public DBEntity generateEntity(@NonNull Cursor resource) {
+        Set<Integer> flags = new HashSet<Integer>();
+        flags.add(FLAG_ALL);
+        return generateEntity(resource, flags);
+    }
+
+    @Override
+    public DBEntity generateEntity(@NonNull Cursor resource, Set<Integer> flags) {
         Character c = new Character();
 
         c.setId(resource.getLong(resource.getColumnIndex(CharacterFactory.COLUMN_ID)));
@@ -445,290 +460,316 @@ public class CharacterFactory extends DBEntityFactory {
         c.setReference(extractValue(resource, CharacterFactory.COLUMN_REFERENCE));
         c.setSource(extractValue(resource, CharacterFactory.COLUMN_SOURCE));
 
-        c.setStrength(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_STR));
-        c.setDexterity(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_DEX));
-        c.setConstitution(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CON));
-        c.setIntelligence(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_INT));
-        c.setWisdom(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_WIS));
-        c.setCharisma(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
+        if(flags.contains(FLAG_ALL)) {
 
-        c.setHitpoints(extractValueAsInt(resource, CharacterFactory.COLUMN_HITPOINTS));
-        c.setHitpointsTemp(extractValueAsInt(resource, CharacterFactory.COLUMN_HPTEMP));
-        c.setSpeed(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED));
+            c.setStrength(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_STR));
+            c.setDexterity(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_DEX));
+            c.setConstitution(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CON));
+            c.setIntelligence(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_INT));
+            c.setWisdom(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_WIS));
+            c.setCharisma(extractValueAsInt(resource, CharacterFactory.COLUMN_ABILITY_CHA));
 
-        // fill race
-        String raceValue = extractValue(resource, CharacterFactory.COLUMN_RACE);
-        if(raceValue != null && raceValue.length() > 0) {
-            String[] race = raceValue.split(":");
-            if(race.length == 2) {
-                try {
-                    long raceId = Long.valueOf(race[0]);
-                    String raceName = race[1];
-                    Race raceEntity = (Race) DBHelper.getInstance(null).fetchEntity(raceId, RaceFactory.getInstance());
-                    // race found
-                    if(raceEntity != null && raceEntity.getName().equals(raceName)) {
-                        c.setRace(raceEntity);
-                    }
-                    // race not found => search by name
-                    else {
-                        Log.w(CharacterFactory.class.getSimpleName(), "Couldn't find race by id: " + race);
-                        raceEntity = (Race) DBHelper.getInstance(null).fetchEntityByName(raceName, RaceFactory.getInstance());
-                        if(raceEntity != null) {
+            c.setHitpoints(extractValueAsInt(resource, CharacterFactory.COLUMN_HITPOINTS));
+            c.setHitpointsTemp(extractValueAsInt(resource, CharacterFactory.COLUMN_HPTEMP));
+            c.setSpeed(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED));
+
+            // fill race
+            String raceValue = extractValue(resource, CharacterFactory.COLUMN_RACE);
+            if (raceValue != null && raceValue.length() > 0) {
+                String[] race = raceValue.split(":");
+                if (race.length == 2) {
+                    try {
+                        long raceId = Long.valueOf(race[0]);
+                        String raceName = race[1];
+                        Race raceEntity = (Race) DBHelper.getInstance(null).fetchEntity(raceId, RaceFactory.getInstance());
+                        // race found
+                        if (raceEntity != null && raceEntity.getName().equals(raceName)) {
                             c.setRace(raceEntity);
                         }
-                    }
-
-                } catch(NumberFormatException nfe) {
-                    Log.e(CharacterFactory.class.getSimpleName(), "Stored raceId '" + race[0] + "' is invalid!");
-                }
-            }
-        }
-
-        // fill classes
-        String classesValue = extractValue(resource, CharacterFactory.COLUMN_CLASSES);
-        Log.d(CharacterFactory.class.getSimpleName(), "Classes found: " + classesValue);
-        if(classesValue != null && classesValue.length() > 0) {
-            String[] classes = classesValue.split("#");
-            for(String cl : classes) {
-                String[] clDetails = cl.split(":");
-                if(clDetails != null && clDetails.length >= 3) {
-                    try {
-                        long classId = Long.parseLong(clDetails[0]);
-                        String className = clDetails[1];
-                        int level = Integer.parseInt(clDetails[2]);
-                        long archetypeId = 0;
-                        String archetypeName = null;
-                        // archetype was added later
-                        if(clDetails.length==4) {
-                            archetypeId = Long.parseLong(clDetails[3]);
-                        }
-
-                        Class clEntity = (Class) DBHelper.getInstance(null).fetchEntity(classId, ClassFactory.getInstance());
-                        ClassArchetype archEntity = archetypeId == 0 ? null : (ClassArchetype) DBHelper.getInstance(null).fetchEntity(archetypeId, ClassArchetypesFactory.getInstance());
-
-                        // class not found => search by name
-                        if(clEntity == null) {
-                            Log.w(CharacterFactory.class.getSimpleName(), "Couldn't find class by id: " + cl);
-                            clEntity = (Class) DBHelper.getInstance(null).fetchEntityByName(className, ClassFactory.getInstance());
-                        }
-
-                        if(clEntity != null) {
-                            c.addOrSetClass(clEntity, archEntity, level);
-                        }
-
-                    } catch(NumberFormatException nfe) {
-                        Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + cl + "' is invalid (NFE)!");
-                    }
-                }
-            }
-        }
-
-        // fill skills
-        String skillsValue = extractValue(resource, CharacterFactory.COLUMN_SKILLS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Skills found: " + skillsValue);
-        if(skillsValue != null && skillsValue.length() > 0) {
-            String[] skills = skillsValue.split("#");
-            for(String skill : skills) {
-                String[] skillDetails = skill.split(":");
-                if (skillDetails.length >= 2) {
-                    try {
-                        long skillId = Long.parseLong(skillDetails[0]);
-                        int ranks = Integer.parseInt(skillDetails[1]);
-                        c.setSkillRank(skillId, ranks);
-                        if(skillDetails.length >= 3) {
-                            DBEntity entity = DBHelper.getInstance(null).fetchEntity(skillId, SkillFactory.getInstance());
-                            if(entity != null) {
-                                c.setClassSkill((Skill)entity, Boolean.valueOf(skillDetails[2]));
+                        // race not found => search by name
+                        else {
+                            Log.w(CharacterFactory.class.getSimpleName(), "Couldn't find race by id: " + race);
+                            raceEntity = (Race) DBHelper.getInstance(null).fetchEntityByName(raceName, RaceFactory.getInstance());
+                            if (raceEntity != null) {
+                                c.setRace(raceEntity);
                             }
                         }
+
                     } catch (NumberFormatException nfe) {
-                        Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + skill + "' is invalid (NFE)!");
+                        Log.e(CharacterFactory.class.getSimpleName(), "Stored raceId '" + race[0] + "' is invalid!");
                     }
                 }
             }
-        }
 
-        // fill feats
-        String featsValue = extractValue(resource, CharacterFactory.COLUMN_FEATS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Feats found: " + featsValue);
-        if(featsValue != null && featsValue.length() > 0) {
-            String[] feats = featsValue.split("#");
-            long[] featIds = new long[feats.length];
-            try {
-                for(int i = 0; i < feats.length; i++) {
-                    featIds[i] = Long.parseLong(feats[i]);
-                }
-                // retrieve all feats from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, FeatFactory.getInstance());
-                for(DBEntity e : list) {
-                    c.addFeat((Feat)e);
-                }
-            } catch (NumberFormatException nfe) {
-                Log.e(CharacterFactory.class.getSimpleName(), "Stored feat '" + featsValue + "' is invalid (NFE)!");
-            }
-        }
-
-        // fill class features
-        String featuresValue = extractValue(resource, CharacterFactory.COLUMN_CLFEATURES);
-        Log.d(CharacterFactory.class.getSimpleName(), "Class features found: " + featuresValue);
-        if(featuresValue != null && featuresValue.length() > 0) {
-            String[] feats = featuresValue.split("#");
-            long[] featIds = new long[feats.length];
-            try {
-                for(int i = 0; i < feats.length; i++) {
-                    featIds[i] = Long.parseLong(feats[i]);
-                }
-                // retrieve all class features from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, ClassFeatureFactory.getInstance());
-                for(DBEntity e : list) {
-                    c.addClassFeature((ClassFeature) e);
-                }
-            } catch (NumberFormatException nfe) {
-                Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featsValue + "' is invalid (NFE)!");
-            }
-        }
-
-        // fill race alternate traits
-        String traitsValue = extractValue(resource, CharacterFactory.COLUMN_ALTTRAITS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits found: " + traitsValue);
-        if(traitsValue != null && traitsValue.length() > 0) {
-            String[] traits = traitsValue.split("#");
-            long[] traitIds = new long[traits.length];
-            try {
-                for(int i = 0; i < traits.length; i++) {
-                    traitIds[i] = Long.parseLong(traits[i]);
-                }
-                // retrieve all traits from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(traitIds, TraitFactory.getInstance());
-                for(DBEntity e : list) {
-                    c.addTrait((Trait)e);
-                }
-            } catch (NumberFormatException nfe) {
-                Log.e(CharacterFactory.class.getSimpleName(), "Stored trait '" + traitsValue + "' is invalid (NFE)!");
-            }
-        }
-
-        // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>|<inventory1-objectId>|<inventory1-infos>#<inventory2>|<inventory2-weight>...
-        String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
-        Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
-        if(inventoryValue != null && inventoryValue.length() > 0) {
-            for(String item : inventoryValue.split("#")) {
-                String[] itemElements = item.split("\\|");
-                if(itemElements != null && itemElements.length >= 2) {
-                    String name = itemElements[0];
-                    int weight = 0;
-                    try {
-                        weight = Integer.parseInt(itemElements[1]);
-                    } catch (NumberFormatException nfe) {
-                        Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
-                    }
-                    // item reference was introduced later
-                    long objId = 0;
-                    if(itemElements.length >= 3) {
+            // fill classes
+            String classesValue = extractValue(resource, CharacterFactory.COLUMN_CLASSES);
+            Log.d(CharacterFactory.class.getSimpleName(), "Classes found: " + classesValue);
+            if (classesValue != null && classesValue.length() > 0) {
+                String[] classes = classesValue.split("#");
+                for (String cl : classes) {
+                    String[] clDetails = cl.split(":");
+                    if (clDetails != null && clDetails.length >= 3) {
                         try {
-                            objId = Long.parseLong(itemElements[2]);
+                            long classId = Long.parseLong(clDetails[0]);
+                            String className = clDetails[1];
+                            int level = Integer.parseInt(clDetails[2]);
+                            long archetypeId = 0;
+                            String archetypeName = null;
+                            // archetype was added later
+                            if (clDetails.length == 4) {
+                                archetypeId = Long.parseLong(clDetails[3]);
+                            }
+
+                            Class clEntity = (Class) DBHelper.getInstance(null).fetchEntity(classId, ClassFactory.getInstance());
+                            ClassArchetype archEntity = archetypeId == 0 ? null : (ClassArchetype) DBHelper.getInstance(null).fetchEntity(archetypeId, ClassArchetypesFactory.getInstance());
+
+                            // class not found => search by name
+                            if (clEntity == null) {
+                                Log.w(CharacterFactory.class.getSimpleName(), "Couldn't find class by id: " + cl);
+                                clEntity = (Class) DBHelper.getInstance(null).fetchEntityByName(className, ClassFactory.getInstance());
+                            }
+
+                            if (clEntity != null) {
+                                c.addOrSetClass(clEntity, archEntity, level);
+                            }
+
                         } catch (NumberFormatException nfe) {
-                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + cl + "' is invalid (NFE)!");
                         }
                     }
-                    // item additional info (ex: ammo)
-                    String infos = null;
-                    if(itemElements.length >= 4) {
-                        infos = itemElements[3];
-                    }
-                    // item cost was introduced later
-                    int price = 0;
-                    if(itemElements.length >= 5) {
-                        try {
-                            price = Integer.parseInt(itemElements[4]);
-                        } catch (NumberFormatException nfe) {
-                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
-                        }
-                    }
+                }
+            }
+        }
 
-                    Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
-                    if (toAdd.isValid()) {
-                        c.addInventoryItem(toAdd);
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SKILLS)) {
+            // fill skills
+            String skillsValue = extractValue(resource, CharacterFactory.COLUMN_SKILLS);
+            Log.d(CharacterFactory.class.getSimpleName(), "Skills found: " + skillsValue);
+            if (skillsValue != null && skillsValue.length() > 0) {
+                String[] skills = skillsValue.split("#");
+                for (String skill : skills) {
+                    String[] skillDetails = skill.split(":");
+                    if (skillDetails.length >= 2) {
+                        try {
+                            long skillId = Long.parseLong(skillDetails[0]);
+                            int ranks = Integer.parseInt(skillDetails[1]);
+                            c.setSkillRank(skillId, ranks);
+                            if (skillDetails.length >= 3) {
+                                DBEntity entity = DBHelper.getInstance(null).fetchEntity(skillId, SkillFactory.getInstance());
+                                if (entity != null) {
+                                    c.setClassSkill((Skill) entity, Boolean.valueOf(skillDetails[2]));
+                                }
+                            }
+                        } catch (NumberFormatException nfe) {
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored class '" + skill + "' is invalid (NFE)!");
+                        }
                     }
                 }
             }
         }
 
-        // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1Linkto>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif1Linkto>
-        // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
-        // (assuming that modif ids won't change during data import)
-        // fill modifs
-        String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
-        if(modifsValue != null && modifsValue.length() > 0) {
-            for(String modif : modifsValue.split("#")) {
-                String[] modElements = modif.split(":");
-                if(modElements != null && modElements.length >= 3) {
-                    String source = modElements[0];
-                    String icon = modElements[2];
-                    int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
-                    List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
-                    for (String bonusVal : modElements[1].split(",")) {
-                        String[] bonusElements = bonusVal.split("\\|");
-                        if (bonusElements != null && bonusElements.length == 2) {
+        if(flags.contains(FLAG_ALL)) {
+            // fill feats
+            String featsValue = extractValue(resource, CharacterFactory.COLUMN_FEATS);
+            Log.d(CharacterFactory.class.getSimpleName(), "Feats found: " + featsValue);
+            if (featsValue != null && featsValue.length() > 0) {
+                String[] feats = featsValue.split("#");
+                long[] featIds = new long[feats.length];
+                try {
+                    for (int i = 0; i < feats.length; i++) {
+                        featIds[i] = Long.parseLong(feats[i]);
+                    }
+                    // retrieve all feats from DB
+                    List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, FeatFactory.getInstance());
+                    for (DBEntity e : list) {
+                        c.addFeat((Feat) e);
+                    }
+                } catch (NumberFormatException nfe) {
+                    Log.e(CharacterFactory.class.getSimpleName(), "Stored feat '" + featsValue + "' is invalid (NFE)!");
+                }
+            }
+        }
+
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_FEATURES)) {
+            // fill class features
+            String featuresValue = extractValue(resource, CharacterFactory.COLUMN_CLFEATURES);
+            Log.d(CharacterFactory.class.getSimpleName(), "Class features found: " + featuresValue);
+            if (featuresValue != null && featuresValue.length() > 0) {
+                String[] features = featuresValue.split("#");
+                long[] featIds = new long[features.length];
+                long[] linkedTos = new long[features.length];
+                try {
+                    for (int i = 0; i < features.length; i++) {
+                        String[] values = features[i].split(":");
+                        featIds[i] = Long.parseLong(values[0]);
+                        linkedTos[i] = values.length >= 2 ? Long.parseLong(values[1]) : 0L;
+                    }
+                    Map<Long, ClassFeature> cfList = new HashMap<>();
+                    // retrieve all class features from DB
+                    List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(featIds, ClassFeatureFactory.getInstance());
+                    for (DBEntity e : list) {
+                        ClassFeature cf = (ClassFeature) e;
+                        c.addClassFeature(cf);
+                        cfList.put(cf.getId(), cf);
+                    }
+                    // update links
+                    for(int i = 0; i<featIds.length; i++) {
+                        if(cfList.containsKey(featIds[i]) && cfList.containsKey(linkedTos[i])) {
+                            cfList.get(featIds[i]).setLinkedTo(cfList.get(linkedTos[i]));
+                            cfList.get(linkedTos[i]).setLinkedTo(cfList.get(featIds[i]));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    Log.e(CharacterFactory.class.getSimpleName(), "Stored class feature '" + featuresValue + "' is invalid (NFE)!");
+                }
+            }
+        }
+
+        if(flags.contains(FLAG_ALL)) {
+            // fill race alternate traits
+            String traitsValue = extractValue(resource, CharacterFactory.COLUMN_ALTTRAITS);
+            Log.d(CharacterFactory.class.getSimpleName(), "Race alt. traits found: " + traitsValue);
+            if (traitsValue != null && traitsValue.length() > 0) {
+                String[] traits = traitsValue.split("#");
+                long[] traitIds = new long[traits.length];
+                try {
+                    for (int i = 0; i < traits.length; i++) {
+                        traitIds[i] = Long.parseLong(traits[i]);
+                    }
+                    // retrieve all traits from DB
+                    List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(traitIds, TraitFactory.getInstance());
+                    for (DBEntity e : list) {
+                        c.addTrait((Trait) e);
+                    }
+                } catch (NumberFormatException nfe) {
+                    Log.e(CharacterFactory.class.getSimpleName(), "Stored trait '" + traitsValue + "' is invalid (NFE)!");
+                }
+            }
+
+            // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>|<inventory1-objectId>|<inventory1-infos>#<inventory2>|<inventory2-weight>...
+            String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
+            Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
+            if (inventoryValue != null && inventoryValue.length() > 0) {
+                for (String item : inventoryValue.split("#")) {
+                    String[] itemElements = item.split("\\|");
+                    if (itemElements != null && itemElements.length >= 2) {
+                        String name = itemElements[0];
+                        int weight = 0;
+                        try {
+                            weight = Integer.parseInt(itemElements[1]);
+                        } catch (NumberFormatException nfe) {
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
+                        }
+                        // item reference was introduced later
+                        long objId = 0;
+                        if (itemElements.length >= 3) {
                             try {
-                                Integer bonusIdx = Integer.parseInt(bonusElements[0]);
-                                Integer bonusValue = Integer.parseInt(bonusElements[1]);
-                                bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
+                                objId = Long.parseLong(itemElements[2]);
                             } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
                             }
                         }
-                    }
-                    Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
-                    if (toAdd.isValid()) {
-                        c.addModif(toAdd);
+                        // item additional info (ex: ammo)
+                        String infos = null;
+                        if (itemElements.length >= 4) {
+                            infos = itemElements[3];
+                        }
+                        // item cost was introduced later
+                        int price = 0;
+                        if (itemElements.length >= 5) {
+                            try {
+                                price = Integer.parseInt(itemElements[4]);
+                            } catch (NumberFormatException nfe) {
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
+                            }
+                        }
+
+                        Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
+                        if (toAdd.isValid()) {
+                            c.addInventoryItem(toAdd);
+                        }
                     }
                 }
             }
+
+            // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1Linkto>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif1Linkto>
+            // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
+            // (assuming that modif ids won't change during data import)
+            // fill modifs
+            String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
+            Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
+            if (modifsValue != null && modifsValue.length() > 0) {
+                for (String modif : modifsValue.split("#")) {
+                    String[] modElements = modif.split(":");
+                    if (modElements != null && modElements.length >= 3) {
+                        String source = modElements[0];
+                        String icon = modElements[2];
+                        int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
+                        List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
+                        for (String bonusVal : modElements[1].split(",")) {
+                            String[] bonusElements = bonusVal.split("\\|");
+                            if (bonusElements != null && bonusElements.length == 2) {
+                                try {
+                                    Integer bonusIdx = Integer.parseInt(bonusElements[0]);
+                                    Integer bonusValue = Integer.parseInt(bonusElements[1]);
+                                    bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
+                                } catch (NumberFormatException nfe) {
+                                    Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
+                                }
+                            }
+                        }
+                        Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
+                        if (toAdd.isValid()) {
+                            c.addModif(toAdd);
+                        }
+                    }
+                }
+            }
+
+            // new 16 fields for PDF
+            c.setSpeedWithArmor(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_ARMOR));
+            c.setSpeedDig(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_DIG));
+            c.setSpeedFly(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLY));
+            c.setSpeedManeuverability(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLYM));
+            c.setPlayer(extractValue(resource, CharacterFactory.COLUMN_PLAYER));
+            c.setAlignment(extractValueAsInt(resource, CharacterFactory.COLUMN_ALIGNMENT));
+            c.setDivinity(extractValue(resource, CharacterFactory.COLUMN_DIVINITY));
+            c.setOrigin(extractValue(resource, CharacterFactory.COLUMN_ORIGIN));
+            c.setSizeType(extractValueAsInt(resource, CharacterFactory.COLUMN_SIZETYPE));
+            c.setSex(extractValueAsInt(resource, CharacterFactory.COLUMN_SEX));
+            c.setAge(extractValueAsInt(resource, CharacterFactory.COLUMN_AGE));
+            c.setHeight(extractValueAsInt(resource, CharacterFactory.COLUMN_HEIGHT));
+            c.setWeight(extractValueAsInt(resource, CharacterFactory.COLUMN_WEIGHT));
+            c.setHair(extractValue(resource, CharacterFactory.COLUMN_HAIR));
+            c.setEyes(extractValue(resource, CharacterFactory.COLUMN_EYES));
+            c.setLanguages(extractValue(resource, CharacterFactory.COLUMN_LANG));
+            // new fields for PDF
+            c.setMoneyCP(extractValueAsInt(resource, CharacterFactory.COLUMN_CP));
+            c.setMoneySP(extractValueAsInt(resource, CharacterFactory.COLUMN_SP));
+            c.setMoneyGP(extractValueAsInt(resource, CharacterFactory.COLUMN_GP));
+            c.setMoneyPP(extractValueAsInt(resource, CharacterFactory.COLUMN_PP));
+            c.setExperience(extractValueAsInt(resource, CharacterFactory.COLUMN_XP));
         }
 
-        // new 16 fields for PDF
-        c.setSpeedWithArmor(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_ARMOR));
-        c.setSpeedDig(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_DIG));
-        c.setSpeedFly(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLY));
-        c.setSpeedManeuverability(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_FLYM));
-        c.setPlayer(extractValue(resource, CharacterFactory.COLUMN_PLAYER));
-        c.setAlignment(extractValueAsInt(resource, CharacterFactory.COLUMN_ALIGNMENT));
-        c.setDivinity(extractValue(resource, CharacterFactory.COLUMN_DIVINITY));
-        c.setOrigin(extractValue(resource, CharacterFactory.COLUMN_ORIGIN));
-        c.setSizeType(extractValueAsInt(resource, CharacterFactory.COLUMN_SIZETYPE));
-        c.setSex(extractValueAsInt(resource, CharacterFactory.COLUMN_SEX));
-        c.setAge(extractValueAsInt(resource, CharacterFactory.COLUMN_AGE));
-        c.setHeight(extractValueAsInt(resource, CharacterFactory.COLUMN_HEIGHT));
-        c.setWeight(extractValueAsInt(resource, CharacterFactory.COLUMN_WEIGHT));
-        c.setHair(extractValue(resource, CharacterFactory.COLUMN_HAIR));
-        c.setEyes(extractValue(resource, CharacterFactory.COLUMN_EYES));
-        c.setLanguages(extractValue(resource, CharacterFactory.COLUMN_LANG));
-        // new fields for PDF
-        c.setMoneyCP(extractValueAsInt(resource, CharacterFactory.COLUMN_CP));
-        c.setMoneySP(extractValueAsInt(resource, CharacterFactory.COLUMN_SP));
-        c.setMoneyGP(extractValueAsInt(resource, CharacterFactory.COLUMN_GP));
-        c.setMoneyPP(extractValueAsInt(resource, CharacterFactory.COLUMN_PP));
-        c.setExperience(extractValueAsInt(resource, CharacterFactory.COLUMN_XP));
-
-        // fill spells
-        String spellsValue = extractValue(resource, CharacterFactory.COLUMN_SPELLS);
-        Log.d(CharacterFactory.class.getSimpleName(), "Spells found: " + spellsValue);
-        if(spellsValue != null && spellsValue.length() > 0) {
-            String[] spells = spellsValue.split("#");
-            long[] spellIds = new long[spells.length];
-            try {
-                for(int i = 0; i < spells.length; i++) {
-                    spellIds[i] = Long.parseLong(spells[i]);
+        if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SPELLS)) {
+            // fill spells
+            String spellsValue = extractValue(resource, CharacterFactory.COLUMN_SPELLS);
+            Log.d(CharacterFactory.class.getSimpleName(), "Spells found: " + spellsValue);
+            if (spellsValue != null && spellsValue.length() > 0) {
+                String[] spells = spellsValue.split("#");
+                long[] spellIds = new long[spells.length];
+                try {
+                    for (int i = 0; i < spells.length; i++) {
+                        spellIds[i] = Long.parseLong(spells[i]);
+                    }
+                    // retrieve all feats from DB
+                    List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(spellIds, SpellFactory.getInstance());
+                    for (DBEntity e : list) {
+                        c.addSpell((Spell) e);
+                    }
+                } catch (NumberFormatException nfe) {
+                    Log.e(CharacterFactory.class.getSimpleName(), "Stored spell '" + spellsValue + "' is invalid (NFE)!");
                 }
-                // retrieve all feats from DB
-                List<DBEntity> list = DBHelper.getInstance(null).fetchAllEntitiesById(spellIds, SpellFactory.getInstance());
-                for(DBEntity e : list) {
-                    c.addSpell((Spell)e);
-                }
-            } catch (NumberFormatException nfe) {
-                Log.e(CharacterFactory.class.getSimpleName(), "Stored spell '" + spellsValue + "' is invalid (NFE)!");
             }
         }
 

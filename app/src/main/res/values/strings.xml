@@ -345,6 +345,15 @@
     <string name="sheet_modifs_bonus_example">+2 Force</string>
     <string name="sheet_modifs_skills">-- Compétences --</string>
 
+    <!-- Character modifications -->
+    <string name="features_title">Lier deux aptitudes</string>
+    <string name="features_linkto">Lier \'%s\' à:</string>
+    <string name="features_description">Lier une aptitude (de base) avec une aptitude (à choisir)
+        fusionnera les deux pour un affichage plus convivial. Par exemple, lier "Pouvoir de rage" avec
+        "Coup puissant" fusionnera les deux pour indiquer "Pouvoir de rage (coup puissant)".
+    </string>
+    <string name="features_example">Nom d\'aptitude (exemple)</string>
+
     <!-- Other stats -->
     <string name="sheet_label_other">Autres</string>
     <string name="sheet_ini">INI</string>
@@ -519,9 +528,14 @@
     <string name="sheet_classfeatures_example_name">Aptitude (exemple)</string>
     <string name="sheet_classfeatures_add">Vous pouvez ajouter d\'autres aptitudes depuis le catalogue.</string>
     <string name="sheet_classfeatures_batch_add">Ajout en lot:</string>
-    <string name="sheet_classfeatures_base">Aptitudes de base</string>
+    <string name="sheet_classfeatures_batch_add_base">base</string>
+    <string name="sheet_classfeatures_batch_del">Retrait en lot:</string>
+    <string name="sheet_classfeatures_batch_del_all">toutes</string>
+    <string name="sheet_classfeatures_batch_del_base">base</string>
     <string name="sheet_classfeatures_batch_message">Ajout pour le(s) niveau(x): %s</string>
     <string name="sheet_classfeatures_batch_error">Aucune aptitude ajoutée! Aucun niveau sans aptitude.</string>
+    <string name="sheet_classfeatures_batch_del_message">Les aptitudes ont été retirées avec succès!</string>
+    <string name="sheet_classfeatures_batch_del_error">Le retrait des aptitudes a échoué!</string>
 
     <!-- Feat filters -->
     <string name="sheet_feats_filters_title">Filtrer les dons</string>

@@ -1232,7 +1232,11 @@ public class Character extends DBEntity {
         Collections.sort(features, new Comparator<ClassFeature>() {
             @Override
             public int compare(ClassFeature a1, ClassFeature a2) {
-                if(a1.getLevel() != a2.getLevel()) {
+                if(a1.isAuto() && !a2.isAuto()) {
+                    return -1;
+                } else if(!a1.isAuto() && a2.isAuto()) {
+                    return 1;
+                } else if(a1.getLevel() != a2.getLevel()) {
                     return Integer.compare(a1.getLevel(),a2.getLevel());
                 } else if(a1.getClass_() != a2.getClass_()) {
                     return collator.compare(a1.getClass_().getShortName(), a2.getClass_().getShortName());
@@ -1243,6 +1247,18 @@ public class Character extends DBEntity {
             }
         });
         return features;
+    }
+
+    public void removeClasseFeatures(boolean autoOnly) {
+        for(ClassFeature cf : getClassFeatures()) {
+            if(!autoOnly || cf.isAuto()) {
+                if(cf.getLinkedTo() != null) {
+                    cf.getLinkedTo().setLinkedTo(null);
+                    cf.setLinkedTo(null);
+                }
+                features.remove(cf);
+            }
+        }
     }
 
     public boolean hasClassFeature(ClassFeature feature) {
