@@ -208,7 +208,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                     int percentage = (int)((progresses[idx].getCountProcessed() / (float)progresses[idx].getCountTotal()) * 100);
 
                     // avoid publishing progress for too small steps
-                    if(percentage != lastPercentage) {
+                    if(percentage >= lastPercentage + 5) {
                         publishProgress(progresses);
                         lastPercentage = percentage;
                     }

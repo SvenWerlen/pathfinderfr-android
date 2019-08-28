@@ -627,6 +627,10 @@ public class Character extends DBEntity {
         return 10 + bonus_armor + bonus_shield + ( bonus_dex < 0 ? bonus_dex : 0 ) + bonus_size + bonus_natural + bonus_other;
     }
 
+    public int getSizeModifierAttack() {
+        return getSizeModifier(getSizeType());
+    }
+
     public int getSizeModifierArmorClass() {
         return getSizeModifier(getSizeType());
     }
@@ -869,16 +873,8 @@ public class Character extends DBEntity {
      */
     public String getAttackBonusMeleeAsString(int weaponIdx) {
         int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE, weaponIdx);
+        addBonus += getSizeModifierAttack();
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
-    }
-
-    /**
-     * @return attack bonus (melee)
-     */
-    public int getAttackBestBonusMelee(int weaponIdx) {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE, weaponIdx);
-        int bestBonus = getBaseAttackBonusBest();
-        return bestBonus + addBonus + getStrengthModif();
     }
 
     /**
@@ -915,6 +911,7 @@ public class Character extends DBEntity {
      */
     public String getAttackBonusRangeAsString(int weaponIdx) {
         int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED, weaponIdx);
+        addBonus += getSizeModifierAttack();
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
     }
 

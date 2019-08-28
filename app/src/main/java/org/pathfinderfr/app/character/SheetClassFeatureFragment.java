@@ -340,7 +340,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             if(!character.isValidClassFeature(classfeature)) {
                 nameTv.setTextColor(getResources().getColor(R.color.colorWarning));
             }
-            nameTv.setOnClickListener(new View.OnClickListener() {
+            row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Context context = SheetClassFeatureFragment.this.getContext();

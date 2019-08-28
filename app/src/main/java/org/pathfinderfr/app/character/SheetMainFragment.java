@@ -437,6 +437,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         meleeTooltipContent,
                         text,
                         character.getStrengthModif(),
+                        character.getSizeModifierAttack(),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_MELEE, tooltipBabModif), // other
                         character.getAttackBonusMeleeAsString(0)));
             }
@@ -461,6 +462,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         rangedTooltipContent,
                         text,
                         character.getDexterityModif(),
+                        character.getSizeModifierAttack(),
                         generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_RANGED, tooltipBabModif), // other
                         character.getAttackBonusRangeAsString(0)));
             }
