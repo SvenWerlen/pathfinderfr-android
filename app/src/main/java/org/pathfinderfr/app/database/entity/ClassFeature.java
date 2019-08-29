@@ -9,6 +9,7 @@ public class ClassFeature extends DBEntity {
     private Class class_;
     private ClassArchetype archetype;
     private ClassFeature linkedTo;
+    private String linkedName;
     private boolean auto;
     private int level;
 
@@ -60,4 +61,7 @@ public class ClassFeature extends DBEntity {
 
     public ClassFeature getLinkedTo() { return linkedTo; }
     public void setLinkedTo(ClassFeature linkedTo) { this.linkedTo = linkedTo; }
+
+    public String getLinkedName() { return linkedName; }
+    public void setLinkedName(String linkedName) { this.linkedName = linkedName; }
 }

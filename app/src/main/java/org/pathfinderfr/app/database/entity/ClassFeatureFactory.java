@@ -219,6 +219,9 @@ public class ClassFeatureFactory extends DBEntityFactory {
         if(classFeature.getLinkedTo() != null) {
             buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedTo().getNameShort()));
         }
+        if(classFeature.getLinkedName() != null) {
+            buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedName()));
+        }
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, classFeature.getConditions()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, String.valueOf(classFeature.getLevel())));

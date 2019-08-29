@@ -326,12 +326,15 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             // name
             TextView nameTv = FragmentUtil.copyExampleTextFragment(exampleName);
             if(classfeature.isAuto()) {
-                if(classfeature.getLinkedTo() == null) {
-                    String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
-                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameShort()));
-                } else {
+                if(classfeature.getLinkedTo() != null) {
                     String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name.linkedTo");
                     nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getName(), classfeature.getLinkedTo().getNameShort()));
+                } else if(classfeature.getLinkedName() != null) {
+                    String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name.linkedTo");
+                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getName(), classfeature.getLinkedName()));
+                } else {
+                    String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
+                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameShort()));
                 }
             } else {
                 nameTv.setText(classfeature.getName());

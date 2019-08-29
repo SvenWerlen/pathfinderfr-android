@@ -156,7 +156,7 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
         if(mItem != null && (character != null)) {
             for(ClassFeature cf : character.getClassFeatures()) {
                 if (cf.getId() == mItem.getId()) {
-                    isLinkedTo = cf.getLinkedTo() != null;
+                    isLinkedTo = cf.getLinkedTo() != null || cf.getLinkedName() != null;
                     break;
                 }
             }
@@ -521,7 +521,7 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
     }
 
     @Override
-    public void onLink(ClassFeature targetLink) {
+    public void onLink(ClassFeature targetLink, String label) {
         if(!(mItem instanceof ClassFeature) || character == null) {
             return;
         }
@@ -555,6 +555,8 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
         if(target != null) {
             target.setLinkedTo(source);
         }
+        source.setLinkedName(label);
+
         if(DBHelper.getInstance(getContext()).updateEntity(character, new HashSet<>(Arrays.asList(CharacterFactory.FLAG_FEATURES)))) {
             updateActionIcons(getView());
 

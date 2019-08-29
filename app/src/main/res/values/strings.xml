@@ -348,12 +348,15 @@
 
     <!-- Character modifications -->
     <string name="features_title">Lier deux aptitudes</string>
+    <string name="features_label">Ou spécifier manuellement:</string>
     <string name="features_linkto">Lier \'%s\' à:</string>
     <string name="features_description">Lier une aptitude (de base) avec une aptitude (à choisir)
-        fusionnera les deux pour un affichage plus convivial. Par exemple, lier "Pouvoir de rage" avec
-        "Coup puissant" fusionnera les deux pour indiquer "Pouvoir de rage (coup puissant)".
+        fusionnera les deux pour un affichage plus convivial. Par exemple, lier \"Pouvoir de rage\" avec
+        \"Coup puissant\" fusionnera les deux pour indiquer \"Pouvoir de rage (coup puissant)\".
+        La deuxième alternative est de saisir un libellé manuellement. Par exemple, un guerrier pourrait indiquer
+        \"Assomant\" pour \"Don supplémentaire #2\".
     </string>
-    <string name="features_example">Nom d\'aptitude (exemple)</string>
+    <string name="features_nolink">Aucun lien</string>
 
     <!-- Other stats -->
     <string name="sheet_label_other">Autres</string>

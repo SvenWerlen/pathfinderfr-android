@@ -319,15 +319,16 @@ public class CharacterFactory extends DBEntityFactory {
         }
 
         if(flags.contains(FLAG_ALL) || flags.contains(FLAG_FEATURES)) {
-            // class features are stored using format <feat1Id>:<linked1To>#<feat2Id>:<linked2To>...
+            // class features are stored using format <feat1Id>:<linked1To>:<linked1Text>#<feat2Id>:<linked2To>...
             // (assuming that class features ids won't change during data import)
             if (c.getClassFeatures().size() > 0) {
                 StringBuffer value = new StringBuffer();
                 for (ClassFeature feat : c.getClassFeatures()) {
-                    value.append(feat.getId());
+                    value.append(feat.getId()).append(':');
                     if(feat.getLinkedTo() != null) {
-                        value.append(':').append(feat.getLinkedTo().getId());
+                        value.append(feat.getLinkedTo().getId());
                     }
+                    value.append(':').append(feat.getLinkedName() != null ? feat.getLinkedName() : "");
                     value.append('#');
                 }
                 if (value.length() > 0) {
@@ -598,11 +599,13 @@ public class CharacterFactory extends DBEntityFactory {
                 String[] features = featuresValue.split("#");
                 long[] featIds = new long[features.length];
                 long[] linkedTos = new long[features.length];
+                String[] linkedNames = new String[features.length];
                 try {
                     for (int i = 0; i < features.length; i++) {
                         String[] values = features[i].split(":");
                         featIds[i] = Long.parseLong(values[0]);
-                        linkedTos[i] = values.length >= 2 ? Long.parseLong(values[1]) : 0L;
+                        linkedTos[i] = values.length >= 2 && values[1].length() > 0 ? Long.parseLong(values[1]) : 0L;
+                        linkedNames[i] = values.length >= 3 && values[2].length() > 0 ? values[2] : null;
                     }
                     Map<Long, ClassFeature> cfList = new HashMap<>();
                     // retrieve all class features from DB
@@ -614,6 +617,9 @@ public class CharacterFactory extends DBEntityFactory {
                     }
                     // update links
                     for(int i = 0; i<featIds.length; i++) {
+                        if(cfList.containsKey(featIds[i])) {
+                            cfList.get(featIds[i]).setLinkedName(linkedNames[i]);
+                        }
                         if(cfList.containsKey(featIds[i]) && cfList.containsKey(linkedTos[i])) {
                             cfList.get(featIds[i]).setLinkedTo(cfList.get(linkedTos[i]));
                             cfList.get(linkedTos[i]).setLinkedTo(cfList.get(featIds[i]));
