@@ -7,63 +7,45 @@
     android:scrollbars="vertical"
     android:theme="@style/AppTheme.NoActionBar">
 
-    <com.wefika.flowlayout.FlowLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="start|top"
         android:padding="20dp">
 
         <TextView
-            android:id="@+id/labelClass"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/classfeatures_class"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:text="@string/classfeatures_class" />
 
-        <com.wefika.flowlayout.FlowLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/flowClass"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|top">
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/features_class_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog">
 
-            <CheckBox
-                android:id="@+id/classAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:checked="true"
-                android:text="@string/classfeatures_filter_all" />
-
-        </com.wefika.flowlayout.FlowLayout>
+        </android.support.v7.widget.AppCompatSpinner>
 
         <TextView
-            android:id="@+id/labelLevel"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/classfeatures_maxlevel"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:text="@string/classfeatures_archetype" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/features_archetype_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog">
+
+        </android.support.v7.widget.AppCompatSpinner>
 
         <com.wefika.flowlayout.FlowLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/flowMaxLevel"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="start|top">
-
-        </com.wefika.flowlayout.FlowLayout>
-
-        <com.wefika.flowlayout.FlowLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/flowActions"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="start|top">
 
@@ -87,6 +69,6 @@
 
         </com.wefika.flowlayout.FlowLayout>
 
-    </com.wefika.flowlayout.FlowLayout>
+    </LinearLayout>
 
 </ScrollView>

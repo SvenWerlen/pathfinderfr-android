@@ -162,9 +162,10 @@
     <string name="delete">Supprimer</string>
 
     <!-- ClassFeature filters -->
-    <string name="classfeatures_filter_all">Tous</string>
     <string name="classfeatures_class">Classe:</string>
-    <string name="classfeatures_maxlevel">Niveau maximum:</string>
+    <string name="classfeatures_archetype">Archétype:</string>
+    <string name="classfeatures_filter_all">Toutes</string>
+    <string name="classfeatures_filter_base">De base</string>
 
     <!-- Trait filters -->
     <string name="trait_filter_all">Tous</string>

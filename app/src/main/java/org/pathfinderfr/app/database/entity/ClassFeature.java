@@ -22,27 +22,16 @@ public class ClassFeature extends DBEntity {
     public String getNameShort() {
         String name = getName();
         // remove (infos)
-        int idx = name.indexOf("(");
-        if( idx > 0) {
-            name = name.substring(0, idx).trim();
-        }
+        //int idx = name.indexOf("(");
+        //if( idx > 0) {
+        //  name = name.substring(0, idx).trim();
+        //}
         // remove (category:)
-        idx = name.indexOf(":");
+        int idx = name.indexOf(":");
         if( idx > 0) {
             name = name.substring(idx+1).trim();
         }
         return name;
-    }
-
-    @Override
-    public String getNameLong() {
-        if(archetype != null) {
-            try {
-                String template = ConfigurationUtil.getInstance().getProperties().getProperty("template.classfeatures.namelong");
-                return String.format(template, getName(), archetype.getName());
-            } catch(Exception e) {e.printStackTrace();}
-        }
-        return getName();
     }
 
     @Override

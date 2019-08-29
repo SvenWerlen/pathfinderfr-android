@@ -4,28 +4,29 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-
-import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.ClassFeature;
-import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
-import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
-import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
+import org.pathfinderfr.app.util.StringWithTag;
+import org.pathfinderfr.app.util.TraitFilter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -38,15 +39,10 @@ import java.util.Set;
  */
 public class FilterClassFeaturesFragment extends DialogFragment implements View.OnClickListener {
 
-    private static final String ARG_FILTER = "filter";
-
-    private static final Integer TAG_CLASS = 1;
-    private static final Integer TAG_MAXLEVEL = 2;
-
-    private List<CheckBox> cbClass;
-    private List<CheckBox> cbMaxLevel;
-
     private ClassFeatureFilter filter;
+    private long selectedClass;
+    private long selectedArchetype;
+    List<ClassArchetype> archetypes;
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,9 +68,6 @@ public class FilterClassFeaturesFragment extends DialogFragment implements View.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        cbClass = new ArrayList<>();
-        cbMaxLevel = new ArrayList<>();
     }
 
     @Override
@@ -83,54 +76,125 @@ public class FilterClassFeaturesFragment extends DialogFragment implements View.
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_classfeatures_filter, container, false);
-        FlowLayout layoutClass = (FlowLayout) rootView.findViewById(R.id.flowClass);
-        FlowLayout layoutMaxLevel = (FlowLayout) rootView.findViewById(R.id.flowMaxLevel);
-        CheckBox checkClass = (CheckBox)rootView.findViewById(R.id.classAll);
 
         rootView.findViewById(R.id.applyButton).setOnClickListener(this);
         rootView.findViewById(R.id.cancelButton).setOnClickListener(this);
 
-        checkClass.setOnClickListener(this);
-
         DBHelper dbHelper = DBHelper.getInstance(rootView.getContext());
         String[] sources = PreferenceUtil.getSources(rootView.getContext());
-        List<DBEntity> classFeatures = dbHelper.getAllEntities(ClassFeatureFactory.getInstance(), sources);
         List<DBEntity> classes = dbHelper.getAllEntities(ClassFactory.getInstance(), sources);
-
-        Set<Long> clIds = new HashSet<>();
-        for(DBEntity clf : classFeatures) {
-            clIds.add(((ClassFeature)clf).getClass_().getId());
+        List<DBEntity> archs = dbHelper.getAllEntities(ClassArchetypesFactory.getInstance(), sources);
+        archetypes = new ArrayList<>();
+        for(DBEntity e : archs) {
+            archetypes.add((ClassArchetype)e);
         }
 
-        if(filter != null) {
-            checkClass.setChecked(!filter.hasFilterClass());
-            for (DBEntity cl : classes) {
-                if (clIds.contains(cl.getId())) {
-                    CheckBox cb = new CheckBox(getActivity());
-                    Long classId = ((Class) cl).getId();
-                    cb.setText(((Class) cl).getShortName());
-                    cb.setTag(new Pair<Integer, Long>(TAG_CLASS, cl.getId()));
-                    cb.setLayoutParams(checkClass.getLayoutParams());
-                    cb.setOnClickListener(this);
-                    cb.setEnabled(filter.hasFilterClass());
-                    cb.setChecked(filter.isFilterClassEnabled(classId));
-                    layoutClass.addView(cb);
-                    cbClass.add(cb);
-                }
+        int selClassIdx = 0;
+
+        final AppCompatSpinner classSpinner = rootView.findViewById(R.id.features_class_spinner);
+        final AppCompatSpinner archSpinner = rootView.findViewById(R.id.features_archetype_spinner);
+        List<StringWithTag> listClasses = new ArrayList<>();
+        List<StringWithTag> listArchs = new ArrayList<>();
+
+        // class list
+        listClasses.add(new StringWithTag(getResources().getString(R.string.classfeatures_filter_all), ClassFeatureFilter.FILTER_CLASS_SHOW_ALL));
+        int idx = 1;
+
+        for(DBEntity cl : classes) {
+            listClasses.add(new StringWithTag(cl.getName(), cl.getId()));
+            if(filter != null && filter.getFilterClass() == cl.getId()) {
+                selClassIdx = idx;
             }
-            for (int i=1; i<=20; i++) {
-                CheckBox cb = new CheckBox(getActivity());
-                cb.setText(String.valueOf(i));
-                cb.setTag(TAG_MAXLEVEL);
-                cb.setLayoutParams(checkClass.getLayoutParams());
-                cb.setOnClickListener(this);
-                cb.setChecked(filter.getFilterMaxLevel() == i);
-                layoutMaxLevel.addView(cb);
-                cbMaxLevel.add(cb);
+            idx++;
+        }
+
+        ArrayAdapter<StringWithTag> dataAdapterClasses = new ArrayAdapter<>(this.getContext(),
+                android.R.layout.simple_spinner_item, listClasses);
+        dataAdapterClasses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        classSpinner.setAdapter(dataAdapterClasses);
+        classSpinner.setSelection(selClassIdx);
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
+                if(selectedClass == (Long)s.getTag()) {
+                    return;
+                }
+                selectedClass = (Long)s.getTag();
+                selectedArchetype = ClassFeatureFilter.FILTER_ARCH_BASE;
+                archSpinner.setEnabled(position > 0);
+                updateArchList(getView());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedClass = ClassFeatureFilter.FILTER_CLASS_SHOW_ALL;
+                selectedArchetype = ClassFeatureFilter.FILTER_ARCH_BASE;
+                archSpinner.setEnabled(false);
+                updateArchList(getView());
+            }
+        });
+
+        ArrayAdapter<StringWithTag> dataAdapterArchs = new ArrayAdapter<>(this.getContext(),
+                android.R.layout.simple_spinner_item, listArchs);
+        dataAdapterArchs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        archSpinner.setAdapter(dataAdapterArchs);
+        archSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
+                selectedArchetype = (Long)s.getTag();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedArchetype = ClassFeatureFilter.FILTER_ARCH_BASE;
+            }
+        });
+
+        if(filter != null ) {
+            selectedClass = filter.getFilterClass();
+            selectedArchetype = filter.getFilterArchetype();
+            if(filter.getFilterClass() == ClassFeatureFilter.FILTER_CLASS_SHOW_ALL) {
+                archSpinner.setEnabled(false);
+            } else {
+                updateArchList(rootView);
             }
         }
 
         return rootView;
+    }
+
+    private void updateArchList(View view) {
+        // archetypes list
+        List<StringWithTag> listArchs = new ArrayList<>();
+        listArchs.clear();
+        listArchs.add(new StringWithTag(getResources().getString(R.string.classfeatures_filter_base), ClassFeatureFilter.FILTER_ARCH_BASE));
+
+        final AppCompatSpinner archSpinner = view.findViewById(R.id.features_archetype_spinner);
+        int idx = 1;
+        int selected = 0;
+        for(ClassArchetype a : archetypes) {
+            if(selectedClass == ClassFeatureFilter.FILTER_CLASS_SHOW_ALL) {
+                break;
+            } else if(selectedClass != a.getClass_().getId()) {
+                continue;
+            }
+            listArchs.add(new StringWithTag(a.getName(), a.getId()));
+            if(selectedArchetype == a.getId()) {
+                selected = idx;
+            }
+            idx++;
+        }
+
+        ArrayAdapter<StringWithTag> dataAdapterArchs = new ArrayAdapter<>(this.getContext(),
+                android.R.layout.simple_spinner_item, listArchs);
+        dataAdapterArchs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        archSpinner.setAdapter(dataAdapterArchs);
+
+        if(selected > 0) {
+            archSpinner.setSelection(selected);
+        }
     }
 
     @Override
@@ -157,16 +221,9 @@ public class FilterClassFeaturesFragment extends DialogFragment implements View.
             if (mListener != null && filter != null) {
                 // fill filters
                 filter.clearFilters();
-                for(CheckBox c : cbClass) {
-                    if(c.isChecked()) {
-                        filter.addFilterClass(((Pair<Integer, Long>)c.getTag()).second);
-                    }
-                }
-                for(CheckBox c : cbMaxLevel) {
-                    if(c.isChecked()) {
-                        filter.setFilterMaxLevel(Integer.valueOf(c.getText().toString()));
-                        break;
-                    }
+                filter.setFilterClass(selectedClass);
+                if(filter.getFilterClass() != ClassFeatureFilter.FILTER_CLASS_SHOW_ALL) {
+                    filter.setFilterArchetype(selectedArchetype);
                 }
                 dismiss();
                 mListener.onApplyFilter(filter);
@@ -179,30 +236,6 @@ public class FilterClassFeaturesFragment extends DialogFragment implements View.
             dismiss();
             return;
         }
-
-        // checkboxes only
-        if(!(v instanceof CheckBox)) {
-            return;
-        }
-
-        CheckBox cb = (CheckBox) v;
-        boolean status = cb.isChecked();
-
-        if(cb.getId() == R.id.classAll) {
-            for(CheckBox c : cbClass) {
-                c.setChecked(false);
-                c.setEnabled(!status);
-            }
-        }
-        else if(cb.getTag() instanceof Pair && ((Pair<Integer,Long>)cb.getTag()).first == TAG_CLASS) {
-            ((CheckBox)getView().findViewById(R.id.classAll)).setChecked(false);
-        }
-        else if(cb.getTag() == TAG_MAXLEVEL) {
-            for(CheckBox c : cbMaxLevel) {
-                c.setChecked(v == c ? true : false);
-            }
-        }
-
     }
 
     /**

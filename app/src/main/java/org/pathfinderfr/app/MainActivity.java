@@ -766,10 +766,8 @@ public class MainActivity extends AppCompatActivity
         listFull = new ArrayList<>();
         for(DBEntity e : classFeatures) {
             ClassFeature a = (ClassFeature)e;
-            // check level max && class
-            if(a.getLevel() <= filter.getFilterMaxLevel() &&
-                    (!filter.hasFilterClass() || filter.isFilterClassEnabled(a.getClass_().getId()))) {
-                listFull.add(e);
+            if(!filter.isFiltered(a)) {
+                listFull.add(a);
             }
         }
     }

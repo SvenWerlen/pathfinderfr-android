@@ -37,8 +37,6 @@ import java.util.List;
  */
 public class FilterTraitFragment extends DialogFragment implements View.OnClickListener {
 
-    private static final String ARG_FILTER = "filter";
-
     private TraitFilter filter;
     private long selectedRace;
     private String selectedType;
@@ -222,7 +220,6 @@ public class FilterTraitFragment extends DialogFragment implements View.OnClickL
 
                 dismiss();
                 mListener.onApplyFilter(filter);
-                System.out.println(filter.generatePreferences());
             }
             return;
         }
