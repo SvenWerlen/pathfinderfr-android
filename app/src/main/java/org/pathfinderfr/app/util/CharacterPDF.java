@@ -1176,7 +1176,17 @@ public class CharacterPDF {
             }
         }  else if(element instanceof ClassFeature) {
             ClassFeature f = (ClassFeature)element;
-            text = String.format("[C] %s %d: %s", f.getClass_().getShortName(), f.getLevel(), f.getNameLong());
+            String linkedTo = null;
+            if(f.getLinkedTo() != null) {
+                linkedTo = f.getLinkedTo().getNameShort();
+            } else if(f.getLinkedName() != null) {
+                linkedTo = f.getLinkedName();
+            }
+            if(linkedTo == null) {
+                text = String.format("[C] %s %d: %s", f.getClass_().getShortName(), f.getLevel(), f.getNameLong());
+            } else {
+                text = String.format("[C] %s %d: %s (%s)", f.getClass_().getShortName(), f.getLevel(), f.getNameLong(), linkedTo);
+            }
         }
         return text;
     }
@@ -1201,7 +1211,9 @@ public class CharacterPDF {
         }
         // class features
         for(ClassFeature cl : character.getClassFeatures()) {
-            entities.add(cl);
+            if(cl.isAuto() || cl.getLinkedTo() == null) {
+                entities.add(cl);
+            }
         }
 
         // normal display

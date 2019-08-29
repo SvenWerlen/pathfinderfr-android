@@ -44,6 +44,8 @@ public class CharacterImportExport {
     private static final String YAML_RANK            = "Rang";
     private static final String YAML_FEATS           = "Dons";
     private static final String YAML_CLASSFEATURES   = "Aptitudes";
+    private static final String YAML_LINKEDTO        = "LiéÀ";
+    private static final String YAML_LINKEDNAME      = "LiéNom";
     private static final String YAML_MODIFS          = "Modifs";
     private static final String YAML_MODIF_SOURCE    = "Source";
     private static final String YAML_MODIF_ICON      = "Icône";
@@ -224,6 +226,12 @@ public class CharacterImportExport {
         for(ClassFeature f : c.getClassFeatures()) {
             Map<String, Object> featObj = new LinkedHashMap();
             featObj.put(YAML_NAME, f.getName());
+            if(f.isAuto() && f.getLinkedTo() != null) {
+                featObj.put(YAML_LINKEDTO, f.getLinkedTo().getName());
+            }
+            if(f.getLinkedName() != null) {
+                featObj.put(YAML_LINKEDNAME, f.getLinkedName());
+            }
             features.add(featObj);
         }
         data.put(YAML_CLASSFEATURES, features);
@@ -582,15 +590,56 @@ public class CharacterImportExport {
                 Object features = map.get(YAML_CLASSFEATURES);
                 if (features instanceof List) {
                     List<Object> fList = (List<Object>) features;
+                    List<String> linkedTo = new ArrayList<>();
                     for (Object f : fList) {
                         if (f instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) f;
                             if(values.containsKey(YAML_NAME)) {
-                                ClassFeature feature = (ClassFeature)dbHelper.fetchEntityByName(values.get(YAML_NAME).toString(), ClassFeatureFactory.getInstance());
-                                if(feature == null) {
+                                List<DBEntity> featList = dbHelper.fetchAllEntitiesByName(values.get(YAML_NAME).toString(), ClassFeatureFactory.getInstance());
+                                if(featList == null || featList.size() == 0) {
                                     errors.add(ERROR_FEATURE_NOMATCH);
-                                } else if(!feature.isAuto()) {
-                                    c.addClassFeature(feature);
+                                }
+                                ClassFeature feature = null;
+                                // find best match
+                                for(DBEntity entity : featList) {
+                                    ClassFeature cf = (ClassFeature)entity;
+                                    // class matches
+                                    for(int i = 0; i<c.getClassesCount(); i++) {
+                                        if(c.isValidClassFeature(cf)) {
+                                            feature = cf;
+                                            break;
+                                        }
+                                    }
+                                    if(feature != null) {
+                                        break;
+                                    }
+                                }
+                                // take first match (best guess)
+                                if(feature == null) {
+                                    feature = (ClassFeature)featList.get(0);
+                                }
+                                c.addClassFeature(feature);
+                                if(values.containsKey(YAML_LINKEDNAME)) {
+                                    feature.setLinkedName(values.get(YAML_LINKEDNAME).toString());
+                                }
+                                if(feature.isAuto() && values.containsKey(YAML_LINKEDTO)) {
+                                    linkedTo.add(values.get(YAML_LINKEDTO).toString());
+                                } else {
+                                    linkedTo.add("");
+                                }
+                            }
+                        }
+                    }
+                    // update linkedTo (if any)
+                    for(int idx = 0; idx < linkedTo.size(); idx++) {
+                        if(linkedTo.get(idx).length() > 0) {
+                            String name = linkedTo.get(idx);
+                            // search corresponding
+                            for(ClassFeature cf : c.getClassFeatures()) {
+                                if(cf.getName().equals(name)) {
+                                    c.getClassFeatures().get(idx).setLinkedTo(cf);
+                                    cf.setLinkedTo(c.getClassFeatures().get(idx));
+                                    break;
                                 }
                             }
                         }

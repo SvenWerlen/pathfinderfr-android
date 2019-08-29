@@ -23,12 +23,12 @@ public class ClassFeature extends DBEntity {
     public String getNameShort() {
         String name = getName();
         // remove (infos)
-        //int idx = name.indexOf("(");
-        //if( idx > 0) {
-        //  name = name.substring(0, idx).trim();
-        //}
+        int idx = name.indexOf("(");
+        if( idx > 0) {
+          name = name.substring(0, idx).trim();
+        }
         // remove (category:)
-        int idx = name.indexOf(":");
+        idx = name.indexOf(":");
         if( idx > 0) {
             name = name.substring(idx+1).trim();
         }
