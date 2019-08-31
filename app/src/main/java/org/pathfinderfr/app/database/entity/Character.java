@@ -256,7 +256,7 @@ public class Character extends DBEntity {
         StringBuffer classes = new StringBuffer();
         for(int i = 0; i < getClassesCount(); i++) {
             Triplet<Class,ClassArchetype,Integer> cl = getClass(i);
-            classes.append(", ").append(cl.first.getShortName()).append(" ").append(cl.third);
+            classes.append(", ").append(cl.first.getNameShort()).append(" ").append(cl.third);
         }
         return name + " (" + race + classes.toString() + ")";
     }
@@ -1239,7 +1239,7 @@ public class Character extends DBEntity {
                 } else if(a1.getLevel() != a2.getLevel()) {
                     return Integer.compare(a1.getLevel(),a2.getLevel());
                 } else if(a1.getClass_() != a2.getClass_()) {
-                    return collator.compare(a1.getClass_().getShortName(), a2.getClass_().getShortName());
+                    return collator.compare(a1.getClass_().getNameShort(), a2.getClass_().getNameShort());
                 }
                 else {
                     return collator.compare(a1.getName(), a2.getName());

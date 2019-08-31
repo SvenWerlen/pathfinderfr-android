@@ -123,7 +123,7 @@ public class FilterSpellFragment extends DialogFragment implements View.OnClickL
                 if(classIds.contains(cl.getId())) {
                     CheckBox cb = new CheckBox(getActivity());
                     Long classId = ((Class) cl).getId();
-                    cb.setText(((Class) cl).getShortName());
+                    cb.setText(((Class) cl).getNameShort());
                     cb.setTag(new Pair<Integer, Long>(TAG_CLASS,cl.getId()));
                     cb.setLayoutParams(params);
                     cb.setOnClickListener(this);

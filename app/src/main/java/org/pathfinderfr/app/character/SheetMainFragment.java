@@ -530,7 +530,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
                     Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getFortitudeBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getNameShort(), cl.third, lvl.getFortitudeBonus()));
                     }
                 }
                 act.showTooltip(
@@ -557,7 +557,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
                     Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getReflexBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getNameShort(), cl.third, lvl.getReflexBonus()));
                     }
                 }
                 act.showTooltip(
@@ -584,7 +584,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
                     Class.Level lvl = cl.first.getLevel(cl.third);
                     if(lvl != null) {
-                        text.append(String.format(savTooltipEntry, cl.first.getShortName(), cl.third, lvl.getWillBonus()));
+                        text.append(String.format(savTooltipEntry, cl.first.getNameShort(), cl.third, lvl.getWillBonus()));
                     }
                 }
                 act.showTooltip(

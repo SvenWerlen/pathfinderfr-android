@@ -622,7 +622,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // Map of <classShortName,classId>
         Map<String,Long> classMap = new HashMap<>();
         for(DBEntity cl : classes) {
-            classMap.put(((Class)cl).getShortName(),cl.getId());
+            classMap.put(((Class)cl).getNameShort(),cl.getId());
         }
 
         for(DBEntity spell : spells) {
@@ -720,7 +720,7 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             res = db.rawQuery(SpellFactory.getInstance().getQueryFetchAll(filter, sources), null);
             res.moveToFirst();
-            while (res.isAfterLast() == false) {
+            while (!res.isAfterLast()) {
                 Spell spell = (Spell) SpellFactory.getInstance().generateEntity(res);
                 if(!filter.hasFilterSchool() || filter.isFilterSchoolEnabled(spell.getSchool())) {
                     list.add(spell);

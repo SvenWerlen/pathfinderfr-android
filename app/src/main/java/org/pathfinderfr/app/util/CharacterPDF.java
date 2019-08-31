@@ -1183,9 +1183,9 @@ public class CharacterPDF {
                 linkedTo = f.getLinkedName();
             }
             if(linkedTo == null) {
-                text = String.format("[C] %s %d: %s", f.getClass_().getShortName(), f.getLevel(), f.getNameLong());
+                text = String.format("[C] %s %d: %s", f.getClass_().getNameShort(), f.getLevel(), f.getNameLong());
             } else {
-                text = String.format("[C] %s %d: %s (%s)", f.getClass_().getShortName(), f.getLevel(), f.getNameLong(), linkedTo);
+                text = String.format("[C] %s %d: %s (%s)", f.getClass_().getNameShort(), f.getLevel(), f.getNameLong(), linkedTo);
             }
         }
         return text;

@@ -29,30 +29,22 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.FavoriteFactory;
-import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
-import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellTable;
-import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -165,6 +157,55 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         return rowId;
     }
 
+    /**
+     * Returns the class from which the orig class is taking spells
+     * @param orig origin class
+     * @param ctx context (for dbhelper)
+     */
+    private List<Class> getSpellListFrom(Class orig, Context ctx) {
+        List<Class> classes = new ArrayList<>();
+        Class from;
+        if("Enq".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Alchimiste", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Arc".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Ensorceleur", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Cha".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Druide", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Rôdeur", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Prc".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Prêtre", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Sca".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Barde", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else {
+            classes.add(orig);
+        }
+        return classes;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -223,14 +264,17 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         for(int i=0; i<character.getClassesCount(); i++) {
             SpellFilter filter = new SpellFilter(null);
             Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
-            // increase spell caster level
-            classLvl = new Triplet<>(classLvl.first, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
-            filter.addFilterClass(classLvl.first.getId());
-            Class.Level lvl = classLvl.first.getLevel(classLvl.third);
-            if(lvl != null && lvl.getMaxSpellLvl() > 0) {
-                filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
-                spellClasses.add(classLvl);
-                spells.addAll(dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext())));
+            List<Class> classes = getSpellListFrom(classLvl.first, view.getContext());
+            for(Class cl : classes) {
+                // increase spell caster level
+                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
+                filter.addFilterClass(cl.getId());
+                Class.Level lvl = classLvl.first.getLevel(classLvl.third);
+                if (lvl != null && lvl.getMaxSpellLvl() > 0) {
+                    filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
+                    spellClasses.add(classLvl);
+                    spells.addAll(dbHelper.getSpells(filter, PreferenceUtil.getSources(view.getContext())));
+                }
             }
         }
 
@@ -260,13 +304,18 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
 
             if(classForThatLevel.size() > 1) {
                 StringBuffer buf = new StringBuffer();
+                Set<String> clAdded = new HashSet<>();
                 for(Triplet<Class, ClassArchetype,Integer> pair : spellClasses) {
-                    buf.append(pair.first.getShortName()).append("/");
+                    String name = pair.first.getShortName(true);
+                    if(!clAdded.contains(name)) {
+                        clAdded.add(name);
+                        buf.append(name).append("/");
+                    }
                 }
                 buf.deleteCharAt(buf.length()-1);
                 levelTv.setText(String.format(templateLevel, buf.toString(), level.getLevel()));
             } else if(classForThatLevel.size() == 1) {
-                levelTv.setText(String.format(templateLevel, classForThatLevel.get(0).getShortName(), level.getLevel()));
+                levelTv.setText(String.format(templateLevel, classForThatLevel.get(0).getShortName(true), level.getLevel()));
             }
             rowLevel.addView(levelTv);
             table.addView(rowLevel);

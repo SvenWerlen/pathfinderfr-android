@@ -40,7 +40,7 @@ public class ClassFeature extends DBEntity {
     @Override
     public String getNameLong() {
         String template = ConfigurationUtil.getInstance(null).getProperties().getProperty("template.classfeatures.name");
-        return String.format(template, getClass_().getShortName(), getLevel(), getName());
+        return String.format(template, getClass_().getNameShort(), getLevel(), getName());
     }
 
     @Override

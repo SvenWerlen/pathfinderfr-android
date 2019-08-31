@@ -14,13 +14,20 @@ public class Class extends DBEntity {
     private String hitDie;
     private Set<String> skills;
     private List<Level> levels;
+    private String altName;
 
     public Class() {
         skills = new HashSet<>();
         levels = new ArrayList<>();
     }
 
-    public String getShortName() {
+    @Override
+    public String getNameShort() {
+        return getShortName(false);
+    }
+
+    public String getShortName(boolean useAlternateName) {
+        String name = useAlternateName && altName != null ? this.altName : this.name;
         // @TODO replace ugly fix for Barbare vs Barde
         if("Barbare".equals(name)) {
             return "Brb";
@@ -41,7 +48,7 @@ public class Class extends DBEntity {
         else if("Magus".equals(name)) {
             return "Mgs";
         }
-        String name = getName().toLowerCase();
+        name = name.toLowerCase();
         if(name.length()>=3) {
             return name.substring(0, 1).toUpperCase() + name.substring(1, 3);
         } else {
@@ -56,6 +63,9 @@ public class Class extends DBEntity {
     public String getAlignment() { return this.alignment; };
     public void setHitDie(String hitDie) { this.hitDie = hitDie; };
     public String getHitDie() { return this.hitDie; };
+    public String getAltName() { return altName; }
+    public void setAltName(String altName) { this.altName = altName; }
+
     public Set<String> getSkills() {
         return skills;
     }

@@ -43,7 +43,7 @@ public class SpellUtil {
         for(Pair<String,Integer> pair : levels) {
             for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
                 // matching class
-                if(cl.first.getShortName().equals(pair.first)) {
+                if(cl.first.getNameShort().equals(pair.first)) {
                     // matching level
                     Class.Level level = cl.first.getLevel(cl.third);
                     if(level != null && level.getMaxSpellLvl() >= pair.second) {
