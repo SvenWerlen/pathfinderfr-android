@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity
     public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
     public static final String KEY_RELOAD_REQUIRED = "refresh_required";
+    // preference for contextual activity (called on top of other activities)
+    public static final String KEY_CONTEXTUAL = "contextual";
+    public static final String KEY_CONTEXTUAL_NAV = "contextual_nav";
     // spell filters
     public static final String KEY_SPELL_FILTERS = "filter_spells";
     public static final String KEY_ABILITY_FILTERS = "filter_classfeatures";
@@ -124,22 +127,29 @@ public class MainActivity extends AppCompatActivity
 
         dbhelper = DBHelper.getInstance(getBaseContext());
 
-        // listen to welcome page
-        findViewById(R.id.welcome_sheets).setOnClickListener(this);
-        findViewById(R.id.welcome_selchar).setOnClickListener(this);
-        findViewById(R.id.welcome_favorites).setOnClickListener(this);
-        findViewById(R.id.welcome_skills).setOnClickListener(this);
-        findViewById(R.id.welcome_feats).setOnClickListener(this);
-        findViewById(R.id.welcome_abilities).setOnClickListener(this);
-        findViewById(R.id.welcome_traits).setOnClickListener(this);
-        findViewById(R.id.welcome_spells).setOnClickListener(this);
-        findViewById(R.id.welcome_equipment).setOnClickListener(this);
-        findViewById(R.id.welcome_magic).setOnClickListener(this);
-        findViewById(R.id.welcome_condition).setOnClickListener(this);
-        findViewById(R.id.welcome_generator).setOnClickListener(this);
+        if(!getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
+            // listen to welcome page
+            findViewById(R.id.welcome_sheets).setOnClickListener(this);
+            findViewById(R.id.welcome_selchar).setOnClickListener(this);
+            findViewById(R.id.welcome_favorites).setOnClickListener(this);
+            findViewById(R.id.welcome_skills).setOnClickListener(this);
+            findViewById(R.id.welcome_feats).setOnClickListener(this);
+            findViewById(R.id.welcome_abilities).setOnClickListener(this);
+            findViewById(R.id.welcome_traits).setOnClickListener(this);
+            findViewById(R.id.welcome_spells).setOnClickListener(this);
+            findViewById(R.id.welcome_equipment).setOnClickListener(this);
+            findViewById(R.id.welcome_magic).setOnClickListener(this);
+            findViewById(R.id.welcome_condition).setOnClickListener(this);
+            findViewById(R.id.welcome_generator).setOnClickListener(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+        }
 
         // search button appears only for item-list view
         ImageButton searchButton = findViewById(R.id.searchButton);
@@ -219,11 +229,6 @@ public class MainActivity extends AppCompatActivity
 
         updateWelcomeAndNavigation();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
         recyclerView.setAdapter(new ItemListRecyclerViewAdapter(this, listCur, false));
 
@@ -239,7 +244,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         // reset list
-        String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factoryId = getCurrentFactory();
         MenuItem selItem;
         if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
             selItem = navigationView.getMenu().findItem(R.id.nav_sheet);
@@ -440,7 +445,7 @@ public class MainActivity extends AppCompatActivity
         }
         Collections.sort(listCur);
 
-        String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factoryId = getCurrentFactory();
 
         boolean showNameLong;
         if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
@@ -458,11 +463,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        if(getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
+            super.onBackPressed();
+            return;
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+            String factoryId = getCurrentFactory();
             if(factoryId != null) {
                 NavigationView nav = (NavigationView) findViewById(R.id.nav_view);
                 nav.setCheckedItem(R.id.nav_home);
@@ -642,8 +651,10 @@ public class MainActivity extends AppCompatActivity
             searchInput.setVisibility(View.GONE);
 
             // Update preferences
-            PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
-                    putString(KEY_CUR_FACTORY,factoryId).apply();
+            if(!getIntent().hasExtra(KEY_CONTEXTUAL_NAV)) {
+                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().
+                        putString(KEY_CUR_FACTORY, factoryId).apply();
+            }
 
             // Update view
             listFull.clear();
@@ -662,13 +673,21 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private String getCurrentFactory() {
+        if(getIntent().hasExtra(KEY_CONTEXTUAL_NAV)) {
+            System.out.println("KEY_CONTEXTUAL_NAV " + getIntent().getStringExtra(KEY_CONTEXTUAL_NAV));
+            return getIntent().getStringExtra(KEY_CONTEXTUAL_NAV);
+        }
+        return PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean reloadRequired = prefs.getBoolean(MainActivity.KEY_RELOAD_REQUIRED, false);
-        String factory = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factory = getCurrentFactory();
 
         updateWelcomeAndNavigation();
         updateTitle(factory);

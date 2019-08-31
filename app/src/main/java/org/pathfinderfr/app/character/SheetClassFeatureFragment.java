@@ -69,6 +69,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     private List<Pair<TableRow, ClassFeature>> features;
 
     private Callbacks mCallbacks;
+    private boolean refreshNeeded;
 
     public SheetClassFeatureFragment() {
         // Required empty public constructor
@@ -96,6 +97,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         if (getArguments() != null) {
             characterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
+        refreshNeeded = false;
     }
 
     @Override
@@ -392,6 +394,22 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             messageAdd.setVisibility(View.GONE);
         }
 
+        messageAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set character as "selected"
+                PreferenceManager.getDefaultSharedPreferences(SheetClassFeatureFragment.this.getContext()).edit().
+                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID,character.getId()).
+                        apply();
+                Context context = SheetClassFeatureFragment.this.getContext();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, ClassFeatureFactory.FACTORY_ID);
+                context.startActivity(intent);
+                refreshNeeded = true;
+            }
+        });
+
         applyFilters(view);
 
         // reset listeners for opened dialogs
@@ -409,6 +427,15 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
     @Override
     public void onFilterApplied() {
         applyFilters(getView());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(refreshNeeded && mCallbacks != null) {
+            mCallbacks.onRefreshRequest();
+        }
+        refreshNeeded = false;
     }
 
     @Override

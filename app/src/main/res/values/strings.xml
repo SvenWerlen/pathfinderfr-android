@@ -530,7 +530,7 @@
     <string name="sheet_classfeatures_filter_empty">Aucun aptitude ne répond à ces critères (filtres).</string>
     <string name="sheet_classfeatures_example_label_name">Aptitudes</string>
     <string name="sheet_classfeatures_example_name">Aptitude (exemple)</string>
-    <string name="sheet_classfeatures_add">Vous pouvez ajouter d\'autres aptitudes depuis le catalogue.</string>
+    <string name="sheet_classfeatures_add">Ajouter des aptitudes <b><u>depuis le catalogue</u></b>.</string>
     <string name="sheet_classfeatures_batch_add">Ajout en lot:</string>
     <string name="sheet_classfeatures_batch_add_base">base</string>
     <string name="sheet_classfeatures_batch_del">Retrait en lot:</string>
