@@ -26,6 +26,8 @@ public class CharacterTest {
         cl2.getLevels().add(new Class.Level(4, new int[] { 11, 6, 1 }, 0,0,0,0));
 
         Character c = new Character();
+        c.setStrength(24);
+        c.setDexterity(18);
         c.addOrSetClass(cl1, null, 1);
         assertEquals("+1", c.getBaseAttackBonusAsString());
         c.addOrSetClass(cl1, null, 3);
@@ -44,9 +46,18 @@ public class CharacterTest {
         c.addOrSetClass(cl1, null, 4);
         c.addOrSetClass(cl2, null, 1);
         assertEquals("+12/+7/+2", c.getBaseAttackBonusAsString());
+        assertEquals("+19/+14/+9", c.getAttackBonusMeleeAsString(0));
+        c.setSizeType(Character.SIZE_SMALL);
+        assertEquals("+20/+15/+10", c.getAttackBonusMeleeAsString(0));
+        c.setSizeType(Character.SIZE_TINY);
+        assertEquals("+21/+16/+11", c.getAttackBonusMeleeAsString(0));
+        c.setSizeType(Character.SIZE_MEDIUM);
         c.addOrSetClass(cl1, null, 4);
         c.addOrSetClass(cl2, null, 4);
-        assertEquals("+22/+17/+12/+7/+2", c.getBaseAttackBonusAsString());
+        assertEquals("+22/+17/+12/+7", c.getBaseAttackBonusAsString());
         assertEquals(22, c.getBaseAttackBonusBest());
+        assertEquals("+29/+24/+19/+14", c.getAttackBonusMeleeAsString(0));
+        assertEquals("+26/+21/+16/+11", c.getAttackBonusRangeAsString(0));
+
     }
 }

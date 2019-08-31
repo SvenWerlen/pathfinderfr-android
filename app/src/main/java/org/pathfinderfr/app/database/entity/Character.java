@@ -813,7 +813,7 @@ public class Character extends DBEntity {
         if(classes == null || classes.size() == 0) {
             return null;
         }
-        int maxBonus = addBonus;
+        int maxBonus = 0;
         for(Triplet<Class,ClassArchetype,Integer> cl : classes) {
             // find matching level (should be in order but ...)
             boolean found = false;
@@ -836,12 +836,15 @@ public class Character extends DBEntity {
         while(maxBonus > 0) {
             bab.add(maxBonus);
             maxBonus -= 5;
+            if(bab.size()==4) {
+                break;
+            }
         }
 
-        // convert to int[]
+        // convert to int[] and add bonus
         int[] result = new int[bab.size()];
         for(int i=0; i<bab.size(); i++) {
-            result[i]=bab.get(i);
+            result[i]=bab.get(i) + addBonus;
         }
         return result;
     }
