@@ -1,6 +1,5 @@
 package org.pathfinderfr.app.character;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -37,9 +35,9 @@ import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Race;
+import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.TraitFactory;
-import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
@@ -130,9 +128,13 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
 
         int rowId = 0;
         for(TableRow row : traits) {
-            row.setVisibility(filterTraits ? View.VISIBLE : View.GONE);
+            if(!filterTraits) {
+                row.setVisibility(View.GONE);
+                continue;
+            }
+            row.setVisibility(View.VISIBLE);
             row.setBackgroundColor(ContextCompat.getColor(getContext(),
-                    rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+                    rowId % 2 == 0 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
         for(Pair<TableRow,ClassFeature> entry : features) {
@@ -142,7 +144,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             }
             entry.first.setVisibility(View.VISIBLE);
             entry.first.setBackgroundColor(ContextCompat.getColor(getContext(),
-                    rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+                    rowId % 2 == 0 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
 

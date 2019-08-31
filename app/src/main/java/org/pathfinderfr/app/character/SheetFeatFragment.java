@@ -30,11 +30,8 @@ import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.FeatFactory;
-import org.pathfinderfr.app.database.entity.Skill;
-import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
-import org.pathfinderfr.app.util.PreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,11 +49,27 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
 
     private Character character;
     private long characterId;
+    private boolean refreshNeeded;
+
+    private SheetFeatFragment.Callbacks mCallbacks;
 
     private List<Pair<TableRow, Feat>> feats;
 
+    public interface Callbacks {
+        void onRefreshRequest();
+    }
+
     public SheetFeatFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Activities containing this fragment must implement its callbacks
+        if(context instanceof SheetFeatFragment.Callbacks) {
+            mCallbacks = (SheetFeatFragment.Callbacks) context;
+        }
     }
 
     /**
@@ -77,6 +90,7 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
         if (getArguments() != null) {
             characterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
+        refreshNeeded = false;
     }
 
     private void applyFilters(View view) {
@@ -113,7 +127,7 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
             }
             entry.first.setVisibility(View.VISIBLE);
             entry.first.setBackgroundColor(ContextCompat.getColor(getContext(),
-                    rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+                    rowId % 2 == 0 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
             rowId++;
         }
 
@@ -200,9 +214,21 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
             }
         });
 
-        if(feats.size() > 0) {
-            view.findViewById(R.id.sheet_feats_empty_list).setVisibility(View.GONE);
-        }
+        view.findViewById(R.id.sheet_feats_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set character as "selected"
+                PreferenceManager.getDefaultSharedPreferences(SheetFeatFragment.this.getContext()).edit().
+                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID,character.getId()).
+                        apply();
+                Context context = SheetFeatFragment.this.getContext();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, FeatFactory.FACTORY_ID);
+                context.startActivity(intent);
+                refreshNeeded = true;
+            }
+        });
 
         applyFilters(view);
 
@@ -221,5 +247,14 @@ public class SheetFeatFragment extends Fragment implements FragmentFeatFilter.On
     @Override
     public void onFilterApplied() {
         applyFilters(getView());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(refreshNeeded && mCallbacks != null) {
+            mCallbacks.onRefreshRequest();
+        }
+        refreshNeeded = false;
     }
 }

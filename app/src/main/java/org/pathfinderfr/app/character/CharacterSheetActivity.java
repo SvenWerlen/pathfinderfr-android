@@ -24,7 +24,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.List;
 
-public class CharacterSheetActivity extends AppCompatActivity implements SheetClassFeatureFragment.Callbacks {
+public class CharacterSheetActivity extends AppCompatActivity implements SheetClassFeatureFragment.Callbacks, SheetFeatFragment.Callbacks {
 
     public static final String SELECTED_CHARACTER_ID        = "characterId";
 
@@ -226,6 +226,6 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetCl
 
     @Override
     public void onRefreshRequest() {
-        showFragment(SheetClassFeatureFragment.newInstance(character.getId()));
+        showTab();
     }
 }

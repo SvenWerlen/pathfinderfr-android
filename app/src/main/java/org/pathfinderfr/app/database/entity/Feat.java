@@ -68,4 +68,9 @@ public class Feat extends DBEntity {
     public void setNormal(String normal) {
         this.normal = normal;
     }
+
+    @Override
+    public String getDescription() {
+        return getAdvantage();
+    }
 }

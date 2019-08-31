@@ -520,7 +520,7 @@
     <string name="sheet_skills_filter_empty">Aucune compétence ne répond à ces critères (filtres).</string>
 
     <!-- Feats -->
-    <string name="sheet_feats_empty_list">Le personnage ne possède aucun don. Vous pouvez en ajouter depuis le catalogue des dons.</string>
+    <string name="sheet_feats_add">Ajouter des dons <b><u>depuis le catalogue</u></b>.</string>
     <string name="sheet_feats_filter_empty">Aucun don ne répond à ces critères (filtres).</string>
     <string name="sheet_feats_example_label_name">Dons</string>
     <string name="sheet_feats_example_name">Don (exemple)</string>

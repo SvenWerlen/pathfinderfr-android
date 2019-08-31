@@ -40,12 +40,12 @@
     </TableLayout>
 
     <TextView
-        android:id="@+id/sheet_feats_empty_list"
+        android:id="@+id/sheet_feats_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="italic"
         android:padding="5dp"
-        android:text="@string/sheet_feats_empty_list" />
+        android:text="@string/sheet_feats_add" />
 
     <TextView
         android:id="@+id/sheet_feats_filter_empty"

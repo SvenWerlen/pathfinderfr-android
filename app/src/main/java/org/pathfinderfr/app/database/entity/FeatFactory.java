@@ -162,7 +162,6 @@ public class FeatFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CATEGORY, feat.getCategory()));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, feat.getConditions()));
-        buf.append(generateItemDetail(templateItem, YAML_ADVANTAGE, feat.getAdvantage()));
         buf.append(generateItemDetail(templateItem, YAML_SPECIAL, feat.getSpecial()));
         buf.append(generateItemDetail(templateItem, YAML_NORMAL, feat.getNormal()));
         return String.format(templateList,buf.toString());

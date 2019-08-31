@@ -218,7 +218,8 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
                     String detail = mItem.getFactory().generateDetails(mItem,
                             templates.getProperty("template.spell.details"),
                             templates.getProperty("template.spell.detail"));
-                    text = detail + String.format(templates.getProperty("template.spell.description"), mItem.getDescription());
+                    text = detail + String.format(templates.getProperty("template.spell.description"),
+                            mItem.getDescription() == null ? "" : mItem.getDescription());
 
                     if(mItem instanceof ClassFeature) {
                         ClassFeature cf = (ClassFeature)mItem;
