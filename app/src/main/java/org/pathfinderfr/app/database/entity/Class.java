@@ -48,6 +48,10 @@ public class Class extends DBEntity {
         else if("Magus".equals(name)) {
             return "Mgs";
         }
+        // @TODO replace ugly fix for Chasseur vs Chaman
+        else if("Chaman".equals(name)) {
+            return "Chm";
+        }
         name = name.toLowerCase();
         if(name.length()>=3) {
             return name.substring(0, 1).toUpperCase() + name.substring(1, 3);

@@ -41,7 +41,15 @@ public class SpellTable {
     }
 
     public void addSpell(Spell spell) {
-        for(Pair<String,Integer> pair: SpellUtil.getLevel(classLevels, spell)) {
+        List<Pair<String,Integer>> lvls = SpellUtil.getLevel(classLevels, spell);
+        if(lvls.size() == 0) {
+            if(spell.getDefaultLvl() >=0) {
+                lvls.add(new Pair<String, Integer>("???", spell.getDefaultLvl()));
+            } else {
+                Log.d(SpellTable.class.getSimpleName(), "Spell '" + spell.getName() + "' skipped: " + spell.getLevel());
+            }
+        }
+        for(Pair<String,Integer> pair: lvls) {
             // ignore if spell doesn't match max spell level of class
             if(levels.containsKey(pair.second)) {
                 levels.get(pair.second).addSpell(spell, pair.first);
@@ -51,7 +59,6 @@ public class SpellTable {
                 levels.put(pair.second, lvl);
             }
         }
-        //else { Log.d(SpellTable.class.getSimpleName(), "Spell '" + spell.getName() + "' skipped: + " + spell.getLevel());}
     }
 
     public static class SpellLevel implements Comparable<SpellLevel>{

@@ -234,7 +234,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         for(Spell entity : spells) {
             // only add if favorite (or filtering disabled)
             if(!filterOnlyFav || chosenSpells.contains(entity.getId())) {
-                sTable.addSpell((Spell) entity);
+                sTable.addSpell(entity);
             }
         }
 

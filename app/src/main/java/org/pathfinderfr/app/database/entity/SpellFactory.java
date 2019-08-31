@@ -19,7 +19,8 @@ public class SpellFactory extends DBEntityFactory {
 
     private static final String TABLENAME         = "spells";
     private static final String COLUMN_SCHOOL     = "school";
-    private static final String COLUMN_LEVEL      = "level";
+    private static final String COLUMN_LEVEL      = "level"; // Alc 1, Ens 2, ...
+    private static final String COLUMN_LVL        = "lvl";   // 1, 2 (for matching class)
     private static final String COLUMN_CASTING    = "castingtime";
     private static final String COLUMN_COMPONENTS = "components";
     private static final String COLUMN_RANGE      = "range";
@@ -126,10 +127,17 @@ public class SpellFactory extends DBEntityFactory {
             bufFilter.append(String.format("%s.%s <= %d", SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_LEVEL, filter.getFilterMaxLevel()));
         }
 
-        String sql = String.format("SELECT DISTINCT %s.%s,%s,%s,%s.%s FROM %s INNER JOIN %s ON %s.%s=%s.%s %s ORDER BY %s COLLATE UNICODE",
-                TABLENAME, COLUMN_ID, COLUMN_NAME, COLUMN_SCHOOL, TABLENAME, COLUMN_LEVEL, // fields
-                TABLENAME, SpellClassLevelFactory.TABLENAME, TABLENAME, COLUMN_ID, SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_SPELLID, // from inner join
-                bufFilter.length() > 0 ? "WHERE " + bufFilter.toString() : "", // filter
+        String sql = String.format("SELECT DISTINCT %s.%s,%s,%s,%s.%s,%s.%s as %s FROM %s INNER JOIN %s ON %s.%s=%s.%s %s ORDER BY %s COLLATE UNICODE",
+                TABLENAME, COLUMN_ID,                                                   // spell id
+                COLUMN_NAME,                                                            // spell name
+                COLUMN_SCHOOL,                                                          // spell school
+                TABLENAME, COLUMN_LEVEL,                                                // spell level (list of classes and levels)
+                SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_LEVEL,  // spell level (matching filter class)
+                COLUMN_LVL,                                                             // AS
+                TABLENAME, SpellClassLevelFactory.TABLENAME,                            // FROM ... INNER JOIN ...
+                TABLENAME, COLUMN_ID,                                                   // ON ...
+                SpellClassLevelFactory.TABLENAME, SpellClassLevelFactory.COLUMN_SPELLID,// = ...
+                bufFilter.length() > 0 ? "WHERE " + bufFilter.toString() : "",          // filter
                 COLUMN_NAME); // order by
         Log.i(SpellFactory.class.getSimpleName(), "SQL = " + sql);
         return sql;
@@ -177,6 +185,7 @@ public class SpellFactory extends DBEntityFactory {
         spell.setDuration(extractValue(resource,SpellFactory.COLUMN_DURATION));
         spell.setSavingThrow(extractValue(resource,SpellFactory.COLUMN_SAVING));
         spell.setSpellResistance(extractValue(resource,SpellFactory.COLUMN_SPELL_RES));
+        spell.setDefaultLvl(extractValueAsInt(resource,SpellFactory.COLUMN_LVL));
         return spell;
     }
 

@@ -15,6 +15,8 @@ public class Spell extends DBEntity {
     // spell-specific
     private String school;
     private String level;
+
+    private int lvl = -1;
     private String castingTime;
     private String components;
     private String range;
@@ -68,6 +70,14 @@ public class Spell extends DBEntity {
 
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    public int getDefaultLvl() {
+        return lvl;
+    }
+
+    public void setDefaultLvl(int lvl) {
+        this.lvl = lvl;
     }
 
     public String getCastingTime() {
