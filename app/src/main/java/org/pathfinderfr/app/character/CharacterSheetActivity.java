@@ -73,6 +73,9 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetCl
     };
 
     private boolean showTab() {
+        if(character == null) {
+            return false;
+        }
         // update character
         character = (Character)DBHelper.getInstance(getBaseContext()).fetchEntity(character.getId(),CharacterFactory.getInstance());
 
