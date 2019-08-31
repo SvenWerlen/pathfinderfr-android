@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.4.1] - 2019-08-31
+### Fixed
+- Filters (lists) not working in contextual mode
+
 ## [3.4.1] - 2019-08-30
 ### Fixed
 - Invalid BAB computation

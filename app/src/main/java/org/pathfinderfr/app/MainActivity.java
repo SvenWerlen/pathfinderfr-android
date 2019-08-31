@@ -514,8 +514,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        String factoryId = PreferenceManager.getDefaultSharedPreferences(
-                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factoryId = getCurrentFactory();
 
         String[] sources = PreferenceUtil.getSources(getBaseContext());
         Log.i(MainActivity.class.getSimpleName(), "Sources enabled: " + StringUtil.listToString(sources, ','));
@@ -729,8 +728,7 @@ public class MainActivity extends AppCompatActivity
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        String factory = PreferenceManager.getDefaultSharedPreferences(
-                getBaseContext()).getString(KEY_CUR_FACTORY, null);
+        String factory = getCurrentFactory();
 
         if(SpellFactory.FACTORY_ID.equals(factory)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
