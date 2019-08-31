@@ -177,13 +177,15 @@ public class FragmentLinkedFeaturePicker extends DialogFragment implements View.
                 dismiss();
             }
         } else if(v.getId() == R.id.link_ok) {
-            if(mListener != null && selected != null) {
-                mListener.onLink(selected, null);
-                dismiss();
-            } else if(mListener != null && label.getText().length() > 0) {
+            if(mListener == null) {
+            } else if(selected == null && label.getText().length() > 0) {
                 mListener.onLink(null, label.getText().toString());
-                dismiss();
+            } else if(selected == null) {
+                mListener.onLink(null, null);
+            } else {
+                mListener.onLink(selected, null);
             }
+            dismiss();
 
         } else if(v.getTag() instanceof ClassFeature) {
             updateChosenFeature((TextView)v, getView());
