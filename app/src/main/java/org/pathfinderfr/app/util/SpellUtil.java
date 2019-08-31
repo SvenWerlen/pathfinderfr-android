@@ -1,7 +1,11 @@
 package org.pathfinderfr.app.util;
 
+import android.content.Context;
+
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
+import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.Spell;
 
 import java.util.ArrayList;
@@ -133,6 +137,55 @@ public class SpellUtil {
         }
 
         return clean;
+    }
+
+    /**
+     * Returns the class from which the orig class is taking spells
+     * @param orig origin class
+     * @param ctx context (for dbhelper)
+     */
+    public static List<Class> getSpellListFrom(Class orig, Context ctx) {
+        List<Class> classes = new ArrayList<>();
+        Class from;
+        if("Enq".equals(orig.getNameShort())) {
+            from = (Class) DBHelper.getInstance(ctx).fetchEntityByName("Alchimiste", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Arc".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Ensorceleur", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Cha".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Druide", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Rôdeur", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Prc".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Prêtre", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else if("Sca".equals(orig.getNameShort())) {
+            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Barde", ClassFactory.getInstance());
+            if(from != null) {
+                from.setAltName(orig.getName());
+                classes.add(from);
+            }
+        } else {
+            classes.add(orig);
+        }
+        return classes;
     }
 
 }

@@ -38,6 +38,7 @@ import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellTable;
+import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
@@ -157,55 +158,6 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         return rowId;
     }
 
-    /**
-     * Returns the class from which the orig class is taking spells
-     * @param orig origin class
-     * @param ctx context (for dbhelper)
-     */
-    private List<Class> getSpellListFrom(Class orig, Context ctx) {
-        List<Class> classes = new ArrayList<>();
-        Class from;
-        if("Enq".equals(orig.getNameShort())) {
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Alchimiste", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-        } else if("Arc".equals(orig.getNameShort())) {
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Ensorceleur", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-        } else if("Cha".equals(orig.getNameShort())) {
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Druide", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Rôdeur", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-        } else if("Prc".equals(orig.getNameShort())) {
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Prêtre", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-        } else if("Sca".equals(orig.getNameShort())) {
-            from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Barde", ClassFactory.getInstance());
-            if(from != null) {
-                from.setAltName(orig.getName());
-                classes.add(from);
-            }
-        } else {
-            classes.add(orig);
-        }
-        return classes;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -264,7 +216,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         for(int i=0; i<character.getClassesCount(); i++) {
             SpellFilter filter = new SpellFilter(null);
             Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
-            List<Class> classes = getSpellListFrom(classLvl.first, view.getContext());
+            List<Class> classes = SpellUtil.getSpellListFrom(classLvl.first, view.getContext());
             for(Class cl : classes) {
                 // increase spell caster level
                 classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));

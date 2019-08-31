@@ -1269,13 +1269,16 @@ public class CharacterPDF {
         for(int i=0; i<character.getClassesCount(); i++) {
             SpellFilter filter = new SpellFilter(null);
             Triplet<Class, ClassArchetype,Integer> classLvl = character.getClass(i);
-            // increase spell caster level
-            classLvl = new Triplet<>(classLvl.first, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
-            filter.addFilterClass(classLvl.first.getId());
-            Class.Level lvl = classLvl.first.getLevel(classLvl.third);
-            if(lvl != null && lvl.getMaxSpellLvl() > 0) {
-                filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
-                spellClasses.add(classLvl);
+            List<Class> classes = SpellUtil.getSpellListFrom(classLvl.first, null);
+            for(Class cl : classes) {
+                // increase spell caster level
+                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
+                filter.addFilterClass(cl.getId());
+                Class.Level lvl = cl.getLevel(classLvl.third);
+                if (lvl != null && lvl.getMaxSpellLvl() > 0) {
+                    filter.setFilterMaxLevel(lvl.getMaxSpellLvl());
+                    spellClasses.add(classLvl);
+                }
             }
         }
 
