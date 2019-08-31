@@ -438,6 +438,7 @@ public class MainActivity extends AppCompatActivity
                 listCur.add(el);
             }
         }
+        Collections.sort(listCur);
 
         String factoryId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
 

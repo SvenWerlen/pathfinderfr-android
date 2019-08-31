@@ -334,7 +334,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                     nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getName(), classfeature.getLinkedName()));
                 } else {
                     String template = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.classfeatures.name");
-                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getNameShort()));
+                    nameTv.setText(String.format(template, classfeature.getClass_().getShortName(), classfeature.getLevel(), classfeature.getName()));
                 }
             } else {
                 nameTv.setText(classfeature.getName());

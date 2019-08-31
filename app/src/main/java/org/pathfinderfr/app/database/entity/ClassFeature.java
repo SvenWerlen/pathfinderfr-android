@@ -2,6 +2,8 @@ package org.pathfinderfr.app.database.entity;
 
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
+import java.text.Collator;
+
 public class ClassFeature extends DBEntity {
 
     // classfeature-specific
@@ -36,6 +38,12 @@ public class ClassFeature extends DBEntity {
     }
 
     @Override
+    public String getNameLong() {
+        String template = ConfigurationUtil.getInstance(null).getProperties().getProperty("template.classfeatures.name");
+        return String.format(template, getClass_().getShortName(), getLevel(), getName());
+    }
+
+    @Override
     public boolean isValid() {
         return super.isValid() && class_ != null;
     }
@@ -64,4 +72,19 @@ public class ClassFeature extends DBEntity {
 
     public String getLinkedName() { return linkedName; }
     public void setLinkedName(String linkedName) { this.linkedName = linkedName; }
+
+    @Override
+    public int compareTo(DBEntity o) {
+        if(!(o instanceof ClassFeature)) {
+            return super.compareTo(o);
+        }
+        ClassFeature cf = (ClassFeature)o;
+        if(getName() == null || cf.getName() == null) {
+            return 0;
+        } else if(getLevel() == cf.getLevel()) {
+            return super.compareTo(cf);
+        } else {
+            return Integer.compare(getLevel(), ((ClassFeature) o).getLevel());
+        }
+    }
 }
