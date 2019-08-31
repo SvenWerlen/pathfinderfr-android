@@ -91,7 +91,7 @@
                         android:layout_height="18dp"
                         android:layout_gravity="start|center"
                         android:layout_marginLeft="5dp"
-                        app:srcCompat="@drawable/ic_item_icon_feat" />
+                        app:srcCompat="@drawable/ic_item_icon_classfeature" />
 
                     <TextView
                         android:id="@+id/sheet_classfeatures_example_name"

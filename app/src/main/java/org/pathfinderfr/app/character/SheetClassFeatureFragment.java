@@ -418,10 +418,13 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             List<DBEntity> features = DBHelper.getInstance(getContext()).getAllEntities(ClassFeatureFactory.getInstance());
             Map<Long,Integer> classes = new HashMap<>();
             Set<Long> archetypes = new HashSet<>();
-            Set<Integer> completedLevel = new HashSet<>();
             Set<Integer> addedLevel = new HashSet<>();
+            Map<Long,Set<Integer>> completedLevel = new HashMap<>();
             for(ClassFeature cf : character.getClassFeatures()) {
-                completedLevel.add(cf.getLevel());
+                if(!completedLevel.containsKey(cf.getClass_().getId())) {
+                    completedLevel.put(cf.getClass_().getId(), new HashSet<Integer>());
+                }
+                completedLevel.get(cf.getClass_().getId()).add(cf.getLevel());
             }
             for(int i = 0; i < character.getClassesCount(); i++) {
                 Triplet<Class, ClassArchetype,Integer> level = character.getClass(i);
@@ -437,7 +440,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                         && (cFeat.getClassArchetype() == null || archetypes.contains(cFeat.getClassArchetype().getId()))
                         && cFeat.getLevel() <= classes.get(cFeat.getClass_().getId())) {
                     // in order to avoid previously removed abilities to reappear, only add if no ability exist for that level
-                    if(!completedLevel.contains(cFeat.getLevel())) {
+                    if(!completedLevel.containsKey(cFeat.getClass_().getId()) || !completedLevel.get(cFeat.getClass_().getId()).contains(cFeat.getLevel())) {
                         if(character.addClassFeature(cFeat)) {
                             addedLevel.add(cFeat.getLevel());
                         }
