@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.4.1] - 2019-08-30
+### Fixed
+- Invalid BAB computation
+### Changed
+- Class feature list (sort by level)
+### Added
+- Jump from character sheet to catalog (for feats and class features)
+
+## [3.4.0] - 2019-08-29
+### Changed
+- Class feature list (filter by class & archetype)
+### Added
+- Link a class feature with another
+- Provide LinkTo description
+
 ## [3.3.0] - 2019-08-24
 ### Fixed
 - Invalid BAB computation
