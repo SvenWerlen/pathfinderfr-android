@@ -56,6 +56,10 @@ public class Spell extends DBEntity {
         return name;
     }
 
+    public boolean isValid() {
+        return getName() != null && getName().length() > 0;
+    }
+
     public String getSchool() {
         return school;
     }

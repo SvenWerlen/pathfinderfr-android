@@ -157,7 +157,6 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 TypedValue.COMPLEX_UNIT_DIP, 40, view.getResources().getDisplayMetrics());
 
         // add all skills
-        int rowId = 0;
         skills = new ArrayList<>();
 
         final String skillTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.title");
@@ -165,6 +164,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         final String savTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.content");
         final String tooltipModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.modif.entry");
 
+        int classSkillCount = 0;
         DBHelper helper = DBHelper.getInstance(view.getContext());
         for(DBEntity entity : helper.getAllEntitiesWithAllFields(SkillFactory.getInstance())) {
             final Skill skill = (Skill)entity;
@@ -183,6 +183,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             ImageView iconIv = FragmentUtil.copyExampleImageFragment(exampleIcon);
             if(character.isClassSkill(skill)) {
                 iconIv.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_checked));
+                classSkillCount += 1;
             }
             iconIv.setColorFilter(exampleName.getCurrentTextColor());
             row.addView(iconIv);
@@ -272,8 +273,6 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
             // add to table
             table.addView(row);
-
-            rowId++;
         }
 
         view.findViewById(R.id.skills_table_header).setOnClickListener(new View.OnClickListener() {
@@ -289,6 +288,9 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 newFragment.show(ft, DIALOG_SKILL_FILTER);
             }
         });
+
+        ((TextView)view.findViewById(R.id.prefered_total)).setText(String.valueOf(classSkillCount));
+        ((TextView)view.findViewById(R.id.ranks_total)).setText(String.valueOf(character.getSkillRanksTotal()));
 
         applyFilters(view);
 
@@ -317,6 +319,8 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 rankTv.setText(String.valueOf(character.getSkillRank(skill.getId())));
                 totalTv.setText(String.valueOf(character.getSkillTotalBonus(skill)));
             }
+
+            ((TextView)getView().findViewById(R.id.ranks_total)).setText(String.valueOf(character.getSkillRanksTotal()));
         }
     }
 

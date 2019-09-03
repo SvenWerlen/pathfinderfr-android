@@ -205,7 +205,12 @@ public class SpellFactory extends DBEntityFactory {
         spell.setDuration((String)attributes.get(YAML_DURATION));
         spell.setSavingThrow((String)attributes.get(YAML_SAVING));
         spell.setSpellResistance((String)attributes.get(YAML_SPELL_RES));
-        return spell.isValid() ? spell : null;
+        if(spell.isValid()) {
+            return spell;
+        } else {
+            Log.w(SpellFactory.class.getSimpleName(), "Invalid Spell: " + spell.toString());
+            return null;
+        }
     }
 
 

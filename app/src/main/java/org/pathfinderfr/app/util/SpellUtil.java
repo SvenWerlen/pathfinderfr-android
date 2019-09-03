@@ -23,6 +23,9 @@ public class SpellUtil {
      * @return clean value
      */
     public static String cleanSchool(String school) {
+        if(school == null || school.length() == 0) {
+            return null;
+        }
         // only take first word
         Pattern pattern = Pattern.compile("([A-zÀ-ú]+).*");
         Matcher matcher = pattern.matcher(school.toLowerCase());
@@ -170,7 +173,7 @@ public class SpellUtil {
                 from.setAltName(orig.getName());
                 classes.add(from);
             }
-        } else if("Prc".equals(orig.getNameShort())) {
+        } else if("Prc".equals(orig.getNameShort()) || "Ora".equals(orig.getNameShort())) {
             from = (Class)DBHelper.getInstance(ctx).fetchEntityByName("Prêtre", ClassFactory.getInstance());
             if(from != null) {
                 from.setAltName(orig.getName());

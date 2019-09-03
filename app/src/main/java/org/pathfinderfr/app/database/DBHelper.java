@@ -696,7 +696,10 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
-                list.add(res.getString(0));
+                String school = res.getString(0);
+                if(school != null && school.length() > 0) {
+                    list.add(school);
+                }
                 res.moveToNext();
             }
         } catch(SQLiteException exception) {

@@ -32,7 +32,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
-    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/3.4";
+    public static final String SOURCE = "https://raw.githubusercontent.com/SvenWerlen/pathfinderfr-data/Feature/3.4Spells";
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     private LoadDataTask loadTaskInProgress;

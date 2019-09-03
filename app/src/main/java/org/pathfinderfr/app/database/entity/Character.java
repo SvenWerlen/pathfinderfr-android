@@ -975,6 +975,14 @@ public class Character extends DBEntity {
         }
     }
 
+    public int getSkillRanksTotal() {
+        int count = 0;
+        for(CSkill sk : skills.values()) {
+            count += sk.getRank();
+        }
+        return count;
+    }
+
     public Set<Long> getSkills() {
         return skills.keySet();
     }

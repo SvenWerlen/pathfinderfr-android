@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="1"
-        android:shrinkColumns="1">
+        android:shrinkColumns="1"
+        android:layout_weight="0">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -94,7 +95,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <TableLayout
             android:id="@+id/sheet_skills_table"
@@ -171,4 +173,46 @@
         </TableLayout>
 
     </ScrollView>
+
+    <TableLayout
+        android:id="@+id/skills_table_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:shrinkColumns="1"
+        android:layout_weight="0">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/prefered_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_skills_example_total"
+                android:textAlignment="textStart"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/ranks_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_skills_example_total"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+
+        </TableRow>
+
+    </TableLayout>
 </LinearLayout>
