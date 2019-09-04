@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [3.4.1] - 2019-08-31
+## [3.4.3] - 2019-09-03
+### Changed
+- Skills: #class skills and ranks
+### Fixed
+- NullPointerException during data update
+
+## [3.4.2] - 2019-08-31
 ### Fixed
 - Filters (lists) not working in contextual mode
 
