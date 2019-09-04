@@ -99,7 +99,7 @@ public class SpellUtil {
     public static List<Pair<String,Integer>> cleanClasses(String cl) {
         List<String> classes = new ArrayList<>();
         // Split by comma ',' and eventually by slash '/'
-        String[] regex = cl.split(",");
+        String[] regex = cl == null ? new String[0] : cl.split(",");
         for(String s : regex) {
             s = s.toLowerCase().trim();
             if(s.indexOf('/') > 0) {
