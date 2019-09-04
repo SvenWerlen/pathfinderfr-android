@@ -259,7 +259,7 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
             layout.addView(className);
             final TextView classDescr = FragmentUtil.copyExampleTextFragment(exampleDescr);
             String descrTemplate = ConfigurationUtil.getInstance(rootView.getContext()).getProperties().getProperty("template.sheet.classpicker");
-            String description = String.format(descrTemplate, cl.getDescription(), cl.getAlignment(), cl.getHitDie(),
+            String description = String.format(descrTemplate, cl.getDescription(), cl.getAlignment(), cl.getHitDie(), cl.getRanksPerLevel(),
                     StringUtil.listToString(cl.getSkills().toArray(new String[0]), ", "));
 
             classDescr.setText(Html.fromHtml(description));

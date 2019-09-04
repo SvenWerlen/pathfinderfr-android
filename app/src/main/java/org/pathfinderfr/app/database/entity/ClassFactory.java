@@ -20,6 +20,7 @@ public class ClassFactory extends DBEntityFactory {
     private static final String COLUMN_HITDIE      = "hitdie";
     private static final String COLUMN_CLASSSKILLS = "skills";
     private static final String COLUMN_LEVELS      = "levels";
+    private static final String COLUMN_RANKSPERLVL = "ranksperlvl";
 
     private static final String YAML_NAME          = "Nom";
     private static final String YAML_DESC          = "Description";
@@ -27,6 +28,7 @@ public class ClassFactory extends DBEntityFactory {
     private static final String YAML_SOURCE        = "Source";
     private static final String YAML_ALIGNMENT     = "Alignement";
     private static final String YAML_HITDIE        = "DésDeVie";
+    private static final String YAML_RANKSPERLVL   = "RangsParNiveau";
     private static final String YAML_CLASSSKILLS   = "CompétencesDeClasse";
     private static final String YAML_CLASSSKILL    = "Compétence";
     private static final String YAML_LEVELS        = "Progression";
@@ -67,11 +69,11 @@ public class ClassFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
-                        "%s text, %s text, %s text, %s text" +
+                        "%s text, %s text, %s text, %s text, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
-                COLUMN_ALIGNMENT, COLUMN_HITDIE, COLUMN_CLASSSKILLS, COLUMN_LEVELS);
+                COLUMN_ALIGNMENT, COLUMN_HITDIE, COLUMN_CLASSSKILLS, COLUMN_LEVELS, COLUMN_RANKSPERLVL);
         return query;
     }
 
@@ -88,6 +90,7 @@ public class ClassFactory extends DBEntityFactory {
         contentValues.put(ClassFactory.COLUMN_SOURCE, cl.getSource());
         contentValues.put(ClassFactory.COLUMN_ALIGNMENT, cl.getAlignment());
         contentValues.put(ClassFactory.COLUMN_HITDIE, cl.getHitDie());
+        contentValues.put(ClassFactory.COLUMN_RANKSPERLVL, cl.getRanksPerLevel());
         contentValues.put(ClassFactory.COLUMN_CLASSSKILLS, StringUtil.listToString(cl.getSkills().toArray(new String[0]),':'));
 
         StringBuffer buf = new StringBuffer();
@@ -119,6 +122,7 @@ public class ClassFactory extends DBEntityFactory {
         cl.setSource(extractValue(resource, ClassFactory.COLUMN_SOURCE));
         cl.setAlignment(extractValue(resource, ClassFactory.COLUMN_ALIGNMENT));
         cl.setHitDie(extractValue(resource, ClassFactory.COLUMN_HITDIE));
+        cl.setRanksPerLevel(extractValueAsInt(resource, ClassFactory.COLUMN_RANKSPERLVL));
         String skillsValue = extractValue(resource, ClassFactory.COLUMN_CLASSSKILLS);
         if(skillsValue != null && skillsValue.length() > 0) {
             cl.getSkills().addAll(Arrays.asList(skillsValue.split(":")));
@@ -161,6 +165,9 @@ public class ClassFactory extends DBEntityFactory {
         cl.setSource((String)attributes.get(YAML_SOURCE));
         cl.setAlignment((String)attributes.get(YAML_ALIGNMENT));
         cl.setHitDie((String)attributes.get(YAML_HITDIE));
+        if(attributes.containsKey(YAML_RANKSPERLVL)) {
+            cl.setRanksPerLevel(Integer.parseInt((String) attributes.get(YAML_RANKSPERLVL)));
+        }
         Object skills = attributes.get(YAML_CLASSSKILLS);
         if(skills instanceof List) {
             List<Object> list = (List<Object>)skills;

@@ -15,6 +15,7 @@ public class Class extends DBEntity {
     private Set<String> skills;
     private List<Level> levels;
     private String altName;
+    private int ranksPerLevel;
 
     public Class() {
         skills = new HashSet<>();
@@ -69,6 +70,9 @@ public class Class extends DBEntity {
     public String getHitDie() { return this.hitDie; };
     public String getAltName() { return altName; }
     public void setAltName(String altName) { this.altName = altName; }
+    public int getRanksPerLevel() { return ranksPerLevel; }
+    public void setRanksPerLevel(int ranksPerLevel) { this.ranksPerLevel = ranksPerLevel; }
+
 
     public Set<String> getSkills() {
         return skills;

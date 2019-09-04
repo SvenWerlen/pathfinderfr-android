@@ -27,6 +27,8 @@ import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.Class;
+import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -34,6 +36,7 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -291,6 +294,19 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
 
         ((TextView)view.findViewById(R.id.prefered_total)).setText(String.valueOf(classSkillCount));
         ((TextView)view.findViewById(R.id.ranks_total)).setText(String.valueOf(character.getSkillRanksTotal()));
+
+        // ranks per level
+        String rplTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.ranksperlevel");
+        StringBuffer buf = new StringBuffer();
+        for(int i = 0; i<character.getClassesCount(); i++) {
+            Class cl = character.getClass(i).first;
+            buf.append(String.format(rplTemplate, cl.getNameShort(), cl.getRanksPerLevel()));
+            buf.append(", ");
+        }
+        if(buf.length()>=2) {
+            buf.delete(buf.length()-2, buf.length());
+        }
+        ((TextView)view.findViewById(R.id.ranksperlevel)).setText(buf.toString());
 
         applyFilters(view);
 

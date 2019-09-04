@@ -488,6 +488,7 @@
     <string name="sheet_skills_example_label_rank">Rang</string>
     <string name="sheet_skills_example_name">Compétence (exemple)</string>
     <string name="sheet_skills_example_total">0</string>
+    <string name="sheet_skills_example_ranksperlevel">Bar (2+Int), Gue (8+Int)</string>
     <string name="sheet_skills_example_ability">DEX</string>
     <string name="sheet_skills_example_ability_bonus">0</string>
     <string name="sheet_skills_example_rank">0</string>
