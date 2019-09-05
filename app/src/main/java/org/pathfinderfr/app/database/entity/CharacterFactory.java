@@ -30,6 +30,7 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_ABILITY_WIS = "ab_wis";
     private static final String COLUMN_ABILITY_CHA = "ab_cha";
     private static final String COLUMN_SKILLS      = "skills";
+    private static final String COLUMN_SKILLS_MAX  = "skmaxranks";
     private static final String COLUMN_FEATS       = "feats";
     private static final String COLUMN_CLFEATURES  = "clfeatures";
     private static final String COLUMN_ALTTRAITS   = "alttraits";
@@ -103,6 +104,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s integer, %s integer, %s integer, " +                        // str, dex, con
                         "%s integer, %s integer, %s integer," +                         // int, wis, cha
                         "%s text, %s text, %s text, %s text, %s text, %s text," +       // skills, feats, features, traits, modifs, inventory
+                        "%s integer," +                                                 // skill max ranks
                         "%s integer, %s integer, " +                                    // hitpoints, hitpointstemps
                         "%s integer, %s integer, %s integer, %s integer, %s integer," + // speed (reg, armor, dig, fly, maneuver)
                         "%s integer, %s integer, %s integer, %s integer," +             // money (cp, sp, gp, pp)
@@ -118,6 +120,7 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
                 COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
+                COLUMN_SKILLS_MAX,
                 COLUMN_HITPOINTS, COLUMN_HPTEMP,
                 COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
                 COLUMN_CP, COLUMN_SP, COLUMN_GP, COLUMN_PP,
@@ -215,6 +218,13 @@ public class CharacterFactory extends DBEntityFactory {
         return changes;
     }
 
+    /**
+     * @return SQL statement for upgrading DB from v20
+     */
+    public String getQueryUpgradeV20() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SKILLS_MAX);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         Set<Integer> flags = new HashSet<Integer>();
@@ -280,6 +290,7 @@ public class CharacterFactory extends DBEntityFactory {
         }
 
         if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SKILLS)) {
+            contentValues.put(CharacterFactory.COLUMN_SKILLS_MAX, c.getMaxSkillRanks());
             // skills are stored using format <skill1Id>:<ranks>:<isclassskill>#<skill2Id>:<ranks>:<isclassskill>#...
             // (assuming that skill ids won't change during data import)
             if (c.getSkills().size() > 0) {
@@ -300,6 +311,7 @@ public class CharacterFactory extends DBEntityFactory {
             } else {
                 contentValues.put(CharacterFactory.COLUMN_SKILLS, "");
             }
+
         }
 
         if(flags.contains(FLAG_ALL)) {
@@ -543,6 +555,7 @@ public class CharacterFactory extends DBEntityFactory {
         }
 
         if(flags.contains(FLAG_ALL) || flags.contains(FLAG_SKILLS)) {
+            c.setMaxSkillRanks(extractValueAsInt(resource, CharacterFactory.COLUMN_SKILLS_MAX));
             // fill skills
             String skillsValue = extractValue(resource, CharacterFactory.COLUMN_SKILLS);
             Log.d(CharacterFactory.class.getSimpleName(), "Skills found: " + skillsValue);

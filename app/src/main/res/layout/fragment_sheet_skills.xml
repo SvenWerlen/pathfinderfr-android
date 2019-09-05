@@ -190,32 +190,20 @@
             android:paddingBottom="2dp">
 
             <TextView
-                android:id="@+id/prefered_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sheet_skills_example_total"
-                android:textAlignment="textStart"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold"/>
-
-            <TextView
                 android:id="@+id/ranksperlevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sheet_skills_example_ranksperlevel"
-                android:textAlignment="center"
+                android:textAlignment="textStart"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:textColor="@color/colorWhite" />
-
 
             <TextView
                 android:id="@+id/ranks_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sheet_skills_example_total"
+                android:text="@string/sheet_skills_example_rankstotal"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textAlignment="textEnd"

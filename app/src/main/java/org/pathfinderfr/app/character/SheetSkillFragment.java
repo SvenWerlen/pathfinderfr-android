@@ -36,6 +36,7 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
@@ -48,10 +49,12 @@ import java.util.Set;
 /**
  * Skill tab on character sheet
  */
-public class SheetSkillFragment extends Fragment implements FragmentRankPicker.OnFragmentInteractionListener, FragmentSkillFilter.OnFragmentInteractionListener {
+public class SheetSkillFragment extends Fragment implements FragmentRankPicker.OnFragmentInteractionListener,
+        FragmentSkillFilter.OnFragmentInteractionListener, FragmentSkillMaxRanksPicker.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID = "character_id";
     private static final String DIALOG_SKILL_FILTER = "skill-filter";
+    private static final String DIALOG_SKILL_MAXRANKS = "skill-maxranks";
 
     private Character character;
     private long characterId;
@@ -292,8 +295,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             }
         });
 
-        ((TextView)view.findViewById(R.id.prefered_total)).setText(String.valueOf(classSkillCount));
-        ((TextView)view.findViewById(R.id.ranks_total)).setText(String.valueOf(character.getSkillRanksTotal()));
+        updateTotalRanks(view);
 
         // ranks per level
         String rplTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.skill.ranksperlevel");
@@ -308,6 +310,51 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         }
         ((TextView)view.findViewById(R.id.ranksperlevel)).setText(buf.toString());
 
+        view.findViewById(R.id.skills_table_footer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FragmentTransaction ft = SheetSkillFragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = SheetSkillFragment.this.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_SKILL_MAXRANKS);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                // compute total #ranks
+                StringBuffer descrClasses = new StringBuffer();
+                int level = character.getLevel();
+                int totalRanks = 0;
+                String template = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.skill.maxranks.class");
+                //template.skill.maxranks.class=%d niveau%s de <b>%s</b> (%d+Int) = %d rangs<br/>
+                for(int i = 0; i<character.getClassesCount(); i++) {
+                    Triplet<Class, ClassArchetype, Integer> val = character.getClass(i);
+                    int ranks = val.third * (val.first.getRanksPerLevel()+character.getIntelligenceModif());
+                    descrClasses.append(String.format(template,
+                            val.third, val.third > 1 ? "x" : "",
+                            val.first.getName(),
+                            val.first.getRanksPerLevel(),
+                            ranks));
+                    totalRanks += ranks;
+                }
+                if(character.getRace() != null && "Humain".equals(character.getRace().getName())) {
+                    template = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.skill.maxranks.race");
+                    descrClasses.append(String.format(template, level));
+                    totalRanks += level;
+                }
+
+                String descrTemplate = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("template.skill.maxranks");
+                String htmlContent = String.format(descrTemplate,
+                        character.getIntelligenceModif(),
+                        descrClasses,
+                        level,
+                        totalRanks, totalRanks+level);
+
+                DialogFragment newFragment = FragmentSkillMaxRanksPicker.newInstance(SheetSkillFragment.this, character.getMaxSkillRanks(), htmlContent);
+                newFragment.show(ft, DIALOG_SKILL_MAXRANKS);
+            }
+        });
+
         applyFilters(view);
 
         // reset listeners for opened dialogs
@@ -317,9 +364,24 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             if (fragSkillFilter != null) {
                 fragSkillFilter.setListener(this);
             }
+            FragmentSkillMaxRanksPicker fragSkillMaxRanks = (FragmentSkillMaxRanksPicker) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(DIALOG_SKILL_MAXRANKS);
+            if (fragSkillMaxRanks != null) {
+                fragSkillMaxRanks.setListener(this);
+            }
         }
 
         return view;
+    }
+
+    private void updateTotalRanks(View view) {
+        String total = "";
+        if(character.getMaxSkillRanks() <= 0) {
+            total = String.valueOf(character.getSkillRanksTotal());
+        } else {
+            total = character.getSkillRanksTotal() + "/" + character.getMaxSkillRanks();
+        }
+        ((TextView)view.findViewById(R.id.ranks_total)).setText(total);
     }
 
     @Override
@@ -335,8 +397,17 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                 rankTv.setText(String.valueOf(character.getSkillRank(skill.getId())));
                 totalTv.setText(String.valueOf(character.getSkillTotalBonus(skill)));
             }
+            updateTotalRanks(getView());
+        }
+    }
 
-            ((TextView)getView().findViewById(R.id.ranks_total)).setText(String.valueOf(character.getSkillRanksTotal()));
+    @Override
+    public void onSaveMaxRanksPerLevel(int max) {
+        max = max <= 0 ? -1 : max;
+        // update character
+        character.setMaxSkillRanks(max);
+        if(DBHelper.getInstance(getContext()).updateEntity(character, new HashSet<Integer>(Arrays.asList(CharacterFactory.FLAG_SKILLS)))) {
+            updateTotalRanks(getView());
         }
     }
 
@@ -344,4 +415,5 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
     public void onFilterApplied() {
         applyFilters(getView());
     }
+
 }

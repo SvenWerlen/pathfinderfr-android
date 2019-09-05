@@ -77,6 +77,13 @@ public class ClassFactory extends DBEntityFactory {
         return query;
     }
 
+    /**
+     * @return SQL statement for upgrading DB from v20
+     */
+    public String getQueryUpgradeV20() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_RANKSPERLVL);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         if (!(entity instanceof Class)) {

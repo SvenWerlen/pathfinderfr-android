@@ -488,6 +488,7 @@
     <string name="sheet_skills_example_label_rank">Rang</string>
     <string name="sheet_skills_example_name">Compétence (exemple)</string>
     <string name="sheet_skills_example_total">0</string>
+    <string name="sheet_skills_example_rankstotal">57/65</string>
     <string name="sheet_skills_example_ranksperlevel">Bar (2+Int), Gue (8+Int)</string>
     <string name="sheet_skills_example_ability">DEX</string>
     <string name="sheet_skills_example_ability_bonus">0</string>
@@ -519,6 +520,16 @@
     <string name="sheet_skills_filter_apply">Appliquer</string>
 
     <string name="sheet_skills_filter_empty">Aucune compétence ne répond à ces critères (filtres).</string>
+
+    <!-- Money -->
+    <string name="sheet_skills_maxranks_title">Rangs de compétence</string>
+    <string name="sheet_skills_maxranks_descr">Calculez et indiquez le nombre de rangs maximum autorisés.
+        pour le personnage. Laisser vide (ou 0) si vous ne voulez pas que l\'application vous avertisse
+        en cas de dépassement.
+    </string>
+    <string name="sheet_skills_maxranks_label">rangs maximum</string>
+    <string name="sheet_skills_maxranks_help">Aide au calcul</string>
+    <string name="sheet_skills_maxranks_calc">Détail des calculs</string>
 
     <!-- Feats -->
     <string name="sheet_feats_add">Ajouter des dons <b><u>depuis le catalogue</u></b>.</string>

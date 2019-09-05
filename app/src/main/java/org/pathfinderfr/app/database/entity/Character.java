@@ -99,40 +99,43 @@ public class Character extends DBEntity {
     public static final int MODIF_SKILL = 200;
 
     // character-specific
-    int[] abilities;
-    Race race;
-    List<Triplet<Class,ClassArchetype,Integer>> classes;
-    Map<Long,CSkill> skills;
-    List<Feat> feats;
-    List<ClassFeature> features;
-    List<Trait> traits;
-    List<CharacterModif> modifs;
-    List<InventoryItem> invItems;
-    int hitpoints, hitpointsTemp;
-    int speed;
-    List<Spell> spells;
+    private int[] abilities;
+    private Race race;
+    private List<Triplet<Class,ClassArchetype,Integer>> classes;
+    private Map<Long,CSkill> skills;
+    private List<Feat> feats;
+    private List<ClassFeature> features;
+    private List<Trait> traits;
+    private List<CharacterModif> modifs;
+    private List<InventoryItem> invItems;
+    private int hitpoints, hitpointsTemp;
+    private int speed;
+    private List<Spell> spells;
 
     // infos additionnelles
-    String player;
-    int alignment;
-    String divinity;
-    String origin;
-    int sizeType;
-    int sex;
-    int age;
-    int height;
-    int weight;
-    String hair;
-    String eyes;
-    int speedWithArmor;
-    int speedDig;
-    int speedFly;
-    int speedFlyManeuv;
-    String languages;
-    int experience;
+    private String player;
+    private int alignment;
+    private String divinity;
+    private String origin;
+    private int sizeType;
+    private int sex;
+    private int age;
+    private int height;
+    private int weight;
+    private String hair;
+    private String eyes;
+    private int speedWithArmor;
+    private int speedDig;
+    private int speedFly;
+    private int speedFlyManeuv;
+    private String languages;
+    private int experience;
 
     // money
-    int moneyCP, moneySP, moneyGP, moneyPP;
+    private int moneyCP, moneySP, moneyGP, moneyPP;
+
+    // others
+    private int maxSkillRanks;
 
     public Character() {
         abilities = new int[] { 10, 10, 10, 10, 10, 10 };
@@ -348,7 +351,8 @@ public class Character extends DBEntity {
     public void setMoneyGP(int value) { this.moneyGP = value; }
     public int getMoneyPP() { return moneyPP; }
     public void setMoneyPP(int value) { this.moneyPP = value; }
-
+    public int getMaxSkillRanks() { return maxSkillRanks; }
+    public void setMaxSkillRanks(int value) { this.maxSkillRanks = value; }
 
     /**
      * @param abilityId ability identifier
