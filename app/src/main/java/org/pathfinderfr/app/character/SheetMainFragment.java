@@ -40,6 +40,9 @@ import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.EquipmentFactory;
+import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -87,20 +90,37 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     private List<TextView> classPickers;
     private List<ImageView> modifPickers;
 
+    private TableLayout weapons;
+    private TextView weaponNameExample;
+    private TextView weaponTextExample;
     private TableLayout inventory;
     private TextView inventoryNameExample;
     private TextView inventoryWeightExample;
 
     private long characterId;
     ProfileListener listener;
-    private OnFragmentInteractionListener mListener;
 
+    private boolean refreshNeeded;
 
+    private SheetFeatFragment.Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onRefreshRequest();
+    }
 
     public SheetMainFragment() {
         // Required empty public constructor
         classPickers = new ArrayList<>();
         modifPickers = new ArrayList<>();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Activities containing this fragment must implement its callbacks
+        if(context instanceof SheetFeatFragment.Callbacks) {
+            mCallbacks = (SheetFeatFragment.Callbacks) context;
+        }
     }
 
     /**
@@ -124,6 +144,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         if (getArguments() != null) {
             characterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
+        refreshNeeded = false;
     }
 
     private static void showTooltip(View v, String message) {
@@ -134,18 +155,24 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         t.show();
     }
 
+
+    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate) {
+        return generateOtherBonusText(character, modifId, tooltipTemplate, 0);
+    }
+
     /**
      * Generates a string (tables rows) for each individual other bonus
      * @param character character object
      * @param modifId modif identifier
      * @param tooltipTemplate template for a row entry
+     * @param weaponIdx applied for specific weapon
      * @return
      */
-    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate) {
+    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate, int weaponIdx) {
         List<Character.CharacterModif> modifs = character.getModifsForId(modifId);
         StringBuffer buf = new StringBuffer();
         for(Character.CharacterModif modif: modifs) {
-            if(modif.isEnabled()) {
+            if(modif.isEnabled() && (modif.getLinkToWeapon()<=0 || modif.getLinkToWeapon() == weaponIdx)) {
                 buf.append(String.format(tooltipTemplate, modif.getSource(), modif.getModif(0).second));
             }
         }
@@ -414,59 +441,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             }
         });
 
-        // ATTACK BONUS (MELEE & RANGED)
-        final String tooltipBabModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.babmodif.entry");
-        final String meleeTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.attmelee.content");
-        final String rangedTooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.attranged.content");
-        view.findViewById(R.id.combat_attack_melee).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_attack_melee));}
-        });
-        view.findViewById(R.id.attack_melee_value).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StringBuffer text = new StringBuffer();
-                for(int i=0; i<character.getClassesCount(); i++) {
-                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.third);
-                    if(lvl != null) {
-                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
-                    }
-                }
-                act.showTooltip(babTooltipTitle,String.format(
-                        meleeTooltipContent,
-                        text,
-                        character.getStrengthModif(),
-                        character.getSizeModifierAttack(),
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_MELEE, tooltipBabModif), // other
-                        character.getAttackBonusMeleeAsString(0)));
-            }
-        });
-
-        view.findViewById(R.id.combat_attack_distance).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { showTooltip(v, getResources().getString(R.string.sheet_attack_distance));}
-        });
-        view.findViewById(R.id.attack_distance_value).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StringBuffer text = new StringBuffer();
-                for(int i=0; i<character.getClassesCount(); i++) {
-                    Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
-                    Class.Level lvl = cl.first.getLevel(cl.third);
-                    if(lvl != null) {
-                        text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
-                    }
-                }
-                act.showTooltip(babTooltipTitle,String.format(
-                        rangedTooltipContent,
-                        text,
-                        character.getDexterityModif(),
-                        character.getSizeModifierAttack(),
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_ATT_RANGED, tooltipBabModif), // other
-                        character.getAttackBonusRangeAsString(0)));
-            }
-        });
+        // Weapons
+        weapons = view.findViewById(R.id.weapons_table);
+        weaponNameExample = view.findViewById(R.id.weapon_name);
+        weaponTextExample = view.findViewById(R.id.weapon_bonus);
+        updateWeapons(view);
 
         // COMBAT MANEUVER BONUS
         final String cmbTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmb.title");
@@ -706,6 +685,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         // inventory
         view.findViewById(R.id.sheet_inventory_item_add).setOnClickListener(listener);
+        view.findViewById(R.id.sheet_inventory_item_add_fromEquipment).setOnClickListener(listener);
         inventory = view.findViewById(R.id.sheet_inventory_table);
         inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
         inventoryWeightExample = view.findViewById(R.id.sheet_inventory_example_weight);
@@ -777,10 +757,6 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_bab), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.base_attack_bonus_value), minHeight, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_attack_melee), minHeight, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.attack_melee_value), minHeight, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_attack_distance), minHeight, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.attack_distance_value), minHeight, scale);
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmb_total), minHeight, scale);
@@ -792,6 +768,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_ability), minHeight, scale);
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add_fromEquipment), 0, scale);
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_money_total_value), 0, scale);
         }
@@ -902,6 +879,136 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         updateSheet(view);
     }
 
+    private void updateWeapons(View view) {
+        weapons.removeViews(1, weapons.getChildCount()-1);
+
+        // fat fingers
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int base = 32;
+        float scale = 1f;
+        try {
+            scale = (Integer.parseInt(preferences.getString(MainActivity.PREF_FATFINGERS, "0"))/100f);
+        } catch(NumberFormatException nfe) {}
+
+        final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
+        final String babTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.title");
+        final String babTooltipEntry = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.entry");
+        final String tooltipBabModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.babmodif.entry");
+
+        int weaponIdx = 0;
+        for(final Weapon weapon : character.getInventoryWeapons()) {
+            final int curWeaponIdx = weaponIdx + 1;
+            final String attackBonus = weapon.isRanged() ? character.getAttackBonusRangeAsString(curWeaponIdx) : character.getAttackBonusMeleeAsString(curWeaponIdx);
+            String damageString = character.getDamage(weapon, curWeaponIdx);
+
+            TableRow row = new TableRow(view.getContext());
+            TextView name = FragmentUtil.copyExampleTextFragment(weaponNameExample);
+            name.setText(weapon.getName());
+            row.addView(name);
+            TextView bonus = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            bonus.setText(attackBonus);
+            bonus.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            row.addView(bonus);
+            TextView critical = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            critical.setText(weapon.getCritical());
+            critical.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(critical);
+            TextView type = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            type.setText(weapon.getType());
+            type.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(type);
+            TextView range = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            range.setText(weapon.getRangeInMeters());
+            range.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(range);
+            TextView damage = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            damage.setText(damageString);
+            damage.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(damage);
+            weapons.addView(row);
+            weaponIdx++;
+
+            // fat fingers
+            if(scale > 1) {
+                int minHeight = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, base * scale, view.getResources().getDisplayMetrics());
+
+                FragmentUtil.adaptForFatFingers(name, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(bonus, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(critical, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(type, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(range, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(damage, minHeight, scale);
+            }
+
+            final String tooltipContent = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty(weapon.isRanged() ? "tooltip.attranged.content" : "tooltip.attmelee.content");
+
+            // listeners
+            bonus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    StringBuffer text = new StringBuffer();
+                    for(int i=0; i<character.getClassesCount(); i++) {
+                        Triplet<Class, ClassArchetype,Integer> cl = character.getClass(i);
+                        Class.Level lvl = cl.first.getLevel(cl.third);
+                        if(lvl != null) {
+                            text.append(String.format(babTooltipEntry, cl.first.getName(), cl.third, lvl.getBaseAttackBonusAsString() ));
+                        }
+                    }
+                    act.showTooltip(babTooltipTitle,String.format(
+                            tooltipContent,
+                            text,
+                            weapon.isRanged() ? character.getDexterityModif() : character.getStrengthModif(),
+                            character.getSizeModifierAttack(),
+                            generateOtherBonusText(character,
+                                    weapon.isRanged() ? Character.MODIF_COMBAT_ATT_RANGED : Character.MODIF_COMBAT_ATT_MELEE,
+                                    tooltipBabModif,
+                                    curWeaponIdx), // other
+                            attackBonus));
+                }
+            });
+
+            name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // try to find matching inventory item
+                    int inventoryIdx = 0;
+                    Character.InventoryItem matchingItem = null;
+                    for(Character.InventoryItem item : character.getInventoryItems()) {
+                        if(item.isWeapon() && item.getName().equals(weapon.getName())) {
+                            matchingItem = item;
+                            break;
+                        }
+                        inventoryIdx++;
+                    }
+                    // not found
+                    if(matchingItem == null) {
+                        return;
+                    }
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentInventoryPicker.newInstance(SheetMainFragment.this);
+
+
+                    Bundle arguments = new Bundle();
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_IDX, inventoryIdx);
+                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, matchingItem.getName());
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, matchingItem.getWeight());
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, matchingItem.getPrice());
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, matchingItem.getObjectId());
+                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, matchingItem.getInfos());
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                }
+            });
+        }
+    }
+
     private void updateInventory(View view) {
         inventory.removeAllViews();
         int rowId = 0;
@@ -954,6 +1061,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)view.findViewById(R.id.sheet_inventory_item_totalweight)).setText(totalWeight + "kg");
         updateSheetSummary(view);
         updateMoneyValue(view);
+        updateWeapons(view);
     }
 
     private void updateMoneyValue(View view) {
@@ -1044,8 +1152,6 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         TextView savingWillAbility = view.findViewById(R.id.savingthrows_will_ability);
 
         TextView baseAttackBonus = view.findViewById(R.id.base_attack_bonus_value);
-        TextView attackMeleeBonus = view.findViewById(R.id.attack_melee_value);
-        TextView attackDistanceBonus = view.findViewById(R.id.attack_distance_value);
         TextView combatManBonusTotal = view.findViewById(R.id.combat_cmb_total);
         TextView combatManBonusBab = view.findViewById(R.id.combat_cmb_bab);
         TextView combatManBonusAbility = view.findViewById(R.id.combat_cmb_ability);
@@ -1071,8 +1177,6 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
 
         int[] bab = character.getBaseAttackBonus();
         baseAttackBonus.setText(character.getBaseAttackBonusAsString());
-        attackMeleeBonus.setText(character.getAttackBonusMeleeAsString(0));
-        attackDistanceBonus.setText(character.getAttackBonusRangeAsString(0));
         combatManBonusTotal.setText(String.valueOf(character.getCombatManeuverBonus()));
         combatManBonusBab.setText(String.valueOf(bab == null || bab.length == 0 ? 0: bab[0]));
         combatManBonusAbility.setText(String.valueOf(character.getStrengthModif()));
@@ -1086,6 +1190,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         ((TextView)view.findViewById(R.id.money_pp_value)).setText(String.valueOf(character.getMoneyPP()));
 
         updateSheetSummary(view);
+        updateWeapons(view);
     }
 
 
@@ -1416,6 +1521,18 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 return;
+            }
+            else if(v.getId() == R.id.sheet_inventory_item_add_fromEquipment) {
+                // set character as "selected"
+                PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
+                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
+                        apply();
+                Context context = parent.getContext();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, EquipmentFactory.FACTORY_ID);
+                context.startActivity(intent);
+                parent.refreshNeeded = true;
             }
         }
 
@@ -1754,6 +1871,15 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
             // store changes
             characterDBUpdate();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(refreshNeeded && mCallbacks != null) {
+            mCallbacks.onRefreshRequest();
+        }
+        refreshNeeded = false;
     }
 
 }

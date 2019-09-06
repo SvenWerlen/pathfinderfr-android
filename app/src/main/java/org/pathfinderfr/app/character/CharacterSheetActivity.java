@@ -24,7 +24,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.util.List;
 
-public class CharacterSheetActivity extends AppCompatActivity implements SheetClassFeatureFragment.Callbacks, SheetFeatFragment.Callbacks {
+public class CharacterSheetActivity extends AppCompatActivity implements SheetMainFragment.Callbacks, SheetClassFeatureFragment.Callbacks, SheetFeatFragment.Callbacks {
 
     public static final String SELECTED_CHARACTER_ID        = "characterId";
 

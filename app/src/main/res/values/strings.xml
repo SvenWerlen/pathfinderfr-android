@@ -314,6 +314,7 @@
     <string name="sheet_class_archetype_value">classe de base</string>
     <string name="sheet_class_select">Niveau:</string>
     <string name="sheet_class_level_value">1</string>
+    <string name="sheet_click_to_add_catalog">Catalogue</string>
 
     <!-- Character modifications -->
     <string name="sheet_modifs">Modif(s):</string>
@@ -408,9 +409,15 @@
     <string name="sheet_cmd">DMD</string>
     <string name="sheet_combat_man_defense">Degré de manoeuvre défensive</string>
     <string name="sheet_attack">BBA</string>
-    <string name="sheet_att_mel">CàC</string>
-    <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
+    <string name="sheet_weapons">Armes</string>
+    <string name="sheet_weapon1">Arme 1</string>
+    <string name="sheet_weapons_bonus">Bonus</string>
+    <string name="sheet_weapons_critical">Critique</string>
+    <string name="sheet_weapons_type">Type</string>
+    <string name="sheet_weapons_range">Portée</string>
+    <string name="sheet_weapons_damages">Dommages</string>
     <string name="sheet_att_dist">Dist</string>
+    <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
     <string name="sheet_damage_melee">Bonus de dégâts (au corps-à-corps)</string>
     <string name="sheet_damage_distance">Bonus de dégâts (à distance)</string>
