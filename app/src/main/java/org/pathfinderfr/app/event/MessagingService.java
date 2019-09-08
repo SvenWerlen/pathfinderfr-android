@@ -18,10 +18,44 @@ public class MessagingService extends FirebaseMessagingService {
     public static final String REQUEST_ACCEPT = "reqacc";
 
     private static final String MESSAGE_TITLE      = "title";
-    private static final String MESSAGE_CONTINUOUS = "c";
+    private static final String MESSAGE_MULTI_IDX  = "idx";
     private static final String MESSAGE_CONTENT    = "message";
     private static final String MESSAGE_ID_SYNC    = "character-sync";
-    private Map<String, String> data;
+    private Map<String, Multipart> data;
+
+    private static class Multipart {
+        private Map<Integer, String> parts = new HashMap<>();
+        public void add(int idx, String part) {
+            parts.put(idx, part);
+        }
+        // returns true if multipart message is complete
+        public boolean isComplete() {
+            int idx = 1;
+            while(true) {
+                if(parts.containsKey(-idx)) {
+                    return true;
+                } else if(!parts.containsKey(idx)) {
+                    return false;
+                }
+                idx++;
+            }
+        }
+        // return full message
+        public String getMessage() {
+            int idx = 1;
+            StringBuffer buf = new StringBuffer();
+            while(true) {
+                if(parts.containsKey(-idx)) {
+                    buf.append(parts.get(-idx));
+                    return buf.toString();
+                } else if(!parts.containsKey(idx)) {
+                    return null;
+                }
+                buf.append(parts.get(idx));
+                idx++;
+            }
+        }
+    }
 
     public MessagingService() {
         data = new HashMap<>();
@@ -29,8 +63,6 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        // ...
-
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
@@ -46,26 +78,34 @@ public class MessagingService extends FirebaseMessagingService {
 
             // sync character
             if(MESSAGE_ID_SYNC.equals(data.get(MESSAGE_TITLE))) {
-                String continous = data.containsKey(MESSAGE_CONTINUOUS) ? data.get(MESSAGE_CONTINUOUS) : null;
+                String multipartIdx = data.containsKey(MESSAGE_MULTI_IDX) ? data.get(MESSAGE_MULTI_IDX) : null;
                 String charString = data.get(MESSAGE_CONTENT);
 
-                if(continous != null) {
-                    if(this.data.containsKey(remoteMessage.getFrom())) {
-                        charString = this.data.get(remoteMessage.getFrom()) + charString;
+                Log.d(TAG, "Multipart " + multipartIdx);
+
+                if(multipartIdx != null) {
+                    String sender = remoteMessage.getFrom() == null ? "--" : remoteMessage.getFrom();
+                    // first part received
+                    if(!this.data.containsKey(sender)) {
+                        this.data.put(sender, new Multipart());
                     }
+                    this.data.get(sender).add(Integer.valueOf(multipartIdx), charString);
                     // more messages expected?
-                    if(Boolean.toString(true).equals(continous)) {
-                        this.data.put(remoteMessage.getFrom(), charString);
+                    if(!this.data.get(sender).isComplete()) {
                         return;
                     } else {
-                        this.data.remove(remoteMessage.getFrom());
+                        charString = this.data.get(sender).getMessage();
+                        this.data.remove(sender);
                     }
                 }
 
-                LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
-                Intent intent = new Intent(REQUEST_ACCEPT);
-                intent.putExtra("character", charString);
-                broadcaster.sendBroadcast(intent);
+                System.out.println(charString);
+                if(charString != null) {
+                    LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
+                    Intent intent = new Intent(REQUEST_ACCEPT);
+                    intent.putExtra("character", charString);
+                    broadcaster.sendBroadcast(intent);
+                }
             }
         }
 
