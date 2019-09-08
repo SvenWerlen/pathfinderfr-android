@@ -294,7 +294,7 @@
                 android:textSize="16sp"
                 android:text="@string/sheet_other_size" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/sheet_other_size_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -302,7 +302,7 @@
                 android:prompt="@string/sheet_other_size"
                 android:entries="@array/size_types">
 
-            </android.support.v7.widget.AppCompatSpinner>
+            </androidx.appcompat.widget.AppCompatSpinner>
 
             <LinearLayout
                 android:layout_width="match_parent"

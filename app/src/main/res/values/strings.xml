@@ -688,6 +688,13 @@
     <string name="summary_height">%d cm</string>
     <string name="summary_weight">%d kg</string>
 
+    <string name="sync_character_noguid">Le personnage ne peut pas être synchronisé! Faite un changement pour forcer la sauvegarde et réessayez!</string>
+    <string name="sync_character_success">Demande de synchronisation envoyée avec succès!</string>
+
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="msg_subscribed">Souscription réussie à: %s</string>
+    <string name="msg_subscribe_failed">Souscription échouée pour: %s</string>
+
 </resources>
 
 

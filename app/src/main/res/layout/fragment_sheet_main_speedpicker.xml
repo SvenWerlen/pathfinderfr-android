@@ -212,7 +212,7 @@
                     android:width="150dp"
                     android:text="@string/sheet_speed_fly_maneuver" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/sheet_speed_fly_maneuver_spinner"
                     android:layout_width="170dp"
                     android:layout_height="wrap_content"
@@ -220,7 +220,7 @@
                     android:prompt="@string/sheet_speed_fly_maneuver"
                     android:entries="@array/speed_fly_maneuver">
 
-                </android.support.v7.widget.AppCompatSpinner>
+                </androidx.appcompat.widget.AppCompatSpinner>
 
             </LinearLayout>
 

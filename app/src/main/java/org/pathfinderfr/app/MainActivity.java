@@ -1,25 +1,14 @@
 package org.pathfinderfr.app;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -32,6 +21,29 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
@@ -55,6 +67,8 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
+import org.pathfinderfr.app.event.MessagingService;
+import org.pathfinderfr.app.event.MsgBroadcastReceiver;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
@@ -112,6 +126,7 @@ public class MainActivity extends AppCompatActivity
     String search = null;
 
     RecyclerView recyclerView;
+    BroadcastReceiver receiver;
 
 
     /**
@@ -126,6 +141,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         dbhelper = DBHelper.getInstance(getBaseContext());
+        receiver = new MsgBroadcastReceiver(this);
 
         if(!getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
             // listen to welcome page
@@ -953,4 +969,43 @@ public class MainActivity extends AppCompatActivity
             onNavigationItemSelected(nav.getMenu().findItem(navId));
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.w(MainActivity.class.getSimpleName(), "getInstanceId failed", task.getException());
+                    return;
+                }
+
+                for(final String uuid : dbhelper.fetchCharacterUUIDs()) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(uuid).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String msg = getString(R.string.msg_subscribed);
+                            if (!task.isSuccessful()) {
+                                msg = getString(R.string.msg_subscribe_failed);
+                            }
+                            Log.d(MainActivity.class.getSimpleName(), String.format(msg, uuid));
+                        }
+                    });
+                }
+            }
+        });
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+                new IntentFilter(MessagingService.REQUEST_ACCEPT)
+        );
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
 }

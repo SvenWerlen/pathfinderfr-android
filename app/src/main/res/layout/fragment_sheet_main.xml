@@ -58,6 +58,13 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:background="@drawable/ic_genpdf" />
 
+            <ImageButton
+                android:id="@+id/actionSync"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/ic_sync" />
+
             <View android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />

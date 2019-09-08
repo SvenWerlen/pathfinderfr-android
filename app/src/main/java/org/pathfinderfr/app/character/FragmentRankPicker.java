@@ -4,34 +4,24 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.text.Html;
+import androidx.fragment.app.DialogFragment;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.MainActivity;
-import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.Class;
-import org.pathfinderfr.app.database.entity.ClassFactory;
-import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
-import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FragmentRankPicker extends DialogFragment implements View.OnClickListener {

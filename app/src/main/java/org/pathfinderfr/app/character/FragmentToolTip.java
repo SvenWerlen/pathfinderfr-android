@@ -1,18 +1,15 @@
 package org.pathfinderfr.app.character;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.text.HtmlCompat;
-import android.text.Html;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.core.text.HtmlCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;

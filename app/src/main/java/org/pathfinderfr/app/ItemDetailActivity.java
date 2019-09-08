@@ -3,16 +3,14 @@ package org.pathfinderfr.app;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
 import android.view.MenuItem;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.database.entity.Character;
-import org.pathfinderfr.app.database.entity.DBEntity;
 
 /**
  * An activity representing a single Item detail screen. This

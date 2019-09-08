@@ -1,10 +1,8 @@
 package org.pathfinderfr.app.util;
 
-import android.graphics.Typeface;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import androidx.core.app.ActivityCompat;
+
 import android.util.TypedValue;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 

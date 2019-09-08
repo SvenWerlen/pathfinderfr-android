@@ -8,12 +8,17 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -27,6 +32,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
@@ -41,8 +50,6 @@ import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
-import org.pathfinderfr.app.database.entity.Feat;
-import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -257,6 +264,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
 
         view.findViewById(R.id.actionShare).setOnClickListener(listener);
+        view.findViewById(R.id.actionSync).setOnClickListener(listener);
         view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
@@ -1487,6 +1495,25 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_DELETE_ACTION);
                     return;
+                }
+                else if(v.getId() == R.id.actionSync) {
+                    final View root = parent.getActivity().findViewById(R.id.sheet_container);
+                    if(!parent.character.hasUUID()) {
+                        // force generating UUID (for old characters)
+                        parent.character.getUniqID();
+                        if (!DBHelper.getInstance(parent.getContext()).updateEntity(parent.character)) {
+                            if (root != null) {
+                                Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_noguid),
+                                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                            }
+                            return;
+                        }
+                    }
+
+                    if (root != null) {
+                        Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_success),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
                 }
                 // MODIFICATION ENABLED/DISABLED
                 else {

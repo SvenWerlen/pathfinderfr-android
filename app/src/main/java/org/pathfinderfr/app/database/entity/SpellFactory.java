@@ -2,11 +2,10 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 import android.util.Log;
 
-import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;

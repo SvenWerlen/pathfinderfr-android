@@ -1,22 +1,17 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.text.HtmlCompat;
-import android.util.Log;
+import androidx.fragment.app.DialogFragment;
+import androidx.core.text.HtmlCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.database.entity.Character;
 
 public class FragmentHitPointsPicker extends DialogFragment implements View.OnClickListener {
 

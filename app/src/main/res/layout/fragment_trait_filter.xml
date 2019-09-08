@@ -22,13 +22,13 @@
             android:checked="true"
             android:text="@string/trait_filter_race" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/trait_race_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dialog">
 
-        </android.support.v7.widget.AppCompatSpinner>
+        </androidx.appcompat.widget.AppCompatSpinner>
 
         <CheckBox
             android:id="@+id/traitCharacter"
@@ -39,13 +39,13 @@
             android:checked="true"
             android:text="@string/trait_filter_character" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/trait_character_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dialog">
 
-        </android.support.v7.widget.AppCompatSpinner>
+        </androidx.appcompat.widget.AppCompatSpinner>
 
         <com.wefika.flowlayout.FlowLayout
             android:id="@+id/flowActions"

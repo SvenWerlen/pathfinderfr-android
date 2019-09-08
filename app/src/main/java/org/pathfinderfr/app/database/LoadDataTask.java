@@ -1,7 +1,7 @@
 package org.pathfinderfr.app.database;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Pair;
 
 import com.esotericsoftware.yamlbeans.YamlReader;

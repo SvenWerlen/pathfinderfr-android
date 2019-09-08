@@ -2,8 +2,8 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
-import org.pathfinderfr.app.util.ConfigurationUtil;
-import org.pathfinderfr.app.util.StringUtil;
 
 public class FragmentSkillMaxRanksPicker extends DialogFragment implements View.OnClickListener {
 

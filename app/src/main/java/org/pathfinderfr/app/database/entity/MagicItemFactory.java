@@ -2,9 +2,8 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class Character extends DBEntity {
 
@@ -99,6 +100,7 @@ public class Character extends DBEntity {
     public static final int MODIF_SKILL = 200;
 
     // character-specific
+    private UUID uniqID;
     private int[] abilities;
     private Race race;
     private List<Triplet<Class,ClassArchetype,Integer>> classes;
@@ -296,6 +298,23 @@ public class Character extends DBEntity {
 
     public int getAbilityModif(int ability) {
         return CharacterUtil.getAbilityBonus(getAbilityValue(ability));
+    }
+
+    public void setUniqID(String uuid) {
+        if(uniqID == null && uuid != null && uuid.length() > 0) {
+            uniqID = UUID.fromString(uuid);
+        }
+    }
+
+    public boolean hasUUID() {
+        return uniqID != null;
+    }
+
+    public synchronized UUID getUniqID() {
+        if(uniqID == null) {
+            uniqID = UUID.randomUUID();
+        }
+        return uniqID;
     }
 
     public int getStrength() { return getAbilityValue(ABILITY_STRENGH); }

@@ -48,7 +48,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 20;
+    public static final int DATABASE_VERSION = 21;
 
     private static DBHelper instance;
 
@@ -223,12 +223,18 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 19;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 19");
         }
-        // version 19 introduced 6 new columns on character, 1 new column on feat, 1 new column on armor (for PDF)
+        // version 20 introduced 6 new columns on character, 1 new column on feat, 1 new column on armor (for PDF)
         if(oldVersion == 19) {
             executeNoFail(db, ClassFactory.getInstance().getQueryUpgradeV20());
             executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV20());
             oldVersion = 20;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 20");
+        }
+        // version 21 introduced UUID for characters (for firebase messaging)
+        if(oldVersion == 20) {
+            executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV21());
+            oldVersion = 21;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 21");
         }
     }
 
@@ -260,6 +266,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         executeNoFail(db, ClassFactory.getInstance().getQueryUpgradeV20());
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV20());
+        executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV21());
     }
 
     /**
@@ -392,6 +399,28 @@ public class DBHelper extends SQLiteOpenHelper {
         DBEntity entity = factory.generateEntity(res);
         res.close();
         return entity;
+    }
+
+    public String[] fetchCharacterUUIDs() {
+        CharacterFactory factory = CharacterFactory.getInstance();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchAllUUIDs(), null );
+        // not found?
+        if(res.getCount()<1) {
+            res.close();
+            return null;
+        }
+        res.moveToFirst();
+        List<String> list = new ArrayList<>();
+        while (!res.isAfterLast()) {
+            String uuid = res.getString(res.getColumnIndex(CharacterFactory.COLUMN_UUID));
+            if(uuid != null && uuid.length() > 0) {
+                list.add(uuid);
+            }
+            res.moveToNext();
+        }
+        res.close();
+        return list.toArray(new String[0]);
     }
 
     /**

@@ -20,13 +20,13 @@
             android:textStyle="bold"
             android:text="@string/classfeatures_class" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/features_class_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dialog">
 
-        </android.support.v7.widget.AppCompatSpinner>
+        </androidx.appcompat.widget.AppCompatSpinner>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,13 +35,13 @@
             android:layout_marginTop="15dp"
             android:text="@string/classfeatures_archetype" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/features_archetype_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dialog">
 
-        </android.support.v7.widget.AppCompatSpinner>
+        </androidx.appcompat.widget.AppCompatSpinner>
 
         <com.wefika.flowlayout.FlowLayout
             android:id="@+id/flowActions"

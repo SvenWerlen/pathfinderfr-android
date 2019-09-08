@@ -1,7 +1,7 @@
 package org.pathfinderfr.app.character;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.itextpdf.io.image.ImageData;

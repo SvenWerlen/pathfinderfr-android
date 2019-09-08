@@ -3,9 +3,9 @@ package org.pathfinderfr.app.character;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
@@ -13,15 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
@@ -29,16 +23,7 @@ import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Weapon;
-import org.pathfinderfr.app.util.ConfigurationUtil;
-import org.pathfinderfr.app.util.FragmentUtil;
-import org.pathfinderfr.app.util.Pair;
-import org.pathfinderfr.app.util.PreferenceUtil;
-import org.pathfinderfr.app.util.StringWithTag;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentInventoryPicker extends DialogFragment implements View.OnClickListener {
 

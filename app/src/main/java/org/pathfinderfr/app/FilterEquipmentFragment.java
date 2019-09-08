@@ -2,8 +2,8 @@ package org.pathfinderfr.app;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +13,10 @@ import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.Class;
-import org.pathfinderfr.app.database.entity.ClassFactory;
-import org.pathfinderfr.app.database.entity.ClassFeature;
-import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Equipment;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
-import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.EquipmentFilter;
-import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
 
 import java.util.ArrayList;

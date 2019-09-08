@@ -2,19 +2,17 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.entity.Character;
-import org.pathfinderfr.app.util.StringWithTag;
 
 public class FragmentSpeedPicker extends DialogFragment implements View.OnClickListener {
 

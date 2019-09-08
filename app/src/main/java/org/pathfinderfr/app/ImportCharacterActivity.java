@@ -1,18 +1,14 @@
 package org.pathfinderfr.app;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;

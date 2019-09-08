@@ -2,9 +2,7 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-
-import org.pathfinderfr.app.util.StringUtil;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Map;

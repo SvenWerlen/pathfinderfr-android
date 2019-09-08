@@ -2,7 +2,7 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import org.pathfinderfr.app.database.DBHelper;
@@ -21,6 +21,7 @@ public class CharacterFactory extends DBEntityFactory {
     public static final String FACTORY_ID          = "CHARACTERS";
 
     private static final String TABLENAME          = "characters";
+    public static final String COLUMN_UUID        = "uuid";
     private static final String COLUMN_RACE        = "race";
     private static final String COLUMN_CLASSES     = "classes";
     private static final String COLUMN_ABILITY_STR = "ab_str";
@@ -97,6 +98,7 @@ public class CharacterFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
+                        "%s text," +                                                    // UUID
                         "%s text, %s integer, %s text, %s text," +                      // player, alignment, divinity, origin
                         "%s integer, %s integer, %s integer, %s integer, %s integer," + // sizeType, sex, age, height, weight
                         "%s text, %s text, " +                                          // hair, eyes
@@ -113,6 +115,7 @@ public class CharacterFactory extends DBEntityFactory {
                 TABLENAME,
                 COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
+                COLUMN_UUID,
                 COLUMN_PLAYER, COLUMN_ALIGNMENT, COLUMN_DIVINITY, COLUMN_ORIGIN,
                 COLUMN_SIZETYPE, COLUMN_SEX, COLUMN_AGE, COLUMN_HEIGHT, COLUMN_WEIGHT,
                 COLUMN_HAIR, COLUMN_EYES,
@@ -126,6 +129,20 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_CP, COLUMN_SP, COLUMN_GP, COLUMN_PP,
                 COLUMN_LANG, COLUMN_XP, COLUMN_SPELLS);
         return query;
+    }
+
+    /**
+     * @return the query to fetch all character UUIDs
+     */
+    public String getQueryFetchAllUUIDs() {
+        return String.format("SELECT uuid FROM %s", getTableName());
+    }
+
+    /**
+     * @return the query to fetch a character by UUID
+     */
+    public String getQueryFetchByUUID(String UUID) {
+        return String.format("SELECT * FROM %s where %s=%s", getTableName(), COLUMN_UUID, UUID);
     }
 
     /**
@@ -225,6 +242,13 @@ public class CharacterFactory extends DBEntityFactory {
         return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_SKILLS_MAX);
     }
 
+    /**
+     * @return SQL statement for upgrading DB from v20
+     */
+    public String getQueryUpgradeV21() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_UUID);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         Set<Integer> flags = new HashSet<Integer>();
@@ -242,6 +266,7 @@ public class CharacterFactory extends DBEntityFactory {
         ContentValues contentValues = new ContentValues();
 
         if(flags.contains(FLAG_ALL)) {
+            contentValues.put(CharacterFactory.COLUMN_UUID, c.getUniqID().toString());
             contentValues.put(CharacterFactory.COLUMN_NAME, c.getName());
             contentValues.put(CharacterFactory.COLUMN_DESC, c.getDescription());
             contentValues.put(CharacterFactory.COLUMN_REFERENCE, c.getReference()); // there is no reference
@@ -468,6 +493,7 @@ public class CharacterFactory extends DBEntityFactory {
         Character c = new Character();
 
         c.setId(resource.getLong(resource.getColumnIndex(CharacterFactory.COLUMN_ID)));
+        c.setUniqID(extractValue(resource, CharacterFactory.COLUMN_UUID));
         c.setName(extractValue(resource, CharacterFactory.COLUMN_NAME));
         c.setDescription(extractValue(resource, CharacterFactory.COLUMN_DESC));
         c.setReference(extractValue(resource, CharacterFactory.COLUMN_REFERENCE));

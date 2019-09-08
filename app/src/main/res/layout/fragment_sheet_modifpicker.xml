@@ -86,7 +86,7 @@
                     android:orientation="horizontal"
                     android:gravity="left">
 
-                    <android.support.v7.widget.AppCompatSpinner
+                    <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/sheet_modifs_spinner"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                         android:spinnerMode="dialog"
                         android:prompt="@string/sheet_modifs_pick">
 
-                    </android.support.v7.widget.AppCompatSpinner>
+                    </androidx.appcompat.widget.AppCompatSpinner>
 
                     <EditText
                         android:id="@+id/sheet_modifs_value"
@@ -186,7 +186,7 @@
                     android:linksClickable="true"
                     android:text="@string/sheet_modifs_about_linkto" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/sheet_modifs_spinner_weapon"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -194,7 +194,7 @@
                     android:spinnerMode="dialog"
                     android:prompt="@string/sheet_modifs_pick_weapon">
 
-                </android.support.v7.widget.AppCompatSpinner>
+                </androidx.appcompat.widget.AppCompatSpinner>
             </LinearLayout>
 
             <LinearLayout

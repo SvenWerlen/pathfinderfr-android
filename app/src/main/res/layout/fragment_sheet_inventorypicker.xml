@@ -135,7 +135,7 @@
                         android:textStyle="bold"
                         android:gravity="end"/>
 
-                    <android.support.v7.widget.AppCompatSpinner
+                    <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/sheet_inventory_item_price_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
                         android:prompt="@string/sheet_inventory_item_price_unit"
                         android:entries="@array/price_unit">
 
-                    </android.support.v7.widget.AppCompatSpinner>
+                    </androidx.appcompat.widget.AppCompatSpinner>
 
                 </LinearLayout>
 

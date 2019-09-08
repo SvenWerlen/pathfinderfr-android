@@ -2,9 +2,9 @@ package org.pathfinderfr.app.character;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
@@ -25,7 +25,6 @@ import com.wefika.flowlayout.FlowLayout;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
@@ -36,7 +35,6 @@ import org.pathfinderfr.app.database.entity.Character;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FragmentModifPicker extends DialogFragment implements View.OnClickListener {
