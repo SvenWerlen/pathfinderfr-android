@@ -17,10 +17,13 @@ public class MessagingService extends FirebaseMessagingService {
     private static final String TAG = MessagingService.class.getSimpleName();
     public static final String REQUEST_ACCEPT = "reqacc";
 
+    private static final String MESSAGE_UUID       = "uuid";
+    private static final String MESSAGE_SENDER     = "sender";
     private static final String MESSAGE_TITLE      = "title";
     private static final String MESSAGE_MULTI_IDX  = "idx";
     private static final String MESSAGE_CONTENT    = "message";
     private static final String MESSAGE_ID_SYNC    = "character-sync";
+
     private Map<String, Multipart> data;
 
     private static class Multipart {
@@ -72,14 +75,20 @@ public class MessagingService extends FirebaseMessagingService {
             //Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
             Map<String, String> data = remoteMessage.getData();
-            if(!data.containsKey(MESSAGE_TITLE)) {
+            if(!data.containsKey(MESSAGE_TITLE) || !data.containsKey(MESSAGE_SENDER)) {
                return;
             }
 
             // sync character
             if(MESSAGE_ID_SYNC.equals(data.get(MESSAGE_TITLE))) {
+                String uuid = data.containsKey(MESSAGE_UUID) ? data.get(MESSAGE_UUID) : null;
                 String multipartIdx = data.containsKey(MESSAGE_MULTI_IDX) ? data.get(MESSAGE_MULTI_IDX) : null;
                 String charString = data.get(MESSAGE_CONTENT);
+
+                if(uuid == null) {
+                    Log.w(MessagingService.class.getSimpleName(), "Trying to sync character without specifying GUID!");
+                    return;
+                }
 
                 Log.d(TAG, "Multipart " + multipartIdx);
 
@@ -99,10 +108,12 @@ public class MessagingService extends FirebaseMessagingService {
                     }
                 }
 
-                System.out.println(charString);
                 if(charString != null) {
+                    Log.d(TAG, "Notify UI");
                     LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
                     Intent intent = new Intent(REQUEST_ACCEPT);
+                    intent.putExtra("sender", data.get(MESSAGE_SENDER));
+                    intent.putExtra("uuid", uuid);
                     intent.putExtra("character", charString);
                     broadcaster.sendBroadcast(intent);
                 }

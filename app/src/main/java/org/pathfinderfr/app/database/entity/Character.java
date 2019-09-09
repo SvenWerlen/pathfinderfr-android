@@ -100,7 +100,7 @@ public class Character extends DBEntity {
     public static final int MODIF_SKILL = 200;
 
     // character-specific
-    private UUID uniqID;
+    private String uniqID;
     private int[] abilities;
     private Race race;
     private List<Triplet<Class,ClassArchetype,Integer>> classes;
@@ -301,8 +301,8 @@ public class Character extends DBEntity {
     }
 
     public void setUniqID(String uuid) {
-        if(uniqID == null && uuid != null && uuid.length() > 0) {
-            uniqID = UUID.fromString(uuid);
+        if(uuid != null && uuid.length() > 0) {
+            uniqID = uuid;
         }
     }
 
@@ -310,9 +310,9 @@ public class Character extends DBEntity {
         return uniqID != null;
     }
 
-    public synchronized UUID getUniqID() {
+    public synchronized String getUniqID() {
         if(uniqID == null) {
-            uniqID = UUID.randomUUID();
+            uniqID = UUID.randomUUID().toString();
         }
         return uniqID;
     }

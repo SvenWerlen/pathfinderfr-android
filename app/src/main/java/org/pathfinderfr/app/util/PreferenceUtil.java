@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.pathfinderfr.app.MainActivity;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PreferenceUtil {
 
@@ -28,5 +32,14 @@ public class PreferenceUtil {
             }
         }
         return false;
+    }
+
+    public static synchronized String getApplicationUUID(Context ctx) {
+        String uuid = PreferenceManager.getDefaultSharedPreferences(ctx).getString(MainActivity.KEY_APP_UUID, null);
+        if(uuid == null) {
+            uuid = UUID.randomUUID().toString();
+            PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString(MainActivity.KEY_APP_UUID, uuid).apply();
+        }
+        return uuid;
     }
 }

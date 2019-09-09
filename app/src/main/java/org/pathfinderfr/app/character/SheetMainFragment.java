@@ -9,11 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,10 +29,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
@@ -55,9 +48,11 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Weapon;
+import org.pathfinderfr.app.event.MessageBroker;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
@@ -71,8 +66,8 @@ import java.util.List;
 /**
  * Skill tab on character sheet
  */
-public class SheetMainFragment extends Fragment implements FragmentAbilityPicker.OnFragmentInteractionListener,
-        FragmentAbilityCalc.OnFragmentInteractionListener,
+public class SheetMainFragment extends Fragment implements MessageBroker.ISender,
+        FragmentAbilityPicker.OnFragmentInteractionListener, FragmentAbilityCalc.OnFragmentInteractionListener,
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
@@ -110,6 +105,7 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
     private boolean refreshNeeded;
 
     private SheetFeatFragment.Callbacks mCallbacks;
+
 
     public interface Callbacks {
         void onRefreshRequest();
@@ -1510,10 +1506,11 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
                         }
                     }
 
-                    if (root != null) {
-                        Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_success),
-                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    }
+                    // send synchronisation message
+                    String sender = PreferenceUtil.getApplicationUUID(parent.getContext());
+                    String content = CharacterImportExport.exportCharacterAsYML(parent.character, parent.getContext());
+                    MessageBroker broker = new MessageBroker(this.parent, sender, parent.character.getUniqID().toString(), MessageBroker.TYPE_SYNC, content);
+                    broker.execute();
                 }
                 // MODIFICATION ENABLED/DISABLED
                 else {
@@ -1909,4 +1906,17 @@ public class SheetMainFragment extends Fragment implements FragmentAbilityPicker
         refreshNeeded = false;
     }
 
+    @Override
+    public void onCompleted(Integer status) {
+        View root = getActivity().findViewById(R.id.sheet_container);
+        if (root != null) {
+            if(status == 201) {
+                Snackbar.make(root, getView().getResources().getString(R.string.sync_character_success),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            } else {
+                Snackbar.make(root, String.format(getView().getResources().getString(R.string.sync_character_failure), status),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        }
+    }
 }

@@ -424,6 +424,24 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * @param uuid UUID of the entity to be fetched
+     * @return the unique identifier of the character
+     */
+    public long fetchCharacterIdByUUID(String uuid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( CharacterFactory.getInstance().getQueryFetchIdByUUID(uuid), null );
+        // not found?
+        if(res.getCount()<1) {
+            res.close();
+            return -1;
+        }
+        res.moveToFirst();
+        long id = res.getLong(res.getColumnIndex(CharacterFactory.COLUMN_ID));
+        res.close();
+        return id;
+    }
+
+    /**
      * @param id unique ID of the entity to be fetched
      * @param factory factory corresponding to the element (skill, feet, spell, etc.)
      * @param flags data to be fetched

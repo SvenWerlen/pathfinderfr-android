@@ -21,7 +21,7 @@ public class CharacterFactory extends DBEntityFactory {
     public static final String FACTORY_ID          = "CHARACTERS";
 
     private static final String TABLENAME          = "characters";
-    public static final String COLUMN_UUID        = "uuid";
+    public  static final String COLUMN_UUID        = "uuid";
     private static final String COLUMN_RACE        = "race";
     private static final String COLUMN_CLASSES     = "classes";
     private static final String COLUMN_ABILITY_STR = "ab_str";
@@ -141,8 +141,15 @@ public class CharacterFactory extends DBEntityFactory {
     /**
      * @return the query to fetch a character by UUID
      */
+    public String getQueryFetchIdByUUID(String UUID) {
+        return String.format("SELECT id FROM %s where %s=\"%s\"", getTableName(), COLUMN_UUID, UUID);
+    }
+
+    /**
+     * @return the query to fetch a character by UUID
+     */
     public String getQueryFetchByUUID(String UUID) {
-        return String.format("SELECT * FROM %s where %s=%s", getTableName(), COLUMN_UUID, UUID);
+        return String.format("SELECT * FROM %s where %s=\"%s\"", getTableName(), COLUMN_UUID, UUID);
     }
 
     /**

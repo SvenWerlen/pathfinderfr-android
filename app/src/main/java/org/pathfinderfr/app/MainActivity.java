@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity
     public final static String PREF_FATFINGERS        = "general_fatfingers";
 
 
+    // current senderId (each app has its own UUID)
+    public static final String KEY_APP_UUID = "app_id";
     // current factory (which list is currently been displayed)
     public static final String KEY_CUR_FACTORY = "current_factory";
     // list must be refreshed (something has been done outside of main activity)
@@ -1005,7 +1007,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
 }

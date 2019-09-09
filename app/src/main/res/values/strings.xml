@@ -690,6 +690,9 @@
 
     <string name="sync_character_noguid">Le personnage ne peut pas être synchronisé! Faite un changement pour forcer la sauvegarde et réessayez!</string>
     <string name="sync_character_success">Demande de synchronisation envoyée avec succès!</string>
+    <string name="sync_character_failure">Échec de l\'envoi de la demande de synchronisation (%d)!</string>
+    <string name="sync_character_updated">Personnage mis à jour!</string>
+    <string name="sync_character_updated_errors">Personnage mis à jour avec erreurs!</string>
 
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string name="msg_subscribed">Souscription réussie à: %s</string>
