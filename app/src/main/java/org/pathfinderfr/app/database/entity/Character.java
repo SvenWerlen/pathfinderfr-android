@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Character extends DBEntity {
 
@@ -308,6 +310,17 @@ public class Character extends DBEntity {
 
     public boolean hasUUID() {
         return uniqID != null;
+    }
+
+    public String getShortUniqID() {
+        if(uniqID != null) {
+            Pattern p = Pattern.compile("([\\da-f]+)-.*-([\\da-f]+)");   // the pattern to search for
+            Matcher m = p.matcher(uniqID);
+            if (m.find()) {
+               return String.format("%s-***-%s", m.group(1).substring(0,4), m.group(2).substring(0,4));
+            }
+        }
+        return "-";
     }
 
     public synchronized String getUniqID() {

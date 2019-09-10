@@ -271,7 +271,9 @@
     <string name="sheet_ability_calc_button">calculatrice</string>
 
     <!-- Character details -->
+    <string name="sheet_id">Id (debug):</string>
     <string name="sheet_name">Nom:</string>
+    <string name="sheet_example_id">NNNNNNNN...</string>
 
     <!-- Character race -->
     <string name="sheet_race">Race:</string>
@@ -688,6 +690,7 @@
     <string name="summary_height">%d cm</string>
     <string name="summary_weight">%d kg</string>
 
+    <string name="sync_character_inprogress">Veuillez patienter…</string>
     <string name="sync_character_noguid">Le personnage ne peut pas être synchronisé! Faite un changement pour forcer la sauvegarde et réessayez!</string>
     <string name="sync_character_success">Demande de synchronisation envoyée avec succès!</string>
     <string name="sync_character_failure">Échec de l\'envoi de la demande de synchronisation (%d)!</string>

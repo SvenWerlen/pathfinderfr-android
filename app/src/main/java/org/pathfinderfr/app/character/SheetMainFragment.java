@@ -604,6 +604,10 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.money_gp_value).setOnClickListener(listener);
         view.findViewById(R.id.money_pp_value).setOnClickListener(listener);
 
+        // update id
+        TextView idTv = view.findViewById(R.id.sheet_main_id);
+        idTv.setText(character.getShortUniqID());
+
         // update name
         TextView nameTv = view.findViewById(R.id.sheet_main_namepicker);
         if(character.getName() != null) {
@@ -1505,6 +1509,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                             return;
                         }
                     }
+                    Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_inprogress),
+                            Snackbar.LENGTH_SHORT).setAction("Action", null).show();
 
                     // send synchronisation message
                     String sender = PreferenceUtil.getApplicationUUID(parent.getContext());

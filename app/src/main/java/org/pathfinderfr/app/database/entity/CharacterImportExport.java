@@ -24,6 +24,7 @@ import java.util.Map;
 
 public class CharacterImportExport {
 
+    private static final String YAML_UUID            = "Id";
     private static final String YAML_NAME            = "Nom";
     private static final String YAML_RACE            = "Race";
     private static final String YAML_HP              = "PointsVie";
@@ -141,6 +142,9 @@ public class CharacterImportExport {
 
         // basics
         Map<String, Object> data = new LinkedHashMap<>();
+        if(c.hasUUID()) {
+            data.put(YAML_UUID, c.getUniqID());
+        }
         data.put(YAML_NAME, c.getName());
         data.put(YAML_PLAYER, c.getPlayer());
         data.put(YAML_SEX, CharacterPDF.sex2text(c.getSex()));
@@ -366,6 +370,7 @@ public class CharacterImportExport {
             YamlReader reader = new YamlReader(yml);
             Map map = (Map) reader.read();
 
+            c.setUniqID((String)map.get(YAML_UUID));
             c.setName(cleanText((String)map.get(YAML_NAME), errors, 30, ERROR_NAME_TOOLONG));
             c.setPlayer(cleanText((String)map.get(YAML_PLAYER), errors, 30, ERROR_PLAYER_TOOLONG));
             if(map.containsKey(YAML_SEX)) {
