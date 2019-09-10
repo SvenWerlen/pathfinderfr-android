@@ -984,7 +984,11 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                for(final String uuid : dbhelper.fetchCharacterUUIDs()) {
+                String[] uuids = dbhelper.fetchCharacterUUIDs();
+                if(uuids == null || uuids.length == 0) {
+                    return;
+                }
+                for(final String uuid : uuids) {
                     FirebaseMessaging.getInstance().subscribeToTopic(uuid).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
