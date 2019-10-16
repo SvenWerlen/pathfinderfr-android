@@ -75,6 +75,7 @@ import org.pathfinderfr.app.util.EquipmentFilter;
 import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.TraitFilter;
 
@@ -580,6 +581,7 @@ public class MainActivity extends AppCompatActivity
             SpellFilter filter = new SpellFilter(prefs.getString(KEY_SPELL_FILTERS, null));
             filterActive = filter.hasAnyFilter();
             newEntities = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter, sources);
+            SpellUtil.removeDuplicates(newEntities);
             totalCount = newEntities.size();
             if(filterActive) {
                 totalCount = dbhelper.getCountEntities(SpellFactory.getInstance(), sources);
@@ -786,6 +788,7 @@ public class MainActivity extends AppCompatActivity
         prefs.edit().putString(MainActivity.KEY_SPELL_FILTERS, filter.generatePreferences()).apply();
         listFull = (List<DBEntity>)(List<?>)dbhelper.getSpells(filter,
                 sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+        SpellUtil.removeDuplicates(listFull);
         applySearch();
 
         // change icon if filter applied

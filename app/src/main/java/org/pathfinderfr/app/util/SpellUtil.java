@@ -6,6 +6,7 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Spell;
 
 import java.util.ArrayList;
@@ -191,4 +192,20 @@ public class SpellUtil {
         return classes;
     }
 
+
+    /**
+     * Removes duplicates from given list (based on Id)
+     */
+    public static void removeDuplicates(List<DBEntity> list) {
+        Set<Long> ids = new HashSet<>();
+        List<DBEntity> uniqList = new ArrayList<>();
+        for(DBEntity s : list) {
+            if(!ids.contains(s.getId())) {
+                ids.add(s.getId());
+                uniqList.add(s);
+            }
+        }
+        list.clear();
+        list.addAll(uniqList);
+    }
 }
