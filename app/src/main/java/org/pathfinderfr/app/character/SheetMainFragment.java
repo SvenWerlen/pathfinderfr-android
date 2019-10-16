@@ -72,7 +72,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
         FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener,
-        FragmentInfosPicker.OnFragmentInteractionListener, FragmentMoneyPicker.OnFragmentInteractionListener {
+        FragmentInfosPicker.OnFragmentInteractionListener, FragmentMoneyPicker.OnFragmentInteractionListener,
+        FragmentSync.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
     private static final String DIALOG_PICK_ABILITY   = "ability-picker";
@@ -87,6 +88,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private static final String DIALOG_PICK_MODIFS    = "modifs-picker";
     private static final String DIALOG_PICK_MONEY     = "money-picker";
     private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
+    private static final String DIALOG_SYNC_ACTION    = "sync-action";
 
     private Character character;
     private List<TextView> classPickers;
@@ -603,10 +605,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.money_sp_value).setOnClickListener(listener);
         view.findViewById(R.id.money_gp_value).setOnClickListener(listener);
         view.findViewById(R.id.money_pp_value).setOnClickListener(listener);
-
-        // update id
-        TextView idTv = view.findViewById(R.id.sheet_main_id);
-        idTv.setText(character.getShortUniqID());
 
         // update name
         TextView nameTv = view.findViewById(R.id.sheet_main_namepicker);
@@ -1497,26 +1495,26 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     return;
                 }
                 else if(v.getId() == R.id.actionSync) {
-                    final View root = parent.getActivity().findViewById(R.id.sheet_container);
-                    if(!parent.character.hasUUID()) {
-                        // force generating UUID (for old characters)
-                        parent.character.getUniqID();
-                        if (!DBHelper.getInstance(parent.getContext()).updateEntity(parent.character)) {
-                            if (root != null) {
-                                Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_noguid),
-                                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                            }
-                            return;
-                        }
+                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_SYNC_ACTION);
+                    if (prev != null) {
+                        ft.remove(prev);
                     }
-                    Snackbar.make(root, parent.getView().getResources().getString(R.string.sync_character_inprogress),
-                            Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentSync.newInstance(parent);
 
-                    // send synchronisation message
-                    String sender = PreferenceUtil.getApplicationUUID(parent.getContext());
-                    String content = CharacterImportExport.exportCharacterAsYML(parent.character, parent.getContext());
-                    MessageBroker broker = new MessageBroker(this.parent, sender, parent.character.getUniqID().toString(), MessageBroker.TYPE_SYNC, content);
-                    broker.execute();
+                    Bundle arguments = new Bundle();
+                    String name = parent.character.getName();
+                    if(name != null) {
+                        arguments.putString(FragmentSync.ARG_NAME, name);
+                    }
+                    String uuid = parent.character.getShortUniqID();
+                    if(uuid != null) {
+                        arguments.putString(FragmentSync.ARG_UUID, uuid);
+                    }
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_SYNC_ACTION);
+                    return;
                 }
                 // MODIFICATION ENABLED/DISABLED
                 else {
@@ -1924,5 +1922,29 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         }
+    }
+
+    @Override
+    public void onSync() {
+        final View root = getActivity().findViewById(R.id.sheet_container);
+        if(!character.hasUUID()) {
+            // force generating UUID (for old characters)
+            character.getUniqID();
+            if (!DBHelper.getInstance(getContext()).updateEntity(character)) {
+                if (root != null) {
+                    Snackbar.make(root, getView().getResources().getString(R.string.sync_character_noguid),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                return;
+            }
+        }
+        Snackbar.make(root, getView().getResources().getString(R.string.sync_character_inprogress),
+                Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+
+        // send synchronisation message
+        String sender = PreferenceUtil.getApplicationUUID(getContext());
+        String content = CharacterImportExport.exportCharacterAsYML(character, getContext());
+        MessageBroker broker = new MessageBroker(this, sender, character.getUniqID(), MessageBroker.TYPE_SYNC, content);
+        broker.execute();
     }
 }

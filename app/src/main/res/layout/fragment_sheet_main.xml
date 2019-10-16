@@ -95,30 +95,6 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
-                android:text="@string/sheet_id" />
-
-            <TextView
-                android:id="@+id/sheet_main_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:tag="name"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_example_id" />
-
-        </com.wefika.flowlayout.FlowLayout>
-
-        <com.wefika.flowlayout.FlowLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
                 android:text="@string/sheet_name" />
 
             <TextView

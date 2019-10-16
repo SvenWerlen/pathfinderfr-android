@@ -976,36 +976,40 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if (!task.isSuccessful()) {
-                    Log.w(MainActivity.class.getSimpleName(), "getInstanceId failed", task.getException());
-                    return;
-                }
+        try {
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    if (!task.isSuccessful()) {
+                        Log.w(MainActivity.class.getSimpleName(), "getInstanceId failed", task.getException());
+                        return;
+                    }
 
-                String[] uuids = dbhelper.fetchCharacterUUIDs();
-                if(uuids == null || uuids.length == 0) {
-                    return;
-                }
-                for(final String uuid : uuids) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(uuid).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String msg = getString(R.string.msg_subscribed);
-                            if (!task.isSuccessful()) {
-                                msg = getString(R.string.msg_subscribe_failed);
+                    String[] uuids = dbhelper.fetchCharacterUUIDs();
+                    if (uuids == null || uuids.length == 0) {
+                        return;
+                    }
+                    for (final String uuid : uuids) {
+                        FirebaseMessaging.getInstance().subscribeToTopic(uuid).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                String msg = getString(R.string.msg_subscribed);
+                                if (!task.isSuccessful()) {
+                                    msg = getString(R.string.msg_subscribe_failed);
+                                }
+                                Log.d(MainActivity.class.getSimpleName(), String.format(msg, uuid));
                             }
-                            Log.d(MainActivity.class.getSimpleName(), String.format(msg, uuid));
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        });
+            });
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-                new IntentFilter(MessagingService.REQUEST_ACCEPT)
-        );
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+                    new IntentFilter(MessagingService.REQUEST_ACCEPT)
+            );
+        } catch(Exception e) {
+            Log.w(MainActivity.class.getSimpleName(), "Error during messaging initialization!");
+        }
     }
 
     @Override

@@ -157,9 +157,12 @@
     <string name="spellfilter_class">Classe:</string>
     <string name="spellfilter_level">Niveau:</string>
     <string name="apply_filters">Appliquer</string>
+
+    <!-- Buttons -->
     <string name="cancel">Annuler</string>
     <string name="save">Enregistrer</string>
     <string name="delete">Supprimer</string>
+    <string name="sync">Synchroniser</string>
 
     <!-- ClassFeature filters -->
     <string name="classfeatures_class">Classe:</string>
@@ -271,9 +274,9 @@
     <string name="sheet_ability_calc_button">calculatrice</string>
 
     <!-- Character details -->
-    <string name="sheet_id">Id (debug):</string>
+    <string name="sheet_id">Identifiant unique:</string>
     <string name="sheet_name">Nom:</string>
-    <string name="sheet_example_id">NNNNNNNN...</string>
+    <string name="sheet_example_id">NNNNN...NNNNNN</string>
 
     <!-- Character race -->
     <string name="sheet_race">Race:</string>
@@ -700,6 +703,25 @@
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string name="msg_subscribed">Souscription réussie à: %s</string>
     <string name="msg_subscribe_failed">Souscription échouée pour: %s</string>
+
+    <!-- Character modifications -->
+    <string name="sheet_sync">Synchronisation (beta)</string>
+    <string name="sheet_sync_description">Cette fonctionnalité permet de propager des changements
+        effectués sur une feuille de personnage à d\'autres appareils. Par exemple, un joueur peut
+        modifier la feuille de son personnage suite à un passage de niveau et ensuite utiliser la
+        synchronisation pour soumettre les changements à son maître de jeu. La synchronisation peut
+        également servir à maintenir un personnage sur plusieurs appareils (ex: téléphone et tablette).
+        \n\nPour tester la synchronisation, il est nécessaire d\'exporter la feuille de personnage et l\'importer
+        sur un autre appareil. Alors, tout changement effectué sur cette feuille de personnage sera
+        propagé vers l\'autre appareil lors d\'une synchronisation (et vice-versa).
+        Il est possible de propager les changements à plusieurs appareils.
+        \n\nL\'identifiant unique permet de s\'assurer que les différents appareils disposent bien
+        de la même feuille de personnage. Si les identifiants diffèrent, la synchronisation ne
+        fonctionnera pas.
+        \n\nNoter que la synchronisation est une capacité en cours de test et pourrait ne pas
+        fonctionner correctement. Il est recommandé de conserver une copie de la feuille de personnage
+        (export) afin d\'éviter la perte de données.
+    </string>
 
 </resources>
 
