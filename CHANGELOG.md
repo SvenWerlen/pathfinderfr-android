@@ -6,12 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [3.5.0] - ...
+## [3.5.0] - 2019-10-19
 ### Added
 - Skill ranks per level (classes)
 - Maximum skill ranks
 - Weapons on character sheet
 - Jump from character sheet to to catalog (equipment list)
+- Character synchronization (for beta testing)
 
 ## [3.4.3] - 2019-09-03
 ### Changed
