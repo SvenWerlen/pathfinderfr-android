@@ -331,8 +331,7 @@
     <string name="sheet_modifs_bonus">Bonus / malus:</string>
     <string name="sheet_modifs_linkto">Relier à une arme:</string>
     <string name="sheet_modifs_about_linkto">Si vous reliez la modification à une arme, le bonus
-        d\'attaque et de dégâts ne s\'appliquera que pour cette arme (visible uniquement sur la feuille de
-        personnage au format PDF). Tous les autres bonus s\'appliqueront normalement.
+        d\'attaque et de dégâts ne s\'appliquera que pour cette arme. Tous les autres bonus s\'appliqueront normalement.
     </string>
     <string name="sheet_modifs_linkto_nothing">Aucun lien</string>
     <string name="sheet_modifs_error_invalidchoice">Choix invalide!</string>
