@@ -887,7 +887,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
     private void updateWeapons(View view) {
-        weapons.removeViews(1, weapons.getChildCount()-1);
+        weapons.removeViews(2, weapons.getChildCount()-2);
 
         // fat fingers
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -896,6 +896,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         try {
             scale = (Integer.parseInt(preferences.getString(MainActivity.PREF_FATFINGERS, "0"))/100f);
         } catch(NumberFormatException nfe) {}
+
+        Resources r = getResources();
+        int px2 = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, r.getDisplayMetrics());
 
         final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
         final String babTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.title");
@@ -911,6 +914,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             TableRow row = new TableRow(view.getContext());
             TextView name = FragmentUtil.copyExampleTextFragment(weaponNameExample);
             name.setText(weapon.getName());
+            name.setLayoutParams(new TableRow.LayoutParams(name.getLayoutParams()));
+            ((TableRow.LayoutParams)name.getLayoutParams()).span = 3;
+            ((TableRow.LayoutParams)name.getLayoutParams()).setMargins(px2,px2,px2,px2);
             row.addView(name);
             TextView bonus = FragmentUtil.copyExampleTextFragment(weaponTextExample);
             bonus.setText(attackBonus);
@@ -920,6 +926,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             critical.setText(weapon.getCritical());
             critical.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             row.addView(critical);
+            weapons.addView(row);
+            // second part
+            row = new TableRow(view.getContext());
             TextView type = FragmentUtil.copyExampleTextFragment(weaponTextExample);
             type.setText(weapon.getType());
             type.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -928,9 +937,16 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             range.setText(weapon.getRangeInMeters());
             range.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             row.addView(range);
+            TextView ammo = FragmentUtil.copyExampleTextFragment(weaponTextExample);
+            ammo.setText(weapon.getDescription());
+            range.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(ammo);
             TextView damage = FragmentUtil.copyExampleTextFragment(weaponTextExample);
             damage.setText(damageString);
             damage.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            damage.setLayoutParams(new TableRow.LayoutParams(damage.getLayoutParams()));
+            ((TableRow.LayoutParams)damage.getLayoutParams()).span = 2;
+            ((TableRow.LayoutParams)damage.getLayoutParams()).setMargins(px2,px2,px2,px2);
             row.addView(damage);
             weapons.addView(row);
             weaponIdx++;
