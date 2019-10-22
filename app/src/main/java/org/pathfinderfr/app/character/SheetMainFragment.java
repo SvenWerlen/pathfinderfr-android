@@ -177,7 +177,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         List<Character.CharacterModif> modifs = character.getModifsForId(modifId);
         StringBuffer buf = new StringBuffer();
         for(Character.CharacterModif modif: modifs) {
-            if(modif.isEnabled() && (modif.getLinkToWeapon()<=0 || modif.getLinkToWeapon() == weaponIdx)) {
+            if((modif.getLinkToWeapon() > 0 && modif.getLinkToWeapon() == weaponIdx) ||
+                    (modif.getLinkToWeapon() <= 0 && modif.isEnabled())) {
                 buf.append(String.format(tooltipTemplate, modif.getSource(), modif.getModif(0).second));
             }
         }
