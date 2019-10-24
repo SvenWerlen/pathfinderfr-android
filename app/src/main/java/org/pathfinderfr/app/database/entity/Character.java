@@ -1529,18 +1529,41 @@ public class Character extends DBEntity {
         }
     }
 
-    public void addInventoryItem(InventoryItem item) {
+    /**
+     * Re-orders the list by moving one item before another (drag-and-drop)
+     * @param idxToMove index of the item to move
+     * @param idxBefore index of the item before which to move
+     * @return true if move was done/required
+     */
+    public boolean moveInventoryItem(int idxToMove, int idxBefore) {
+        // invalid inputs
+        if(idxToMove < 0 || idxToMove >= invItems.size() || idxBefore < 0 || idxBefore >= invItems.size()) {
+            return false;
+        }
+        // move will result with the same ordering
+        if(idxToMove == idxBefore || idxBefore == idxToMove + 1) {
+            return false;
+        }
         indexInventoryWeapons();
-        invItems.add(item);
-        Collections.sort(invItems);
+        InventoryItem itemToMove = invItems.get(idxToMove);
+        List<InventoryItem> newOrderedList = new ArrayList<>();
+        int idx = 0;
+        for(InventoryItem item : invItems) {
+            if(idx == idxBefore) {
+                newOrderedList.add(itemToMove);
+            }
+            if(idx != idxToMove) {
+                newOrderedList.add(item);
+            }
+            idx++;
+        }
+        invItems = newOrderedList;
         reindexModifLinks();
-
+        return true;
     }
 
-    public void deleteInventoryItem(InventoryItem item) {
-        indexInventoryWeapons();
-        invItems.remove(item);
-        reindexModifLinks();
+    public void addInventoryItem(InventoryItem item) {
+        invItems.add(item);
     }
 
     public void deleteInventoryItem(int idx) {

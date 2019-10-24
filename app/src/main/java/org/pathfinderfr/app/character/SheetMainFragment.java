@@ -1,10 +1,18 @@
 package org.pathfinderfr.app.character;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,17 +26,21 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
@@ -1039,7 +1051,19 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             TableRow row = new TableRow(view.getContext());
             TextView name = FragmentUtil.copyExampleTextFragment(inventoryNameExample);
             name.setText(item.getName());
-            row.addView(name);
+            LinearLayout nameLayout = new LinearLayout(view.getContext());
+            nameLayout.setOrientation(LinearLayout.VERTICAL);
+            TextView dropHere = FragmentUtil.copyExampleTextFragment(inventoryNameExample);
+            dropHere.setText(R.string.dragdrop_here);
+            dropHere.setGravity(Gravity.CENTER);
+            dropHere.setHeight(80);
+            dropHere.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            dropHere.setTextColor(getResources().getColor(R.color.colorWhite));
+            dropHere.setVisibility(View.GONE);
+            dropHere.setPadding(30, 5, 30, 5);
+            nameLayout.addView(dropHere);
+            nameLayout.addView(name);
+            row.addView(nameLayout);
             TextView weight = FragmentUtil.copyExampleTextFragment(inventoryWeightExample);
             if(item.getWeight() >= 1000) {
                 weight.setText(String.format("%.1fkg", item.getWeight()/1000f));
@@ -1055,6 +1079,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             final long itemPrice = item.getPrice();
             final long itemReference = item.getObjectId();
             final String itemInfos = item.getInfos();
+            row.setTag(new Triplet<TextView, TextView, Integer>(dropHere, name, itemIdx));
             row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1077,6 +1102,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 }
             });
+            row.setOnLongClickListener(listener);
+            row.setOnDragListener(listener);
             inventory.addView(row);
             rowId++;
         }
@@ -1231,7 +1258,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
 
-    private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener {
+    private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener, View.OnDragListener {
 
         SheetMainFragment parent;
 
@@ -1620,8 +1647,60 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     newFragment.show(ft, DIALOG_PICK_MODIFS);
                     return true;
                 }
+            } else {
+                Triplet<TextView,TextView,Integer> triplet = (Triplet<TextView,TextView,Integer>)v.getTag();
+                TextView tvName = triplet.second;
+                ClipData.Item item = new ClipData.Item(triplet.third.toString());
+                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+
+                ClipData dragData = new ClipData(tvName.getText(), mimeTypes, item);
+                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(tvName);
+
+                //v.setVisibility(View.GONE);
+                v.startDrag(dragData,myShadow,null,0);
+                return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            Triplet<TextView,TextView,Integer> triplet = (Triplet<TextView,TextView,Integer>)v.getTag();
+
+            switch(event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    triplet.first.setVisibility(View.VISIBLE);
+                    break;
+
+                case DragEvent.ACTION_DRAG_EXITED :
+                    triplet.first.setVisibility(View.GONE);
+                    break;
+
+                case DragEvent.ACTION_DRAG_LOCATION  :
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENDED   :
+                    break;
+
+                case DragEvent.ACTION_DROP:
+                    triplet.first.setVisibility(View.GONE);
+                    ClipData.Item item = event.getClipData().getItemAt(0);
+                    int idxItemToMove = Integer.parseInt(item.getText().toString());
+                    int idxBeforeItem = triplet.third;
+                    Log.i(SheetMainFragment.class.getSimpleName(), "Item " + idxItemToMove + " moved before " + idxBeforeItem);
+                    if(parent.character.moveInventoryItem(idxItemToMove, idxBeforeItem)) {
+                        Log.i(SheetMainFragment.class.getSimpleName(), "Item was moved!");
+                        parent.updateInventory(parent.getView());
+                        parent.updateWeapons(parent.getView());
+                        parent.characterDBUpdate();
+                    }
+                    break;
+                default: break;
+            }
+            return true;
         }
     }
 

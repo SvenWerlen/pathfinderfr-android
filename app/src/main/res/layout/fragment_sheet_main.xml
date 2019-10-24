@@ -1323,7 +1323,7 @@
                             android:paddingBottom="4dp"
                             android:paddingStart="4dp"
                             android:paddingEnd="4dp"
-                            android:text="@string/sheet_weapons_damages"
+                            android:text="@string/sheet_weapons_ammo"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
                             android:textStyle="italic" />
@@ -1702,6 +1702,7 @@
                     android:paddingEnd="5dp"
                     android:text="@string/sheet_inventory_example_total"
                     android:width="60dp"
+                    android:layout_gravity="bottom"
                     android:textAlignment="textEnd"/>
 
             </TableRow>

@@ -420,6 +420,7 @@
     <string name="sheet_weapons_type">Type</string>
     <string name="sheet_weapons_range">Portée</string>
     <string name="sheet_weapons_damages">Dommages</string>
+    <string name="sheet_weapons_ammo">Munitions</string>
     <string name="sheet_att_dist">Dist</string>
     <string name="sheet_attack_melee">Bonus d\'attaque (au corps-à-corps)</string>
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
@@ -721,6 +722,8 @@
         fonctionner correctement. Il est recommandé de conserver une copie de la feuille de personnage
         (export) afin d\'éviter la perte de données.
     </string>
+
+    <string name="dragdrop_here">Déplacer ici  </string>
 
 </resources>
 
