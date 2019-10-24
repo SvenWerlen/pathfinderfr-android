@@ -5,5 +5,5 @@ the documentation is only available in french.
 
 ## Premiers pas
 
-| ![Capture import de données](../images/navigation-first-time.png) | Au premier lancement, l'application requiert le chargement des données |
+| ![Capture import de données](../images/navigation-first-time.png | width=100) | Au premier lancement, l'application requiert le chargement des données |
 
