@@ -916,6 +916,20 @@ public class Character extends DBEntity {
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
     }
 
+    public String getAttackBonusAsString(boolean melee) {
+        StringBuffer buf = new StringBuffer();
+        int idx = 1;
+        for(Weapon w : getInventoryWeapons()) {
+            if(melee != w.isRanged()) {
+                buf.append(w.getName()).append(", ");
+                buf.append(melee ? getAttackBonusMeleeAsString(idx) : getAttackBonusRangeAsString(idx)).append(" ");
+                buf.append('(').append(getDamage(w, idx)).append(") ");
+            }
+            idx++;
+        }
+        return buf.toString();
+    }
+
     /**
      * @return damage bonus
      */
