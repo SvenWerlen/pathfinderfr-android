@@ -1,3 +1,4 @@
+.directory
 *.iml
 .gradle
 /local.properties

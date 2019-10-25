@@ -2,7 +2,7 @@
 
 Cette page présente les détails d'un don.
 
-<a href="."><img src="../../images/catalog/feat-details_small.jpg" title="Détails d'un don"/></a>
+<a href="../../images/catalog/feat-details.png"><img src="../../images/catalog/feat-details_small.jpg" title="Détails d'un don"/></a>
 
 ## Actions
 

@@ -2,7 +2,7 @@
 
 Cette page présente les détails d'une compétence.
 
-<a href="."><img src="../../images/catalog/skill-details_small.jpg" title="Détails d'une compétence"/></a>
+<a href="../../images/catalog/skill-details.png"><img src="../../images/catalog/skill-details_small.jpg" title="Détails d'une compétence"/></a>
 
 ## Actions
 

@@ -1,8 +1,8 @@
-# Navigation
+# [Accueil](..) > Navigation
 
 La navigation latérale permet d'accéder rapidement à chaque section de l'application
 
-<a href="."><img src="../../images/navigation/navigation_small.jpg" title="Navigation"/></a>
+<a href="../../images/navigation/navigation.png"><img src="../../images/navigation/navigation_small.jpg" title="Navigation"/></a>
 
 * **[Accueil](..)**: retourner à l'écran d'accueil
 * **[Personnages](..)**: gérer un ou plusieurs personnages (PJ)
