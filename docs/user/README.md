@@ -1,9 +1,15 @@
-# User documentation
+# Écran d'accueil
 
-This page describes how to use the application. Since the application is targeting the french community,
-the documentation is only available in french.
+Cette section documente l'application. Naviguez en cliquant sur les captures d'écran.
 
 ## Premiers pas
 
-| ![Capture import de données](../images/navigation-first-time.png | width=100) | Au premier lancement, l'application requiert le chargement des données |
+Au premier lancement, l'application nécessite l'importation des données. 
+
+<a href="."><img src="../images/welcome-first-time_small.jpg" title="Accueil"/></a>
+<a href="navigation/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (première fois)"/></a>
+<a href="importdata/"><img src="../images/loaddata-first-time_small.jpg" title="Importer les données (première fois)"/></a>
+
+ 
+
 

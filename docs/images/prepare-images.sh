@@ -9,3 +9,4 @@ rm *-smaller.jpg
 find -maxdepth 1 -name "*-crop.jpg" -exec convert {} -resize 201x400 {}-small.jpg \;
 rm *-crop.jpg
 rename -f 's/\.jpg-smaller\.jpg-crop\.jpg-small\.jpg/_small\.jpg/g' *-small.jpg
+rename -f 's/\.png-smaller\.jpg-crop\.jpg-small\.jpg/_small\.jpg/g' *-small.jpg
