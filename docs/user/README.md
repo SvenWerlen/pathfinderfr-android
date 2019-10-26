@@ -2,7 +2,7 @@
 
 Cette section documente l'application PathfinderFR-Android. 
 Sections les plus fréquemment consultées:
-* [Navigation](./navigation)
+* [Navigation](./navigation/README.md)
 * [Gestion des personnages](./character/character.md)
 
 
@@ -15,7 +15,7 @@ Les écrans d'accueil au premier démarrage et en utilisation.
 
  ## Navigation
 
-La [navigation latérale](./navigation) au premier démarrage et en utilisation.
+La [navigation latérale](./navigation/README.md) au premier démarrage et en utilisation.
 
 <a href="../images/navigation-first-time.png/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (premier démarrage)"/></a>
 <a href="../images/navigation.png"><img src="../images/navigation_small.jpg" title="Écran d'accueil"/></a>
