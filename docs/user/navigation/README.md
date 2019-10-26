@@ -23,4 +23,7 @@ Toutes les rubriques du catalogue permettent de lister et retrouver les détails
 
 * **[États](../gm/conditions.md)**: les états préjudiciables
 * **[Générateur de trésors](../gm/generator.md)**: un générateur de trésors
-* **[Mettre à jour la bibliothèque](../gm/loaddata.md)**: pour vérifier et mettre à jour les données de l'application
+
+**Options avancées**
+
+* **[Mettre à jour la bibliothèque](../options/loaddata.md)**: pour vérifier et mettre à jour les données de l'application
