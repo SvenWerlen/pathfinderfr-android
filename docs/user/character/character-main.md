@@ -21,6 +21,9 @@ distribuer de l'or ou de l'expérience aux personnages.
 * ![](../../images/icons/delete.png): supprime un personnage. Par mesure de précaution, il est 
 nécessaire de saisir le nom du personnage ou simplement _"oui"_ pour confirmer la suppression.
 
+<a href="../../images/character/character-profile-mode1.png"><img src="../../images/character/character-profile-mode1_small.jpg" title="Profil (mode Feuille)"/></a>
+<a href="../../images/character/character-profile-mode2.png"><img src="../../images/character/character-profile-mode2_small.jpg" title="Profil (mode Sommaire)"/></a>
+
 ## Gestion du profil
 
 La partie supérieure de la section _Profil_ permet la gestion des informations sur le personnage,

@@ -3,7 +3,7 @@
 Cette section documente l'application PathfinderFR-Android. 
 Sections les plus fréquemment consultées:
 * [Navigation](./navigation/README.md)
-* [Gestion des personnages](./character/character.md)
+* [Gestion des personnages](./character/character-details.md)
 * [Tutoriels](./tuto/README.md)
 
 ## Écran d'accueil
