@@ -6,24 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.DragEvent;
@@ -39,8 +25,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.borders.SolidBorder;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
@@ -901,6 +892,13 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private void updateWeapons(View view) {
         weapons.removeViews(2, weapons.getChildCount()-2);
 
+        List<Weapon> weaponsList = character.getInventoryWeapons();
+        if(weaponsList.size() == 0) {
+            weapons.setVisibility(View.GONE);
+            return;
+        }
+        weapons.setVisibility(View.VISIBLE);
+
         // fat fingers
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         int base = 32;
@@ -918,7 +916,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         final String tooltipBabModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.babmodif.entry");
 
         int weaponIdx = 0;
-        for(final Weapon weapon : character.getInventoryWeapons()) {
+        for(final Weapon weapon : weaponsList) {
             final int curWeaponIdx = weaponIdx + 1;
             final String attackBonus = weapon.isRanged() ? character.getAttackBonusRangeAsString(curWeaponIdx) : character.getAttackBonusMeleeAsString(curWeaponIdx);
             String damageString = character.getDamage(weapon, curWeaponIdx);
