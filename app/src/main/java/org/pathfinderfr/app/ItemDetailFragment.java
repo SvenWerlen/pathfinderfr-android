@@ -245,7 +245,7 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
         updateActionIcons(rootView);
 
 
-        if(mItem == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof Trait
+        if(mItem == null || character == null || !(mItem instanceof Feat || mItem instanceof ClassFeature || mItem instanceof Trait
                 || mItem instanceof Weapon || mItem instanceof Armor || mItem instanceof Equipment || mItem instanceof  MagicItem || mItem instanceof Skill) ) {
             addToCharacter.setVisibility(View.GONE);
         }
