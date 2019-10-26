@@ -1,6 +1,6 @@
 # [Accueil](..) > [Personnages](character.md) > Créer un nouveau personnage
 
-Cette page décrit typiquement les étapes de création d'un personnage
+Ce [tutoriel](../tuto/README.md) décrit les étapes de création d'un personnage
 
 ## Créer un nouveau personnage
 

@@ -1,0 +1,132 @@
+Nom: Drako
+Joueur: Exemple
+Sexe: M
+Alignement: CN
+Divinité: Gorum
+Origine: Varisie, Pointesable
+Race: Nain
+Classes: 
+-  Nom: Barbare
+   Archetype: Enragé haineux
+   Niveau: 2
+-  Nom: Druide
+   Niveau: 1
+Caracs: 
+-  Force: 14
+-  Dextérité: 15
+-  Constitution: 13
+-  Intelligence: 10
+-  Sagesse: 12
+-  Charisme: 8
+Expérience: 3000
+TypeTaille: M
+Âge: 45
+Taille: 135
+Poids: 0
+Cheveux: Roux
+Yeux: Bruns
+Langues: Commun, nain
+PointsVie: 28
+PointsVieTemp: 0
+Vitesse: 6
+VitesseAvecArmure: 6
+VitesseCreusement: 0
+VitesseVol: 0
+VolManoeuvrabilité: ""
+Compétences: 
+-  Nom: Survie
+   Rang: 1
+-  Nom: Acrobaties
+   Rang: 2
+-  Nom: Art de la magie
+   Rang: 2
+-  Nom: Escalade
+   Rang: 1
+-  Nom: Connaissances (exploration souterraine)
+   Rang: 2
+-  Nom: Connaissances (ingénierie)
+   Rang: 2
+-  Nom: Perception
+   Rang: 2
+Dons: 
+-  Nom: Combat à deux armes
+Aptitudes: 
+-  Nom: Armes et armures
+-  Nom: Déplacement accéléré
+-  Nom: Pouvoirs de rage
+-  Nom: Rage de berserker
+-  Nom: Armes et armures
+-  Nom: Empathie sauvage
+-  Nom: Incantation spontanée
+-  Nom: Instinct naturel
+-  Nom: Langues supplémentaires
+-  Nom: Oraisons
+-  Nom: Pacte avec la nature
+-  Nom: Sorts
+-  Nom: Sorts du Bien, du Chaos, de la Loi et du Mal
+-  Nom: Ennemi juré (Ext)
+   LiéNom: Gobelins et orques
+-  Nom: Esquive instinctive
+-  Nom: Pouvoir de rage
+   LiéÀ: 'Rage: Repousser l’ennemi (Ext)'
+-  Nom: Réduction de rage (Ext)
+-  Nom: 'Rage: Repousser l’ennemi (Ext)'
+Sorts: []
+Modifs: 
+-  Source: Modifs de création
+   Icône: rollingdices
+   Lien: 0
+   Bonus: 
+   -  Id: 4
+      Valeur: 2
+   -  Id: 6
+      Valeur: 2
+   -  Id: 7
+      Valeur: -2
+-  Source: Rage
+   Icône: enrage
+   Lien: 0
+   Bonus: 
+   -  Id: 2
+      Valeur: 4
+   -  Id: 4
+      Valeur: 4
+   -  Id: 14
+      Valeur: 2
+   -  Id: 22
+      Valeur: -2
+-  Source: Armure
+   Icône: chest_armor
+   Lien: 0
+   Bonus: 
+   -  Id: 26
+      Valeur: 6
+-  Source: Bouclier
+   Icône: shield
+   Lien: 0
+   Bonus: 
+   -  Id: 27
+      Valeur: 2
+Richesses: 
+   pc: 0
+   pa: 45
+   po: 2
+   pp: 0
+Inventaire: 
+-  Nom: Cuirasse
+   Poids: 15000
+   Prix: 20000
+   Référence: Armure Cuirasse
+-  Nom: Écu (acier)
+   Poids: 7500
+   Prix: 2000
+   Référence: Armure Écu (acier)
+-  Nom: Hache de guerre naine
+   Poids: 4000
+   Prix: 3000
+   Référence: Arme Hache de guerre naine
+-  Nom: Hache de lancer
+   Poids: 1000
+   Prix: 800
+   Référence: Arme Hache de lancer
+TraitsAlternatifs: []

@@ -1,14 +1,22 @@
-# Écran d'accueil
+# Documentation utilisateur
 
-Cette section documente l'application. Naviguez en cliquant sur les captures d'écran.
+Cette section documente l'application PathfinderFR-Android. 
+Sections les plus fréquemment consultées:
+* [Navigation](./navigation)
+* [Gestion des personnages](./character/character.md)
 
-## Premiers pas
 
-Au premier lancement, l'application nécessite l'[importation des données](options/loaddata.md). 
+## Écran d'accueil
 
-<a href="../images/welcome-first-time.png"><img src="../images/welcome-first-time_small.jpg" title="Accueil"/></a>
-<a href="../images/navigation-first-time.png/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (première fois)"/></a>
+Les écrans d'accueil au premier démarrage et en utilisation.
 
- ## Accueil
+<a href="../images/welcome-first-time.png"><img src="../images/welcome-first-time_small.jpg" title="Écran d'accueil (premier démarrage)"/></a>
+<a href="../images/welcome.png"><img src="../images/welcome_small.jpg" title="Écran d'accueil"/></a>
 
+ ## Navigation
+
+La [navigation latérale](./navigation) au premier démarrage et en utilisation.
+
+<a href="../images/navigation-first-time.png/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (premier démarrage)"/></a>
+<a href="../images/navigation.png"><img src="../images/navigation_small.jpg" title="Écran d'accueil"/></a>
 
