@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Objets magiques
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Objets magiques
 
 La liste des objets magiques de Pathfinder.
 

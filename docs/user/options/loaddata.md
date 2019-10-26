@@ -1,4 +1,4 @@
-# [Accueil](..) > [Options avancées](../navigation) > Mise à jour des données
+# [Accueil](../README.md) > [Options avancées](../navigation/README.md) > Mise à jour des données
 
 Cette section permet de mettre à jour les données de l'application.  
 

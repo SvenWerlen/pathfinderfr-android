@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Sorts](spells.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Sorts](spells.md) > Détails
 
 Cette page présente les détails d'un un sort.
 

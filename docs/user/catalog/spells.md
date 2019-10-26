@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Sorts
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Sorts
 
 La liste des sorts de Pathfinder.
 

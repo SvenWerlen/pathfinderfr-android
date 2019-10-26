@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Dons](feats.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Dons](feats.md) > Détails
 
 Cette page présente les détails d'un don.
 

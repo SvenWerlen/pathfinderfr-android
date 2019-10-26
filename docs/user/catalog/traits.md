@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Traits
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Traits
 
 La liste des traits de Pathfinder.
 

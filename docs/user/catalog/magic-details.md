@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Objets magiques](magic.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Objets magiques](magic.md) > Détails
 
 Cette page présente les détails d'un objet magique.
 

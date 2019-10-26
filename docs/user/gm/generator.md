@@ -1,4 +1,4 @@
-# [Accueil](..) > [Pour le MJ](../navigation) > Générateur de trésors
+# [Accueil](../README.md) > [Pour le MJ](../navigation/README.md) > Générateur de trésors
 
 Le générateur de trésors, comme son nom l'indique, permet à un maître de jeu de rapidement générer
 un trésor (suite à un combat aléatoire par exemple). Le générateur de trésor se base sur la

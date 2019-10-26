@@ -1,4 +1,4 @@
-# [Accueil](..) > [Pour le MJ](../navigation) > États préjudiciables
+# [Accueil](../README.md) > [Pour le MJ](../navigation/README.md) > États préjudiciables
 
 La liste des états préjudiciables de Pathfinder.
 

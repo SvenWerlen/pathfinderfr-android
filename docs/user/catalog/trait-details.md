@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Traits](traits.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Traits](traits.md) > Détails
 
 Cette page présente les détails d'un trait.
 

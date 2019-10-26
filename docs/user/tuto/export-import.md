@@ -1,4 +1,4 @@
-# [Accueil](..) > [Personnages](character.md) > Export/Importer un personnage
+# [Accueil](../README.md) > [Personnages](character.md) > Export/Importer un personnage
 
 Ce [tutoriel](../tuto/README.md) décrit les étapes pour exporter et importer un personnage
 

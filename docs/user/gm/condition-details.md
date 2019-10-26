@@ -1,4 +1,4 @@
-# [Accueil](..) > [Pour le MJ](../navigation) > [États préjudiciables](conditions.md) > Détails
+# [Accueil](../README.md) > [Pour le MJ](../navigation/README.md) > [États préjudiciables](conditions.md) > Détails
 
 Cette page présente les détails d'un état préjudiciable.
 

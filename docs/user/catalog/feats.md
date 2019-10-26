@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Dons
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Dons
 
 La liste des dons de Pathfinder.
 

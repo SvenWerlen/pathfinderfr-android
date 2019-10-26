@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Compétences](skills.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Compétences](skills.md) > Détails
 
 Cette page présente les détails d'une compétence.
 

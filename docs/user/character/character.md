@@ -1,4 +1,4 @@
-# [Accueil](..) > Personnages
+# [Accueil](../README.md) > Personnages
 
 La section _Personnages_ permet de créer et gérer des personnages.
 

@@ -1,10 +1,10 @@
-# [Accueil](..) > Navigation
+# [Accueil](../README.md) > Navigation
 
 La navigation latérale permet d'accéder rapidement à chaque section de l'application
 
 <a href="../../images/navigation/navigation.png"><img src="../../images/navigation/navigation_small.jpg" title="Navigation"/></a>
 
-* **[Accueil](..)**: retourner à l'écran d'accueil
+* **[Accueil](../README.md)**: retourner à l'écran d'accueil
 * **[Personnages](../character/character.md)**: gérer un ou plusieurs personnages (PJ)
 
 **Catalogue**

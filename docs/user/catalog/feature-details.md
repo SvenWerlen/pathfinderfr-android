@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Aptitudes](features.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Aptitudes](features.md) > Détails
 
 Cette page présente les détails d'une aptitude.
 

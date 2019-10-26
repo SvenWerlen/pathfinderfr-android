@@ -1,4 +1,4 @@
-# [Accueil](..) > [Personnages](character.md) > [Gérer](character-details.md) > Profil
+# [Accueil](../README.md) > [Personnages](character.md) > [Gérer](character-details.md) > Profil
 
 La section _Profil_ permet la gestion de la majorité des attributs et de l'équipement du personnage.
 

@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > [Équipement](equipment.md) > Détails
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > [Équipement](equipment.md) > Détails
 
 Cette page présente les détails d'un équipement.
 

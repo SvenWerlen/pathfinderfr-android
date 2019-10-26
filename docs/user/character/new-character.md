@@ -1,4 +1,4 @@
-# [Accueil](..) > [Personnages](character.md) > Créer un nouveau personnage
+# [Accueil](../README.md) > [Personnages](character.md) > Créer un nouveau personnage
 
 Ce [tutoriel](../tuto/README.md) décrit les étapes de création d'un personnage
 

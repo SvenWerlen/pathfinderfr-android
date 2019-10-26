@@ -1,4 +1,4 @@
-# [Accueil](..) > [Personnages](character.md) > Gérer un personnage
+# [Accueil](../README.md) > [Personnages](character.md) > Gérer un personnage
 
 
 ## Les différentes sections

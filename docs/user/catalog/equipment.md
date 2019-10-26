@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Équipement
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Équipement
 
 La liste des équipements de Pathfinder.
 

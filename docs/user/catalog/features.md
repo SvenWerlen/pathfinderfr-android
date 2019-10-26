@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Aptitudes
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Aptitudes
 
 La liste des aptitudes de Pathfinder.
 

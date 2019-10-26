@@ -1,4 +1,4 @@
-# [Accueil](..) > [Catalogue](../navigation) > Compétences
+# [Accueil](../README.md) > [Catalogue](../navigation/README.md) > Compétences
 
 La liste des compétences de Pathfinder.
 
