@@ -620,7 +620,7 @@
         Si vous êtes satisfaits, cliquez sur le bouton \"Appliquer\" pour confirmer l\'import et accéder
         à la liste des personnages. Sinon, cliquez sur le bouton \"Annuler\" pour retourner.
     </string>
-    <string name="importcharacter">Appliquer</string>
+    <string name="importcharacter">Importer</string>
     <string name="importcharacter_info_acces">Accès au fichier ... succès</string>
     <string name="importcharacter_info_read">Lecture du fichier ... succès</string>
     <string name="importcharacter_info_parse">Analyse du fichier ... succès</string>
