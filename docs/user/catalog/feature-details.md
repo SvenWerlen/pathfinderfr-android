@@ -29,7 +29,7 @@ personnage. L'exemple ci-dessous présente comment lier le pouvoir de rage spéc
 <a href="../../images/catalog/feature-linkto.png"><img src="../../images/catalog/feature-linkto_small.jpg"/></a>
 <a href="../../images/catalog/feature-linkto-after.png"><img src="../../images/catalog/feature-linkto-after_small.jpg"/></a>
 
-### Lier une aptitude à une autre
+### Spécifier un texte pour une aptitude
 
 En cliquant sur l'action ![](../../images/icons/linkto-off.png), il est également possible d'attribuer
 un texte spécifique à une aptitude. L'exemple ci-dessous présente comment spécifier l'ennemi juré
