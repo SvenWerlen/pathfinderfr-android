@@ -5,7 +5,7 @@ La navigation latérale permet d'accéder rapidement à chaque section de l'appl
 <a href="../../images/navigation/navigation.png"><img src="../../images/navigation/navigation_small.jpg" title="Navigation"/></a>
 
 * **[Accueil](..)**: retourner à l'écran d'accueil
-* **[Personnages](..)**: gérer un ou plusieurs personnages (PJ)
+* **[Personnages](../character/character.md)**: gérer un ou plusieurs personnages (PJ)
 
 **Catalogue**
 
@@ -21,6 +21,6 @@ Toutes les rubriques du catalogue permettent de lister et retrouver les détails
 
 **Pour les maîtres du jeu (MJ)**
 
-* **[États](.)**: les états préjudiciables
-* **[Générateur de trésors](.)**: un générateur de trésors
-* **[Mettre à jour la bibliothèque](.)**: pour vérifier et mettre à jour les données de l'application
+* **[États](../gm/conditions.md)**: les états préjudiciables
+* **[Générateur de trésors](../gm/generator.md)**: un générateur de trésors
+* **[Mettre à jour la bibliothèque](../gm/loaddata.md)**: pour vérifier et mettre à jour les données de l'application

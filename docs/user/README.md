@@ -4,12 +4,11 @@ Cette section documente l'application. Naviguez en cliquant sur les captures d'�
 
 ## Premiers pas
 
-Au premier lancement, l'application nécessite l'importation des données. 
+Au premier lancement, l'application nécessite l'[importation des données](gm/loaddata.md). 
 
-<a href="."><img src="../images/welcome-first-time_small.jpg" title="Accueil"/></a>
-<a href="navigation/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (première fois)"/></a>
-<a href="importdata/"><img src="../images/loaddata-first-time_small.jpg" title="Importer les données (première fois)"/></a>
+<a href="../images/welcome-first-time.png"><img src="../images/welcome-first-time_small.jpg" title="Accueil"/></a>
+<a href="../images/navigation-first-time.png/"><img src="../images/navigation-first-time_small.jpg" title="Navigation (première fois)"/></a>
 
- 
+ ## Accueil
 
 
