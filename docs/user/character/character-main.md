@@ -14,6 +14,8 @@ et éventuellement le partager (ex: courriel). Cette fonction peut servir à fai
 du personnage ou de l'[importer](../tuto/export-import.md)  sur un autre appareil ou encore par une autre personne.
 * ![](../../images/icons/mode1.png) ![](../../images/icons/mode2.png): permet de basculer entre le 
 mode _Feuille_ qui permet l'édition et le mode _Sommaire_ plus condensé mais en lecture uniquement.
+* ![](../../images/icons/pdf.png): génère une [feuille de personnage au format PDF](../tuto/character-sheet-pdf.md), optimisée pour
+une impression _papier_.
 * ![](../../images/icons/sync.png) (_BETA_): permet la synchronisation d'un personnage et propager
 des modifications à d'autres appareils. Cette fonction peut servir à un joueur (PJ) pour soumettre 
 les changements après un changement de niveau au maître de jeu (MJ) ou à l'inverse à un MJ de 
@@ -23,6 +25,7 @@ nécessaire de saisir le nom du personnage ou simplement _"oui"_ pour confirmer 
 
 <a href="../../images/character/character-profile-mode1.png"><img src="../../images/character/character-profile-mode1_small.jpg" title="Profil (mode Feuille)"/></a>
 <a href="../../images/character/character-profile-mode2.png"><img src="../../images/character/character-profile-mode2_small.jpg" title="Profil (mode Sommaire)"/></a>
+<a href="../../images/character/character-profile-pdf.png"><img src="../../images/character/character-profile-pdf_small.jpg" title="Feuille de personnage au format PDF"/></a>
 
 ## Gestion du profil
 
