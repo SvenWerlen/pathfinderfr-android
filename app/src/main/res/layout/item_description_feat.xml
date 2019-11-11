@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:gravity="center_vertical"
+        tools:context=".app.ItemDetailFragment"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/itemdetails_quickaction"
+            tools:context=".app.ItemDetailFragment" />
+
+        <ImageButton
+            android:id="@+id/actionExternalLink"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_link_external" />
+
+        <ImageButton
+            android:id="@+id/actionAddToCharacter"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_item_icon_sheet" />
+
+        <ImageButton
+            android:id="@+id/actionFavorite"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_link_favorite" />
+
+    </LinearLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        android:id="@+id/feat_requires"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|top">
+
+        <TextView
+            android:id="@+id/feat_requires_example"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/feat_example_featname" />
+
+        <TextView
+            android:id="@+id/feat_requires_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/feat_example_separator" />
+
+        <TextView
+            android:id="@+id/feat_requires_example2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/feat_example_featname" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        android:id="@+id/feat_unlocks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:gravity="start|top">
+
+        <TextView
+            android:id="@+id/feat_unlocks_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/feat_unlocks" />
+
+        <TextView
+            android:id="@+id/feat_unlocks_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/feat_example_featname" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+    <TextView
+        android:id="@+id/item_alert_message"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="@color/colorWarning"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:text="@string/itemdetails_alert_message"
+        android:textSize="12sp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <WebView
+            android:id="@+id/item_full_description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+
+</LinearLayout>

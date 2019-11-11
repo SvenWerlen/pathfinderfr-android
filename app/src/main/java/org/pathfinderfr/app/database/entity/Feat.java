@@ -1,18 +1,30 @@
 package org.pathfinderfr.app.database.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Feat extends DBEntity {
 
     // feat-specific
     private String summary;
     private String category;
     private String conditions;
+    private List<Long> requires; // relations to other feats
     private String advantage;
     private String special;
     private String normal;
 
+    // only used during YAML import
+    private List<String> requiresRef;
+
     @Override
     public DBEntityFactory getFactory() {
         return FeatFactory.getInstance();
+    }
+
+    public Feat() {
+        requiresRef = new ArrayList<>();
+        requires = new ArrayList<>();
     }
 
     /**
@@ -46,6 +58,22 @@ public class Feat extends DBEntity {
     }
     public void setConditions(String conditions) {
         this.conditions = conditions;
+    }
+
+    public List<String> getRequiresRef() {
+        return requiresRef;
+    }
+
+    public void setRequiresRef(List<String> requiresRef) {
+        this.requiresRef = requiresRef;
+    }
+
+    public List<Long> getRequires() {
+        return requires;
+    }
+
+    public void setRequires(List<Long> requires) {
+        this.requires = requires;
     }
 
     public String getAdvantage() {

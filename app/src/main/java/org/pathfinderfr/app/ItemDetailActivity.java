@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import android.view.MenuItem;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.entity.FeatFactory;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -53,13 +56,14 @@ public class ItemDetailActivity extends AppCompatActivity implements ItemDetailF
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
+            String factoryId = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
             Bundle arguments = new Bundle();
             arguments.putLong(ItemDetailFragment.ARG_ITEM_ID, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_ID, 0));
             arguments.putLong(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, getIntent().getLongExtra(ItemDetailFragment.ARG_ITEM_SEL_CHARACTER, 0));
             arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
             arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
             arguments.putString(ItemDetailFragment.ARG_ITEM_MESSAGE, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_MESSAGE));
-            ItemDetailFragment fragment = new ItemDetailFragment();
+            Fragment fragment = FeatFactory.FACTORY_ID.equals(factoryId) ? new ItemDetailFragmentFeat() : new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
@@ -110,7 +114,8 @@ public class ItemDetailActivity extends AppCompatActivity implements ItemDetailF
         arguments.putString(ItemDetailFragment.ARG_ITEM_FACTORY_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID));
         arguments.putBoolean(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, getIntent().getBooleanExtra(ItemDetailFragment.ARG_ITEM_SHOWDETAILS, showDetails));
         arguments.putString(ItemDetailFragment.ARG_ITEM_MESSAGE, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_MESSAGE));
-        ItemDetailFragment fragment = new ItemDetailFragment();
+        String factoryId = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID);
+        Fragment fragment = FeatFactory.FACTORY_ID.equals(factoryId) ? new ItemDetailFragmentFeat() : new ItemDetailFragment();
         fragment.setArguments(arguments);
         transaction.addToBackStack(null);
         transaction.replace(R.id.item_detail_container, fragment);

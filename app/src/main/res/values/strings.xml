@@ -725,6 +725,13 @@
 
     <string name="dragdrop_here">Déplacer ici  </string>
 
+    <!-- Feat description view -->
+    <string name="feat_example_featname">Nom du don</string>
+    <string name="feat_example_separator">&gt;</string>
+    <string name="feat_example_separator2">,</string>
+    <string name="feat_requires">Requiert:</string>
+    <string name="feat_unlocks">Débloque:</string>
+
 </resources>
 
 

@@ -2,10 +2,14 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class FeatFactory extends DBEntityFactory {
@@ -16,6 +20,7 @@ public class FeatFactory extends DBEntityFactory {
     private static final String COLUMN_SUMMARY    = "summary";
     private static final String COLUMN_CATEGORY   = "category";
     private static final String COLUMN_CONDITIONS = "conditions";
+    private static final String COLUMN_REQUIRES   = "requires";
     private static final String COLUMN_ADVANTAGE  = "advantage";
     private static final String COLUMN_SPECIAL    = "special";
     private static final String COLUMN_NORMAL     = "normal";
@@ -27,6 +32,7 @@ public class FeatFactory extends DBEntityFactory {
     private static final String YAML_SOURCE       = "Source";
     private static final String YAML_CATEGORY     = "Catégorie";
     private static final String YAML_CONDITIONS   = "Conditions";
+    private static final String YAML_CONDREFS     = "ConditionsRefs";
     private static final String YAML_ADVANTAGE    = "Avantage";
     private static final String YAML_SPECIAL      = "Spécial";
     private static final String YAML_NORMAL       = "Normal";
@@ -62,11 +68,11 @@ public class FeatFactory extends DBEntityFactory {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s text, %s text, %s text, %s text," +
-                        "%s text, %s text, %s text, %s text, %s text, %s text" +
+                        "%s text, %s text, %s text, %s text, %s text, %s text, %s text" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
-                COLUMN_SUMMARY, COLUMN_CATEGORY, COLUMN_CONDITIONS, COLUMN_ADVANTAGE, COLUMN_SPECIAL,  COLUMN_NORMAL);
+                COLUMN_SUMMARY, COLUMN_CATEGORY, COLUMN_CONDITIONS, COLUMN_REQUIRES, COLUMN_ADVANTAGE, COLUMN_SPECIAL,  COLUMN_NORMAL);
         return query;
     }
 
@@ -75,6 +81,13 @@ public class FeatFactory extends DBEntityFactory {
      */
     public String getQueryUpgradeV19() {
         return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_SUMMARY);
+    }
+
+    /**
+     * @return SQL statement for upgrading DB from v21 to v22
+     */
+    public String getQueryUpgradeV22() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_REQUIRES);
     }
 
     /**
@@ -87,8 +100,8 @@ public class FeatFactory extends DBEntityFactory {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
             filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
         }
-        return String.format("SELECT %s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), filters, COLUMN_NAME);
+        return String.format("SELECT %s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
+                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, COLUMN_REQUIRES, getTableName(), filters, COLUMN_NAME);
     }
 
     @Override
@@ -101,6 +114,11 @@ public class FeatFactory extends DBEntityFactory {
         contentValues.put(FeatFactory.COLUMN_NAME, feat.getName());
         contentValues.put(FeatFactory.COLUMN_DESC, feat.getDescription());
         contentValues.put(FeatFactory.COLUMN_REFERENCE, feat.getReference());
+        List<Long> ids = new ArrayList<>();
+        for(Long id : feat.getRequires()) {
+            ids.add(id);
+        }
+        contentValues.put(FeatFactory.COLUMN_REQUIRES, StringUtil.listToString(ids.toArray(new Long[0]),","));
         contentValues.put(FeatFactory.COLUMN_SOURCE, feat.getSource());
         contentValues.put(FeatFactory.COLUMN_CATEGORY, feat.getSummary());
         contentValues.put(FeatFactory.COLUMN_CATEGORY, feat.getCategory());
@@ -125,6 +143,17 @@ public class FeatFactory extends DBEntityFactory {
         feat.setSummary(extractValue(resource,FeatFactory.COLUMN_SUMMARY));
         feat.setCategory(extractValue(resource,FeatFactory.COLUMN_CATEGORY));
         feat.setConditions(extractValue(resource,FeatFactory.COLUMN_CONDITIONS));
+        String requires = extractValue(resource,FeatFactory.COLUMN_REQUIRES);
+        if(requires != null && requires.length() > 0) {
+            String[] list = requires.split(",");
+            for(String el : list) {
+                try {
+                    feat.getRequires().add(Long.valueOf(el));
+                } catch (NumberFormatException e) {
+                    Log.w(FeatFactory.class.getSimpleName(), "Invalid Feat ID " + el);
+                }
+            }
+        }
         feat.setAdvantage(extractValue(resource,FeatFactory.COLUMN_ADVANTAGE));
         feat.setSpecial(extractValue(resource,FeatFactory.COLUMN_SPECIAL));
         feat.setNormal(extractValue(resource,FeatFactory.COLUMN_NORMAL));
@@ -142,6 +171,15 @@ public class FeatFactory extends DBEntityFactory {
         feat.setSummary((String)attributes.get(YAML_SUMMARY));
         feat.setCategory((String)attributes.get(YAML_CATEGORY));
         feat.setConditions((String)attributes.get(YAML_CONDITIONS));
+        Object refs = attributes.get(YAML_CONDREFS);
+        if(refs instanceof List) {
+            List<Object> list = (List<Object>)refs;
+            for(Object ref : list) {
+                if(ref instanceof String) {
+                    feat.getRequiresRef().add((String)ref);
+                }
+            }
+        }
         feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE));
         feat.setSpecial((String)attributes.get(YAML_SPECIAL));
         feat.setNormal((String)attributes.get(YAML_NORMAL));

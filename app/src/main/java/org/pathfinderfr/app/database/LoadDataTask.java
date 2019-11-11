@@ -2,6 +2,8 @@ package org.pathfinderfr.app.database;
 
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
+
+import android.util.Log;
 import android.util.Pair;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
@@ -10,6 +12,7 @@ import org.pathfinderfr.app.LoadDataActivity;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 
@@ -180,6 +183,8 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                 e.printStackTrace();
             }
 
+            Map<String, DBEntity> referencesMap = new HashMap<>();
+
             try {
                 if (isCancelled()) { progresses[idx].setStatus(UpdateStatus.STATUS_CANCELLED); break; }
                 progresses[idx].setStatus(UpdateStatus.STATUS_DOWNLOADING);
@@ -197,8 +202,23 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                     if(list.get(i) instanceof Map) {
                         DBEntity entity = factory.generateEntity((Map<String,Object>)list.get(i));
                         if(entity != null) {
+                            // for feats, update "requires" before inserting into DB
+                            // assuming that required feats have already been processed
+                            if(entity instanceof Feat) {
+                                Feat f = (Feat)entity;
+                                for(String required : f.getRequiresRef()) {
+                                    if(referencesMap.containsKey(required)) {
+                                        f.getRequires().add(((Feat)referencesMap.get(required)).getId());
+                                    } else {
+                                        Log.w(LoadDataTask.class.getSimpleName(), "Couldn't find required feat for " + f.getName());
+                                    }
+                                }
+                            }
+
                             long id = dbHelper.insertEntity(entity);
                             if(id >= 0) {
+                                entity.setId(id);
+                                referencesMap.put(entity.getReference(), entity);
                                 count[idx]++;
                             }
                         }
