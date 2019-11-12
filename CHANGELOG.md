@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Order inventory (drag-and-drop)
+- New modifs for skills (all & based on an ability)
+### Changed
+- Feats list displays unlocked feats first
+- Feat details improved (required & unlocked)
 
 ## [3.5.0] - 2019-10-19
 ### Added
