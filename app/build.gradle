@@ -6,8 +6,8 @@ android {
         applicationId "org.pathfinderfr"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 41
-        versionName "3.5.0"
+        versionCode 42
+        versionName "3.6.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
