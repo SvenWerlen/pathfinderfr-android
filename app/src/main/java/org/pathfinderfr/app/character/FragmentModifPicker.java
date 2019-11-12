@@ -185,6 +185,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Character.MODIF_COMBAT_DAM_RANGED: return getResources().getString(R.string.sheet_damage_distance);
             case Character.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
             case Character.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
+            case Character.MODIF_SKILL_ALL: return getResources().getString(R.string.sheet_skill_all);
+            case Character.MODIF_SKILL_FOR: return getResources().getString(R.string.sheet_skill_for);
+            case Character.MODIF_SKILL_DEX: return getResources().getString(R.string.sheet_skill_dex);
+            case Character.MODIF_SKILL_CON: return getResources().getString(R.string.sheet_skill_con);
+            case Character.MODIF_SKILL_INT: return getResources().getString(R.string.sheet_skill_int);
+            case Character.MODIF_SKILL_WIS: return getResources().getString(R.string.sheet_skill_wis);
+            case Character.MODIF_SKILL_CHA: return getResources().getString(R.string.sheet_skill_cha);
             default:
                 if(modifId > Character.MODIF_SKILL) {
                     DBEntity entity = DBHelper.getInstance(getContext()).fetchEntity(modifId - Character.MODIF_SKILL, SkillFactory.getInstance());
@@ -327,6 +334,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Character.MODIF_COMBAT_CMD));
         // Skills
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_skills), 0));
+        list.add(getStringWithTag(Character.MODIF_SKILL_ALL));
+        list.add(getStringWithTag(Character.MODIF_SKILL_FOR));
+        list.add(getStringWithTag(Character.MODIF_SKILL_DEX));
+        list.add(getStringWithTag(Character.MODIF_SKILL_CON));
+        list.add(getStringWithTag(Character.MODIF_SKILL_INT));
+        list.add(getStringWithTag(Character.MODIF_SKILL_WIS));
+        list.add(getStringWithTag(Character.MODIF_SKILL_CHA));
         List<DBEntity> skills = DBHelper.getInstance(rootView.getContext()).getAllEntities(SkillFactory.getInstance(),
                 PreferenceUtil.getSources(rootView.getContext()));
         for(DBEntity skill : skills) {

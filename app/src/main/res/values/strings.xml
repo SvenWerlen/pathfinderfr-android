@@ -434,6 +434,13 @@
     <string name="sheet_money_goldpieces">Pièces d\'or</string>
     <string name="sheet_money_pp">PP</string>
     <string name="sheet_money_platinepieces">Pièces de platine</string>
+    <string name="sheet_skill_all">Toutes les compétences</string>
+    <string name="sheet_skill_for">Compétences basées sur la force</string>
+    <string name="sheet_skill_dex">Compétences basées sur la dextérité</string>
+    <string name="sheet_skill_con">Compétences basées sur la constitution</string>
+    <string name="sheet_skill_int">Compétences basées sur l\'intelligence</string>
+    <string name="sheet_skill_wis">Compétences basées sur la sagesse</string>
+    <string name="sheet_skill_cha">Compétences basées sur le charisme</string>
 
 
     <!-- Hit points -->

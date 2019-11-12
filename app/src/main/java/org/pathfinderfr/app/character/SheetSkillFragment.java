@@ -174,9 +174,7 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
             final Skill skill = (Skill)entity;
             int abilityMod = character.getSkillAbilityMod(skill);
             int rank = character.getSkillRank(skill.getId());
-            int classSkillBonus = (rank > 0 && character.isClassSkill(skill)) ? 3 : 0;
-            int addBonus = character.getAdditionalBonus(Character.MODIF_SKILL + (int)skill.getId());
-            int total = abilityMod + rank + classSkillBonus + addBonus;
+            int total = character.getSkillTotalBonus(skill);
 
             TableRow row = new TableRow(view.getContext());
             row.setMinimumHeight(height);
@@ -232,7 +230,9 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                                     rank,
                                     classSkillText,
                                     skill.getAbility().toLowerCase(), abilityMod,
-                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL + (int)skill.getId(), tooltipModif), // other
+                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL + (int)skill.getId(), tooltipModif) + // other (specific skill)
+                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL_ALL, tooltipModif) +                          // other (all skills)
+                                    SheetMainFragment.generateOtherBonusText(character, character.getAbilityBonus(skill.getAbilityId()), tooltipModif),     // other (skill based on ability)
                                     total ));
                 }
             });

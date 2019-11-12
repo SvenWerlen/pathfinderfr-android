@@ -99,6 +99,14 @@ public class Character extends DBEntity {
     public static final int MODIF_COMBAT_DAM_MELEE = 35;
     public static final int MODIF_COMBAT_DAM_RANGED = 36;
 
+    public static final int MODIF_SKILL_ALL = 41;
+    public static final int MODIF_SKILL_FOR = 42;
+    public static final int MODIF_SKILL_DEX = 43;
+    public static final int MODIF_SKILL_CON = 44; // doesn't exist
+    public static final int MODIF_SKILL_INT = 45;
+    public static final int MODIF_SKILL_WIS = 46;
+    public static final int MODIF_SKILL_CHA = 47;
+
     public static final int MODIF_SKILL = 200;
 
     // character-specific
@@ -402,6 +410,22 @@ public class Character extends DBEntity {
             case "INT": return getIntelligenceModif();
             case "SAG": return getWisdomModif();
             case "CHA": return getCharismaModif();
+            default: return 0;
+        }
+    }
+
+    public int getAbilityBonus(String abilityId) {
+        if(abilityId == null) {
+            return 0;
+        }
+        // TODO: make it language-independant
+        switch(abilityId) {
+            case "FOR": return MODIF_SKILL_FOR;
+            case "DEX": return MODIF_SKILL_DEX;
+            case "CON": return MODIF_SKILL_CON;
+            case "INT": return MODIF_SKILL_INT;
+            case "SAG": return MODIF_SKILL_WIS;
+            case "CHA": return MODIF_SKILL_CHA;
             default: return 0;
         }
     }
@@ -1067,11 +1091,9 @@ public class Character extends DBEntity {
         if(skill == null) {
             return 0;
         }
-        int rank = getSkillRank(skill.getId());
         int abilityMod = getSkillAbilityMod(skill);
-        int classSkill = (rank > 0 && isClassSkill(skill)) ? 3 : 0;
-        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
-        return rank + abilityMod + classSkill + bonus;
+        int bonus = getSkillModBonus(skill);
+        return abilityMod + bonus;
     }
 
     public int getSkillModBonus(Skill skill) {
@@ -1080,7 +1102,9 @@ public class Character extends DBEntity {
         }
         int rank = getSkillRank(skill.getId());
         int classSkill = (rank > 0 && isClassSkill(skill)) ? 3 : 0;
-        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId());
+        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId()) +
+                getAdditionalBonus(getAbilityBonus(skill.getAbilityId())) +
+                getAdditionalBonus(MODIF_SKILL_ALL);
         return classSkill + bonus;
     }
 
