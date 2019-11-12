@@ -17,6 +17,9 @@ public class Feat extends DBEntity {
     // only used during YAML import
     private List<String> requiresRef;
 
+    // only used in specific view
+    private int depth;
+
     @Override
     public DBEntityFactory getFactory() {
         return FeatFactory.getInstance();
@@ -95,6 +98,14 @@ public class Feat extends DBEntity {
     }
     public void setNormal(String normal) {
         this.normal = normal;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     @Override

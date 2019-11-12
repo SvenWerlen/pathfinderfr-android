@@ -202,4 +202,12 @@ public class StringUtil {
         t.printStackTrace(pw);
         return sw.toString(); // stack trace as a string
     }
+
+    public static String gererate(int count, String val) {
+        StringBuffer buf = new StringBuffer();
+        for(int i=0; i<count; i++) {
+            buf.append(val);
+        }
+        return buf.toString();
+    }
 }

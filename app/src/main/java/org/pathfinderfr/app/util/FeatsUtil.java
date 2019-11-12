@@ -3,16 +3,21 @@ package org.pathfinderfr.app.util;
 import android.util.Log;
 
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class FeatsUtil {
+
+    private static final String SEP = "     ";
 
     /**
      * This function generates a list of feats that are required for the specified feat
@@ -117,6 +122,77 @@ public class FeatsUtil {
             }
         }
         return results;
+    }
+
+
+    private static void fillUnlockedFeatsRecursive(List<DBEntity> feats, Feat feat, int depth,  Map<Long, Feat> cFeats) {
+        List<Feat> unlocked = FeatsUtil.getUnlockedFeats(feat);
+        if(unlocked == null || unlocked.size() == 0) {
+            return;
+        }
+        for(Feat u : unlocked) {
+            if(cFeats.containsKey(u.getId())) {
+                Feat f = cFeats.get(u.getId());
+                f.setDepth(-depth);
+                f.setName(StringUtil.gererate(depth, SEP) + f.getName());
+                feats.add(f);
+                fillUnlockedFeatsRecursive(feats, f, depth+1, cFeats );
+            }
+            // check if all requirement are met
+            // if ok, feat is added to the list
+            else {
+                boolean reqOK = true;
+                for(Long id : u.getRequires()) {
+                    if(!cFeats.containsKey(id)) {
+                        reqOK = false;
+                        break;
+                    }
+                }
+                if(reqOK) {
+                    u.setDepth(depth);
+                    u.setName(StringUtil.gererate(depth, SEP) + u.getName());
+                    feats.add(u);
+                }
+            }
+        }
+    }
+
+    public static List<DBEntity> getFeatsList(List<DBEntity> fullList, Character character) {
+        List<DBEntity> feats = new ArrayList<>();
+        Map<Long, Feat> added = new HashMap<>();
+        // register all features possessed
+        for(Feat f : character.getFeats()) {
+            added.put(f.getId(), f);
+        }
+        // first: list of feats from character & unlocked feats (recursively)
+        Feat sep = new Feat();
+        if(character.getFeats().size() > 0) {
+            sep.setName(ConfigurationUtil.getInstance().getProperties().getProperty("feat.unlocked"));
+            feats.add(sep);
+            for (Feat f : character.getFeats()) {
+                if (f.getRequires().size() == 0) {
+                    f.setDepth(-1);
+                    feats.add(f);
+                    fillUnlockedFeatsRecursive(feats, f, 1, added);
+                }
+            }
+        }
+        // update added features
+        for(DBEntity e : feats) {
+            added.put(e.getId(), (Feat)e);
+        }
+        // second: separator
+        sep = new Feat();
+        sep.setName(ConfigurationUtil.getInstance().getProperties().getProperty("feat.nodeps"));
+        feats.add(sep);
+        // third: others (with no dependency)
+        for(DBEntity e : fullList) {
+            Feat f = (Feat)e;
+            if(!added.containsKey(f.getId()) && f.getRequires().size() == 0) {
+                feats.add(f);
+            }
+        }
+        return feats;
     }
 
 }

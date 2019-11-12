@@ -3,6 +3,9 @@ package org.pathfinderfr.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +44,8 @@ public class ItemListRecyclerViewAdapter
     private boolean showNameLong;
     private int lineHeight;
 
+    private int colorEnabled;
+
     ItemListRecyclerViewAdapter(MainActivity parent,
                                 List<DBEntity> items,
                                 boolean twoPane) {
@@ -66,6 +71,10 @@ public class ItemListRecyclerViewAdapter
         public void onClick(View view) {
             DBEntity item = (DBEntity) view.getTag();
 
+            if(item == null || item.getId() <= 0) {
+                return;
+            }
+
             if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
                 Context context = view.getContext();
                 Intent intent = new Intent(mParentActivity, CharacterSheetActivity.class);
@@ -86,6 +95,8 @@ public class ItemListRecyclerViewAdapter
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_list_content, parent, false);
+
+        colorEnabled = view.getContext().getResources().getColor(R.color.colorBlack);
 
         return new ViewHolder(view);
     }
@@ -113,44 +124,68 @@ public class ItemListRecyclerViewAdapter
         holder.itemView.setTag(entity);
         holder.itemView.setOnClickListener(mOnClickListener);
 
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext());
         holder.itemView.setMinimumHeight(lineHeight);
         holder.itemView.setBackgroundColor(ContextCompat.getColor(
                 holder.itemView.getContext(), position % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
 
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.itemIcon);
-        icon.setVisibility(View.VISIBLE);
+
+        // default view
+        if(entity.getId() > 0) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(
+                    holder.itemView.getContext(), position % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
+            holder.mContentView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBlack));
+            // special case for feats
+            if(entity instanceof Feat && ((Feat)entity).getDepth() < 0) {
+                icon.setVisibility(View.GONE);
+                holder.mContentView.setTypeface(null, Typeface.BOLD_ITALIC);
+            } else if(entity instanceof Feat && ((Feat)entity).getDepth() > 0) {
+                icon.setVisibility(View.GONE);
+                holder.mContentView.setTypeface(null, Typeface.NORMAL);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+                holder.mContentView.setTypeface(null, Typeface.NORMAL);
+            }
+        }
+        // view for separators
+        else if(entity.getId() <= 0) {
+            icon.setVisibility(View.GONE);
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorPrimaryDark));
+            holder.mContentView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorWhite));
+            holder.mContentView.setTypeface(null, Typeface.NORMAL);
+        }
+
         if(entity instanceof Feat) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_feat));
         } else if(entity instanceof ClassFeature) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_classfeature));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_classfeature));
         } else if(entity instanceof Skill) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_skill));
         } else if(entity instanceof Spell) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_spell));
         } else if(entity instanceof Condition) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_condition));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_condition));
         } else if(entity instanceof Weapon) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_weapons));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_weapons));
         } else if(entity instanceof Armor) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_armors));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_armors));
         } else if(entity instanceof Equipment) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_equipment));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_equipment));
         } else if(entity instanceof MagicItem) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_magic));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_magic));
         } else if(entity instanceof Trait) {
-            icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_trait));
+            icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_item_icon_trait));
         } else if(entity instanceof Character) {
             // show icon for pined character
             long characterId = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
             if(characterId > 0 && characterId == entity.getId()) {
-                icon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_pin));
+                icon.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_pin));
             } else {
                 icon.setVisibility(View.INVISIBLE);
             }
         }
-        icon.setColorFilter(holder.itemView.getResources().getColor(R.color.colorBlack));
+        icon.getBackground().setColorFilter(colorEnabled, PorterDuff.Mode.SRC_ATOP);
     }
 
     @Override

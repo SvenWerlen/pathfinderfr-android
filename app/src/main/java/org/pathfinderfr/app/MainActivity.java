@@ -47,6 +47,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
+import org.pathfinderfr.app.character.SheetFeatFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
@@ -72,6 +73,7 @@ import org.pathfinderfr.app.event.MsgBroadcastReceiver;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
+import org.pathfinderfr.app.util.FeatsUtil;
 import org.pathfinderfr.app.util.MagicItemFilter;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.SpellFilter;
@@ -462,9 +464,13 @@ public class MainActivity extends AppCompatActivity
                 listCur.add(el);
             }
         }
-        Collections.sort(listCur);
 
         String factoryId = getCurrentFactory();
+
+        // special case for feats when contextual (don't sort)
+        if(!getIntent().getBooleanExtra(KEY_CONTEXTUAL, false) || !FeatFactory.FACTORY_ID.equals(factoryId)) {
+            Collections.sort(listCur);
+        }
 
         boolean showNameLong;
         if(CharacterFactory.FACTORY_ID.equals(factoryId)) {
@@ -557,8 +563,18 @@ public class MainActivity extends AppCompatActivity
             totalCount = newEntities.size();
             factoryId = SkillFactory.FACTORY_ID;
         } else if (id == R.id.nav_feats) {
-            newEntities = dbhelper.getAllEntities(FeatFactory.getInstance(),
+            // when contextual, feats are displayed differently
+            List<DBEntity> allFeats = dbhelper.getAllEntities(FeatFactory.getInstance(),
                     sources.length == ConfigurationUtil.getInstance().getAvailableSources().length ? null : sources);
+            long characterId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
+            Character character = characterId > 0 ? (Character)dbhelper.fetchEntity(characterId, CharacterFactory.getInstance()) : null;
+            if(character != null && getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
+                Collections.sort(allFeats); // will not be sorted later
+                newEntities = FeatsUtil.getFeatsList(allFeats, character);
+            }
+            else {
+                newEntities = allFeats;
+            }
             totalCount = newEntities.size();
             factoryId = FeatFactory.FACTORY_ID;
         } else if (id == R.id.nav_abilities) {
@@ -694,7 +710,6 @@ public class MainActivity extends AppCompatActivity
 
     private String getCurrentFactory() {
         if(getIntent().hasExtra(KEY_CONTEXTUAL_NAV)) {
-            System.out.println("KEY_CONTEXTUAL_NAV " + getIntent().getStringExtra(KEY_CONTEXTUAL_NAV));
             return getIntent().getStringExtra(KEY_CONTEXTUAL_NAV);
         }
         return PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(KEY_CUR_FACTORY, null);
@@ -725,8 +740,19 @@ public class MainActivity extends AppCompatActivity
 
         if(reloadRequired) {
             if(FavoriteFactory.FACTORY_ID.equalsIgnoreCase(factory) ||
-                    CharacterFactory.FACTORY_ID.equalsIgnoreCase(factory)) {
+                    CharacterFactory.FACTORY_ID.equalsIgnoreCase(factory) ||
+                    FeatFactory.FACTORY_ID.equalsIgnoreCase((factory))) {
+                long characterId = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, 0L);
                 List<DBEntity> entities = dbhelper.getAllEntities(EntityFactories.getFactoryById(factory));
+                // special case for feats when contextual
+                if(FeatFactory.FACTORY_ID.equalsIgnoreCase((factory)) && getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
+                    Character character = characterId > 0 ? (Character)dbhelper.fetchEntity(characterId, CharacterFactory.getInstance()) : null;
+                    if(character != null) {
+                        Collections.sort(entities); // will not be sorted later
+                        entities = FeatsUtil.getFeatsList(entities, character);
+                    }
+                }
+
                 listFull.clear();
                 listFull.addAll(entities);
                 totalCount = listFull.size();
