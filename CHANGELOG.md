@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.6.1] - 2019-11-16
+### Fixed
+- Crash during character import due to configuration loading (older devices)
+
 ## [3.6.0] - 2019-11-11
 ### Fixed
 - PDF: Header is repeated for classfeatures (Rou 4: Rou4: ...)

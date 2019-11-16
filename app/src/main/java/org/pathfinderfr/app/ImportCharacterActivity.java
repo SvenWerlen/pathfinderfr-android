@@ -118,7 +118,7 @@ public class ImportCharacterActivity extends AppCompatActivity {
         if(result.second.size() > 0) {
             content.append(getString(R.string.importcharacter_info_errors)).append("<br/><font color=\"red\">");
             for(int errorNo : result.second) {
-                content.append("- ").append(ConfigurationUtil.getInstance().getProperties().get("importcharacter.error" + errorNo)).append("<br/>");
+                content.append("- ").append(ConfigurationUtil.getInstance(getApplicationContext()).getProperties().get("importcharacter.error" + errorNo)).append("<br/>");
             }
             content.append("</font>");
         }
