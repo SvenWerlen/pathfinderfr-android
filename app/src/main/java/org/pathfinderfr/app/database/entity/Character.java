@@ -1091,9 +1091,10 @@ public class Character extends DBEntity {
         if(skill == null) {
             return 0;
         }
+        int rank = getSkillRank(skill.getId());
         int abilityMod = getSkillAbilityMod(skill);
         int bonus = getSkillModBonus(skill);
-        return abilityMod + bonus;
+        return rank + abilityMod + bonus;
     }
 
     public int getSkillModBonus(Skill skill) {

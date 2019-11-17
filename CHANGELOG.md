@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.6.2] - 2019-11-16
+### Fixed
+- Bug: skill rank not considered in total
+
 ## [3.6.1] - 2019-11-16
 ### Fixed
 - Crash during character import due to configuration loading (older devices)
