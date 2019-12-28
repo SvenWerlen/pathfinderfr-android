@@ -126,6 +126,9 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
             }
         }
 
+        // if traits should not been displayed, the same applies for the "add from catalog"
+        view.findViewById(R.id.sheet_traits_add).setVisibility(filterTraits ? View.VISIBLE : View.GONE);
+
         int rowId = 0;
         for(TableRow row : traits) {
             if(!filterTraits) {
@@ -172,6 +175,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
         ImageView exampleLinked = view.findViewById(R.id.sheet_classfeatures_example_linked);
         view.findViewById(R.id.sheet_classfeatures_row).setVisibility(View.GONE);
         TextView messageAdd = view.findViewById(R.id.sheet_classfeatures_add);
+        TextView messageAddTrait = view.findViewById(R.id.sheet_traits_add);
         exampleIcon.setColorFilter(view.getResources().getColor(R.color.colorBlack));
 
         view.findViewById(R.id.classfeatures_add_batch).setOnClickListener(this);
@@ -407,6 +411,22 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
                 intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, ClassFeatureFactory.FACTORY_ID);
+                context.startActivity(intent);
+                refreshNeeded = true;
+            }
+        });
+
+        messageAddTrait.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set character as "selected"
+                PreferenceManager.getDefaultSharedPreferences(SheetClassFeatureFragment.this.getContext()).edit().
+                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID,character.getId()).
+                        apply();
+                Context context = SheetClassFeatureFragment.this.getContext();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, TraitFactory.FACTORY_ID);
                 context.startActivity(intent);
                 refreshNeeded = true;
             }
