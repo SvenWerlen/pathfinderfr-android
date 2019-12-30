@@ -6,7 +6,7 @@ android {
         applicationId "org.pathfinderfr"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 45
+        versionCode 46
         versionName "3.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

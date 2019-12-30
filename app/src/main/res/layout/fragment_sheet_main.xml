@@ -1721,34 +1721,50 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
 
-                <TextView
-                    android:id="@+id/sheet_inventory_item_add"
-                    android:layout_width="wrap_content"
+                <com.wefika.flowlayout.FlowLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/sheet_font_text_links"
-                    android:text="@string/sheet_click_to_add" />
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
 
-                <TextView
-                    android:id="@+id/sheet_inventory_item_add_fromEquipment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/sheet_font_text_links"
-                    android:text="@string/sheet_click_to_add_catalog" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textSize="@dimen/sheet_font_text_links"
+                        android:textFontWeight="bold"
+                        android:text="@string/sheet_click_to_add_label" />
 
-                <TextView
-                    android:id="@+id/sheet_inventory_item_add_fromMagic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/sheet_font_text_links"
-                    android:text="@string/sheet_click_to_add_magic" />
+                    <TextView
+                        android:id="@+id/sheet_inventory_item_add_fromEquipment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links"
+                        android:text="@string/sheet_click_to_add_catalog" />
+
+                    <TextView
+                        android:id="@+id/sheet_inventory_item_add_fromMagic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links"
+                        android:text="@string/sheet_click_to_add_magic" />
+
+                    <TextView
+                        android:id="@+id/sheet_inventory_item_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links"
+                        android:text="@string/sheet_click_to_add_manual" />
+
+                </com.wefika.flowlayout.FlowLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
