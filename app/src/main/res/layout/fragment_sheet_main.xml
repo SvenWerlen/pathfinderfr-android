@@ -1732,7 +1732,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:textSize="@dimen/sheet_font_text_links"
-                        android:textFontWeight="bold"
+                        android:textStyle="bold"
                         android:text="@string/sheet_click_to_add_label" />
 
                     <TextView
