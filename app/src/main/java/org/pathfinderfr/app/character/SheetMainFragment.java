@@ -46,6 +46,7 @@ import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
+import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -696,6 +697,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         // inventory
         view.findViewById(R.id.sheet_inventory_item_add).setOnClickListener(listener);
         view.findViewById(R.id.sheet_inventory_item_add_fromEquipment).setOnClickListener(listener);
+        view.findViewById(R.id.sheet_inventory_item_add_fromMagic).setOnClickListener(listener);
         inventory = view.findViewById(R.id.sheet_inventory_table);
         inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
         inventoryWeightExample = view.findViewById(R.id.sheet_inventory_example_weight);
@@ -779,6 +781,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add), 0, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add_fromEquipment), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add_fromMagic), 0, scale);
 
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_money_total_value), 0, scale);
         }
@@ -1601,6 +1604,18 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
                 intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, EquipmentFactory.FACTORY_ID);
+                context.startActivity(intent);
+                parent.refreshNeeded = true;
+            }
+            else if(v.getId() == R.id.sheet_inventory_item_add_fromMagic) {
+                // set character as "selected"
+                PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
+                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
+                        apply();
+                Context context = parent.getContext();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, MagicItemFactory.FACTORY_ID);
                 context.startActivity(intent);
                 parent.refreshNeeded = true;
             }
