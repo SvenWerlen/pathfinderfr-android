@@ -11,6 +11,8 @@ import android.util.Log;
 
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.CharacterItem;
+import org.pathfinderfr.app.database.entity.CharacterItemFactory;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
@@ -48,7 +50,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 22;
+    public static final int DATABASE_VERSION = 23;
 
     private static DBHelper instance;
 
@@ -93,6 +95,12 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", factory.getTableName()));
         db.execSQL(factory.getQueryCreateTable());
+    }
+
+    // DEBUGING ONLY
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
     }
 
     @Override
@@ -242,6 +250,14 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 22;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 22");
         }
+        // version 23 introduced character items as separate database table
+        if(oldVersion == 22) {
+            executeNoFail(db, CharacterItemFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, CharacterItemFactory.getInstance().getQueryCreateIndex());
+            migrateCharacterItems(db);
+            oldVersion = 23;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 23");
+        }
     }
 
     /**
@@ -274,6 +290,76 @@ public class DBHelper extends SQLiteOpenHelper {
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV20());
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV21());
         executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV22());
+    }
+
+    /**
+     * Execute sql queries for migrating Character.inventory => CharacterItems[]
+     */
+    private void migrateCharacterItems(SQLiteDatabase db) {
+        Cursor res =  db.rawQuery( String.format("SELECT id, inventory FROM characters"), null );
+        // not found?
+        if(res.getCount()<1) {
+            res.close();
+            return;
+        }
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            int index = 0;
+            long characterId = res.getLong(res.getColumnIndex("id"));
+            String inventory = res.getString(res.getColumnIndex("inventory"));
+            if(inventory != null && inventory.length() > 0 ) {
+                String[] items = inventory.split("#");
+                for(String item : items) {
+                    String[] props = item.split("\\|");
+                    if (props.length >= 2) {
+                        String name = props[0];
+                        int weight = 0;
+                        try {
+                            weight = Integer.parseInt(props[1]);
+                        } catch (NumberFormatException nfe) {
+                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + props[1] + "' is invalid (NFE)!");
+                        }
+                        // item reference was introduced later
+                        long objId = 0;
+                        if (props.length >= 3) {
+                            try {
+                                objId = Long.parseLong(props[2]);
+                            } catch (NumberFormatException nfe) {
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + props[2] + "' is invalid (NFE)!");
+                            }
+                        }
+                        // item additional info (ex: ammo)
+                        String infos = null;
+                        if (props.length >= 4) {
+                            infos = props[3];
+                        }
+                        // item cost was introduced later
+                        long price = 0;
+                        if (props.length >= 5) {
+                            try {
+                                price = Long.parseLong(props[4]);
+                            } catch (NumberFormatException nfe) {
+                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + props[4] + "' is invalid (NFE)!");
+                            }
+                        }
+                        CharacterItem cItem = new CharacterItem();
+                        cItem.setCharacterId(characterId);
+                        cItem.setOrder(index);
+                        cItem.setName(name);
+                        cItem.setPrice(price);
+                        cItem.setWeight(weight);
+                        cItem.setItemRef(objId);
+                        cItem.setAmmo(infos);
+                        cItem.setLocation(CharacterItem.LOCATION_NOLOC);
+                        ContentValues contentValues = cItem.getFactory().generateContentValuesFromEntity(cItem);
+                        db.insert(cItem.getFactory().getTableName(), null, contentValues);
+                        index++;
+                    }
+                }
+            }
+            res.moveToNext();
+        }
+        res.close();
     }
 
     /**
@@ -363,7 +449,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public boolean deleteEntity(DBEntity entity) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(entity instanceof Character) {
+        if(entity instanceof Character || entity instanceof CharacterItem) {
             String query = String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId());
             db.execSQL(query);
             return true;
@@ -472,17 +558,17 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param item to be converted into weapon, armor, etc.
      * @return the entity as object (assuming that it will always be found)
      */
-    public DBEntity fetchObjectEntity(Character.InventoryItem item) {
+    public DBEntity fetchObjectEntity(CharacterItem item) {
         if(item.isNotLinked()) {
             return null;
         } else if(item.isWeapon()) {
-            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_WEAPONS, WeaponFactory.getInstance());
+            return fetchEntity(item.getOriginalItemRef(), WeaponFactory.getInstance());
         } else if(item.isArmor()) {
-            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_ARMORS, ArmorFactory.getInstance());
+            return fetchEntity(item.getOriginalItemRef(), ArmorFactory.getInstance());
         } else if(item.isEquipment()) {
-            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_EQUIPMENT, EquipmentFactory.getInstance());
+            return fetchEntity(item.getOriginalItemRef(), EquipmentFactory.getInstance());
         } else if(item.isMagicItem()) {
-            return fetchEntity(item.getObjectId() - Character.InventoryItem.IDX_MAGICITEM, MagicItemFactory.getInstance());
+            return fetchEntity(item.getOriginalItemRef(), MagicItemFactory.getInstance());
         }
         return null;
     }
@@ -551,6 +637,30 @@ public class DBHelper extends SQLiteOpenHelper {
         res.close();
         return list;
     }
+
+    /**
+     * @param ids foreign ids to search for
+     * @param factory factory corresponding to the element (skill, feet, spell, etc.)
+     * @return the entity as object (or null if not found)
+     */
+    public List<DBEntity> fetchAllEntitiesByForeignIds(long[] ids, DBEntityFactory factory) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( factory.getQueryFetchByForeignKeys(ids), null );
+        // not found?
+        if(res.getCount()<1) {
+            res.close();
+            return null;
+        }
+        res.moveToFirst();
+        List<DBEntity> list = new ArrayList<>();
+        while (res.isAfterLast() == false) {
+            list.add(factory.generateEntity(res));
+            res.moveToNext();
+        }
+        res.close();
+        return list;
+    }
+
 
 
     public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {

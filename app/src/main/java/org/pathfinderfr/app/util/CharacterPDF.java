@@ -23,6 +23,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.CharacterItem;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassFeature;
@@ -1037,8 +1038,8 @@ public class CharacterPDF {
         table.addCell(createHeader("Poids").setMinWidth(30));
 
         int totalWeight = 0;
-        List<Character.InventoryItem> items = new ArrayList<>();
-        for(Character.InventoryItem item : character.getInventoryItems()) {
+        List<CharacterItem> items = new ArrayList<>();
+        for(CharacterItem item : character.getInventoryItems()) {
             boolean add = true;
             if(item.isWeapon()) {
                 add = options.showWeaponsInInventory;
@@ -1056,7 +1057,7 @@ public class CharacterPDF {
             String itemName = "";
             int itemWeight = -1;
             if(i < items.size()) {
-                Character.InventoryItem item = items.get(i);
+                CharacterItem item = items.get(i);
                 itemName = stringMax(item.getName(),25);
                 itemWeight = item.getWeight();
             }

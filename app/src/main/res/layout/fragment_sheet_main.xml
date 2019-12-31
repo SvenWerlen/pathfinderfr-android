@@ -1638,19 +1638,29 @@
             android:id="@+id/main_table_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="0"
-            android:shrinkColumns="0">
+            android:stretchColumns="1"
+            android:shrinkColumns="1">
 
             <TableRow
+                android:id="@+id/sheet_main_inventory_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimaryDark"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
 
+                <ImageView
+                    android:id="@+id/sheet_main_inventory_header_filter"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="start|center"
+                    app:srcCompat="@drawable/ic_filter" />
+
                 <TextView
+                    android:id="@+id/sheet_main_inventory_header"
                     android:layout_height="wrap_content"
-                    android:text="@string/sheet_main_inventory_example_label_name"
+                    android:text="@string/sheet_main_inventory_header_active"
                     android:textColor="@color/colorWhite"
                     android:paddingStart="5dp"
                     android:textStyle="bold"/>
@@ -1660,8 +1670,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
-                    android:text="@string/sheet_main_inventory_example_label_weight"
-                    android:width="60dp"
+                    android:text="@string/sheet_main_inventory_Header_location"
                     android:paddingEnd="5dp"
                     android:textAlignment="textEnd"
                     android:textColor="@color/colorWhite"
@@ -1676,34 +1685,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:stretchColumns="0"
-            android:shrinkColumns="0">
+            android:stretchColumns="1"
+            android:shrinkColumns="1">
 
             <TableRow
                 android:id="@+id/sheet_inventory_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/sheet_inventory_example_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="3dp"
+                    app:srcCompat="@drawable/ic_person" />
+
                 <TextView
                     android:id="@+id/sheet_inventory_example_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sheet_inventory_example_name"
-                    android:paddingStart="5dp"
+                    android:paddingStart="2dp"
                     android:paddingEnd="5dp"/>
 
                 <TextView
-                    android:id="@+id/sheet_inventory_example_weight"
+                    android:id="@+id/sheet_inventory_example_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
+                    android:paddingEnd="10dp"
                     android:text="@string/sheet_inventory_example_total"
-                    android:width="60dp"
                     android:layout_gravity="bottom"
-                    android:textAlignment="textEnd"/>
+                    android:textAlignment="center"/>
 
             </TableRow>
 
@@ -1766,27 +1782,6 @@
 
                 </com.wefika.flowlayout.FlowLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:text="@string/sheet_inventory_label_total_weight" />
-
-                <TextView
-                    android:id="@+id/sheet_inventory_item_totalweight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:text="@string/sheet_inventory_total_weight"
-                    android:width="60dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"/>
-
             </TableRow>
 
         </TableLayout>
@@ -1795,6 +1790,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:gravity="start|top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp"
+                android:text="@string/sheet_inventory_label_total_weight" />
+
+            <TextView
+                android:id="@+id/sheet_inventory_item_totalweight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="@dimen/sheet_font_text_links"
+                android:text="@string/sheet_inventory_total_weight" />
+
+        </com.wefika.flowlayout.FlowLayout>
+
+        <com.wefika.flowlayout.FlowLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="start|top">
 
             <TextView

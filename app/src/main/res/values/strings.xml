@@ -481,7 +481,9 @@
     <string name="sheet_money_total_value">130 po, 5 pa, 3 pc</string>
 
     <!-- Inventory -->
-    <string name="sheet_main_inventory_example_label_name">Inventaire</string>
+    <string name="sheet_main_inventory_header_active">Équipement actif</string>
+    <string name="sheet_main_inventory_header_all">Tout l\'équipement</string>
+    <string name="sheet_main_inventory_Header_location">Emplacement</string>
     <string name="sheet_main_inventory_example_label_weight">Poids</string>
     <string name="sheet_inventory_example_name">Nom de l\'élément de l\'inventaire</string>
     <string name="sheet_inventory_example_total">0</string>
@@ -490,10 +492,11 @@
 
     <!-- Inventory picker -->
     <string name="sheet_inventory_item_title">Élément de l\'inventaire:</string>
-    <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments sont toujours triés par ordre alphabétique. Vous pouvez aussi ajouter une arme ou une armure à partir du catalogue.</string>
-    <string name="sheet_inventory_item_name">Descriptif:</string>
+    <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments ajoutés depuis le catalogue gardent une référence.</string>
+    <string name="sheet_inventory_item_name">Nom:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_price">Valeur (prix):</string>
+    <string name="sheet_inventory_item_location">Emplacement:</string>
     <string name="sheet_inventory_item_price_unit">Unité de prix</string>
     <string name="sheet_inventory_item_reference">Référence:</string>
     <string name="sheet_inventory_item_reference_example">Arc long</string>

@@ -17,7 +17,6 @@ import org.pathfinderfr.app.util.Pair;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -278,12 +277,12 @@ public class CharacterImportExport {
 
         // inventory
         List<Map> inventory = new ArrayList();
-        for(Character.InventoryItem item : c.getInventoryItems()) {
+        for(CharacterItem item : c.getInventoryItems()) {
             Map<String, Object> itemObj = new LinkedHashMap();
             itemObj.put(YAML_NAME, item.getName());
             itemObj.put(YAML_WEIGHT, item.getWeight());
             itemObj.put(YAML_PRICE, item.getPrice());
-            if(item.getObjectId() > 0) {
+            if(item.getItemRef() > 0) {
                 DBEntity e = dbHelper.fetchObjectEntity(item);
                 if(e != null) {
                     if(e instanceof Weapon) {
@@ -297,8 +296,8 @@ public class CharacterImportExport {
                     }
                 }
             }
-            if(item.getInfos() != null && item.getInfos().length() > 0) {
-                itemObj.put(YAML_AMMO, item.getInfos());
+            if(item.getAmmo() != null && item.getAmmo().length() > 0) {
+                itemObj.put(YAML_AMMO, item.getAmmo());
             }
             inventory.add(itemObj);
         }
@@ -702,25 +701,25 @@ public class CharacterImportExport {
                                     String reference = (String)values.get(YAML_REFERENCE);
                                     if(reference.startsWith(YAML_REF_TYPE_W)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_W.length()+1), WeaponFactory.getInstance());
-                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_WEAPONS + object.getId();
+                                        //objectId = object == null ? 0L : CharacterItem.IDX_WEAPONS + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_A)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_A.length()+1), ArmorFactory.getInstance());
-                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_ARMORS + object.getId();
+                                        //objectId = object == null ? 0L : Character.InventoryItem.IDX_ARMORS + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_E)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_E.length()+1), EquipmentFactory.getInstance());
-                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_EQUIPMENT + object.getId();
+                                        //objectId = object == null ? 0L : Character.InventoryItem.IDX_EQUIPMENT + object.getId();
                                     }
                                     else if(reference.startsWith(YAML_REF_TYPE_M)) {
                                         object = dbHelper.fetchEntityByName(reference.substring(YAML_REF_TYPE_M.length()+1), MagicItemFactory.getInstance());
-                                        objectId = object == null ? 0L : Character.InventoryItem.IDX_MAGICITEM + object.getId();
+                                        //objectId = object == null ? 0L : Character.InventoryItem.IDX_MAGICITEM + object.getId();
                                     }
                                     if(object == null) {
                                         errors.add(ERROR_INVENTORY_REFERENCE);
                                     }
                                 }
-                                c.addInventoryItem(new Character.InventoryItem(itemName, itemWeight, itemPrice, objectId, (String)values.get(YAML_AMMO)));
+                                //c.addInventoryItem(new CharacterItem(0L, itemName, itemWeight, itemPrice, objectId, (String)values.get(YAML_AMMO), CharacterItem.LOCATION_BAG));
                             }
                         }
                     }

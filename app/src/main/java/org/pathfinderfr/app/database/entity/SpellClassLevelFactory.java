@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
 
+import java.util.Locale;
+
 public class SpellClassLevelFactory {
 
     public static final String TABLENAME         = "spellclasslevel";
@@ -28,13 +30,12 @@ public class SpellClassLevelFactory {
     }
 
     public String getQueryCreateTable() {
-        String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
+        return String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
                         "%s integer, %s integer, %s integer" +
                         ")",
                 TABLENAME, COLUMN_ID,
                 COLUMN_SPELLID, COLUMN_CLASSID, COLUMN_LEVEL);
-        return query;
     }
 
     public String getQueryCreateIndex() {
@@ -42,7 +43,7 @@ public class SpellClassLevelFactory {
     }
 
     public String getQuerySpells(Class cl, int maxLevl) {
-        return String.format("SELECT * FROM %s WHERE %s=%d and %s<=%d",
+        return String.format(Locale.CANADA, "SELECT * FROM %s WHERE %s=%d and %s<=%d",
                 TABLENAME, COLUMN_CLASSID, cl.getId(), COLUMN_LEVEL, maxLevl);
     }
 

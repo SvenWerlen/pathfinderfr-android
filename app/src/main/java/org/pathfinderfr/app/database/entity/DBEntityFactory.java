@@ -69,6 +69,13 @@ public abstract class DBEntityFactory {
     }
 
     /**
+     * @return the query to fetch multiple entities (search by foreign key(s))
+     */
+    public String getQueryFetchByForeignKeys(long... id) {
+        throw new IllegalStateException(String.format("Table %s doesn't support fetchByForeignKeys", getTableName()));
+    }
+
+    /**
      * @return the query to fetch all entities
      */
     public String getQueryFetchAll(String... sources) {
@@ -171,6 +178,14 @@ public abstract class DBEntityFactory {
     protected static int extractValueAsInt(@NonNull final Cursor resource, String columnName) {
         if(resource.getColumnIndex(columnName)>=0) {
             return resource.getInt(resource.getColumnIndex(columnName));
+        } else {
+            return -1;
+        }
+    }
+
+    protected static long extractValueAsLong(@NonNull final Cursor resource, String columnName) {
+        if(resource.getColumnIndex(columnName)>=0) {
+            return resource.getLong(resource.getColumnIndex(columnName));
         } else {
             return -1;
         }

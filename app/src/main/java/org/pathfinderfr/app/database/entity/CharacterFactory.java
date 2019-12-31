@@ -426,23 +426,23 @@ public class CharacterFactory extends DBEntityFactory {
             }
 
             // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
-            List<Character.InventoryItem> inventory = c.getInventoryItems();
-            if (inventory.size() > 0) {
-                StringBuffer value = new StringBuffer();
-                for (Character.InventoryItem item : inventory) {
-                    value.append(item.getName()).append('|');
-                    value.append(item.getWeight()).append('|');
-                    value.append(item.getObjectId()).append('|');
-                    value.append(item.getInfos() != null ? item.getInfos() : "").append('|');
-                    value.append(item.getPrice());
-                    value.append('#');
-                }
-                value.deleteCharAt(value.length() - 1);
-                Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
-                contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
-            } else {
-                contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
-            }
+//            List<CharacterItem> inventory = c.getInventoryItems();
+//            if (inventory.size() > 0) {
+//                StringBuffer value = new StringBuffer();
+//                for (CharacterItem item : inventory) {
+//                    value.append(item.getName()).append('|');
+//                    value.append(item.getWeight()).append('|');
+//                    value.append(item.getObjectId()).append('|');
+//                    value.append(item.getInfos() != null ? item.getInfos() : "").append('|');
+//                    value.append(item.getPrice());
+//                    value.append('#');
+//                }
+//                value.deleteCharAt(value.length() - 1);
+//                Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
+//                contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
+//            } else {
+//                contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
+//            }
 
             // new 16 fields for PDF
             contentValues.put(CharacterFactory.COLUMN_SPEED_ARMOR, c.getSpeedWithArmor());
@@ -699,50 +699,50 @@ public class CharacterFactory extends DBEntityFactory {
             }
 
             // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>|<inventory1-objectId>|<inventory1-infos>#<inventory2>|<inventory2-weight>...
-            String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
-            Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
-            if (inventoryValue != null && inventoryValue.length() > 0) {
-                for (String item : inventoryValue.split("#")) {
-                    String[] itemElements = item.split("\\|");
-                    if (itemElements != null && itemElements.length >= 2) {
-                        String name = itemElements[0];
-                        int weight = 0;
-                        try {
-                            weight = Integer.parseInt(itemElements[1]);
-                        } catch (NumberFormatException nfe) {
-                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
-                        }
-                        // item reference was introduced later
-                        long objId = 0;
-                        if (itemElements.length >= 3) {
-                            try {
-                                objId = Long.parseLong(itemElements[2]);
-                            } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
-                            }
-                        }
-                        // item additional info (ex: ammo)
-                        String infos = null;
-                        if (itemElements.length >= 4) {
-                            infos = itemElements[3];
-                        }
-                        // item cost was introduced later
-                        int price = 0;
-                        if (itemElements.length >= 5) {
-                            try {
-                                price = Integer.parseInt(itemElements[4]);
-                            } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
-                            }
-                        }
-
-                        Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
-                        if (toAdd.isValid()) {
-                            c.addInventoryItem(toAdd);
-                        }
-                    }
-                }
-            }
+//            String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
+//            Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
+//            if (inventoryValue != null && inventoryValue.length() > 0) {
+//                for (String item : inventoryValue.split("#")) {
+//                    String[] itemElements = item.split("\\|");
+//                    if (itemElements != null && itemElements.length >= 2) {
+//                        String name = itemElements[0];
+//                        int weight = 0;
+//                        try {
+//                            weight = Integer.parseInt(itemElements[1]);
+//                        } catch (NumberFormatException nfe) {
+//                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
+//                        }
+//                        // item reference was introduced later
+//                        long objId = 0;
+//                        if (itemElements.length >= 3) {
+//                            try {
+//                                objId = Long.parseLong(itemElements[2]);
+//                            } catch (NumberFormatException nfe) {
+//                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
+//                            }
+//                        }
+//                        // item additional info (ex: ammo)
+//                        String infos = null;
+//                        if (itemElements.length >= 4) {
+//                            infos = itemElements[3];
+//                        }
+//                        // item cost was introduced later
+//                        int price = 0;
+//                        if (itemElements.length >= 5) {
+//                            try {
+//                                price = Integer.parseInt(itemElements[4]);
+//                            } catch (NumberFormatException nfe) {
+//                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
+//                            }
+//                        }
+//
+//                        Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
+//                        if (toAdd.isValid()) {
+//                            c.addInventoryItem(toAdd);
+//                        }
+//                    }
+//                }
+//            }
 
             // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1Linkto>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif1Linkto>
             // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>

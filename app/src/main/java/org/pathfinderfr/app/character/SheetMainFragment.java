@@ -41,6 +41,8 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
+import org.pathfinderfr.app.database.entity.CharacterItem;
+import org.pathfinderfr.app.database.entity.CharacterItemFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
@@ -94,6 +96,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
     private static final String DIALOG_SYNC_ACTION    = "sync-action";
 
+    public static final String KEY_INVENTORY_SHOWALL = "pref_inventory_showall";
+
+
     private Character character;
     private List<TextView> classPickers;
     private List<ImageView> modifPickers;
@@ -102,8 +107,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private TextView weaponNameExample;
     private TextView weaponTextExample;
     private TableLayout inventory;
+    private ImageView inventoryIconExample;
     private TextView inventoryNameExample;
-    private TextView inventoryWeightExample;
+    private TextView inventoryLocationExample;
 
     private long characterId;
     ProfileListener listener;
@@ -699,9 +705,25 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.sheet_inventory_item_add_fromEquipment).setOnClickListener(listener);
         view.findViewById(R.id.sheet_inventory_item_add_fromMagic).setOnClickListener(listener);
         inventory = view.findViewById(R.id.sheet_inventory_table);
+        inventoryIconExample = view.findViewById(R.id.sheet_inventory_example_icon);
         inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
-        inventoryWeightExample = view.findViewById(R.id.sheet_inventory_example_weight);
+        inventoryLocationExample = view.findViewById(R.id.sheet_inventory_example_location);
         updateInventory(view);
+
+        view.findViewById(R.id.sheet_main_inventory_toggle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(v.getContext());
+                // toggle
+                boolean showAll = !prefs.getBoolean(KEY_INVENTORY_SHOWALL, false);
+                if(showAll) {
+                    prefs.edit().putBoolean(KEY_INVENTORY_SHOWALL, true).apply();
+                } else {
+                    prefs.edit().remove(KEY_INVENTORY_SHOWALL).apply();
+                }
+                updateInventory(SheetMainFragment.this.getView());
+            }
+        });
 
         // fat fingers
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -1009,8 +1031,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 public void onClick(View v) {
                     // try to find matching inventory item
                     int inventoryIdx = 0;
-                    Character.InventoryItem matchingItem = null;
-                    for(Character.InventoryItem item : character.getInventoryItems()) {
+                    CharacterItem matchingItem = null;
+                    for(CharacterItem item : character.getInventoryItems()) {
                         if(item.isWeapon() && item.getName().equals(weapon.getName())) {
                             matchingItem = item;
                             break;
@@ -1032,12 +1054,13 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
 
                     Bundle arguments = new Bundle();
-                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_IDX, inventoryIdx);
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, matchingItem.getId());
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, matchingItem.getName());
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, matchingItem.getWeight());
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, matchingItem.getPrice());
-                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, matchingItem.getObjectId());
-                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, matchingItem.getInfos());
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, matchingItem.getItemRef());
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, matchingItem.getLocation());
+                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, matchingItem.getAmmo());
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 }
@@ -1048,8 +1071,14 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private void updateInventory(View view) {
         inventory.removeAllViews();
         int rowId = 0;
-        for(Character.InventoryItem item : character.getInventoryItems()) {
+        boolean showAll = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getBoolean(KEY_INVENTORY_SHOWALL, false);
+        List<CharacterItem> items = showAll ? character.getInventoryItems() : character.getEquipedItems();
+        ((TextView)view.findViewById(R.id.sheet_main_inventory_header)).setText(showAll ? R.string.sheet_main_inventory_header_all : R.string.sheet_main_inventory_header_active);
+        view.findViewById(R.id.sheet_main_inventory_header_filter).setVisibility(showAll ? View.GONE : View.VISIBLE);
+
+        for(CharacterItem item : items) {
             TableRow row = new TableRow(view.getContext());
+            ImageView icon = FragmentUtil.copyExampleImageFragment(inventoryIconExample);
             TextView name = FragmentUtil.copyExampleTextFragment(inventoryNameExample);
             name.setText(item.getName());
             LinearLayout nameLayout = new LinearLayout(view.getContext());
@@ -1064,23 +1093,21 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             dropHere.setPadding(30, 5, 30, 5);
             nameLayout.addView(dropHere);
             nameLayout.addView(name);
+            row.addView(icon);
             row.addView(nameLayout);
-            TextView weight = FragmentUtil.copyExampleTextFragment(inventoryWeightExample);
-            if(item.getWeight() >= 1000) {
-                weight.setText(String.format("%.1fkg", item.getWeight()/1000f));
-            } else {
-                weight.setText(String.format("%dg", item.getWeight()));
-            }
-            weight.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            row.addView(weight);
+            TextView location = FragmentUtil.copyExampleTextFragment(inventoryLocationExample);
+            location.setText(ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation()));
+            location.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            row.addView(location);
             row.setBackgroundColor(ContextCompat.getColor(getContext(), rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
-            final int itemIdx = rowId;
+            final long itemId = item.getId();
             final String itemName = item.getName();
             final int itemWeight = item.getWeight();
             final long itemPrice = item.getPrice();
-            final long itemReference = item.getObjectId();
-            final String itemInfos = item.getInfos();
-            row.setTag(new Triplet<TextView, TextView, Integer>(dropHere, name, itemIdx));
+            final long itemReference = item.getItemRef();
+            final int itemLoc = item.getLocation();
+            final String itemInfos = item.getAmmo();
+            row.setTag(new Triplet<TextView, TextView, Long>(dropHere, name, item.getId()));
             row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1093,11 +1120,12 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     DialogFragment newFragment = FragmentInventoryPicker.newInstance(SheetMainFragment.this);
 
                     Bundle arguments = new Bundle();
-                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_IDX, itemIdx);
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, itemId);
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, itemName);
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, itemWeight);
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, itemPrice);
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, itemReference);
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, itemLoc);
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, itemInfos);
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
@@ -1117,7 +1145,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
     private void updateMoneyValue(View view) {
         long total = 0;
-        for(Character.InventoryItem item : character.getInventoryItems()) {
+        for(CharacterItem item : character.getInventoryItems()) {
             total += item.getPrice();
         }
         total += character.getMoneyCP();
@@ -1661,7 +1689,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     return true;
                 }
             } else {
-                Triplet<TextView,TextView,Integer> triplet = (Triplet<TextView,TextView,Integer>)v.getTag();
+                Triplet<TextView,TextView,Long> triplet = (Triplet<TextView,TextView,Long>)v.getTag();
                 TextView tvName = triplet.second;
                 ClipData.Item item = new ClipData.Item(triplet.third.toString());
                 String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
@@ -1678,7 +1706,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
-            Triplet<TextView,TextView,Integer> triplet = (Triplet<TextView,TextView,Integer>)v.getTag();
+            Triplet<TextView,TextView,Long> triplet = (Triplet<TextView,TextView,Long>)v.getTag();
 
             switch(event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
@@ -1701,15 +1729,14 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 case DragEvent.ACTION_DROP:
                     triplet.first.setVisibility(View.GONE);
                     ClipData.Item item = event.getClipData().getItemAt(0);
-                    int idxItemToMove = Integer.parseInt(item.getText().toString());
-                    int idxBeforeItem = triplet.third;
-                    Log.i(SheetMainFragment.class.getSimpleName(), "Item " + idxItemToMove + " moved before " + idxBeforeItem);
-                    if(parent.character.moveInventoryItem(idxItemToMove, idxBeforeItem)) {
-                        Log.i(SheetMainFragment.class.getSimpleName(), "Item was moved!");
-                        parent.updateInventory(parent.getView());
-                        parent.updateWeapons(parent.getView());
-                        parent.characterDBUpdate();
-                    }
+                    long itemIdToMove = Long.parseLong(item.getText().toString());
+                    long itemIdBefore = triplet.third;
+                    CharacterItemFactory.moveItem(DBHelper.getInstance(parent.getContext()), parent.character.getInventoryItems(), itemIdToMove, itemIdBefore);
+                    Log.i(SheetMainFragment.class.getSimpleName(), "Item was moved!");
+                    parent.character.resyncInventory();
+                    parent.updateInventory(parent.getView());
+                    parent.updateWeapons(parent.getView());
+                    parent.characterDBUpdate();
                     break;
                 default: break;
             }
@@ -1983,30 +2010,38 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
     @Override
-    public void onAddItem(Character.InventoryItem item) {
+    public void onAddItem(CharacterItem item) {
         if(item != null && item.isValid()) {
-            character.addInventoryItem(item);
+            item.setCharacterId(character.getId());
+            DBHelper helper = DBHelper.getInstance(getContext());
+            long itemId = helper.insertEntity(item);
+            CharacterItemFactory.moveItem(helper, character.getInventoryItems(), itemId, -1);
+            character.resyncInventory();
             updateInventory(getView());
-            // store changes
-            characterDBUpdate();
         }
     }
 
     @Override
-    public void onDeleteItem(int itemIdx) {
-        character.deleteInventoryItem(itemIdx);
-        updateInventory(getView());
-        // store changes
-        characterDBUpdate();
+    public void onDeleteItem(long itemId) {
+        CharacterItem item = character.getInventoryItemById(itemId);
+        if(item != null) {
+            DBHelper.getInstance(getContext()).deleteEntity(item);
+            character.resyncInventory();
+            updateInventory(getView());
+        }
     }
 
     @Override
-    public void onUpdateItem(int itemIdx, Character.InventoryItem item) {
+    public void onUpdateItem(long itemId, CharacterItem updatedItem) {
+        CharacterItem item = character.getInventoryItemById(itemId);
         if(item != null && item.isValid()) {
-            character.modifyInventoryItem(itemIdx, item);
+            // keep some settings
+            updatedItem.setId(itemId);
+            updatedItem.setCharacterId(character.getId());
+            updatedItem.setOrder(item.getOrder());
+            DBHelper.getInstance(getContext()).updateEntity(updatedItem);
+            character.resyncInventory();
             updateInventory(getView());
-            // store changes
-            characterDBUpdate();
         }
     }
 
