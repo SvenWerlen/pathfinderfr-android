@@ -26,6 +26,8 @@ import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
+import org.pathfinderfr.app.database.entity.Modification;
+import org.pathfinderfr.app.database.entity.ModificationFactory;
 import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -250,11 +252,17 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 22;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 22");
         }
-        // version 23 introduced character items as separate database table
+        // version 23 introduced character items and modifs as separate database table
         if(oldVersion == 22) {
+            executeNoFail(db,"DROP TABLE IF EXISTS characitems");
+            executeNoFail(db,"DROP TABLE IF EXISTS modifs");
             executeNoFail(db, CharacterItemFactory.getInstance().getQueryCreateTable());
             executeNoFail(db, CharacterItemFactory.getInstance().getQueryCreateIndex());
-            migrateCharacterItems(db);
+            executeNoFail(db, ModificationFactory.getInstance().getQueryCreateTable());
+            executeNoFail(db, ModificationFactory.getInstance().getQueryCreateIndex());
+            MigrationHelper.migrateCharacterItems(db);
+            MigrationHelper.migrateModifs(db);
+            // clean: pref_characterModifStates
             oldVersion = 23;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 23");
         }
@@ -290,76 +298,6 @@ public class DBHelper extends SQLiteOpenHelper {
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV20());
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV21());
         executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV22());
-    }
-
-    /**
-     * Execute sql queries for migrating Character.inventory => CharacterItems[]
-     */
-    private void migrateCharacterItems(SQLiteDatabase db) {
-        Cursor res =  db.rawQuery( String.format("SELECT id, inventory FROM characters"), null );
-        // not found?
-        if(res.getCount()<1) {
-            res.close();
-            return;
-        }
-        res.moveToFirst();
-        while (!res.isAfterLast()) {
-            int index = 0;
-            long characterId = res.getLong(res.getColumnIndex("id"));
-            String inventory = res.getString(res.getColumnIndex("inventory"));
-            if(inventory != null && inventory.length() > 0 ) {
-                String[] items = inventory.split("#");
-                for(String item : items) {
-                    String[] props = item.split("\\|");
-                    if (props.length >= 2) {
-                        String name = props[0];
-                        int weight = 0;
-                        try {
-                            weight = Integer.parseInt(props[1]);
-                        } catch (NumberFormatException nfe) {
-                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + props[1] + "' is invalid (NFE)!");
-                        }
-                        // item reference was introduced later
-                        long objId = 0;
-                        if (props.length >= 3) {
-                            try {
-                                objId = Long.parseLong(props[2]);
-                            } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + props[2] + "' is invalid (NFE)!");
-                            }
-                        }
-                        // item additional info (ex: ammo)
-                        String infos = null;
-                        if (props.length >= 4) {
-                            infos = props[3];
-                        }
-                        // item cost was introduced later
-                        long price = 0;
-                        if (props.length >= 5) {
-                            try {
-                                price = Long.parseLong(props[4]);
-                            } catch (NumberFormatException nfe) {
-                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + props[4] + "' is invalid (NFE)!");
-                            }
-                        }
-                        CharacterItem cItem = new CharacterItem();
-                        cItem.setCharacterId(characterId);
-                        cItem.setOrder(index);
-                        cItem.setName(name);
-                        cItem.setPrice(price);
-                        cItem.setWeight(weight);
-                        cItem.setItemRef(objId);
-                        cItem.setAmmo(infos);
-                        cItem.setLocation(CharacterItem.LOCATION_NOLOC);
-                        ContentValues contentValues = cItem.getFactory().generateContentValuesFromEntity(cItem);
-                        db.insert(cItem.getFactory().getTableName(), null, contentValues);
-                        index++;
-                    }
-                }
-            }
-            res.moveToNext();
-        }
-        res.close();
     }
 
     /**
@@ -449,7 +387,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public boolean deleteEntity(DBEntity entity) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(entity instanceof Character || entity instanceof CharacterItem) {
+        if(entity instanceof Character || entity instanceof CharacterItem || entity instanceof Modification) {
             String query = String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId());
             db.execSQL(query);
             return true;
@@ -649,7 +587,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // not found?
         if(res.getCount()<1) {
             res.close();
-            return null;
+            return new ArrayList<>();
         }
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();

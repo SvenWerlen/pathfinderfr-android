@@ -18,231 +18,232 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/itemdetails_quickaction"/>
-
-            <ImageButton
-                android:id="@+id/actionPin"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_pin" />
-
-            <ImageButton
-                android:id="@+id/actionShare"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_share" />
-
-            <ImageButton
-                android:id="@+id/actionToggle"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_toggle_pos1" />
-
-            <ImageButton
-                android:id="@+id/actionPDF"
-                android:layout_width="19dp"
-                android:layout_height="25dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_genpdf" />
-
-            <ImageButton
-                android:id="@+id/actionSync"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_sync" />
-
-            <View android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/actionDelete"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@drawable/ic_delete" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/sheet_main_profile_infos"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        <com.wefika.flowlayout.FlowLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:text="@string/sheet_name" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/sheet_main_namepicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:tag="name"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_click_to_choose" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/itemdetails_quickaction" />
 
-        </com.wefika.flowlayout.FlowLayout>
+                <ImageButton
+                    android:id="@+id/actionPin"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_pin" />
 
-        <com.wefika.flowlayout.FlowLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
+                <ImageButton
+                    android:id="@+id/actionShare"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_share" />
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageButton
+                    android:id="@+id/actionToggle"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_toggle_pos1" />
+
+                <ImageButton
+                    android:id="@+id/actionPDF"
+                    android:layout_width="19dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_genpdf" />
+
+                <ImageButton
+                    android:id="@+id/actionSync"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_sync" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/actionDelete"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_delete" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sheet_main_profile_infos"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:text="@string/sheet_race" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/sheet_main_racepicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:tag="race"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_click_to_choose" />
+                <com.wefika.flowlayout.FlowLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
 
-        </com.wefika.flowlayout.FlowLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="@string/sheet_name"
+                        android:textStyle="bold" />
 
-        <com.wefika.flowlayout.FlowLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
+                    <TextView
+                        android:id="@+id/sheet_main_namepicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:tag="name"
+                        android:text="@string/sheet_click_to_choose"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:text="@string/sheet_other" />
+                </com.wefika.flowlayout.FlowLayout>
 
-            <TextView
-                android:id="@+id/sheet_main_otherpicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:tag="infos"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_click_to_fill" />
+                <com.wefika.flowlayout.FlowLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
 
-        </com.wefika.flowlayout.FlowLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="@string/sheet_race"
+                        android:textStyle="bold" />
 
-        <com.wefika.flowlayout.FlowLayout
-            android:id="@+id/sheet_main_classlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
+                    <TextView
+                        android:id="@+id/sheet_main_racepicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:tag="race"
+                        android:text="@string/sheet_click_to_choose"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:text="@string/sheet_classes" />
+                </com.wefika.flowlayout.FlowLayout>
 
-            <TextView
-                android:id="@+id/sheet_main_classpicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:tag="class"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_click_to_add" />
+                <com.wefika.flowlayout.FlowLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
 
-        </com.wefika.flowlayout.FlowLayout>
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="@string/sheet_other"
+                        android:textStyle="bold" />
 
-        <com.wefika.flowlayout.FlowLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="start|top">
+                    <TextView
+                        android:id="@+id/sheet_main_otherpicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:tag="infos"
+                        android:text="@string/sheet_click_to_fill"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links" />
 
-            <TextView
-                android:id="@+id/sheet_main_modif_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:textStyle="bold"
-                android:text="@string/sheet_modifs" />
+                </com.wefika.flowlayout.FlowLayout>
+
+                <com.wefika.flowlayout.FlowLayout
+                    android:id="@+id/sheet_main_classlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="@string/sheet_classes"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/sheet_main_classpicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:tag="class"
+                        android:text="@string/sheet_click_to_add"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/sheet_font_text_links" />
+
+                </com.wefika.flowlayout.FlowLayout>
+            </LinearLayout>
 
             <com.wefika.flowlayout.FlowLayout
-                android:id="@+id/sheet_main_modifslayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="start|top">
 
-                <ImageView
-                    android:id="@+id/sheet_main_modifs_example_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                <TextView
+                    android:id="@+id/sheet_main_modif_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginBottom="5dp"
-                    app:srcCompat="@drawable/modif_angry_eyes" />
+                    android:text="@string/sheet_modifs"
+                    android:textStyle="bold" />
+
+                <com.wefika.flowlayout.FlowLayout
+                    android:id="@+id/sheet_main_modifslayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="start|top">
+
+                    <ImageView
+                        android:id="@+id/sheet_main_modifs_example_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="start|center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginBottom="5dp"
+                        app:srcCompat="@drawable/modif_angry_eyes" />
+
+                </com.wefika.flowlayout.FlowLayout>
+
+                <TextView
+                    android:id="@+id/sheet_main_modifpicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:tag="modif"
+                    android:text="@string/sheet_click_to_add"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links" />
 
             </com.wefika.flowlayout.FlowLayout>
 
-            <TextView
-                android:id="@+id/sheet_main_modifpicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:tag="modif"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/sheet_font_text_links"
-                android:text="@string/sheet_click_to_add" />
 
-        </com.wefika.flowlayout.FlowLayout>
+            <ScrollView
+                android:id="@+id/sheet_main_summary_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone">
 
-
-        <ScrollView
-            android:id="@+id/sheet_main_summary_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="gone">
-
-            <WebView
-                android:id="@+id/sheet_main_summary"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
+                <WebView
+                    android:id="@+id/sheet_main_summary"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+            </ScrollView>
 
 
             <com.wefika.flowlayout.FlowLayout
@@ -265,8 +266,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_label_char"
                             android:textSize="@dimen/sheet_font_labels"
@@ -275,8 +276,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_label_value"
                             android:textSize="@dimen/sheet_font_labels"
@@ -285,8 +286,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_label_modif"
                             android:textSize="@dimen/sheet_font_labels"
@@ -302,9 +303,9 @@
                             android:id="@+id/ability_str"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_str"
                             android:textColor="@color/colorWhite"
@@ -314,10 +315,10 @@
                             android:id="@+id/ability_str_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability0"
                             android:text="@string/sheet_ability_value"
@@ -328,10 +329,10 @@
                             android:id="@+id/ability_str_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -347,9 +348,9 @@
                             android:id="@+id/ability_dex"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_dex"
                             android:textColor="@color/colorWhite"
@@ -359,10 +360,10 @@
                             android:id="@+id/ability_dex_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability1"
                             android:text="@string/sheet_ability_value"
@@ -373,10 +374,10 @@
                             android:id="@+id/ability_dex_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -392,9 +393,9 @@
                             android:id="@+id/ability_con"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_con"
                             android:textColor="@color/colorWhite"
@@ -404,10 +405,10 @@
                             android:id="@+id/ability_con_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability2"
                             android:text="@string/sheet_ability_value"
@@ -418,10 +419,10 @@
                             android:id="@+id/ability_con_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -437,9 +438,9 @@
                             android:id="@+id/ability_int"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_int"
                             android:textColor="@color/colorWhite"
@@ -449,10 +450,10 @@
                             android:id="@+id/ability_int_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability3"
                             android:text="@string/sheet_ability_value"
@@ -463,10 +464,10 @@
                             android:id="@+id/ability_int_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -482,9 +483,9 @@
                             android:id="@+id/ability_wis"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_wis"
                             android:textColor="@color/colorWhite"
@@ -494,10 +495,10 @@
                             android:id="@+id/ability_wis_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability4"
                             android:text="@string/sheet_ability_value"
@@ -508,10 +509,10 @@
                             android:id="@+id/ability_wis_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -527,9 +528,9 @@
                             android:id="@+id/ability_cha"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_cha"
                             android:textColor="@color/colorWhite"
@@ -539,10 +540,10 @@
                             android:id="@+id/ability_cha_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="ability5"
                             android:text="@string/sheet_ability_value"
@@ -553,10 +554,10 @@
                             android:id="@+id/ability_cha_modif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ability_modif"
                             android:textAlignment="center"
@@ -580,8 +581,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_label_other"
                             android:textSize="@dimen/sheet_font_labels"
@@ -590,8 +591,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_label_value"
                             android:textSize="@dimen/sheet_font_labels"
@@ -607,9 +608,9 @@
                             android:id="@+id/other_ini"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ini"
                             android:textColor="@color/colorWhite"
@@ -619,10 +620,10 @@
                             android:id="@+id/initiative_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:minWidth="40dp"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
@@ -639,9 +640,9 @@
                             android:id="@+id/other_ac"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_ac"
                             android:textColor="@color/colorWhite"
@@ -651,10 +652,10 @@
                             android:id="@+id/armorclass_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="3dp"
                             android:text="@string/sheet_other_value_multiple"
                             android:textAlignment="center"
@@ -671,9 +672,9 @@
                             android:id="@+id/other_mag"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_mag"
                             android:textColor="@color/colorWhite"
@@ -683,10 +684,10 @@
                             android:id="@+id/magicresistance_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -702,9 +703,9 @@
                             android:id="@+id/other_hp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_hp"
                             android:textColor="@color/colorWhite"
@@ -714,10 +715,10 @@
                             android:id="@+id/hitpoint_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="hitpoints"
                             android:text="@string/sheet_other_value"
@@ -734,9 +735,9 @@
                             android:id="@+id/other_hptemp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_hptemp"
                             android:textColor="@color/colorWhite"
@@ -746,10 +747,10 @@
                             android:id="@+id/hitpointtemp_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="hitpoints"
                             android:text="@string/sheet_other_value"
@@ -766,9 +767,9 @@
                             android:id="@+id/other_speed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_sp"
                             android:textColor="@color/colorWhite"
@@ -778,10 +779,10 @@
                             android:id="@+id/speed_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:tag="speed"
                             android:text="@string/sheet_other_value"
@@ -806,8 +807,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_saving"
                             android:textSize="@dimen/sheet_font_labels"
@@ -816,8 +817,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_total"
                             android:textAlignment="center"
@@ -827,8 +828,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_bonusbase"
                             android:textAlignment="center"
@@ -838,8 +839,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_ability"
                             android:textAlignment="center"
@@ -856,9 +857,9 @@
                             android:id="@+id/savingthrows_ref"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_ref"
                             android:textColor="@color/colorWhite"
@@ -868,10 +869,10 @@
                             android:id="@+id/savingthrows_reflex_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -881,10 +882,10 @@
                             android:id="@+id/savingthrows_reflex"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -894,10 +895,10 @@
                             android:id="@+id/savingthrows_reflex_ability"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -913,9 +914,9 @@
                             android:id="@+id/savingthrows_for"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_for"
                             android:textColor="@color/colorWhite"
@@ -925,10 +926,10 @@
                             android:id="@+id/savingthrows_fortitude_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -938,10 +939,10 @@
                             android:id="@+id/savingthrows_fortitude"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -951,10 +952,10 @@
                             android:id="@+id/savingthrows_fortitude_ability"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -970,9 +971,9 @@
                             android:id="@+id/savingthrows_wil"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_wil"
                             android:textColor="@color/colorWhite"
@@ -982,10 +983,10 @@
                             android:id="@+id/savingthrows_will_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -995,10 +996,10 @@
                             android:id="@+id/savingthrows_will"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1008,10 +1009,10 @@
                             android:id="@+id/savingthrows_will_ability"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1033,8 +1034,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_combat"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1043,8 +1044,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_total"
                             android:textAlignment="center"
@@ -1054,8 +1055,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_bab"
                             android:textAlignment="center"
@@ -1065,8 +1066,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_savingthrows_ability"
                             android:textAlignment="center"
@@ -1083,9 +1084,9 @@
                             android:id="@+id/combat_bab"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_bab"
                             android:textColor="@color/colorWhite"
@@ -1095,11 +1096,11 @@
                             android:id="@+id/base_attack_bonus_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:layout_span="3"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1115,9 +1116,9 @@
                             android:id="@+id/combat_cmb"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_cmb"
                             android:textColor="@color/colorWhite"
@@ -1127,10 +1128,10 @@
                             android:id="@+id/combat_cmb_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1140,10 +1141,10 @@
                             android:id="@+id/combat_cmb_bab"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1153,10 +1154,10 @@
                             android:id="@+id/combat_cmb_ability"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1173,9 +1174,9 @@
                             android:id="@+id/combat_cmd"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_cmd"
                             android:textColor="@color/colorWhite"
@@ -1185,10 +1186,10 @@
                             android:id="@+id/combat_cmd_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1198,10 +1199,10 @@
                             android:id="@+id/combat_cmd_bab"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1211,10 +1212,10 @@
                             android:id="@+id/combat_cmd_ability"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginHorizontal="2dp"
                             android:layout_marginVertical="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_other_value"
                             android:textAlignment="center"
@@ -1237,13 +1238,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="2dp"
                             android:layout_marginStart="2dp"
+                            android:layout_marginTop="2dp"
                             android:layout_marginEnd="2dp"
                             android:layout_span="3"
-                            android:paddingTop="4dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
+                            android:paddingTop="4dp"
                             android:paddingEnd="4dp"
                             android:text="@string/sheet_weapons"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1252,12 +1253,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="2dp"
                             android:layout_marginStart="2dp"
+                            android:layout_marginTop="2dp"
                             android:layout_marginEnd="2dp"
-                            android:paddingTop="4dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
+                            android:paddingTop="4dp"
                             android:paddingEnd="4dp"
                             android:text="@string/sheet_weapons_bonus"
                             android:textAlignment="center"
@@ -1267,18 +1268,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="2dp"
                             android:layout_marginStart="2dp"
+                            android:layout_marginTop="2dp"
                             android:layout_marginEnd="2dp"
-                            android:paddingTop="4dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
+                            android:paddingTop="4dp"
                             android:paddingEnd="4dp"
                             android:text="@string/sheet_weapons_critical"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
                             android:textStyle="italic" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
@@ -1286,13 +1288,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="2dp"
                             android:layout_marginStart="2dp"
                             android:layout_marginEnd="2dp"
-                            android:paddingBottom="4dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
                             android:paddingEnd="4dp"
+                            android:paddingBottom="4dp"
                             android:text="@string/sheet_weapons_type"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1301,13 +1303,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="2dp"
                             android:layout_marginStart="2dp"
                             android:layout_marginEnd="2dp"
-                            android:paddingBottom="4dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
                             android:paddingEnd="4dp"
+                            android:paddingBottom="4dp"
                             android:text="@string/sheet_weapons_range"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1316,13 +1318,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="2dp"
                             android:layout_marginStart="2dp"
                             android:layout_marginEnd="2dp"
-                            android:paddingBottom="4dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
                             android:paddingEnd="4dp"
+                            android:paddingBottom="4dp"
                             android:text="@string/sheet_weapons_ammo"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1331,14 +1333,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="2dp"
                             android:layout_marginStart="2dp"
                             android:layout_marginEnd="2dp"
+                            android:layout_marginBottom="2dp"
                             android:layout_span="2"
-                            android:paddingBottom="4dp"
+                            android:gravity="center_vertical"
                             android:paddingStart="4dp"
                             android:paddingEnd="4dp"
+                            android:paddingBottom="4dp"
                             android:text="@string/sheet_weapons_damages"
                             android:textAlignment="center"
                             android:textSize="@dimen/sheet_font_labels"
@@ -1355,10 +1357,10 @@
                             android:id="@+id/weapon_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_margin="2dp"
                             android:layout_span="3"
                             android:background="@color/colorPrimary"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:text="@string/sheet_weapon1"
                             android:textColor="@color/colorWhite"
@@ -1368,12 +1370,12 @@
                             android:id="@+id/weapon_bonus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
@@ -1382,17 +1384,18 @@
                             android:id="@+id/weapon_critical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
@@ -1401,12 +1404,12 @@
                             android:id="@+id/weapon_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
@@ -1415,12 +1418,12 @@
                             android:id="@+id/weapon_range"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
@@ -1429,12 +1432,12 @@
                             android:id="@+id/weapon_ammo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
@@ -1443,13 +1446,13 @@
                             android:id="@+id/weapon_damages"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
                             android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="2dp"
                             android:layout_span="2"
                             android:background="@drawable/text_box"
+                            android:gravity="center_vertical"
                             android:padding="4dp"
                             android:textAlignment="center"
                             android:textColor="@color/colorBlack" />
@@ -1477,9 +1480,9 @@
                                 android:id="@+id/money_cp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_margin="2dp"
                                 android:background="@color/colorPrimary"
+                                android:gravity="center_vertical"
                                 android:padding="4dp"
                                 android:text="@string/sheet_money_cp"
                                 android:textColor="@color/colorWhite"
@@ -1489,10 +1492,10 @@
                                 android:id="@+id/money_cp_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_marginHorizontal="2dp"
                                 android:layout_marginVertical="2dp"
                                 android:background="@drawable/text_box"
+                                android:gravity="center_vertical"
                                 android:minWidth="40dp"
                                 android:padding="4dp"
                                 android:tag="money"
@@ -1517,9 +1520,9 @@
                                 android:id="@+id/money_sp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_margin="2dp"
                                 android:background="@color/colorPrimary"
+                                android:gravity="center_vertical"
                                 android:padding="4dp"
                                 android:text="@string/sheet_money_sp"
                                 android:textColor="@color/colorWhite"
@@ -1529,10 +1532,10 @@
                                 android:id="@+id/money_sp_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_marginHorizontal="2dp"
                                 android:layout_marginVertical="2dp"
                                 android:background="@drawable/text_box"
+                                android:gravity="center_vertical"
                                 android:minWidth="40dp"
                                 android:padding="4dp"
                                 android:tag="money"
@@ -1557,9 +1560,9 @@
                                 android:id="@+id/money_gp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_margin="2dp"
                                 android:background="@color/colorPrimary"
+                                android:gravity="center_vertical"
                                 android:padding="4dp"
                                 android:text="@string/sheet_money_gp"
                                 android:textColor="@color/colorWhite"
@@ -1569,10 +1572,10 @@
                                 android:id="@+id/money_gp_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_marginHorizontal="2dp"
                                 android:layout_marginVertical="2dp"
                                 android:background="@drawable/text_box"
+                                android:gravity="center_vertical"
                                 android:minWidth="40dp"
                                 android:padding="4dp"
                                 android:tag="money"
@@ -1597,9 +1600,9 @@
                                 android:id="@+id/money_pp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_margin="2dp"
                                 android:background="@color/colorPrimary"
+                                android:gravity="center_vertical"
                                 android:padding="4dp"
                                 android:text="@string/sheet_money_pp"
                                 android:textColor="@color/colorWhite"
@@ -1609,10 +1612,10 @@
                                 android:id="@+id/money_pp_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
                                 android:layout_marginHorizontal="2dp"
                                 android:layout_marginVertical="2dp"
                                 android:background="@drawable/text_box"
+                                android:gravity="center_vertical"
                                 android:minWidth="40dp"
                                 android:padding="4dp"
                                 android:tag="money"
@@ -1651,15 +1654,16 @@
 
                 <ImageView
                     android:id="@+id/sheet_main_inventory_header_filter"
-                    android:layout_width="12dp"
+                    android:layout_width="20dp"
                     android:layout_height="12dp"
-                    android:layout_marginLeft="5dp"
                     android:layout_gravity="start|center"
                     app:srcCompat="@drawable/ic_filter" />
 
                 <TextView
                     android:id="@+id/sheet_main_inventory_header"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:text="@string/sheet_main_inventory_header_active"
                     android:textColor="@color/colorWhite"
                     android:paddingStart="5dp"
@@ -1695,10 +1699,9 @@
 
                 <ImageView
                     android:id="@+id/sheet_inventory_example_icon"
-                    android:layout_width="16dp"
+                    android:layout_width="22dp"
                     android:layout_height="16dp"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="3dp"
+                    android:layout_gravity="bottom|center"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
                     app:srcCompat="@drawable/ic_person" />
@@ -1716,7 +1719,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:paddingStart="5dp"
+                    android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/sheet_inventory_example_total"
                     android:layout_gravity="bottom"
@@ -1724,7 +1727,7 @@
 
                 <ImageView
                     android:id="@+id/sheet_inventory_unequiped"
-                    android:layout_width="16dp"
+                    android:layout_width="20dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|center"
                     android:layout_marginTop="2dp"

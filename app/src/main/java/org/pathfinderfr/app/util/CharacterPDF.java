@@ -29,6 +29,7 @@ import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -675,7 +676,7 @@ public class CharacterPDF {
         table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 0, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 0, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_INI)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_INI)));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createCell("Total", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
@@ -697,19 +698,19 @@ public class CharacterPDF {
         table.addCell(createCell("=", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createValueCell(10).setPadding(0).setMinWidth(9).setBorder(Border.NO_BORDER));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_ARMOR)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_ARMOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_SHIELD)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_SHIELD)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getSizeModifierArmorClass()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_NATURAL)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_NATURAL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC_PARADE)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_PARADE)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_COMBAT_AC)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_COMBAT_AC)));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(new Cell().setBorder(Border.NO_BORDER));
         table.addCell(createCell("Total", TextAlignment.CENTER, 1, 1, 0, 0).setBorder(Border.NO_BORDER));
@@ -777,9 +778,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getDexterityModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_REF)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_REF)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_REF)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_REF)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -793,9 +794,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getConstitutionModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_FOR)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_FOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_FOR)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_FOR)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -809,9 +810,9 @@ public class CharacterPDF {
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(character.getWisdomModif()));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_MAG_WIL)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_WIL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
-        table.addCell(createBonusCell(character.getAdditionalBonus(Character.MODIF_SAVES_ALL)+character.getAdditionalBonus(Character.MODIF_SAVES_WIL)));
+        table.addCell(createBonusCell(character.getAdditionalBonus(Modification.MODIF_SAVES_ALL)+character.getAdditionalBonus(Modification.MODIF_SAVES_WIL)));
         table.addCell(createCell("+", TextAlignment.CENTER, 1, 1, 5, 0).setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0).setBorder(Border.NO_BORDER));
         table.addCell(createBonusCell(null));
 
@@ -1273,7 +1274,7 @@ public class CharacterPDF {
             List<Class> classes = SpellUtil.getSpellListFrom(classLvl.first, null);
             for(Class cl : classes) {
                 // increase spell caster level
-                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
+                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Modification.MODIF_COMBAT_MAG_LVL));
                 filter.addFilterClass(cl.getId());
                 Class.Level lvl = cl.getLevel(classLvl.third);
                 if (lvl != null && lvl.getMaxSpellLvl() > 0) {

@@ -405,25 +405,25 @@ public class CharacterFactory extends DBEntityFactory {
             // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1LinkTo>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif2LinkTo>
             // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
             // (assuming that modif ids won't change during data import)
-            if (c.getModifsCount() > 0) {
-                StringBuffer value = new StringBuffer();
-                for (Character.CharacterModif modif : c.getModifs()) {
-                    value.append(modif.getSource()).append(':');
-                    for (int i = 0; i < modif.getModifCount(); i++) {
-                        value.append(modif.getModif(i).first).append('|');
-                        value.append(modif.getModif(i).second).append(',');
-                    }
-                    value.deleteCharAt(value.length() - 1).append(':');
-                    value.append(modif.getIcon()).append(':');
-                    value.append(modif.getLinkToWeapon());
-                    value.append('#');
-                }
-                value.deleteCharAt(value.length() - 1);
-                Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
-                contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
-            } else {
-                contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
-            }
+//            if (c.getModifsCount() > 0) {
+//                StringBuffer value = new StringBuffer();
+//                for (Character.CharacterModif modif : c.getModifs()) {
+//                    value.append(modif.getSource()).append(':');
+//                    for (int i = 0; i < modif.getModifCount(); i++) {
+//                        value.append(modif.getModif(i).first).append('|');
+//                        value.append(modif.getModif(i).second).append(',');
+//                    }
+//                    value.deleteCharAt(value.length() - 1).append(':');
+//                    value.append(modif.getIcon()).append(':');
+//                    value.append(modif.getLinkToWeapon());
+//                    value.append('#');
+//                }
+//                value.deleteCharAt(value.length() - 1);
+//                Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
+//                contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
+//            } else {
+//                contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
+//            }
 
             // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
 //            List<CharacterItem> inventory = c.getInventoryItems();
@@ -748,35 +748,35 @@ public class CharacterFactory extends DBEntityFactory {
             // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
             // (assuming that modif ids won't change during data import)
             // fill modifs
-            String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
-            Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
-            if (modifsValue != null && modifsValue.length() > 0) {
-                for (String modif : modifsValue.split("#")) {
-                    String[] modElements = modif.split(":");
-                    if (modElements != null && modElements.length >= 3) {
-                        String source = modElements[0];
-                        String icon = modElements[2];
-                        int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
-                        List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
-                        for (String bonusVal : modElements[1].split(",")) {
-                            String[] bonusElements = bonusVal.split("\\|");
-                            if (bonusElements != null && bonusElements.length == 2) {
-                                try {
-                                    Integer bonusIdx = Integer.parseInt(bonusElements[0]);
-                                    Integer bonusValue = Integer.parseInt(bonusElements[1]);
-                                    bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
-                                } catch (NumberFormatException nfe) {
-                                    Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
-                                }
-                            }
-                        }
-                        Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
-                        if (toAdd.isValid()) {
-                            c.addModif(toAdd);
-                        }
-                    }
-                }
-            }
+//            String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
+//            Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
+//            if (modifsValue != null && modifsValue.length() > 0) {
+//                for (String modif : modifsValue.split("#")) {
+//                    String[] modElements = modif.split(":");
+//                    if (modElements != null && modElements.length >= 3) {
+//                        String source = modElements[0];
+//                        String icon = modElements[2];
+//                        int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
+//                        List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
+//                        for (String bonusVal : modElements[1].split(",")) {
+//                            String[] bonusElements = bonusVal.split("\\|");
+//                            if (bonusElements != null && bonusElements.length == 2) {
+//                                try {
+//                                    Integer bonusIdx = Integer.parseInt(bonusElements[0]);
+//                                    Integer bonusValue = Integer.parseInt(bonusElements[1]);
+//                                    bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
+//                                } catch (NumberFormatException nfe) {
+//                                    Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
+//                                }
+//                            }
+//                        }
+//                        Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
+//                        if (toAdd.isValid()) {
+//                            c.addModif(toAdd);
+//                        }
+//                    }
+//                }
+//            }
 
             // new 16 fields for PDF
             c.setSpeedWithArmor(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_ARMOR));

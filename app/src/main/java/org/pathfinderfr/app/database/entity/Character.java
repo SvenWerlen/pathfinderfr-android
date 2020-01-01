@@ -62,53 +62,6 @@ public class Character extends DBEntity {
     public static final int SPEED_MANEUV_GOOD    = 4;
     public static final int SPEED_MANEUV_PERFECT = 5;
 
-    public static final int MODIF_ABILITY_ALL = 1;
-    public static final int MODIF_ABILITY_STR = 2;
-    public static final int MODIF_ABILITY_DEX = 3;
-    public static final int MODIF_ABILITY_CON = 4;
-    public static final int MODIF_ABILITY_INT = 5;
-    public static final int MODIF_ABILITY_WIS = 6;
-    public static final int MODIF_ABILITY_CHA = 7;
-
-    public static final int MODIF_SAVES_ALL     = 11;
-    public static final int MODIF_SAVES_REF     = 12;
-    public static final int MODIF_SAVES_FOR     = 13;
-    public static final int MODIF_SAVES_WIL     = 14;
-    public static final int MODIF_SAVES_MAG_ALL = 15;
-    public static final int MODIF_SAVES_MAG_REF = 16;
-    public static final int MODIF_SAVES_MAG_FOR = 17;
-    public static final int MODIF_SAVES_MAG_WIL = 18;
-
-
-    public static final int MODIF_COMBAT_INI = 21;
-    public static final int MODIF_COMBAT_AC = 22;
-    public static final int MODIF_COMBAT_MAG = 23;
-    public static final int MODIF_COMBAT_HP = 24; // not supported
-    public static final int MODIF_COMBAT_SPEED = 25;
-    public static final int MODIF_COMBAT_MAG_LVL = 123;
-
-    public static final int MODIF_COMBAT_AC_ARMOR = 26;
-    public static final int MODIF_COMBAT_AC_SHIELD = 27;
-    public static final int MODIF_COMBAT_AC_NATURAL = 28;
-    public static final int MODIF_COMBAT_AC_PARADE = 29;
-
-    public static final int MODIF_COMBAT_ATT_MELEE = 31;
-    public static final int MODIF_COMBAT_ATT_RANGED = 32;
-    public static final int MODIF_COMBAT_CMB = 33;
-    public static final int MODIF_COMBAT_CMD = 34;
-    public static final int MODIF_COMBAT_DAM_MELEE = 35;
-    public static final int MODIF_COMBAT_DAM_RANGED = 36;
-
-    public static final int MODIF_SKILL_ALL = 41;
-    public static final int MODIF_SKILL_FOR = 42;
-    public static final int MODIF_SKILL_DEX = 43;
-    public static final int MODIF_SKILL_CON = 44; // doesn't exist
-    public static final int MODIF_SKILL_INT = 45;
-    public static final int MODIF_SKILL_WIS = 46;
-    public static final int MODIF_SKILL_CHA = 47;
-
-    public static final int MODIF_SKILL = 200;
-
     // character-specific
     private String uniqID;
     private int[] abilities;
@@ -119,7 +72,7 @@ public class Character extends DBEntity {
     private List<ClassFeature> features;
     private List<CharacterItem> inventory;
     private List<Trait> traits;
-    private List<CharacterModif> modifs;
+    private List<Modification> modifs;
     private int hitpoints, hitpointsTemp;
     private int speed;
     private List<Spell> spells;
@@ -156,7 +109,6 @@ public class Character extends DBEntity {
         feats = new ArrayList<>();
         features = new ArrayList<>();
         traits = new ArrayList<>();
-        modifs = new ArrayList<>();
         spells = new ArrayList<>();
     }
 
@@ -173,95 +125,6 @@ public class Character extends DBEntity {
         public void setClassSkill(boolean classSkill) { isClassSkill = classSkill; }
     }
 
-    // Helper to keep modifs
-    public static class CharacterModif {
-        private String source;
-        private List<Pair<Integer,Integer>> modifs;
-        private String icon;
-        private int linkToWeapon;
-        private boolean enabled;
-        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, int linkToWeapon) {
-            this(source, modifs, icon, linkToWeapon, false);
-        }
-        public CharacterModif(String source, List<Pair<Integer,Integer>> modifs, String icon, int linkToWeapon, boolean enabled) {
-            this.source = source;
-            this.modifs = modifs;
-            this.icon = icon;
-            this.enabled = enabled;
-            this.linkToWeapon = linkToWeapon;
-        }
-        public String getSource() { return source; }
-        public void setSource(String source) { this.source = source; }
-        public int getModifCount() { return modifs == null ? 0 : modifs.size(); }
-        public void setModifs(List<Pair<Integer,Integer>> modifs) { this.modifs = modifs; }
-        public void setLinkToWeapon(int linkToIdx) { this.linkToWeapon = linkToIdx; }
-        public int getLinkToWeapon() { return this.linkToWeapon; }
-        public Pair<Integer,Integer> getModif(int index) { return index < 0 || index >= modifs.size() ? null : modifs.get(index); }
-        public String getIcon() { return icon; }
-        public void setIcon(String icon) { this.icon = icon; }
-        public boolean isEnabled() { return enabled; }
-        public void setEnabled(boolean enabled) { this.enabled = enabled;}
-        public boolean isValid() { return source != null && source.length() > 0 && modifs != null && modifs.size() > 0 && icon != null && icon.length() > 0; }
-        public void update(CharacterModif modif) {
-            source = modif.source;
-            modifs = modif.modifs;
-            icon = modif.icon;
-            linkToWeapon = modif.linkToWeapon;
-        }
-    }
-
-    // Helper to keep inventory
-//    public static class InventoryItem implements Comparable<InventoryItem> {
-//        public static final long IDX_WEAPONS = 0L;
-//        public static final long IDX_ARMORS = 1000000L;
-//        public static final long IDX_EQUIPMENT = 2000000L;
-//        public static final long IDX_MAGICITEM = 3000000L;
-//
-//        private int id; // only used for linktoweapon (modifs)
-//        private String name;
-//        private int weight;
-//        private long price;
-//        private long objectId; // reference to original object
-//        private String infos; // additional info (ex: ammo)
-//        public InventoryItem(String name, int weight, long price, long objectId, String infos) {
-//            this.name = name;
-//            this.weight = weight;
-//            this.price = price;
-//            this.objectId = objectId;
-//            this.infos = infos;
-//        }
-//        public InventoryItem(InventoryItem copy) {
-//            set(copy);
-//        }
-//        public void set(InventoryItem copy) {
-//            this.name = copy.name;
-//            this.weight = copy.weight;
-//            this.price = copy.price;
-//            this.objectId = copy.objectId;
-//            this.infos = copy.infos;
-//        }
-//        public void setId(int id) { this.id = id; }
-//        public int getId() { return id; }
-//        public String getName() { return name; }
-//        public void setName(String name) { this.name = name; }
-//        public int getWeight() { return weight; }
-//        public void setWeight(int weight) { this.weight = weight; }
-//        public long getPrice() { return price; }
-//        public void setPrice(long price) { this.price = price; }
-//        public long getObjectId() { return this.objectId; }
-//        public String getInfos() { return this.infos; }
-//        public boolean isValid() { return name != null && name.length() >= 3 && weight >= 0; }
-//        public boolean isNotLinked() { return objectId <= 0; }
-//        public boolean isWeapon() { return objectId > IDX_WEAPONS && objectId < IDX_ARMORS; }
-//        public boolean isArmor() { return objectId > IDX_ARMORS && objectId < IDX_EQUIPMENT; }
-//        public boolean isEquipment() { return objectId > IDX_EQUIPMENT && objectId < IDX_MAGICITEM; }
-//        public boolean isMagicItem() { return objectId > IDX_MAGICITEM; }
-//
-//        @Override
-//        public int compareTo(InventoryItem item) {
-//            return Collator.getInstance().compare(getName(),item.getName());
-//        }
-//    }
 
     @Override
     public String getNameLong() {
@@ -289,7 +152,7 @@ public class Character extends DBEntity {
         }
         // check if modif is applied
         int bonus = 0;
-        bonus += getAdditionalBonus(MODIF_ABILITY_ALL);
+        bonus += getAdditionalBonus(Modification.MODIF_ABILITY_ALL);
         bonus += getAdditionalBonus(ability+2); // MODIF_ABILITY = ABILITY_ID + 2 (see above)
         return abilities[ability] + bonus;
     }
@@ -413,22 +276,6 @@ public class Character extends DBEntity {
         }
     }
 
-    public int getAbilityBonus(String abilityId) {
-        if(abilityId == null) {
-            return 0;
-        }
-        // TODO: make it language-independant
-        switch(abilityId) {
-            case "FOR": return MODIF_SKILL_FOR;
-            case "DEX": return MODIF_SKILL_DEX;
-            case "CON": return MODIF_SKILL_CON;
-            case "INT": return MODIF_SKILL_INT;
-            case "SAG": return MODIF_SKILL_WIS;
-            case "CHA": return MODIF_SKILL_CHA;
-            default: return 0;
-        }
-    }
-
     public int getHitpoints() {
         return hitpoints;
     }
@@ -446,12 +293,12 @@ public class Character extends DBEntity {
     }
 
     public float getSpeedAsMeters() {
-        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        int bonus = getAdditionalBonus(Modification.MODIF_COMBAT_SPEED);
         return 1.5f * (speed + bonus);
     }
 
     public int getSpeed() {
-        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        int bonus = getAdditionalBonus(Modification.MODIF_COMBAT_SPEED);
         return speed + bonus;
     }
 
@@ -476,7 +323,7 @@ public class Character extends DBEntity {
     }
 
     public int getSpeedWithArmor() {
-        int bonus = getAdditionalBonus(MODIF_COMBAT_SPEED);
+        int bonus = getAdditionalBonus(Modification.MODIF_COMBAT_SPEED);
         return speedWithArmor + bonus;
     }
 
@@ -658,31 +505,31 @@ public class Character extends DBEntity {
         }
     }
 
-    public int getInitiative() { return getDexterityModif() + getAdditionalBonus(MODIF_COMBAT_INI); }
+    public int getInitiative() { return getDexterityModif() + getAdditionalBonus(Modification.MODIF_COMBAT_INI); }
     public int getArmorClass() {
-        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
-        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_armor = getAdditionalBonus(Modification.MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(Modification.MODIF_COMBAT_AC_SHIELD);
         int bonus_size = getSizeModifierArmorClass();
-        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
-        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
-        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        int bonus_natural = getAdditionalBonus(Modification.MODIF_COMBAT_AC_NATURAL);
+        int bonus_parade = getAdditionalBonus(Modification.MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(Modification.MODIF_COMBAT_AC);
         return 10 + bonus_armor + bonus_shield + getDexterityModif() + bonus_size + bonus_natural + bonus_parade + bonus_other;
     }
 
     public int getArmorClassContact() {
         int bonus_size = getSizeModifierArmorClass();
-        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
-        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        int bonus_parade = getAdditionalBonus(Modification.MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(Modification.MODIF_COMBAT_AC);
         return 10 + getDexterityModif() + bonus_size + bonus_parade + bonus_other;
     }
 
     public int getArmorClassFlatFooted() {
         int bonus_dex = getDexterityModif();
-        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
-        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_armor = getAdditionalBonus(Modification.MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(Modification.MODIF_COMBAT_AC_SHIELD);
         int bonus_size = getSizeModifierArmorClass();
-        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
-        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        int bonus_natural = getAdditionalBonus(Modification.MODIF_COMBAT_AC_NATURAL);
+        int bonus_other = getAdditionalBonus(Modification.MODIF_COMBAT_AC);
         return 10 + bonus_armor + bonus_shield + ( bonus_dex < 0 ? bonus_dex : 0 ) + bonus_size + bonus_natural + bonus_other;
     }
 
@@ -700,13 +547,13 @@ public class Character extends DBEntity {
 
     public String getArmorClassDetails() {
         StringBuffer buf = new StringBuffer();
-        int bonus_armor = getAdditionalBonus(MODIF_COMBAT_AC_ARMOR);
-        int bonus_shield = getAdditionalBonus(MODIF_COMBAT_AC_SHIELD);
+        int bonus_armor = getAdditionalBonus(Modification.MODIF_COMBAT_AC_ARMOR);
+        int bonus_shield = getAdditionalBonus(Modification.MODIF_COMBAT_AC_SHIELD);
         int bonus_dex = getDexterityModif();
         int bonus_size = getSizeModifierArmorClass();
-        int bonus_natural = getAdditionalBonus(MODIF_COMBAT_AC_NATURAL);
-        int bonus_parade = getAdditionalBonus(MODIF_COMBAT_AC_PARADE);
-        int bonus_other = getAdditionalBonus(MODIF_COMBAT_AC);
+        int bonus_natural = getAdditionalBonus(Modification.MODIF_COMBAT_AC_NATURAL);
+        int bonus_parade = getAdditionalBonus(Modification.MODIF_COMBAT_AC_PARADE);
+        int bonus_other = getAdditionalBonus(Modification.MODIF_COMBAT_AC);
         if(bonus_armor != 0) {
             buf.append(String.format("armure %+d, ", bonus_armor));
         }
@@ -735,13 +582,13 @@ public class Character extends DBEntity {
     }
 
     public int getMagicResistance() {
-        int bonus = getAdditionalBonus(MODIF_COMBAT_MAG);
+        int bonus = getAdditionalBonus(Modification.MODIF_COMBAT_MAG);
         return bonus;
     }
 
-    public int getSavingThrowsReflexesTotal() { return getDexterityModif() + getSavingThrowsReflexes() + getSavingThrowsBonus(MODIF_SAVES_REF); }
-    public int getSavingThrowsFortitudeTotal() { return getConstitutionModif() + getSavingThrowsFortitude() + getSavingThrowsBonus(MODIF_SAVES_FOR); }
-    public int getSavingThrowsWillTotal() { return getWisdomModif() + getSavingThrowsWill() + getSavingThrowsBonus(MODIF_SAVES_WIL); }
+    public int getSavingThrowsReflexesTotal() { return getDexterityModif() + getSavingThrowsReflexes() + getSavingThrowsBonus(Modification.MODIF_SAVES_REF); }
+    public int getSavingThrowsFortitudeTotal() { return getConstitutionModif() + getSavingThrowsFortitude() + getSavingThrowsBonus(Modification.MODIF_SAVES_FOR); }
+    public int getSavingThrowsWillTotal() { return getWisdomModif() + getSavingThrowsWill() + getSavingThrowsBonus(Modification.MODIF_SAVES_WIL); }
 
     /**
      * @return saving throws based on attached classes (and levels)
@@ -825,8 +672,8 @@ public class Character extends DBEntity {
     public int getSavingThrowsBonus(int bonusId) {
         // check if modif is applied
         int bonus = 0;
-        bonus += getAdditionalBonus(MODIF_SAVES_ALL);
-        bonus += getAdditionalBonus(MODIF_SAVES_MAG_ALL);
+        bonus += getAdditionalBonus(Modification.MODIF_SAVES_ALL);
+        bonus += getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL);
         bonus += getAdditionalBonus(bonusId);
         bonus += getAdditionalBonus(bonusId+4); // magic bonus
         return bonus;
@@ -844,16 +691,16 @@ public class Character extends DBEntity {
          * @param bonusId bonusId for corresponding SavingThrows
          * @return bonus to be applied
          */
-    public int getAdditionalBonus(int bonusId, int linkToWeapon) {
+    public int getAdditionalBonus(int bonusId, int itemId) {
         // check if modif is applied
         int bonus = 0;
-        List<CharacterModif> modifs = getModifsForId(bonusId);
+        List<Modification> modifs = getModifsForId(bonusId);
         // getModifsForId always returns 1 modification (matching the one being searched)
-        for(CharacterModif mod : modifs) {
+        for(Modification mod : modifs) {
             // special case for combat bonuses linked to weapons
-            if((bonusId == MODIF_COMBAT_ATT_MELEE || bonusId == MODIF_COMBAT_ATT_RANGED
-                || bonusId == MODIF_COMBAT_DAM_MELEE || bonusId == MODIF_COMBAT_DAM_RANGED) && mod.getLinkToWeapon() > 0) {
-                if(linkToWeapon == mod.getLinkToWeapon()) {
+            if((bonusId == Modification.MODIF_COMBAT_ATT_MELEE || bonusId == Modification.MODIF_COMBAT_ATT_RANGED
+                || bonusId == Modification.MODIF_COMBAT_DAM_MELEE || bonusId == Modification.MODIF_COMBAT_DAM_RANGED) && mod.getItemId() > 0) {
+                if(itemId == mod.getItemId()) {
                     bonus += mod.getModif(0).second;
                 }
             }
@@ -934,7 +781,7 @@ public class Character extends DBEntity {
      * @return attack bonus (melee), as string
      */
     public String getAttackBonusMeleeAsString(int weaponIdx) {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_MELEE, weaponIdx);
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_MELEE, weaponIdx);
         addBonus += getSizeModifierAttack();
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
     }
@@ -961,7 +808,7 @@ public class Character extends DBEntity {
             return 0;
         }
         int bonus = w.getDamageBonus(getStrengthModif());
-        bonus += getAdditionalBonus(w.isRanged() ? MODIF_COMBAT_DAM_RANGED : MODIF_COMBAT_DAM_MELEE, weaponIdx);;
+        bonus += getAdditionalBonus(w.isRanged() ? Modification.MODIF_COMBAT_DAM_RANGED : Modification.MODIF_COMBAT_DAM_MELEE, weaponIdx);;
         return bonus;
     }
 
@@ -986,7 +833,7 @@ public class Character extends DBEntity {
      * @return attack bonus (range), as string
      */
     public String getAttackBonusRangeAsString(int weaponIdx) {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED, weaponIdx);
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_RANGED, weaponIdx);
         addBonus += getSizeModifierAttack();
         return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
     }
@@ -995,7 +842,7 @@ public class Character extends DBEntity {
      * @return attack bonus (melee)
      */
     public int getAttackBestBonusRange(int weaponIdx) {
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_ATT_RANGED, weaponIdx);
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_RANGED, weaponIdx);
         int bestBonus = getBaseAttackBonusBest();
         return bestBonus + addBonus + getDexterityModif();
     }
@@ -1008,7 +855,7 @@ public class Character extends DBEntity {
         int bonus = 0;
         bonus += getBaseAttackBonusBest();
         int sizeModif = getSizeModifier(getSizeType());
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_CMB);
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_CMB);
         return bonus + getStrengthModif() - sizeModif + addBonus;
     }
 
@@ -1020,7 +867,7 @@ public class Character extends DBEntity {
         int bonus = 0;
         bonus += getBaseAttackBonusBest();
         int sizeModif = getSizeModifier(getSizeType());
-        int addBonus = getAdditionalBonus(MODIF_COMBAT_CMD);
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_CMD);
         return 10 + bonus + getStrengthModif() + getDexterityModif() - sizeModif + addBonus;
     }
 
@@ -1102,9 +949,9 @@ public class Character extends DBEntity {
         }
         int rank = getSkillRank(skill.getId());
         int classSkill = (rank > 0 && isClassSkill(skill)) ? 3 : 0;
-        int bonus = getAdditionalBonus(MODIF_SKILL + (int)skill.getId()) +
-                getAdditionalBonus(getAbilityBonus(skill.getAbilityId())) +
-                getAdditionalBonus(MODIF_SKILL_ALL);
+        int bonus = getAdditionalBonus(Modification.MODIF_SKILL + (int)skill.getId()) +
+                getAdditionalBonus(Modification.modificationForAbility(skill.getAbilityId())) +
+                getAdditionalBonus(Modification.MODIF_SKILL_ALL);
         return classSkill + bonus;
     }
 
@@ -1477,19 +1324,13 @@ public class Character extends DBEntity {
         return null;
     }
 
-    /**
-     * @return the list of modifs
-     */
-    public List<CharacterModif> getModifs() {
-        return modifs;
-    }
-
     public String getModifsAsString() {
         StringBuffer buf = new StringBuffer();
+        List<Modification> modifs = getModifications();
         if(modifs.size() == 0) {
             return "-";
         }
-        for(CharacterModif el : modifs) {
+        for(Modification el : modifs) {
             if(el.isEnabled()) {
                 buf.append(el.getSource()).append(", ");
             }
@@ -1501,12 +1342,13 @@ public class Character extends DBEntity {
     }
 
 
-    public List<CharacterModif> getModifsForId(Integer id) {
-        List<CharacterModif> result = new ArrayList<>();
-        for(CharacterModif el : modifs) {
-            for(Pair<Integer,Integer> m: el.modifs) {
+    public List<Modification> getModifsForId(Integer id) {
+        List<Modification> result = new ArrayList<>();
+        List<Modification> modifs = getModifications();
+        for(Modification el : modifs) {
+            for(Pair<Integer,Integer> m: el.getModifs()) {
                 if(m.first.longValue() == id.longValue()) {
-                    result.add(new CharacterModif(el.source, Arrays.asList(m), el.getIcon(), el.getLinkToWeapon(), el.isEnabled()));
+                    result.add(el);
                     break;
                 }
             }
@@ -1514,59 +1356,78 @@ public class Character extends DBEntity {
         return result;
     }
 
-    public int getModifsCount() {
-        return modifs.size();
+//    /**
+//     * Modif linkToWeapon is based on weapon index in list
+//     * Set indexes on items such it can be retrieved after inventory change
+//     */
+//    public void indexInventoryWeapons() {
+//        int idx = 0;
+//        List<CharacterItem> inventory = getInventoryItems();
+//        for(CharacterItem el : inventory) {
+//            if(el.isWeapon()) {
+//                el.setId(++idx);
+//            }
+//        }
+//    }
+
+//    /**
+//     * Modifies (when needed) linkToWeapon to link to right inventory
+//     */
+//    public void reindexModifLinks() {
+//        List<CharacterItem> inventory = getInventoryItems();
+//        for(CharacterModif modif : modifs) {
+//            if(modif.linkToWeapon > 0) {
+//                int link = modif.linkToWeapon; // reset in case reference not found
+//                modif.linkToWeapon = 0;
+//                int idx = 0;
+//                for(CharacterItem el : inventory) {
+//                    if(el.isWeapon()) {
+//                        idx++;
+//                    }
+//                    if(el.getId() == link) {
+//                        modif.linkToWeapon = idx;
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    public void resyncModifs() {
+        modifs = null;
     }
 
-    public void addModif(CharacterModif modif) {
-        modifs.add(modif);
-    }
-
-    public void deleteModif(CharacterModif modif) {
-        modifs.remove(modif);
-    }
-
-    public CharacterModif getModif(int idx) {
-        if(idx < 0 || idx >= modifs.size()) {
-            return null;
+    public Modification getModificationById(long id) {
+        List<Modification> modifications = getModifications();
+        for(Modification m : modifications) {
+            if(m.getId() == id) {
+                return m;
+            }
         }
-        return modifs.get(idx);
+        return null;
     }
 
     /**
-     * Modif linkToWeapon is based on weapon index in list
-     * Set indexes on items such it can be retrieved after inventory change
+     * @return the list of modifications (as copy)
      */
-    public void indexInventoryWeapons() {
-        int idx = 0;
-        List<CharacterItem> inventory = getInventoryItems();
-        for(CharacterItem el : inventory) {
-            if(el.isWeapon()) {
-                el.setId(++idx);
-            }
-        }
+    public List<Modification> getModifications() {
+        return getModifications(-1);
     }
 
-    /**
-     * Modifies (when needed) linkToWeapon to link to right inventory
-     */
-    public void reindexModifLinks() {
-        List<CharacterItem> inventory = getInventoryItems();
-        for(CharacterModif modif : modifs) {
-            if(modif.linkToWeapon > 0) {
-                int link = modif.linkToWeapon; // reset in case reference not found
-                modif.linkToWeapon = 0;
-                int idx = 0;
-                for(CharacterItem el : inventory) {
-                    if(el.isWeapon()) {
-                        idx++;
-                    }
-                    if(el.getId() == link) {
-                        modif.linkToWeapon = idx;
-                    }
-                }
+    public List<Modification> getModifications(long itemId) {
+        if (modifs == null) {
+            modifs = new ArrayList<>();
+            List<DBEntity> entities = DBHelper.getInstance(null).fetchAllEntitiesByForeignIds(new long[]{id}, ModificationFactory.getInstance());
+            for (DBEntity e : entities) {
+                modifs.add((Modification) e);
             }
         }
+        List<Modification> copy = new ArrayList<>();
+        for(Modification m : modifs) {
+            if(itemId < 0 || m.getItemId() == itemId) {
+                copy.add(m);
+            }
+        }
+        return copy;
     }
 
     public void resyncInventory() {

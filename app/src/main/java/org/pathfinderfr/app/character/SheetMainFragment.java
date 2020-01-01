@@ -54,6 +54,8 @@ import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
+import org.pathfinderfr.app.database.entity.Modification;
+import org.pathfinderfr.app.database.entity.ModificationFactory;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
@@ -191,47 +193,21 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
      * @param character character object
      * @param modifId modif identifier
      * @param tooltipTemplate template for a row entry
-     * @param weaponIdx applied for specific weapon
+     * @param itemId applied for specific weapon
      * @return
      */
-    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate, int weaponIdx) {
-        List<Character.CharacterModif> modifs = character.getModifsForId(modifId);
+    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate, int itemId) {
+        List<Modification> modifs = character.getModifsForId(modifId);
         StringBuffer buf = new StringBuffer();
-        for(Character.CharacterModif modif: modifs) {
-            if((modif.getLinkToWeapon() > 0 && modif.getLinkToWeapon() == weaponIdx) ||
-                    (modif.getLinkToWeapon() <= 0 && modif.isEnabled())) {
+        for(Modification modif: modifs) {
+            if((modif.getItemId() > 0 && modif.getItemId() == itemId) ||
+                    (modif.getItemId() == 0 && modif.isEnabled())) {
                 buf.append(String.format(tooltipTemplate, modif.getSource(), modif.getModif(0).second));
             }
         }
         return buf.toString();
     }
 
-    /**
-     * Initializes the character modifs based on preferences (setEnable(true))
-     *
-     * @param context current context (for finding preferences)
-     * @param character character object
-     */
-    public static void initializeCharacterModifsStates(Context context, Character character) {
-        // initialize character modifs states
-        String modifStates = PreferenceManager.getDefaultSharedPreferences(context).getString(
-                CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), null);
-
-        if(modifStates != null) {
-            Log.d(SheetMainFragment.class.getSimpleName(), "Modif states = " + modifStates);
-            if (modifStates.length() == character.getModifsCount()) {
-                int idx = 0;
-                for(Character.CharacterModif modif : character.getModifs()) {
-                    if(modifStates.charAt(idx) == '1') {
-                        modif.setEnabled(true);
-                    }
-                    idx++;
-                }
-            } else {
-                Log.w(SheetMainFragment.class.getSimpleName(), "Something went wrong. Préférences don't match modif's count.");
-            }
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -247,8 +223,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         }
         if(character == null) {
             throw new IllegalStateException("Something is wrong! Invalid character.");
-        } else {
-            initializeCharacterModifsStates(view.getContext(), character);
         }
 
         view.findViewById(R.id.ability_str).setOnClickListener(new View.OnClickListener() {
@@ -376,7 +350,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             public void onClick(View v) {
                 act.showTooltip(iniTooltipTitle, String.format(iniTooltipContent,
                         character.getDexterityModif(),
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_INI, tooltipModif),
+                        generateOtherBonusText(character, Modification.MODIF_COMBAT_INI, tooltipModif),
                         character.getInitiative()));
             }
         });
@@ -393,13 +367,13 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             @Override
             public void onClick(View v) {
                 act.showTooltip(acTooltipTitle,String.format(acTooltipContent,
-                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_ARMOR),
-                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_SHIELD),
+                        character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_ARMOR),
+                        character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_SHIELD),
                         character.getDexterityModif(), // dex modif
                         character.getSizeModifierArmorClass(),
-                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_NATURAL),
-                        character.getAdditionalBonus(Character.MODIF_COMBAT_AC_PARADE),
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_AC, tooltipModif), // others
+                        character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_NATURAL),
+                        character.getAdditionalBonus(Modification.MODIF_COMBAT_AC_PARADE),
+                        generateOtherBonusText(character, Modification.MODIF_COMBAT_AC, tooltipModif), // others
                         character.getArmorClass()));
             }
         });
@@ -417,7 +391,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             public void onClick(View v) {
                 act.showTooltip(magicTooltipTitle,String.format(
                         magicTooltipContent,
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_MAG, tooltipModif),
+                        generateOtherBonusText(character, Modification.MODIF_COMBAT_MAG, tooltipModif),
                         character.getMagicResistance()));
             }
         });
@@ -491,7 +465,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         bonus,
                         character.getStrengthModif(),
                         character.getSizeModifierManeuver(), // size
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_CMB, tooltipModif), // other
+                        generateOtherBonusText(character, Modification.MODIF_COMBAT_CMB, tooltipModif), // other
                         character.getCombatManeuverBonus()));
             }
         });
@@ -514,7 +488,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         character.getStrengthModif(),
                         character.getDexterityModif(),
                         character.getSizeModifierManeuver(), // size
-                        generateOtherBonusText(character, Character.MODIF_COMBAT_CMD, tooltipModif), // other
+                        generateOtherBonusText(character, Modification.MODIF_COMBAT_CMD, tooltipModif), // other
                         character.getCombatManeuverDefense()));
             }
         });
@@ -544,9 +518,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_constitution).toLowerCase(), character.getConstitutionModif(),
-                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_FOR),
-                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
-                                        + generateOtherBonusText(character, Character.MODIF_SAVES_FOR, tooltipModif), // other
+                                character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_FOR),
+                                generateOtherBonusText(character, Modification.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Modification.MODIF_SAVES_FOR, tooltipModif), // other
                                 character.getSavingThrowsFortitudeTotal()));
             }
         });
@@ -571,9 +545,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_dexterity).toLowerCase(), character.getDexterityModif(),
-                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_REF),
-                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
-                                        + generateOtherBonusText(character, Character.MODIF_SAVES_REF, tooltipModif), // other
+                                character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_REF),
+                                generateOtherBonusText(character, Modification.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Modification.MODIF_SAVES_REF, tooltipModif), // other
                                 character.getSavingThrowsReflexesTotal()));
             }
         });
@@ -598,9 +572,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                         String.format(savTooltipContent,
                                 text,
                                 getResources().getString(R.string.sheet_ability_wisdom).toLowerCase(), character.getWisdomModif(),
-                                character.getAdditionalBonus(Character.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Character.MODIF_SAVES_MAG_WIL),
-                                generateOtherBonusText(character, Character.MODIF_SAVES_ALL, tooltipModif)
-                                        + generateOtherBonusText(character, Character.MODIF_SAVES_WIL, tooltipModif), // other
+                                character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_ALL) + character.getAdditionalBonus(Modification.MODIF_SAVES_MAG_WIL),
+                                generateOtherBonusText(character, Modification.MODIF_SAVES_ALL, tooltipModif)
+                                        + generateOtherBonusText(character, Modification.MODIF_SAVES_WIL, tooltipModif), // other
                                 character.getSavingThrowsWillTotal()));
             }
         });
@@ -893,7 +867,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         ImageView reference = view.findViewById(R.id.sheet_main_modifs_example_icon);
         FlowLayout layout = view.findViewById(R.id.sheet_main_modifslayout);
         // make sure #pickers > #icons
-        int toCreate = character.getModifsCount() - modifPickers.size();
+        List<Modification> modifs = character.getModifications(0);
+        int toCreate = modifs.size() - modifPickers.size();
         for(int i = 0; i <= toCreate; i++) {
             ImageView newPicker = FragmentUtil.copyExampleImageFragment(reference);
             newPicker.setOnClickListener(listener);
@@ -906,11 +881,11 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         final int colorEnabled = view.getContext().getResources().getColor(R.color.colorPrimaryDark);
         int idx = 0;
         for(ImageView iv : modifPickers) {
-            Character.CharacterModif modif = character.getModif(idx);
+            Modification modif = idx < modifs.size() ? modifs.get(idx) : null;
             if(modif != null) {
                 final int resourceId = view.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable",
                         view.getContext().getPackageName());
-                iv.setTag(idx);
+                iv.setTag(modif.getId());
                 iv.setVisibility(View.VISIBLE);
                 if(resourceId > 0) {
                     iv.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
@@ -1031,7 +1006,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                             weapon.isRanged() ? character.getDexterityModif() : character.getStrengthModif(),
                             character.getSizeModifierAttack(),
                             generateOtherBonusText(character,
-                                    weapon.isRanged() ? Character.MODIF_COMBAT_ATT_RANGED : Character.MODIF_COMBAT_ATT_MELEE,
+                                    weapon.isRanged() ? Modification.MODIF_COMBAT_ATT_RANGED : Modification.MODIF_COMBAT_ATT_MELEE,
                                     tooltipBabModif,
                                     curWeaponIdx), // other
                             attackBonus));
@@ -1268,20 +1243,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
 
-    /**
-     * Persists current modification states into preferences
-     * Stores as '01001' where each character represents a modif (1 is enabled, 0 disabled)
-     */
-    private void modifStatesIntoPreferences() {
-        StringBuffer buf = new StringBuffer();
-        for(Character.CharacterModif modif : character.getModifs()) {
-            buf.append(modif.isEnabled() ? '1' : '0');
-        }
-        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().
-                putString(CharacterSheetActivity.PREF_CHARACTER_MODIF_STATES + character.getId(), buf.toString()).apply();
-    }
-
-
     private static class ProfileListener implements View.OnClickListener, View.OnLongClickListener, View.OnDragListener {
 
         SheetMainFragment parent;
@@ -1421,12 +1382,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
 
                 Bundle arguments = new Bundle();
-                ArrayList<String> wParams = new ArrayList<>();
-                List<Weapon> weapons = parent.character.getInventoryWeapons();
-                for(Weapon w : weapons) {
-                    wParams.add(w.getName());
-                }
-                arguments.putStringArrayList(FragmentModifPicker.ARG_MODIF_WEAPONS, wParams);
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_MODIFS);
                 return;
@@ -1587,7 +1542,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 // MODIFICATION ENABLED/DISABLED
                 else {
                     ImageView icon = (ImageView) v;
-                    Character.CharacterModif modif = parent.character.getModif((int) v.getTag());
+                    Modification modif = parent.character.getModificationById((long) v.getTag());
                     if (modif != null) {
                         // toggle modification
                         modif.setEnabled(!modif.isEnabled());
@@ -1597,9 +1552,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                             icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
                         }
                         parent.updateSheet(parent.getView());
-
-                        // save into preferences
-                        parent.modifStatesIntoPreferences();
+                        // save new state
+                        DBHelper.getInstance(parent.getContext()).updateEntity(modif, new HashSet<>(Arrays.asList(ModificationFactory.FLAG_ACTIVE)));
                     }
                     return;
                 }
@@ -1648,7 +1602,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         public boolean onLongClick(View v) {
             if(v instanceof ImageView) {
                 ImageView icon = (ImageView)v;
-                Character.CharacterModif modif = parent.character.getModif((Integer)v.getTag());
+                Modification modif = parent.character.getModificationById((Long)v.getTag());
                 if(modif != null) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_MODIFS);
@@ -1659,8 +1613,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
 
                     Bundle arguments = new Bundle();
-                    arguments.putInt(FragmentModifPicker.ARG_MODIF_IDX, (Integer)v.getTag());
-                    arguments.putString(FragmentModifPicker.ARG_MODIF_SOURCE, modif.getSource());
+                    arguments.putLong(FragmentModifPicker.ARG_MODIF_ID, (Long)v.getTag());
+                    arguments.putString(FragmentModifPicker.ARG_MODIF_NAME, modif.getName());
                     ArrayList<Integer> modifIds = new ArrayList<>();
                     ArrayList<Integer> modifVals = new ArrayList<>();
                     for(int i = 0; i<modif.getModifCount(); i++) {
@@ -1670,14 +1624,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
                     arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
-                    arguments.putInt(FragmentModifPicker.ARG_MODIF_LINKTO, modif.getLinkToWeapon());
-
-                    ArrayList<String> wParams = new ArrayList<>();
-                    List<Weapon> weapons = parent.character.getInventoryWeapons();
-                    for(Weapon w : weapons) {
-                        wParams.add(w.getName());
-                    }
-                    arguments.putStringArrayList(FragmentModifPicker.ARG_MODIF_WEAPONS, wParams);
 
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_MODIFS);
@@ -1813,25 +1759,25 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         if(strR != 0 || dexR != 0 || conR != 0 || intR != 0 || wisR != 0 || chaR != 0) {
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
             if(strR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_STR, strR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_STR, strR));
             }
             if(dexR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_DEX, dexR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_DEX, dexR));
             }
             if(conR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_CON, conR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_CON, conR));
             }
             if(intR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_INT, intR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_INT, intR));
             }
             if(wisR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_WIS, wisR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_WIS, wisR));
             }
             if(chaR != 0) {
-                modifs.add(new Pair<Integer, Integer>(Character.MODIF_ABILITY_CHA, chaR));
+                modifs.add(new Pair<>(Modification.MODIF_ABILITY_CHA, chaR));
             }
             String modifLabel = ConfigurationUtil.getInstance(getView().getContext()).getProperties().getProperty("ability.calc.modifs.title");
-            character.addModif(new Character.CharacterModif(modifLabel, modifs, "rollingdices", 0,true));
+            onAddModif(new Modification(modifLabel, modifs, "rollingdices", true));
         }
 
         // update modifs
@@ -1908,36 +1854,37 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
     @Override
-    public void onAddModif(Character.CharacterModif modif) {
+    public void onAddModif(Modification modif) {
         if(modif != null && modif.isValid()) {
-            character.addModif(modif);
-            updateModifsPickers(getView());
-            modifStatesIntoPreferences();
-            // store changes
-            characterDBUpdate();
+            modif.setCharacterId(character.getId());
+            if(DBHelper.getInstance(getContext()).insertEntity(modif) > 0) {
+                character.resyncModifs();
+                updateModifsPickers(getView());
+                updateSheet(getView());
+            }
         }
     }
 
     @Override
-    public void onDeleteModif(int modifIdx) {
-        Character.CharacterModif modif = character.getModif(modifIdx);
-        if(modif != null) {
-            character.deleteModif(modif);
+    public void onDeleteModif(long modifId) {
+        Modification modif = character.getModificationById(modifId);
+        if(modif != null && DBHelper.getInstance(getContext()).deleteEntity(modif)) {
+            character.resyncModifs();
             updateModifsPickers(getView());
-            modifStatesIntoPreferences();
-            // store changes
-            characterDBUpdate();
+            updateSheet(getView());
         }
     }
 
     @Override
-    public void onModifUpdated(int modifIdx, Character.CharacterModif newModif) {
-        Character.CharacterModif modif = character.getModif(modifIdx);
+    public void onModifUpdated(long modifId, Modification newModif) {
+        Modification modif = character.getModificationById(modifId);
         if(modif != null) {
-            modif.update(newModif);
+            newModif.setId(modifId);
+            newModif.setCharacterId(character.getId());
+            character.resyncModifs();
+            DBHelper.getInstance(getContext()).updateEntity(newModif);
             updateModifsPickers(getView());
-            // store changes
-            characterDBUpdate();
+            updateSheet(getView());
         }
     }
 

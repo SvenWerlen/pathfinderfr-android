@@ -78,7 +78,7 @@ public class CharacterItemFactory extends DBEntityFactory {
     }
 
     public String getQueryCreateIndex() {
-        return String.format( "CREATE INDEX ix_character ON %s (%s)", TABLENAME, COLUMN_CHARACTER_ID);
+        return String.format( "CREATE INDEX IF NOT EXISTS ix_character ON %s (%s)", TABLENAME, COLUMN_CHARACTER_ID);
     }
 
     @Override
@@ -153,27 +153,13 @@ public class CharacterItemFactory extends DBEntityFactory {
 
     @Override
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
-        CharacterItem item = new CharacterItem();
-//        item.setName((String)attributes.get(YAML_NAME));
-//        item.setDescription((String)attributes.get(YAML_DESC));
-//        item.setReference((String)attributes.get(YAML_REFERENCE));
-//        item.setSource((String)attributes.get(YAML_SOURCE));
-//        item.setWeight((String)attributes.get(YAML_WEIGHT));
-//        item.setCategory(attributes.get(YAML_CATEGORY));
-
-        return item.isValid() ? item : null;
+        throw new UnsupportedOperationException();
     }
 
 
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
-        if(!(entity instanceof CharacterItem)) {
-            return "";
-        }
-        CharacterItem item = (CharacterItem)entity;
-        StringBuffer buf = new StringBuffer();
-        String source = item.getSource() == null ? null : getTranslatedText("source." + item.getSource().toLowerCase());
-        return String.format(templateList,buf.toString());
+        throw new UnsupportedOperationException();
     }
 
     public static void moveItem(DBHelper helper, List<CharacterItem> list, long itemIdToMove, long itemIdBefore) {

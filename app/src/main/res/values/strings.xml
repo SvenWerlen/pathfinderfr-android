@@ -349,7 +349,7 @@
     <string name="sheet_modifs_pick">Sélectionner un bonus</string>
     <string name="sheet_modifs_pick_weapon">Sélectionner une arme</string>
     <string name="sheet_modifs_icon">Icône:</string>
-    <string name="sheet_modifs_source">Source:</string>
+    <string name="sheet_modifs_name">Nom:</string>
     <string name="sheet_modifs_value">0</string>
     <string name="sheet_modifs_bonus_example">+2 Force</string>
     <string name="sheet_modifs_skills">-- Compétences --</string>

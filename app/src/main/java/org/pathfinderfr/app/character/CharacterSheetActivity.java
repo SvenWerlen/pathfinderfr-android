@@ -28,7 +28,6 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
 
     public static final String PREF_SELECTED_CHARACTER_ID   = "pref_characterId";
     public static final String PREF_SELECTED_TAB            = "pref_selectedTab";
-    public static final String PREF_CHARACTER_MODIF_STATES  = "pref_characterModifStates";
     public static final String PREF_MAIN_VIEW_SUMMARY       = "pref_characterViewMode";
 
     private static final String DIALOG_TOOLTIP = "dial_tooltip";

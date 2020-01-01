@@ -30,6 +30,7 @@ import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -171,8 +172,6 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sheet_spells, container, false);
 
-        SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
-
         // references
         TableLayout table = view.findViewById(R.id.sheet_spells_table);
         TextView exampleLevel = view.findViewById(R.id.sheet_spells_example_level);
@@ -218,7 +217,7 @@ public class SheetSpellFragment extends Fragment implements FragmentSpellFilter.
             List<Class> classes = SpellUtil.getSpellListFrom(classLvl.first, view.getContext());
             for(Class cl : classes) {
                 // increase spell caster level
-                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Character.MODIF_COMBAT_MAG_LVL));
+                classLvl = new Triplet<>(cl, classLvl.second, classLvl.third + character.getAdditionalBonus(Modification.MODIF_COMBAT_MAG_LVL));
                 filter.addFilterClass(cl.getId());
                 Class.Level lvl = classLvl.first.getLevel(classLvl.third);
                 if (lvl != null && lvl.getMaxSpellLvl() > 0) {

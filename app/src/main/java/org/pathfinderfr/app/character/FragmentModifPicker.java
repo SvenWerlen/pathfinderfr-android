@@ -25,13 +25,13 @@ import com.wefika.flowlayout.FlowLayout;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
 import org.pathfinderfr.app.util.StringWithTag;
-import org.pathfinderfr.app.database.entity.Character;
 
 
 import java.util.ArrayList;
@@ -41,13 +41,11 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public static final float ZOOM_FACTOR = 1.5f;
 
-    public static final String ARG_MODIF_IDX     = "arg_modifIdx";
-    public static final String ARG_MODIF_SOURCE  = "arg_modifSource";
+    public static final String ARG_MODIF_ID      = "arg_modifId";
+    public static final String ARG_MODIF_NAME    = "arg_modifName";
     public static final String ARG_MODIF_IDS     = "arg_modifIds";
     public static final String ARG_MODIF_VALS    = "arg_modifVals";
     public static final String ARG_MODIF_ICON    = "arg_modifIcon";
-    public static final String ARG_MODIF_LINKTO  = "arg_modifLinkTo";
-    public static final String ARG_MODIF_WEAPONS = "arg_modifWeapons";
 
     private FragmentModifPicker.OnFragmentInteractionListener mListener;
     private Integer selectedModif;
@@ -56,8 +54,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     private ArrayList<String> weapons;
 
     private List<LinearLayout> modifs;
-    private Character.CharacterModif initial;
-    private int modifIdx;
+    private Modification initial;
+    private long modifId;
 
     private static final String[] icons = new String[] {
             // character initiatin
@@ -154,47 +152,47 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     
     private String getModifText(int modifId) {
         switch(modifId) {
-            case Character.MODIF_ABILITY_ALL: return getResources().getString(R.string.sheet_ability_all);
-            case Character.MODIF_ABILITY_STR: return getResources().getString(R.string.sheet_ability_strength);
-            case Character.MODIF_ABILITY_DEX: return getResources().getString(R.string.sheet_ability_dexterity);
-            case Character.MODIF_ABILITY_CON: return getResources().getString(R.string.sheet_ability_constitution);
-            case Character.MODIF_ABILITY_INT: return getResources().getString(R.string.sheet_ability_intelligence);
-            case Character.MODIF_ABILITY_WIS: return getResources().getString(R.string.sheet_ability_wisdom);
-            case Character.MODIF_ABILITY_CHA: return getResources().getString(R.string.sheet_ability_charisma);
-            case Character.MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_savingthrows_other_all);
-            case Character.MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_other_reflex);
-            case Character.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_other_fortitude);
-            case Character.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_other_will);
-            case Character.MODIF_SAVES_MAG_ALL: return getResources().getString(R.string.sheet_savingthrows_mag_all);
-            case Character.MODIF_SAVES_MAG_REF: return getResources().getString(R.string.sheet_savingthrows_mag_reflex);
-            case Character.MODIF_SAVES_MAG_FOR: return getResources().getString(R.string.sheet_savingthrows_mag_fortitude);
-            case Character.MODIF_SAVES_MAG_WIL: return getResources().getString(R.string.sheet_savingthrows_mag_will);
-            case Character.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
-            case Character.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass_other);
-            case Character.MODIF_COMBAT_AC_ARMOR: return getResources().getString(R.string.sheet_armorclass_armor);
-            case Character.MODIF_COMBAT_AC_SHIELD: return getResources().getString(R.string.sheet_armorclass_shield);
-            case Character.MODIF_COMBAT_AC_NATURAL: return getResources().getString(R.string.sheet_armorclass_natural);
-            case Character.MODIF_COMBAT_AC_PARADE: return getResources().getString(R.string.sheet_armorclass_parade);
-            case Character.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
-            case Character.MODIF_COMBAT_MAG_LVL: return getResources().getString(R.string.sheet_magiclevel);
-            case Character.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
-            case Character.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
-            case Character.MODIF_COMBAT_ATT_MELEE: return getResources().getString(R.string.sheet_attack_melee);
-            case Character.MODIF_COMBAT_DAM_MELEE: return getResources().getString(R.string.sheet_damage_melee);
-            case Character.MODIF_COMBAT_ATT_RANGED: return getResources().getString(R.string.sheet_attack_distance);
-            case Character.MODIF_COMBAT_DAM_RANGED: return getResources().getString(R.string.sheet_damage_distance);
-            case Character.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
-            case Character.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
-            case Character.MODIF_SKILL_ALL: return getResources().getString(R.string.sheet_skill_all);
-            case Character.MODIF_SKILL_FOR: return getResources().getString(R.string.sheet_skill_for);
-            case Character.MODIF_SKILL_DEX: return getResources().getString(R.string.sheet_skill_dex);
-            case Character.MODIF_SKILL_CON: return getResources().getString(R.string.sheet_skill_con);
-            case Character.MODIF_SKILL_INT: return getResources().getString(R.string.sheet_skill_int);
-            case Character.MODIF_SKILL_WIS: return getResources().getString(R.string.sheet_skill_wis);
-            case Character.MODIF_SKILL_CHA: return getResources().getString(R.string.sheet_skill_cha);
+            case Modification.MODIF_ABILITY_ALL: return getResources().getString(R.string.sheet_ability_all);
+            case Modification.MODIF_ABILITY_STR: return getResources().getString(R.string.sheet_ability_strength);
+            case Modification.MODIF_ABILITY_DEX: return getResources().getString(R.string.sheet_ability_dexterity);
+            case Modification.MODIF_ABILITY_CON: return getResources().getString(R.string.sheet_ability_constitution);
+            case Modification.MODIF_ABILITY_INT: return getResources().getString(R.string.sheet_ability_intelligence);
+            case Modification.MODIF_ABILITY_WIS: return getResources().getString(R.string.sheet_ability_wisdom);
+            case Modification.MODIF_ABILITY_CHA: return getResources().getString(R.string.sheet_ability_charisma);
+            case Modification.MODIF_SAVES_ALL: return getResources().getString(R.string.sheet_savingthrows_other_all);
+            case Modification.MODIF_SAVES_REF: return getResources().getString(R.string.sheet_savingthrows_other_reflex);
+            case Modification.MODIF_SAVES_FOR: return getResources().getString(R.string.sheet_savingthrows_other_fortitude);
+            case Modification.MODIF_SAVES_WIL: return getResources().getString(R.string.sheet_savingthrows_other_will);
+            case Modification.MODIF_SAVES_MAG_ALL: return getResources().getString(R.string.sheet_savingthrows_mag_all);
+            case Modification.MODIF_SAVES_MAG_REF: return getResources().getString(R.string.sheet_savingthrows_mag_reflex);
+            case Modification.MODIF_SAVES_MAG_FOR: return getResources().getString(R.string.sheet_savingthrows_mag_fortitude);
+            case Modification.MODIF_SAVES_MAG_WIL: return getResources().getString(R.string.sheet_savingthrows_mag_will);
+            case Modification.MODIF_COMBAT_INI: return getResources().getString(R.string.sheet_initiative);
+            case Modification.MODIF_COMBAT_AC: return getResources().getString(R.string.sheet_armorclass_other);
+            case Modification.MODIF_COMBAT_AC_ARMOR: return getResources().getString(R.string.sheet_armorclass_armor);
+            case Modification.MODIF_COMBAT_AC_SHIELD: return getResources().getString(R.string.sheet_armorclass_shield);
+            case Modification.MODIF_COMBAT_AC_NATURAL: return getResources().getString(R.string.sheet_armorclass_natural);
+            case Modification.MODIF_COMBAT_AC_PARADE: return getResources().getString(R.string.sheet_armorclass_parade);
+            case Modification.MODIF_COMBAT_MAG: return getResources().getString(R.string.sheet_magicresistance);
+            case Modification.MODIF_COMBAT_MAG_LVL: return getResources().getString(R.string.sheet_magiclevel);
+            case Modification.MODIF_COMBAT_HP: return getResources().getString(R.string.sheet_hitpoints);
+            case Modification.MODIF_COMBAT_SPEED: return getResources().getString(R.string.sheet_speed);
+            case Modification.MODIF_COMBAT_ATT_MELEE: return getResources().getString(R.string.sheet_attack_melee);
+            case Modification.MODIF_COMBAT_DAM_MELEE: return getResources().getString(R.string.sheet_damage_melee);
+            case Modification.MODIF_COMBAT_ATT_RANGED: return getResources().getString(R.string.sheet_attack_distance);
+            case Modification.MODIF_COMBAT_DAM_RANGED: return getResources().getString(R.string.sheet_damage_distance);
+            case Modification.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
+            case Modification.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
+            case Modification.MODIF_SKILL_ALL: return getResources().getString(R.string.sheet_skill_all);
+            case Modification.MODIF_SKILL_FOR: return getResources().getString(R.string.sheet_skill_for);
+            case Modification.MODIF_SKILL_DEX: return getResources().getString(R.string.sheet_skill_dex);
+            case Modification.MODIF_SKILL_CON: return getResources().getString(R.string.sheet_skill_con);
+            case Modification.MODIF_SKILL_INT: return getResources().getString(R.string.sheet_skill_int);
+            case Modification.MODIF_SKILL_WIS: return getResources().getString(R.string.sheet_skill_wis);
+            case Modification.MODIF_SKILL_CHA: return getResources().getString(R.string.sheet_skill_cha);
             default:
-                if(modifId > Character.MODIF_SKILL) {
-                    DBEntity entity = DBHelper.getInstance(getContext()).fetchEntity(modifId - Character.MODIF_SKILL, SkillFactory.getInstance());
+                if(modifId > Modification.MODIF_SKILL) {
+                    DBEntity entity = DBHelper.getInstance(getContext()).fetchEntity(modifId - Modification.MODIF_SKILL, SkillFactory.getInstance());
                     if(entity != null) {
                         return entity.getName();
                     }
@@ -213,7 +211,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     public FragmentModifPicker() {
         // Required empty public constructor
-        modifIdx = -1;
+        modifId = -1;
         modifs = new ArrayList<>();
     }
 
@@ -239,9 +237,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         super.onCreate(savedInstanceState);
 
         // initialize from params
-        if(getArguments() != null && getArguments().containsKey(ARG_MODIF_IDX)) {
-            modifIdx = getArguments().getInt(ARG_MODIF_IDX, -1);
-            String source = getArguments().getString(ARG_MODIF_SOURCE);
+        if(getArguments() != null && getArguments().containsKey(ARG_MODIF_ID)) {
+            modifId = getArguments().getLong(ARG_MODIF_ID, -1);
+            String name = getArguments().getString(ARG_MODIF_NAME);
             List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
@@ -249,19 +247,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
             }
-            int linkTo = getArguments().getInt(ARG_MODIF_LINKTO);
-            if(modifIds != null && modifVals != null) {
-                initial = new Character.CharacterModif(source, modifs, icon, linkTo);
+            if(modifVals != null) {
+                initial = new Modification(name, modifs, icon);
             }
-        }
-
-        if(getArguments() != null) {
-            weapons = getArguments().getStringArrayList(ARG_MODIF_WEAPONS);
         }
 
         // restore values that were selected
         if(savedInstanceState != null) {
-            String source = savedInstanceState.getString(ARG_MODIF_SOURCE);
+            String name = savedInstanceState.getString(ARG_MODIF_NAME);
             List<Integer> modifIds = savedInstanceState.getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = savedInstanceState.getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
@@ -269,11 +262,9 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
             }
-            int linkTo = savedInstanceState.getInt(ARG_MODIF_LINKTO);
-            if(modifIds != null && modifVals != null) {
-                initial = new Character.CharacterModif(source, modifs, icon, linkTo);
+            if(modifVals != null) {
+                initial = new Modification(name, modifs, icon);
             }
-            weapons = savedInstanceState.getStringArrayList(ARG_MODIF_WEAPONS);
         }
     }
 
@@ -297,54 +288,54 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // Abilities
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_choose), 0));
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_abilities), 0));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_STR));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_DEX));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_CON));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_INT));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_WIS));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_CHA));
-        list.add(getStringWithTag(Character.MODIF_ABILITY_ALL));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_STR));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_DEX));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_CON));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_INT));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_WIS));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_CHA));
+        list.add(getStringWithTag(Modification.MODIF_ABILITY_ALL));
         // Saves
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_saves), 0));
-        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_REF));
-        list.add(getStringWithTag(Character.MODIF_SAVES_REF));
-        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_FOR));
-        list.add(getStringWithTag(Character.MODIF_SAVES_FOR));
-        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_WIL));
-        list.add(getStringWithTag(Character.MODIF_SAVES_WIL));
-        list.add(getStringWithTag(Character.MODIF_SAVES_MAG_ALL));
-        list.add(getStringWithTag(Character.MODIF_SAVES_ALL));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_MAG_REF));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_REF));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_MAG_FOR));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_FOR));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_MAG_WIL));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_WIL));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_MAG_ALL));
+        list.add(getStringWithTag(Modification.MODIF_SAVES_ALL));
         // Combat
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_combat), 0));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_INI));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_ARMOR));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_SHIELD));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_NATURAL));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_AC_PARADE));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_AC));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_MAG));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_MAG_LVL));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_INI));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_AC_ARMOR));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_AC_SHIELD));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_AC_NATURAL));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_AC_PARADE));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_AC));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_MAG));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_MAG_LVL));
         //list.add(getStringWithTag(Character.MODIF_COMBAT_HP));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_SPEED));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_MELEE));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_DAM_MELEE));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_ATT_RANGED));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_DAM_RANGED));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_CMB));
-        list.add(getStringWithTag(Character.MODIF_COMBAT_CMD));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_SPEED));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_ATT_MELEE));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_DAM_MELEE));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_ATT_RANGED));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_DAM_RANGED));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_CMB));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_CMD));
         // Skills
         list.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_skills), 0));
-        list.add(getStringWithTag(Character.MODIF_SKILL_ALL));
-        list.add(getStringWithTag(Character.MODIF_SKILL_FOR));
-        list.add(getStringWithTag(Character.MODIF_SKILL_DEX));
-        list.add(getStringWithTag(Character.MODIF_SKILL_CON));
-        list.add(getStringWithTag(Character.MODIF_SKILL_INT));
-        list.add(getStringWithTag(Character.MODIF_SKILL_WIS));
-        list.add(getStringWithTag(Character.MODIF_SKILL_CHA));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_ALL));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_FOR));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_DEX));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_CON));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_INT));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_WIS));
+        list.add(getStringWithTag(Modification.MODIF_SKILL_CHA));
         List<DBEntity> skills = DBHelper.getInstance(rootView.getContext()).getAllEntities(SkillFactory.getInstance(),
                 PreferenceUtil.getSources(rootView.getContext()));
         for(DBEntity skill : skills) {
-            list.add(new StringWithTag(skill.getName(), Character.MODIF_SKILL + (int)skill.getId()));
+            list.add(new StringWithTag(skill.getName(), Modification.MODIF_SKILL + (int)skill.getId()));
         }
 
         ArrayAdapter<StringWithTag> dataAdapter = new ArrayAdapter<>(this.getContext(),
@@ -416,52 +407,21 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             }
         };
 
-        EditText source = rootView.findViewById(R.id.sheet_modifs_source);
-        source.setFilters(new InputFilter[] { filter });
+        EditText name = rootView.findViewById(R.id.sheet_modifs_name);
+        name.setFilters(new InputFilter[] { filter });
 
-        // weapon list
-        AppCompatSpinner wSpinner = rootView.findViewById(R.id.sheet_modifs_spinner_weapon);
-        List<StringWithTag> listWeapons = new ArrayList<>();
-        listWeapons.add(new StringWithTag(getResources().getString(R.string.sheet_modifs_linkto_nothing), 0));
-        if(weapons != null) {
-            for(String w : weapons) {
-                listWeapons.add(new StringWithTag(w, 0));
-            }
-        }
-        ArrayAdapter<StringWithTag> dataAdapterWeapons = new ArrayAdapter<>(this.getContext(),
-                android.R.layout.simple_spinner_item, listWeapons);
-        dataAdapterWeapons.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        wSpinner.setAdapter(dataAdapterWeapons);
-        wSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedWeapon = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedWeapon = 0;
-            }
-        });
-
-        // initialize form if required
-        rootView.findViewById(R.id.sheet_modifs_linkto_weapon).setVisibility(View.GONE);
         if(initial != null) {
-            source.setText(initial.getSource());
+            name.setText(initial.getName());
             // icon has already been highlighted
             for(int i = 0; i<initial.getModifCount(); i++) {
                 Pair<Integer,Integer> modif = initial.getModif(i);
                 addBonusLine(rootView, modif.first, modif.second);
             }
-            // link to weapon
-            if(initial.getLinkToWeapon() > 0 && initial.getLinkToWeapon() <= weapons.size()) {
-                wSpinner.setSelection(initial.getLinkToWeapon());
-            }
         }
 
-        rootView.findViewById(R.id.modifs_delete).setVisibility(modifIdx >= 0 ? View.VISIBLE : View.GONE);
+        rootView.findViewById(R.id.modifs_delete).setVisibility(modifId >= 0 ? View.VISIBLE : View.GONE);
 
-        source.requestFocus();
+        name.requestFocus();
         if(initial==null) {
             ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
@@ -481,7 +441,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     }
 
     private void addBonusLine(View view, int modifId, int bonus) {
-        final View linktoView = view.findViewById(R.id.sheet_modifs_linkto_weapon);
         final TextView bonusTextExample = view.findViewById(R.id.sheet_modifs_bonus_example);
         final ImageView bonusRemoveExample = view.findViewById(R.id.sheet_modifs_remove);
         final String bonusTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.modif");
@@ -496,31 +455,15 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         layout.addView(bonusText);
         layout.addView(bonusRemove);
 
-        if(modifId == Character.MODIF_COMBAT_ATT_MELEE || modifId == Character.MODIF_COMBAT_ATT_RANGED
-            || modifId == Character.MODIF_COMBAT_DAM_MELEE || modifId == Character.MODIF_COMBAT_DAM_RANGED) {
-            linktoView.setVisibility(View.VISIBLE);
-        }
-
         bonusRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout.setVisibility(View.GONE);
-                // hide "linkto" section if no bonus related to bonus attack anymore
-                boolean hide = true;
                 for(View m : modifs) {
                     if(m.getVisibility() == View.GONE) {
                         continue;
                     }
                     Pair<Integer,Integer> pair = (Pair<Integer,Integer>)m.getTag();
-                    if(pair.first == Character.MODIF_COMBAT_ATT_MELEE || pair.first == Character.MODIF_COMBAT_ATT_RANGED
-                        || pair.first == Character.MODIF_COMBAT_DAM_MELEE || pair.first == Character.MODIF_COMBAT_DAM_RANGED) {
-                        hide = false;
-                        break;
-                    }
-                }
-                if(hide) {
-                    linktoView.setVisibility(View.GONE);
-                    selectedWeapon = 0;
                 }
             }
         });
@@ -538,7 +481,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         }
         else if(v.getId() == R.id.modifs_ok) {
             // check that all values have been properly filled
-            String text = ((EditText)getView().findViewById(R.id.sheet_modifs_source)).getText().toString();
+            String text = ((EditText)getView().findViewById(R.id.sheet_modifs_name)).getText().toString();
             String error = null;
             if(text.length() == 0) {
                 error = getView().getResources().getString(R.string.sheet_modifs_error_nosource);
@@ -565,19 +508,19 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 return;
             }
             if(mListener != null) {
-                if(modifIdx >= 0) {
-                    mListener.onModifUpdated(modifIdx,
-                            new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString(), selectedWeapon));
+                if(modifId >= 0) {
+                    mListener.onModifUpdated(modifId,
+                            new Modification(text, bonusList, selectedIcon.getTag().toString()));
                 } else {
-                    mListener.onAddModif(new Character.CharacterModif(text, bonusList, selectedIcon.getTag().toString(), selectedWeapon));
+                    mListener.onAddModif(new Modification(text, bonusList, selectedIcon.getTag().toString()));
                 }
             }
             dismiss();
             return;
         }
         else if(v.getId() == R.id.modifs_delete) {
-            if(modifIdx>=0) {
-                mListener.onDeleteModif(modifIdx);
+            if(modifId >=0) {
+                mListener.onDeleteModif(modifId);
             }
             dismiss();
             return;
@@ -643,18 +586,18 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     }
 
     public interface OnFragmentInteractionListener {
-        void onAddModif(Character.CharacterModif modif);
-        void onDeleteModif(int modifIdx);
-        void onModifUpdated(int modifIdx, Character.CharacterModif modif);
+        void onAddModif(Modification modif);
+        void onDeleteModif(long modifId);
+        void onModifUpdated(long modifId, Modification modif);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ARG_MODIF_IDX, modifIdx);
+        outState.putLong(ARG_MODIF_ID, modifId);
         // store already typed source
-        String text = ((EditText)getView().findViewById(R.id.sheet_modifs_source)).getText().toString();
-        outState.putString(ARG_MODIF_SOURCE, text);
+        String text = ((EditText)getView().findViewById(R.id.sheet_modifs_name)).getText().toString();
+        outState.putString(ARG_MODIF_NAME, text);
         // store already added modifs
         List<Pair<Integer,Integer>> bonusList = new ArrayList<>();
         ArrayList<Integer> modifsId = new ArrayList<>();
@@ -671,10 +614,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // store icon selection
         if(selectedIcon != null) {
             outState.putString(ARG_MODIF_ICON, selectedIcon.getTag().toString());
-        }
-        // store weapon list
-        if(weapons != null && weapons.size() > 0) {
-            outState.putStringArrayList(ARG_MODIF_WEAPONS, weapons);
         }
     }
 }

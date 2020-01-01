@@ -30,6 +30,7 @@ import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
@@ -138,7 +139,6 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
         if(character == null) {
             throw new IllegalStateException("No character selected!");
         }
-        SheetMainFragment.initializeCharacterModifsStates(view.getContext(), character);
 
         // References
         TableLayout table = view.findViewById(R.id.sheet_skills_table);
@@ -230,9 +230,9 @@ public class SheetSkillFragment extends Fragment implements FragmentRankPicker.O
                                     rank,
                                     classSkillText,
                                     skill.getAbility().toLowerCase(), abilityMod,
-                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL + (int)skill.getId(), tooltipModif) + // other (specific skill)
-                                    SheetMainFragment.generateOtherBonusText(character, Character.MODIF_SKILL_ALL, tooltipModif) +                          // other (all skills)
-                                    SheetMainFragment.generateOtherBonusText(character, character.getAbilityBonus(skill.getAbilityId()), tooltipModif),     // other (skill based on ability)
+                                    SheetMainFragment.generateOtherBonusText(character, Modification.MODIF_SKILL + (int)skill.getId(), tooltipModif) + // other (specific skill)
+                                    SheetMainFragment.generateOtherBonusText(character, Modification.MODIF_SKILL_ALL, tooltipModif) +                          // other (all skills)
+                                    SheetMainFragment.generateOtherBonusText(character, Modification.modificationForAbility(skill.getAbilityId()), tooltipModif),     // other (skill based on ability)
                                     total ));
                 }
             });

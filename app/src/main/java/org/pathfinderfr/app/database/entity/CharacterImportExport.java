@@ -250,11 +250,11 @@ public class CharacterImportExport {
 
         // modifs
         List<Map> modifs = new ArrayList<>();
-        for(Character.CharacterModif modif : c.getModifs()) {
+        for(Modification modif : c.getModifications()) {
             Map<String, Object> modifObj = new LinkedHashMap<>();
             modifObj.put(YAML_MODIF_SOURCE, modif.getSource());
             modifObj.put(YAML_MODIF_ICON, modif.getIcon());
-            modifObj.put(YAML_MODIF_LINKTO, modif.getLinkToWeapon());
+            modifObj.put(YAML_MODIF_LINKTO, modif.getItemId());
             List<Map> bonuses = new ArrayList<>();
             for(int idx = 0; idx < modif.getModifCount(); idx++) {
                 Map<String, Object> bonus = new LinkedHashMap<>();
@@ -775,7 +775,7 @@ public class CharacterImportExport {
                                         }
                                     }
                                 }
-                                c.addModif(new Character.CharacterModif(source, bonusList, icon, linkTo));
+                                //c.addModif(new Character.CharacterModif(source, bonusList, icon, linkTo));
                             }
                         }
                     }

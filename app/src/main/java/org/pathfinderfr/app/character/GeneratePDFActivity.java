@@ -96,7 +96,6 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                             input.options.printLogo = ((CheckBox)findViewById(R.id.option_logo)).isChecked();
                             input.options.showWeaponsInInventory = ((CheckBox)findViewById(R.id.option_show_weapons)).isChecked();
                             input.options.showArmorsInInventory = ((CheckBox)findViewById(R.id.option_show_armors)).isChecked();
-                            SheetMainFragment.initializeCharacterModifsStates(v.getContext(), input.character);
                             taskInProgress.execute(input);
                         }
                     } catch( Exception exc ) {
