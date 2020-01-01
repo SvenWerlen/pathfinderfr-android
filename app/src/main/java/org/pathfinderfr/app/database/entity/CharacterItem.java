@@ -29,6 +29,7 @@ public class CharacterItem extends DBEntity {
     private String ammo;
     private int location;
     private int order;
+    private boolean equiped;
 
     public CharacterItem() {}
 
@@ -157,7 +158,11 @@ public class CharacterItem extends DBEntity {
     }
 
     public boolean isEquiped() {
-        return location != LOCATION_NOLOC;
+        return equiped;
+    }
+
+    public void setEquiped(boolean equiped) {
+        this.equiped = equiped;
     }
 
     @Override

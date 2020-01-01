@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -228,4 +229,5 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
     public void onRefreshRequest() {
         showTab();
     }
+
 }

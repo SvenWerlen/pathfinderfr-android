@@ -497,6 +497,10 @@
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_price">Valeur (prix):</string>
     <string name="sheet_inventory_item_location">Emplacement:</string>
+    <string name="sheet_inventory_item_equiped">Équipé</string>
+    <string name="sheet_inventory_item_equiped_descr">Un objet non-équipé n\'apparaîtra pas dans la vue \"Équipement actif\" et les bonus qu\'il procure ne s\'appliqueront pas
+        sur la feuille de personnage. Par exemple, en équipant un arc +2 et en déséquipant le bouclier, les valeurs d\'attaques et de classe d\'armure (CA) se verront automatiquement ajustées.
+    </string>
     <string name="sheet_inventory_item_price_unit">Unité de prix</string>
     <string name="sheet_inventory_item_reference">Référence:</string>
     <string name="sheet_inventory_item_reference_example">Arc long</string>
@@ -504,6 +508,10 @@
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
     <string name="sheet_inventory_error_price">Veuiller spécifier un prix/valeur (ou inscrire "0")!</string>
+    <string name="sheet_inventory_ctx_edit">Modifier</string>
+    <string name="sheet_inventory_ctx_equip">Équiper (%s)</string>
+    <string name="sheet_inventory_ctx_unequip">Ranger (déséquiper)</string>
+    <string name="sheet_inventory_item_unequiped">Rangé</string>
 
     <!-- Skills -->
     <string name="sheet_skills_example_label_name">Compétences</string>

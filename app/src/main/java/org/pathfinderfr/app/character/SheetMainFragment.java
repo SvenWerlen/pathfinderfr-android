@@ -12,9 +12,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -25,6 +28,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
@@ -66,6 +71,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -96,6 +103,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
     private static final String DIALOG_SYNC_ACTION    = "sync-action";
 
+    private static final int CONTEXT_EQUIP = 1;
+    private static final int CONTEXT_EDIT = 2;
+
     public static final String KEY_INVENTORY_SHOWALL = "pref_inventory_showall";
 
 
@@ -108,6 +118,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private TextView weaponTextExample;
     private TableLayout inventory;
     private ImageView inventoryIconExample;
+    private ImageView inventoryIconBagExample;
     private TextView inventoryNameExample;
     private TextView inventoryLocationExample;
 
@@ -462,7 +473,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         weapons = view.findViewById(R.id.weapons_table);
         weaponNameExample = view.findViewById(R.id.weapon_name);
         weaponTextExample = view.findViewById(R.id.weapon_bonus);
-        updateWeapons(view);
 
         // COMBAT MANEUVER BONUS
         final String cmbTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.cmb.title");
@@ -706,6 +716,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.sheet_inventory_item_add_fromMagic).setOnClickListener(listener);
         inventory = view.findViewById(R.id.sheet_inventory_table);
         inventoryIconExample = view.findViewById(R.id.sheet_inventory_example_icon);
+        inventoryIconBagExample = view.findViewById(R.id.sheet_inventory_unequiped);
         inventoryNameExample = view.findViewById(R.id.sheet_inventory_example_name);
         inventoryLocationExample = view.findViewById(R.id.sheet_inventory_example_location);
         updateInventory(view);
@@ -715,11 +726,11 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             public void onClick(View v) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(v.getContext());
                 // toggle
-                boolean showAll = !prefs.getBoolean(KEY_INVENTORY_SHOWALL, false);
+                boolean showAll = !prefs.getBoolean(KEY_INVENTORY_SHOWALL, true);
                 if(showAll) {
-                    prefs.edit().putBoolean(KEY_INVENTORY_SHOWALL, true).apply();
-                } else {
                     prefs.edit().remove(KEY_INVENTORY_SHOWALL).apply();
+                } else {
+                    prefs.edit().putBoolean(KEY_INVENTORY_SHOWALL, false).apply();
                 }
                 updateInventory(SheetMainFragment.this.getView());
             }
@@ -917,7 +928,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private void updateWeapons(View view) {
         weapons.removeViews(2, weapons.getChildCount()-2);
 
-        List<Weapon> weaponsList = character.getInventoryWeapons();
+        boolean showAll = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getBoolean(KEY_INVENTORY_SHOWALL, true);
+        List<Weapon> weaponsList = character.getInventoryWeapons(!showAll);
         if(weaponsList.size() == 0) {
             weapons.setVisibility(View.GONE);
             return;
@@ -1061,6 +1073,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, matchingItem.getItemRef());
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, matchingItem.getLocation());
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, matchingItem.getAmmo());
+                    arguments.putBoolean(FragmentInventoryPicker.ARG_INVENTORY_EQUIPED, matchingItem.isEquiped());
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 }
@@ -1071,7 +1084,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private void updateInventory(View view) {
         inventory.removeAllViews();
         int rowId = 0;
-        boolean showAll = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getBoolean(KEY_INVENTORY_SHOWALL, false);
+        boolean showAll = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getBoolean(KEY_INVENTORY_SHOWALL, true);
         List<CharacterItem> items = showAll ? character.getInventoryItems() : character.getEquipedItems();
         ((TextView)view.findViewById(R.id.sheet_main_inventory_header)).setText(showAll ? R.string.sheet_main_inventory_header_all : R.string.sheet_main_inventory_header_active);
         view.findViewById(R.id.sheet_main_inventory_header_filter).setVisibility(showAll ? View.GONE : View.VISIBLE);
@@ -1095,44 +1108,26 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             nameLayout.addView(name);
             row.addView(icon);
             row.addView(nameLayout);
-            TextView location = FragmentUtil.copyExampleTextFragment(inventoryLocationExample);
-            location.setText(ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation()));
-            location.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            row.addView(location);
+            if(item.isEquiped()) {
+                TextView location = FragmentUtil.copyExampleTextFragment(inventoryLocationExample);
+                location.setText(ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation()));
+                location.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                row.addView(location);
+            } else {
+                ImageView bagIcon = FragmentUtil.copyExampleImageFragment(inventoryIconBagExample);
+                row.addView(bagIcon);
+            }
             row.setBackgroundColor(ContextCompat.getColor(getContext(), rowId % 2 == 1 ? R.color.colorPrimaryAlternate : R.color.colorWhite));
-            final long itemId = item.getId();
-            final String itemName = item.getName();
-            final int itemWeight = item.getWeight();
-            final long itemPrice = item.getPrice();
-            final long itemReference = item.getItemRef();
-            final int itemLoc = item.getLocation();
-            final String itemInfos = item.getAmmo();
             row.setTag(new Triplet<TextView, TextView, Long>(dropHere, name, item.getId()));
             row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-                    DialogFragment newFragment = FragmentInventoryPicker.newInstance(SheetMainFragment.this);
-
-                    Bundle arguments = new Bundle();
-                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, itemId);
-                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, itemName);
-                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, itemWeight);
-                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, itemPrice);
-                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, itemReference);
-                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, itemLoc);
-                    arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, itemInfos);
-                    newFragment.setArguments(arguments);
-                    newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                    getActivity().openContextMenu(v);
                 }
             });
             row.setOnLongClickListener(listener);
             row.setOnDragListener(listener);
+            registerForContextMenu(row);
             inventory.addView(row);
             rowId++;
         }
@@ -1689,6 +1684,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     return true;
                 }
             } else {
+                parent.getActivity().closeContextMenu();
                 Triplet<TextView,TextView,Long> triplet = (Triplet<TextView,TextView,Long>)v.getTag();
                 TextView tvName = triplet.second;
                 ClipData.Item item = new ClipData.Item(triplet.third.toString());
@@ -2090,5 +2086,56 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         String content = CharacterImportExport.exportCharacterAsYML(character, getContext());
         MessageBroker broker = new MessageBroker(this, sender, character.getUniqID(), MessageBroker.TYPE_SYNC, content);
         broker.execute();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        Triplet<TextView, TextView, Long> info = (Triplet<TextView, TextView, Long>)v.getTag();
+        CharacterItem item = (CharacterItem)DBHelper.getInstance(getContext()).fetchEntity(info.third, CharacterItemFactory.getInstance());
+        menu.setHeaderTitle(item.getName());
+        if(item.isEquiped()) {
+            menu.add(CONTEXT_EQUIP, info.third.intValue(), Menu.NONE, getResources().getString(R.string.sheet_inventory_ctx_unequip));
+        } else {
+            String location = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation());
+            menu.add(CONTEXT_EQUIP, info.third.intValue(), Menu.NONE, String.format(getResources().getString(R.string.sheet_inventory_ctx_equip), location));
+        }
+        menu.add(CONTEXT_EDIT, info.third.intValue(), Menu.NONE, getResources().getString(R.string.sheet_inventory_ctx_edit));
+        // repeat this to add additional menus
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        DBHelper helper = DBHelper.getInstance(getContext());
+        if(item.getGroupId() == CONTEXT_EDIT) {
+            CharacterItem cItem = (CharacterItem) helper.fetchEntity(item.getItemId(), CharacterItemFactory.getInstance());
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            DialogFragment newFragment = FragmentInventoryPicker.newInstance(SheetMainFragment.this);
+
+            Bundle arguments = new Bundle();
+            arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, cItem.getId());
+            arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, cItem.getName());
+            arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, cItem.getWeight());
+            arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, cItem.getPrice());
+            arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, cItem.getItemRef());
+            arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, cItem.getLocation());
+            arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, cItem.getAmmo());
+            arguments.putBoolean(FragmentInventoryPicker.ARG_INVENTORY_EQUIPED, cItem.isEquiped());
+            newFragment.setArguments(arguments);
+            newFragment.show(ft, DIALOG_PICK_INVENTORY);
+        }
+        else if(item.getGroupId() == CONTEXT_EQUIP) {
+            CharacterItem cItem = (CharacterItem) helper.fetchEntity(item.getItemId(), CharacterItemFactory.getInstance());
+            cItem.setEquiped(!cItem.isEquiped());
+            helper.updateEntity(cItem, new HashSet<>(Arrays.asList(CharacterItemFactory.FLAG_EQUIPED)));
+            character.resyncInventory();
+            updateInventory(getView());
+        }
+        return true;
     }
 }

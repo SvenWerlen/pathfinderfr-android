@@ -30,7 +30,12 @@ Icons provided under the Creative Commons 3.0 BY or CC0.
 * Unchecked box ([iconfinder_check-box-outline-blank_326558.svg](https://www.iconfinder.com/icons/326558/blank_box_check_icon)): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
 * Unchecked box ([iconfinder_check-box-outline_326561.svg](https://www.iconfinder.com/icons/326561/box_check_icon)): icon made by Google (Material Core), https://www.iconfinder.com/iconsets/material-core
 
-Icons provided as Free for commercial use. 
+Icons provided as Free for commercial use.
+
+## Icons from https://iconscout.com
+* Information Icon by Google Inc. (https://iconscout.com/contributors/google-inc)
+
+Icons provided under Apache 2.0 license.
  
 ## Source code & Copying
 

@@ -1620,9 +1620,13 @@ public class Character extends DBEntity {
      * @return the list of inventory items which are weapons
      */
     public List<Weapon> getInventoryWeapons() {
+        return getInventoryWeapons(false);
+    }
+
+    public List<Weapon> getInventoryWeapons(boolean equipedOnly) {
         List<Weapon> result = new ArrayList<>();
         DBHelper helper = DBHelper.getInstance(null);
-        List<CharacterItem> inventory = getInventoryItems();
+        List<CharacterItem> inventory = equipedOnly ? getEquipedItems() : getInventoryItems();
         for(CharacterItem el : inventory) {
             if(el.isWeapon()) {
                 DBEntity entity = helper.fetchObjectEntity(el);

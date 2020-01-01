@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,6 @@ import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.CharacterItem;
-import org.pathfinderfr.app.database.entity.CharacterItemFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Weapon;
 
@@ -35,11 +35,13 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     public static final String ARG_INVENTORY_OBJID    = "arg_inventoryObjectId";
     public static final String ARG_INVENTORY_LOCATION = "arg_inventoryLocation";
     public static final String ARG_INVENTORY_INFOS    = "arg_inventoryInfos";
+    public static final String ARG_INVENTORY_EQUIPED  = "arg_inventoryActive";
 
     private FragmentInventoryPicker.OnFragmentInteractionListener mListener;
 
     private long invId;
     private CharacterItem initial;
+    private TextView tooltip;
 
     public FragmentInventoryPicker() {
         // Required empty public constructor
@@ -71,12 +73,14 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         if(getArguments().containsKey(ARG_INVENTORY_ID)) {
             invId = getArguments().getLong(ARG_INVENTORY_ID);
             String itemName = getArguments().getString(ARG_INVENTORY_NAME);
-            Integer itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
-            Long itemPrice = getArguments().getLong(ARG_INVENTORY_PRICE);
-            Long itemObjectId = getArguments().getLong(ARG_INVENTORY_OBJID);
-            Integer itemLocation = getArguments().getInt(ARG_INVENTORY_LOCATION);
+            int itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
+            long itemPrice = getArguments().getLong(ARG_INVENTORY_PRICE);
+            long itemObjectId = getArguments().getLong(ARG_INVENTORY_OBJID);
+            int itemLocation = getArguments().getInt(ARG_INVENTORY_LOCATION);
             String itemInfos = getArguments().getString(ARG_INVENTORY_INFOS);
+            boolean active = getArguments().getBoolean(ARG_INVENTORY_EQUIPED);
             initial = new CharacterItem(0L, itemName, itemWeight, itemPrice, itemObjectId, itemInfos, itemLocation);
+            initial.setEquiped(active);
         }
 
         // restore values that were selected
@@ -101,6 +105,15 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         rootView.findViewById(R.id.inventory_item_ok).setOnClickListener(this);
         rootView.findViewById(R.id.inventory_item_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.inventory_item_delete).setOnClickListener(this);
+
+        rootView.findViewById(R.id.sheet_inventory_item_equiped_descr).setVisibility(View.GONE);
+        tooltip = rootView.findViewById(R.id.sheet_inventory_item_equiped_descr);
+        rootView.findViewById(R.id.sheet_inventory_item_equiped_tooltip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tooltip.setVisibility(tooltip.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+            }
+        });
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -152,6 +165,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                     itemInfos.setText(initial.getAmmo());
                 }
             }
+
+            ((Switch)rootView.findViewById(R.id.sheet_inventory_item_equiped)).setChecked(initial.isEquiped());
         } else {
             ((AppCompatSpinner)rootView.findViewById(R.id.sheet_inventory_item_price_unit)).setSelection(2);
             rootView.findViewById(R.id.inventory_item_delete).setVisibility(View.GONE);
@@ -191,6 +206,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             Integer itemPrice = null;
             Integer itemLocation = null;
             String itemInfos = null;
+            boolean isActive = false;
             itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
             try {
                 itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
@@ -235,6 +251,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                         initial == null ? 0L : initial.getItemRef(),
                         itemInfos, initial == null ? CharacterItem.LOCATION_NOLOC : initial.getLocation());
                 item.setLocation(itemLocation);
+                item.setEquiped(((Switch)getView().findViewById(R.id.sheet_inventory_item_equiped)).isChecked());
                 if(mListener != null) {
                     if(invId >= 0) {
                         mListener.onUpdateItem(invId, item);
