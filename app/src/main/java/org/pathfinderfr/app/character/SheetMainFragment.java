@@ -12,12 +12,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextMenu;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -28,8 +25,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
@@ -40,6 +35,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.wefika.flowlayout.FlowLayout;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.ItemDetailActivity;
+import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
@@ -52,6 +49,7 @@ import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassArchetype;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
+import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.Modification;
@@ -88,25 +86,28 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
         FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener,
         FragmentInfosPicker.OnFragmentInteractionListener, FragmentMoneyPicker.OnFragmentInteractionListener,
-        FragmentSync.OnFragmentInteractionListener {
+        FragmentSync.OnFragmentInteractionListener, FragmentContextMenu.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
-    private static final String DIALOG_PICK_ABILITY   = "ability-picker";
-    private static final String DIALOG_CALC_ABILITY   = "ability-calc";
-    private static final String DIALOG_DELETE_ACTION  = "delete-action";
-    private static final String DIALOG_PICK_NAME      = "name-picker";
-    private static final String DIALOG_PICK_RACE      = "race-picker";
-    private static final String DIALOG_PICK_INFOS     = "infos-picker";
-    private static final String DIALOG_PICK_CLASS     = "class-picker";
-    private static final String DIALOG_PICK_HP        = "hitpoint-picker";
-    private static final String DIALOG_PICK_SPEED     = "speed-picker";
-    private static final String DIALOG_PICK_MODIFS    = "modifs-picker";
-    private static final String DIALOG_PICK_MONEY     = "money-picker";
-    private static final String DIALOG_PICK_INVENTORY = "inventory-picker";
-    private static final String DIALOG_SYNC_ACTION    = "sync-action";
+    protected static final String DIALOG_PICK_ABILITY   = "ability-picker";
+    protected static final String DIALOG_CALC_ABILITY   = "ability-calc";
+    protected static final String DIALOG_DELETE_ACTION  = "delete-action";
+    protected static final String DIALOG_PICK_NAME      = "name-picker";
+    protected static final String DIALOG_PICK_RACE      = "race-picker";
+    protected static final String DIALOG_PICK_INFOS     = "infos-picker";
+    protected static final String DIALOG_PICK_CLASS     = "class-picker";
+    protected static final String DIALOG_PICK_HP        = "hitpoint-picker";
+    protected static final String DIALOG_PICK_SPEED     = "speed-picker";
+    protected static final String DIALOG_PICK_MODIFS    = "modifs-picker";
+    protected static final String DIALOG_PICK_MONEY     = "money-picker";
+    protected static final String DIALOG_PICK_INVENTORY = "inventory-picker";
+    protected static final String DIALOG_SYNC_ACTION    = "sync-action";
+    protected static final String DIALOG_CONTEXT_MENU   = "contextmenu";
 
     private static final int CONTEXT_EQUIP = 1;
-    private static final int CONTEXT_EDIT = 2;
+    private static final int CONTEXT_SHOWREF = 2;
+    private static final int CONTEXT_EDIT = 3;
+    private static final int CONTEXT_ENABLE = 100;
 
     public static final String KEY_INVENTORY_SHOWALL = "pref_inventory_showall";
 
@@ -173,6 +174,10 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             characterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
         refreshNeeded = false;
+    }
+
+    protected Character getCharacter() {
+        return character;
     }
 
     private static void showTooltip(View v, String message) {
@@ -1042,6 +1047,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
                     Bundle arguments = new Bundle();
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, matchingItem.getId());
+                    arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_CHARACID, character.getId());
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, matchingItem.getName());
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, matchingItem.getWeight());
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, matchingItem.getPrice());
@@ -1102,7 +1108,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             });
             row.setOnLongClickListener(listener);
             row.setOnDragListener(listener);
-            registerForContextMenu(row);
+            row.setOnClickListener(listener);
             inventory.addView(row);
             rowId++;
         }
@@ -1165,7 +1171,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     }
 
 
-    private void updateSheet(View view) {
+    protected void updateSheet(View view) {
         // update abilities
         ((TextView)view.findViewById(R.id.ability_str_value)).setText(String.valueOf(character.getStrength()));
         ((TextView)view.findViewById(R.id.ability_dex_value)).setText(String.valueOf(character.getDexterity()));
@@ -1436,7 +1442,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 newFragment.show(ft, DIALOG_PICK_MONEY);
                 return;
             }
-
             else if(v instanceof ImageView) {
                 if(v.getId() == R.id.actionPin) {
                     final int colorDisabled = parent.getContext().getResources().getColor(R.color.colorDisabled);
@@ -1596,6 +1601,60 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 context.startActivity(intent);
                 parent.refreshNeeded = true;
             }
+            // inventory items
+            else if(v instanceof TableRow && v.getTag() != null) {
+                Triplet<TextView, TextView, Long> itemTag = (Triplet<TextView, TextView, Long>)v.getTag();
+                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_CONTEXT_MENU);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                ArrayList<Integer> menuIds = new ArrayList<>();
+                ArrayList<Integer> icons = new ArrayList<>();
+                ArrayList<Integer> colors = new ArrayList<>();
+                ArrayList<String> titles = new ArrayList<>();
+                Context ctx = parent.getContext();
+                DialogFragment newFragment = FragmentContextMenu.newInstance(parent);
+                Bundle arguments = new Bundle();
+                CharacterItem item = (CharacterItem)DBHelper.getInstance(ctx).fetchEntity(itemTag.third, CharacterItemFactory.getInstance());
+                if(item.isEquiped()) {
+                    menuIds.add(CONTEXT_EQUIP); icons.add(R.drawable.ic_putin); colors.add(0);
+                    titles.add(parent.getResources().getString(R.string.sheet_inventory_ctx_unequip));
+                } else {
+                    String location = ConfigurationUtil.getInstance(ctx).getProperties().getProperty("sheet_inventory_location_" + item.getLocation());
+                    menuIds.add(CONTEXT_EQUIP); icons.add(R.drawable.ic_takeout); colors.add(0);
+                    titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_equip), location));
+                }
+                if(item.getItemRef() > 0) {
+                    DBEntity ref = DBHelper.getInstance(ctx).fetchObjectEntity(item);
+                    menuIds.add(CONTEXT_SHOWREF); icons.add(R.drawable.ic_zoom); colors.add(0);
+                    titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_reference), ref.getName()));
+                }
+                menuIds.add(CONTEXT_EDIT); icons.add(R.drawable.ic_edit); colors.add(0);
+                titles.add(parent.getResources().getString(R.string.sheet_inventory_ctx_edit));
+                List<Modification> modifs = parent.character.getModifications(item.getId());
+                for(Modification modif : modifs) {
+                    final int resourceId = parent.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable", ctx.getPackageName());
+                    menuIds.add(CONTEXT_ENABLE + (int)modif.getId()); icons.add(resourceId);
+                    if(modif.isEnabled()) {
+                        colors.add(ctx.getResources().getColor(R.color.colorBlack));
+                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_disable), modif.getName()));
+                    } else {
+                        colors.add(ctx.getResources().getColor(R.color.colorPrimaryDark));
+                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_enable), modif.getName()));
+                    }
+                }
+                arguments.putLong(FragmentContextMenu.ARG_CONTEXT_ITEMID, item.getId());
+                arguments.putString(FragmentContextMenu.ARG_CONTEXT_TITLE, item.getName());
+                arguments.putIntegerArrayList(FragmentContextMenu.ARG_CONTEXT_ICONS, icons);
+                arguments.putIntegerArrayList(FragmentContextMenu.ARG_CONTEXT_ICONSCOLOR, colors);
+                arguments.putIntegerArrayList(FragmentContextMenu.ARG_CONTEXT_MENUIDS, menuIds);
+                arguments.putStringArrayList(FragmentContextMenu.ARG_CONTEXT_NAMES, titles);
+                newFragment.setArguments(arguments);
+                newFragment.show(ft, DIALOG_CONTEXT_MENU);
+                return;
+            }
         }
 
         @Override
@@ -1623,6 +1682,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     }
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
                     arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
+                    arguments.putLong(FragmentModifPicker.ARG_MODIF_ITEMID, modif.getItemId());
+                    arguments.putString(FragmentModifPicker.ARG_MODIF_ITEMS, parent.character.getInventoryItemsAsString());
                     arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
 
                     newFragment.setArguments(arguments);
@@ -1881,6 +1942,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         if(modif != null) {
             newModif.setId(modifId);
             newModif.setCharacterId(character.getId());
+            newModif.setEnabled(modif.isEnabled());
             character.resyncModifs();
             DBHelper.getInstance(getContext()).updateEntity(newModif);
             updateModifsPickers(getView());
@@ -2035,27 +2097,15 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         broker.execute();
     }
 
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        Triplet<TextView, TextView, Long> info = (Triplet<TextView, TextView, Long>)v.getTag();
-        CharacterItem item = (CharacterItem)DBHelper.getInstance(getContext()).fetchEntity(info.third, CharacterItemFactory.getInstance());
-        menu.setHeaderTitle(item.getName());
-        if(item.isEquiped()) {
-            menu.add(CONTEXT_EQUIP, info.third.intValue(), Menu.NONE, getResources().getString(R.string.sheet_inventory_ctx_unequip));
-        } else {
-            String location = ConfigurationUtil.getInstance(getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation());
-            menu.add(CONTEXT_EQUIP, info.third.intValue(), Menu.NONE, String.format(getResources().getString(R.string.sheet_inventory_ctx_equip), location));
-        }
-        menu.add(CONTEXT_EDIT, info.third.intValue(), Menu.NONE, getResources().getString(R.string.sheet_inventory_ctx_edit));
-        // repeat this to add additional menus
-    }
 
     @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
+    public void onContextMenu(long itemId, int menuId) {
         DBHelper helper = DBHelper.getInstance(getContext());
-        if(item.getGroupId() == CONTEXT_EDIT) {
-            CharacterItem cItem = (CharacterItem) helper.fetchEntity(item.getItemId(), CharacterItemFactory.getInstance());
+        CharacterItem cItem = (CharacterItem) helper.fetchEntity(itemId, CharacterItemFactory.getInstance());
+        if(cItem == null) {
+            return;
+        }
+        if(menuId == CONTEXT_EDIT) {
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
             if (prev != null) {
@@ -2066,6 +2116,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
 
             Bundle arguments = new Bundle();
             arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_ID, cItem.getId());
+            arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_CHARACID, character.getId());
             arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_NAME, cItem.getName());
             arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, cItem.getWeight());
             arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, cItem.getPrice());
@@ -2076,13 +2127,31 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             newFragment.setArguments(arguments);
             newFragment.show(ft, DIALOG_PICK_INVENTORY);
         }
-        else if(item.getGroupId() == CONTEXT_EQUIP) {
-            CharacterItem cItem = (CharacterItem) helper.fetchEntity(item.getItemId(), CharacterItemFactory.getInstance());
+        else if(menuId == CONTEXT_EQUIP) {
             cItem.setEquiped(!cItem.isEquiped());
             helper.updateEntity(cItem, new HashSet<>(Arrays.asList(CharacterItemFactory.FLAG_EQUIPED)));
             character.resyncInventory();
             updateInventory(getView());
+            updateSheet(getView());
         }
-        return true;
+        else if(menuId == CONTEXT_SHOWREF) {
+            DBEntity object = helper.fetchObjectEntity(cItem);
+            if(object != null) {
+                Context context = getContext();
+                Intent intent = new Intent(context, ItemDetailActivity.class);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, object.getId());
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_FACTORY_ID, object.getFactory().getFactoryId());
+                context.startActivity(intent);
+            }
+        }
+        else if(menuId >= CONTEXT_ENABLE) {
+            Modification modification = character.getModificationById(menuId - CONTEXT_ENABLE);
+            if(modification != null) {
+                modification.setEnabled(!modification.isEnabled());
+                helper.updateEntity(modification, new HashSet<>(Arrays.asList(ModificationFactory.FLAG_ACTIVE)));
+                character.resyncModifs();
+                updateModifsPickers(getView());
+            }
+        }
     }
 }

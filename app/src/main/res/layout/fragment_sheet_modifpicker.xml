@@ -121,7 +121,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="start|center"
-                        app:srcCompat="@drawable/ic_item_icon_add" />
+                        app:srcCompat="@drawable/ic_item_icon_ok" />
 
                 </LinearLayout>
 
@@ -144,8 +144,24 @@
                             android:id="@+id/sheet_modifs_bonus_example"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="30dp"
+                            android:layout_marginStart="5dp"
                             android:text="@string/sheet_modifs_bonus_example" />
+
+                        <ImageView
+                            android:id="@+id/sheet_modifs_minus1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_gravity="start|center"
+                            app:srcCompat="@drawable/ic_item_icon_minus" />
+
+                        <ImageView
+                            android:id="@+id/sheet_modifs_plus1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_gravity="start|center"
+                            app:srcCompat="@drawable/ic_item_icon_plus" />
 
                         <ImageView
                             android:id="@+id/sheet_modifs_remove"
@@ -153,11 +169,35 @@
                             android:layout_height="24dp"
                             android:layout_marginStart="10dp"
                             android:layout_gravity="start|center"
-                            app:srcCompat="@drawable/ic_item_icon_remove" />
+                            app:srcCompat="@drawable/ic_item_icon_delete" />
                     </LinearLayout>
 
                 </LinearLayout>
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/sheet_modifs_linkedto" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/sheet_modifs_linkedto"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/sheet_modifs_pick_item">
+
+                </androidx.appcompat.widget.AppCompatSpinner>
             </LinearLayout>
 
             <LinearLayout

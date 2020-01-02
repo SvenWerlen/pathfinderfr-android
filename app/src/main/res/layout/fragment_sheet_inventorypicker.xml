@@ -250,6 +250,54 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sheet_inventory_item_modifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:gravity="start">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_inventory_item_modifs" />
+
+                <LinearLayout
+                    android:id="@+id/sheet_inventory_item_modifs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="start|center">
+
+                        <ImageView
+                            android:id="@+id/sheet_main_modifs_example_icon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:srcCompat="@drawable/modif_angry_eyes" />
+
+                        <TextView
+                            android:id="@+id/sheet_main_modifs_example_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/sheet_inventory_item_modifs_text" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/sheet_inventory_item_infos_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

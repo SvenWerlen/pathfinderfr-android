@@ -680,33 +680,44 @@ public class Character extends DBEntity {
     }
 
     /**
-     * @param bonusId bonusId for corresponding SavingThrows
+     * @param bonusId bonusId searched
      * @return bonus to be applied
      */
     public int getAdditionalBonus(int bonusId) {
         return getAdditionalBonus(bonusId, 0);
     }
 
-        /**
-         * @param bonusId bonusId for corresponding SavingThrows
-         * @return bonus to be applied
-         */
+    /**
+     * @param bonusId bonusId searched
+     * @param itemId itemId for which bonus must be applied
+     * @return bonus to be applied
+     */
     public int getAdditionalBonus(int bonusId, int itemId) {
         // check if modif is applied
         int bonus = 0;
         List<Modification> modifs = getModifsForId(bonusId);
         // getModifsForId always returns 1 modification (matching the one being searched)
         for(Modification mod : modifs) {
-            // special case for combat bonuses linked to weapons
-            if((bonusId == Modification.MODIF_COMBAT_ATT_MELEE || bonusId == Modification.MODIF_COMBAT_ATT_RANGED
-                || bonusId == Modification.MODIF_COMBAT_DAM_MELEE || bonusId == Modification.MODIF_COMBAT_DAM_RANGED) && mod.getItemId() > 0) {
+            if(!mod.isEnabled()) {
+                continue;
+            }
+            boolean applyBonus = false;
+            // bonus for specific item (weapons)
+            if(itemId > 0) {
                 if(itemId == mod.getItemId()) {
-                    bonus += mod.getModif(0).second;
+                    applyBonus = true;
                 }
             }
-            else if(mod.isEnabled()) {
-                bonus += mod.getModif(0).second;
+            // bonus (for character) assigned to item.
+            else if(mod.getItemId() > 0) {
+                // item must be equiped
+                if(isItemEquiped(mod.getItemId())) {
+                    applyBonus = true;
+                }
+            } else {
+                applyBonus = true;
             }
+            bonus += applyBonus ? mod.getModif(0).second : 0;
         }
         return bonus;
     }
@@ -1356,42 +1367,6 @@ public class Character extends DBEntity {
         return result;
     }
 
-//    /**
-//     * Modif linkToWeapon is based on weapon index in list
-//     * Set indexes on items such it can be retrieved after inventory change
-//     */
-//    public void indexInventoryWeapons() {
-//        int idx = 0;
-//        List<CharacterItem> inventory = getInventoryItems();
-//        for(CharacterItem el : inventory) {
-//            if(el.isWeapon()) {
-//                el.setId(++idx);
-//            }
-//        }
-//    }
-
-//    /**
-//     * Modifies (when needed) linkToWeapon to link to right inventory
-//     */
-//    public void reindexModifLinks() {
-//        List<CharacterItem> inventory = getInventoryItems();
-//        for(CharacterModif modif : modifs) {
-//            if(modif.linkToWeapon > 0) {
-//                int link = modif.linkToWeapon; // reset in case reference not found
-//                modif.linkToWeapon = 0;
-//                int idx = 0;
-//                for(CharacterItem el : inventory) {
-//                    if(el.isWeapon()) {
-//                        idx++;
-//                    }
-//                    if(el.getId() == link) {
-//                        modif.linkToWeapon = idx;
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     public void resyncModifs() {
         modifs = null;
     }
@@ -1464,6 +1439,21 @@ public class Character extends DBEntity {
     }
 
     /**
+     * Returns the list of inventory items as "id1|name1#id2|name2#..."
+     */
+    public String getInventoryItemsAsString() {
+        StringBuffer buf = new StringBuffer();
+        List<CharacterItem> list = getInventoryItems();
+        for(CharacterItem ci : list) {
+            buf.append(ci.id).append('|').append(ci.name).append('#');
+        }
+        if(buf.length() > 0) {
+            buf.deleteCharAt(buf.length()-1);
+        }
+        return buf.toString();
+    }
+
+    /**
      * @return the list of inventory items (equiped)
      */
     public List<CharacterItem> getEquipedItems() {
@@ -1475,6 +1465,16 @@ public class Character extends DBEntity {
             }
         }
         return list;
+    }
+
+    public boolean isItemEquiped(long id) {
+        List<CharacterItem> equiped = getEquipedItems();
+        for(CharacterItem e : equiped) {
+            if(e.getId() == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

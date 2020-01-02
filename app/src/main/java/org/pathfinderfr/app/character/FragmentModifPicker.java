@@ -45,6 +45,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     public static final String ARG_MODIF_NAME    = "arg_modifName";
     public static final String ARG_MODIF_IDS     = "arg_modifIds";
     public static final String ARG_MODIF_VALS    = "arg_modifVals";
+    public static final String ARG_MODIF_ITEMID  = "arg_itemId";
+    public static final String ARG_MODIF_ITEMS   = "arg_items";
     public static final String ARG_MODIF_ICON    = "arg_modifIcon";
 
     private FragmentModifPicker.OnFragmentInteractionListener mListener;
@@ -56,6 +58,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     private List<LinearLayout> modifs;
     private Modification initial;
     private long modifId;
+    private String items;
 
     private static final String[] icons = new String[] {
             // character initiatin
@@ -236,6 +239,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // item list must always be provided
+        if(getArguments() != null && getArguments().containsKey(ARG_MODIF_ITEMS)) {
+            items = getArguments().getString(ARG_MODIF_ITEMS);
+        } else {
+            throw new IllegalStateException("Missing items list");
+        }
+
         // initialize from params
         if(getArguments() != null && getArguments().containsKey(ARG_MODIF_ID)) {
             modifId = getArguments().getLong(ARG_MODIF_ID, -1);
@@ -243,12 +253,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
+            long itemId = getArguments().getLong(ARG_MODIF_ITEMID);
             String icon = getArguments().getString(ARG_MODIF_ICON);
             for(int i = 0; i<modifIds.size();i++) {
-                modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
+                modifs.add(new Pair<>(modifIds.get(i), modifVals.get(i)));
             }
             if(modifVals != null) {
                 initial = new Modification(name, modifs, icon);
+                initial.setItemId(itemId);
             }
         }
 
@@ -258,12 +270,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             List<Integer> modifIds = savedInstanceState.getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = savedInstanceState.getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
+            long itemId = savedInstanceState.getLong(ARG_MODIF_ITEMID);
             String icon = savedInstanceState.getString(ARG_MODIF_ICON);
             for(int i = 0; i<modifIds.size();i++) {
-                modifs.add(new Pair<Integer, Integer>(modifIds.get(i), modifVals.get(i)));
+                modifs.add(new Pair<>(modifIds.get(i), modifVals.get(i)));
             }
             if(modifVals != null) {
                 initial = new Modification(name, modifs, icon);
+                initial.setItemId(itemId);
             }
         }
     }
@@ -359,6 +373,30 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             }
         });
 
+        // LinkedTo
+        AppCompatSpinner spinnerLinkedTo = rootView.findViewById(R.id.sheet_modifs_linkedto);
+        List<StringWithTag> listLinkedTo = new ArrayList<>();
+        int selected = 0;
+        // Items
+        listLinkedTo.add(new StringWithTag(rootView.getResources().getString(R.string.sheet_modifs_linkto_nothing), 0L));
+        int idx = 1;
+        for(String item : items.split("#")) {
+            String[] val = item.split("\\|");
+            if(val.length == 2) {
+                Long itemId = Long.parseLong(val[0]);
+                String itemName = val[1];
+                listLinkedTo.add(new StringWithTag(itemName, itemId));
+                if(initial != null && initial.getItemId() == itemId) {
+                    selected = idx;
+                }
+                idx++;
+            }
+        }
+        ArrayAdapter<StringWithTag> dataAdapterLinkedTo = new ArrayAdapter<>(this.getContext(),
+                android.R.layout.simple_spinner_item, listLinkedTo);
+        dataAdapterLinkedTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLinkedTo.setAdapter(dataAdapterLinkedTo);
+
         // Icons
         FlowLayout layout = rootView.findViewById(R.id.sheet_modifs_layout_icons);
         ImageView exampleIcon = rootView.findViewById(R.id.sheet_modifs_example_icon);
@@ -417,6 +455,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 Pair<Integer,Integer> modif = initial.getModif(i);
                 addBonusLine(rootView, modif.first, modif.second);
             }
+            spinnerLinkedTo.setSelection(selected);
         }
 
         rootView.findViewById(R.id.modifs_delete).setVisibility(modifId >= 0 ? View.VISIBLE : View.GONE);
@@ -442,18 +481,42 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
 
     private void addBonusLine(View view, int modifId, int bonus) {
         final TextView bonusTextExample = view.findViewById(R.id.sheet_modifs_bonus_example);
+        final ImageView bonusMinusExample = view.findViewById(R.id.sheet_modifs_minus1);
+        final ImageView bonusPlusExample = view.findViewById(R.id.sheet_modifs_plus1);
         final ImageView bonusRemoveExample = view.findViewById(R.id.sheet_modifs_remove);
         final String bonusTemplate = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("template.modif");
 
-        TextView bonusText = FragmentUtil.copyExampleTextFragment(bonusTextExample);
+        final TextView bonusText = FragmentUtil.copyExampleTextFragment(bonusTextExample);
         bonusText.setText(String.format(bonusTemplate, getModifText(modifId), bonus));
+        ImageView bonusMinus1 = FragmentUtil.copyExampleImageFragment(bonusMinusExample);
+        ImageView bonusPlus1 = FragmentUtil.copyExampleImageFragment(bonusPlusExample);
         ImageView bonusRemove = FragmentUtil.copyExampleImageFragment(bonusRemoveExample);
         final LinearLayout layout = new LinearLayout(getContext());
         layout.setTag(new Pair<>(modifId, bonus));
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         layout.addView(bonusText);
+        layout.addView(bonusMinus1);
+        layout.addView(bonusPlus1);
         layout.addView(bonusRemove);
+
+        bonusMinus1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Pair<Integer, Integer> p = (Pair<Integer, Integer>)layout.getTag();
+                layout.setTag(new Pair<>(p.first, p.second-1));
+                bonusText.setText(String.format(bonusTemplate, getModifText(p.first), p.second-1));
+            }
+        });
+
+        bonusPlus1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Pair<Integer, Integer> p = (Pair<Integer, Integer>)layout.getTag();
+                layout.setTag(new Pair<>(p.first, p.second+1));
+                bonusText.setText(String.format(bonusTemplate, getModifText(p.first), p.second+1));
+            }
+        });
 
         bonusRemove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -507,12 +570,16 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 t.show();
                 return;
             }
+
+            StringWithTag selected = (StringWithTag)((AppCompatSpinner)getView().findViewById(R.id.sheet_modifs_linkedto)).getSelectedItem();
+
             if(mListener != null) {
+                Modification modif = new Modification(text, bonusList, selectedIcon.getTag().toString());
+                modif.setItemId((Long)selected.getTag());
                 if(modifId >= 0) {
-                    mListener.onModifUpdated(modifId,
-                            new Modification(text, bonusList, selectedIcon.getTag().toString()));
+                    mListener.onModifUpdated(modifId, modif);
                 } else {
-                    mListener.onAddModif(new Modification(text, bonusList, selectedIcon.getTag().toString()));
+                    mListener.onAddModif(modif);
                 }
             }
             dismiss();
@@ -552,7 +619,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             // check if already in list and remove if it is the case
             for(LinearLayout tv : modifs) {
                 Pair<Integer, Integer> mod = (Pair<Integer, Integer>)tv.getTag();
-                if(mod.first == selectedModif) {
+                if(mod.first.equals(selectedModif)) {
                     tv.setVisibility(View.GONE);
                 }
             }

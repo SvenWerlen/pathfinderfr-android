@@ -6,6 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
@@ -14,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +27,23 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterItem;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.Modification;
+import org.pathfinderfr.app.database.entity.ModificationFactory;
 import org.pathfinderfr.app.database.entity.Weapon;
+import org.pathfinderfr.app.util.FragmentUtil;
 
-public class FragmentInventoryPicker extends DialogFragment implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
+public class FragmentInventoryPicker extends DialogFragment implements View.OnClickListener, View.OnLongClickListener, FragmentModifPicker.OnFragmentInteractionListener {
 
     public static final String ARG_INVENTORY_ID       = "arg_inventoryId";
+    public static final String ARG_INVENTORY_CHARACID = "arg_inventoryCharacterId";
     public static final String ARG_INVENTORY_NAME     = "arg_inventoryName";
     public static final String ARG_INVENTORY_WEIGHT   = "arg_inventoryWeight";
     public static final String ARG_INVENTORY_PRICE    = "arg_inventoryPrice";
@@ -39,13 +54,15 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
 
     private FragmentInventoryPicker.OnFragmentInteractionListener mListener;
 
-    private long invId;
+    private long itemId;
+    private long characterId;
     private CharacterItem initial;
     private TextView tooltip;
 
+    private ImageView modifIconExample;
+    private TextView modifNameExample;
+
     public FragmentInventoryPicker() {
-        // Required empty public constructor
-        invId = -1;
     }
 
     public void setListener(OnFragmentInteractionListener listener) {
@@ -71,7 +88,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
 
         // initialize from params
         if(getArguments().containsKey(ARG_INVENTORY_ID)) {
-            invId = getArguments().getLong(ARG_INVENTORY_ID);
+            itemId = getArguments().getLong(ARG_INVENTORY_ID);
+            characterId = getArguments().getLong(ARG_INVENTORY_CHARACID);
             String itemName = getArguments().getString(ARG_INVENTORY_NAME);
             int itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
             long itemPrice = getArguments().getLong(ARG_INVENTORY_PRICE);
@@ -106,6 +124,9 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         rootView.findViewById(R.id.inventory_item_cancel).setOnClickListener(this);
         rootView.findViewById(R.id.inventory_item_delete).setOnClickListener(this);
 
+        modifIconExample = rootView.findViewById(R.id.sheet_main_modifs_example_icon);
+        modifNameExample = rootView.findViewById(R.id.sheet_main_modifs_example_text);
+
         rootView.findViewById(R.id.sheet_inventory_item_equiped_descr).setVisibility(View.GONE);
         tooltip = rootView.findViewById(R.id.sheet_inventory_item_equiped_descr);
         rootView.findViewById(R.id.sheet_inventory_item_equiped_tooltip).setOnClickListener(new View.OnClickListener() {
@@ -134,6 +155,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         itemInfos.setFilters(new InputFilter[] { filter, new InputFilter.LengthFilter(20) });
 
         rootView.findViewById(R.id.sheet_inventory_item_infos_section).setVisibility(View.GONE);
+
 
         // initialize form if required
         if(initial != null) {
@@ -172,6 +194,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             rootView.findViewById(R.id.inventory_item_delete).setVisibility(View.GONE);
         }
 
+        updateModifs(rootView);
+
         itemName.requestFocus();
         if(initial==null) {
             ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -191,6 +215,44 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         mListener = null;
     }
 
+    private void updateModifs(View v) {
+        // item not yet created
+        if(characterId <= 0 || itemId <= 0) {
+            v.findViewById(R.id.sheet_inventory_item_modifs).setVisibility(View.GONE);
+            return;
+        }
+        // retrieve all modifs matching character and item
+        List<DBEntity> modifs = DBHelper.getInstance(v.getContext()).fetchAllEntitiesByForeignIds(new long[] {characterId}, ModificationFactory.getInstance());
+        LinearLayout layout = v.findViewById(R.id.sheet_inventory_item_modifs);
+        layout.removeAllViews();
+        final int colorDisabled = v.getContext().getResources().getColor(R.color.colorBlack);
+        final int colorEnabled = v.getContext().getResources().getColor(R.color.colorPrimaryDark);
+        for(DBEntity m : modifs) {
+            Modification modif = (Modification)m;
+            if(modif.getItemId() != itemId) {
+                continue;
+            }
+
+            LinearLayout modifLayout = new LinearLayout(v.getContext());
+            modifLayout.setOrientation(LinearLayout.HORIZONTAL);
+            modifLayout.setGravity(Gravity.START | Gravity.CENTER);
+            ImageView icon = FragmentUtil.copyExampleImageFragment(modifIconExample);
+            final int resourceId = v.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable", v.getContext().getPackageName());
+            if(resourceId > 0) {
+                icon.setBackgroundColor(modif.isEnabled() ? colorEnabled : colorDisabled);
+                icon.setImageResource(resourceId);
+            }
+            TextView name = FragmentUtil.copyExampleTextFragment(modifNameExample);
+            name.setText(modif.getName());
+            modifLayout.addView(icon);
+            modifLayout.addView(name);
+            modifLayout.setTag(modif);
+            modifLayout.setOnClickListener(this);
+            modifLayout.setOnLongClickListener(this);
+            layout.addView(modifLayout);
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -206,7 +268,6 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             Integer itemPrice = null;
             Integer itemLocation = null;
             String itemInfos = null;
-            boolean isActive = false;
             itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
             try {
                 itemWeight = Integer.valueOf(((EditText) getView().findViewById(R.id.sheet_inventory_item_weight)).getText().toString());
@@ -253,8 +314,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 item.setLocation(itemLocation);
                 item.setEquiped(((Switch)getView().findViewById(R.id.sheet_inventory_item_equiped)).isChecked());
                 if(mListener != null) {
-                    if(invId >= 0) {
-                        mListener.onUpdateItem(invId, item);
+                    if(itemId > 0) {
+                        mListener.onUpdateItem(itemId, item);
                     } else {
                         mListener.onAddItem(item);
                     }
@@ -266,7 +327,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
         else if(v.getId() == R.id.inventory_item_delete) {
 
             if(mListener != null) {
-                mListener.onDeleteItem(invId);
+                mListener.onDeleteItem(itemId);
             }
             dismiss();
             return;
@@ -281,6 +342,76 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 context.startActivity(intent);
                 return;
             }
+        } else if(v instanceof LinearLayout) {
+            // toggle modif status
+            Modification modif = (Modification)v.getTag();
+            modif.setEnabled(!modif.isEnabled());
+            DBHelper.getInstance(v.getContext()).updateEntity(modif,  new HashSet<>(Arrays.asList(ModificationFactory.FLAG_ACTIVE)));
+            updateModifs(getView());
+            if(mListener != null) {
+                SheetMainFragment parent = (SheetMainFragment)mListener;
+                parent.getCharacter().resyncModifs();
+                parent.updateSheet(parent.getView());
+            }
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        Modification modif = (Modification)v.getTag();
+        if(modif != null && mListener instanceof SheetMainFragment) {
+            SheetMainFragment parent = (SheetMainFragment)mListener;
+            FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+            Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(SheetMainFragment.DIALOG_PICK_MODIFS);
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            DialogFragment newFragment = FragmentModifPicker.newInstance(this);
+
+            Bundle arguments = new Bundle();
+            arguments.putLong(FragmentModifPicker.ARG_MODIF_ID, modif.getId());
+            arguments.putString(FragmentModifPicker.ARG_MODIF_NAME, modif.getName());
+            ArrayList<Integer> modifIds = new ArrayList<>();
+            ArrayList<Integer> modifVals = new ArrayList<>();
+            for(int i = 0; i<modif.getModifCount(); i++) {
+                modifIds.add(modif.getModif(i).first);
+                modifVals.add(modif.getModif(i).second);
+            }
+            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
+            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
+            arguments.putLong(FragmentModifPicker.ARG_MODIF_ITEMID, modif.getItemId());
+            arguments.putString(FragmentModifPicker.ARG_MODIF_ITEMS, parent.getCharacter().getInventoryItemsAsString());
+            arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
+
+            newFragment.setArguments(arguments);
+            newFragment.show(ft, SheetMainFragment.DIALOG_PICK_MODIFS);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onAddModif(Modification modif) {
+        if(mListener != null) {
+            ((SheetMainFragment) mListener).onAddModif(modif);
+            updateModifs(getView());
+        }
+    }
+
+    @Override
+    public void onDeleteModif(long modifId) {
+        if(mListener != null) {
+            ((SheetMainFragment) mListener).onDeleteModif(modifId);
+            updateModifs(getView());
+        }
+    }
+
+    @Override
+    public void onModifUpdated(long modifId, Modification modif) {
+        if(mListener != null) {
+            ((SheetMainFragment) mListener).onModifUpdated(modifId, modif);
+            updateModifs(getView());
         }
     }
 
