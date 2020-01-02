@@ -27,6 +27,7 @@ public class CharacterItemFactory extends DBEntityFactory {
     private static final String COLUMN_PRICE        = "price";
     private static final String COLUMN_ITEMREF      = "itemref";
     private static final String COLUMN_AMMO         = "ammo";
+    private static final String COLUMN_CATEGORY     = "category";
     private static final String COLUMN_LOCATION     = "location";
     private static final String COLUMN_EQUIPED      = "equiped";
 
@@ -64,15 +65,15 @@ public class CharacterItemFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
-                        "%s integer, %s integer," +               // characterid, order
-                        "%s text, %s text," +                     // name, desc
-                        "%s integer, %s integer, %s integer," +   // weight, price, itemref
-                        "%s text, %s integer, %s integer" +       // ammo, location, equiped
+                        "%s integer, %s integer," +                     // characterid, order
+                        "%s text, %s text," +                           // name, desc
+                        "%s integer, %s integer, %s integer," +         // weight, price, itemref
+                        "%s text, %s integer, %s integer, %s integer" + // ammo, category, location, equiped
                         ")",
                 TABLENAME, COLUMN_ID, COLUMN_CHARACTER_ID, COLUMN_ORDER,
                 COLUMN_NAME, COLUMN_DESC,
                 COLUMN_WEIGHT, COLUMN_PRICE, COLUMN_ITEMREF,
-                COLUMN_AMMO, COLUMN_LOCATION, COLUMN_EQUIPED);
+                COLUMN_AMMO, COLUMN_CATEGORY, COLUMN_LOCATION, COLUMN_EQUIPED);
 
         return query;
     }
@@ -121,6 +122,7 @@ public class CharacterItemFactory extends DBEntityFactory {
             contentValues.put(CharacterItemFactory.COLUMN_PRICE, item.getPrice());
             contentValues.put(CharacterItemFactory.COLUMN_ITEMREF, item.getItemRef());
             contentValues.put(CharacterItemFactory.COLUMN_AMMO, item.getAmmo());
+            contentValues.put(CharacterItemFactory.COLUMN_CATEGORY, item.getCategory());
             contentValues.put(CharacterItemFactory.COLUMN_LOCATION, item.getLocation());
         }
         if(flags.contains(FLAG_ALL) || flags.contains(FLAG_ORDER)) {
@@ -146,6 +148,7 @@ public class CharacterItemFactory extends DBEntityFactory {
         item.setPrice(extractValueAsLong(resource, CharacterItemFactory.COLUMN_PRICE));
         item.setItemRef(extractValueAsLong(resource, CharacterItemFactory.COLUMN_ITEMREF));
         item.setAmmo(extractValue(resource, CharacterItemFactory.COLUMN_AMMO));
+        item.setCategory(extractValueAsInt(resource, CharacterItemFactory.COLUMN_CATEGORY));
         item.setLocation(extractValueAsInt(resource, CharacterItemFactory.COLUMN_LOCATION));
         item.setEquiped(extractValueAsInt(resource, CharacterItemFactory.COLUMN_EQUIPED) == 1);
         return item;

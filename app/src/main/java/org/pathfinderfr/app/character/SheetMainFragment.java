@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -1052,6 +1053,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, matchingItem.getWeight());
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, matchingItem.getPrice());
                     arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, matchingItem.getItemRef());
+                    arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_CATEGORY, matchingItem.getCategory());
                     arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, matchingItem.getLocation());
                     arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, matchingItem.getAmmo());
                     arguments.putBoolean(FragmentInventoryPicker.ARG_INVENTORY_EQUIPED, matchingItem.isEquiped());
@@ -1059,6 +1061,25 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 }
             });
+        }
+    }
+
+    private int inventoryIcon(int category) {
+        switch(category) {
+            case CharacterItem.CATEGORY_EQUIPMENT: return R.drawable.ic_item_icon_equipment;
+            case CharacterItem.CATEGORY_WEAPON_HAND: return R.drawable.ic_item_icon_weapons;
+            case CharacterItem.CATEGORY_WEAPON_RANGED: return R.drawable.ic_item_icon_ranged;
+            case CharacterItem.CATEGORY_ARMOR: return R.drawable.ic_item_icon_armors;
+            case CharacterItem.CATEGORY_SHIELD: return R.drawable.ic_item_icon_shields;
+            case CharacterItem.CATEGORY_CLOTH: return R.drawable.ic_item_icon_cloth;
+            case CharacterItem.CATEGORY_POTION: return R.drawable.ic_item_icon_potion;
+            case CharacterItem.CATEGORY_RING: return R.drawable.ic_item_icon_ring;
+            case CharacterItem.CATEGORY_SCEPTER: return R.drawable.ic_item_icon_scepter;
+            case CharacterItem.CATEGORY_SCROLL: return R.drawable.ic_item_icon_scroll;
+            case CharacterItem.CATEGORY_STAFF: return R.drawable.ic_item_icon_staff;
+            case CharacterItem.CATEGORY_WAND: return R.drawable.ic_item_icon_wand;
+            case CharacterItem.CATEGORY_MAGIC: return R.drawable.ic_item_icon_magic;
+            default: return R.drawable.ic_item_icon_equipment;
         }
     }
 
@@ -1087,6 +1108,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             dropHere.setPadding(30, 5, 30, 5);
             nameLayout.addView(dropHere);
             nameLayout.addView(name);
+            icon.setImageDrawable(ContextCompat.getDrawable(view.getContext(), inventoryIcon(item.getCategory())));
+            icon.setVisibility(item.getCategory() == CharacterItem.CATEGORY_UNCLASSIFIED ? View.INVISIBLE : View.VISIBLE);
+            icon.setColorFilter(Color.BLACK);
             row.addView(icon);
             row.addView(nameLayout);
             if(item.isEquiped()) {
@@ -1386,8 +1410,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 }
                 ft.addToBackStack(null);
                 DialogFragment newFragment = FragmentModifPicker.newInstance(parent);
-
                 Bundle arguments = new Bundle();
+                arguments.putString(FragmentModifPicker.ARG_MODIF_ITEMS, parent.character.getInventoryItemsAsString());
                 newFragment.setArguments(arguments);
                 newFragment.show(ft, DIALOG_PICK_MODIFS);
                 return;
@@ -2121,6 +2145,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_WEIGHT, cItem.getWeight());
             arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_PRICE, cItem.getPrice());
             arguments.putLong(FragmentInventoryPicker.ARG_INVENTORY_OBJID, cItem.getItemRef());
+            arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_CATEGORY, cItem.getCategory());
             arguments.putInt(FragmentInventoryPicker.ARG_INVENTORY_LOCATION, cItem.getLocation());
             arguments.putString(FragmentInventoryPicker.ARG_INVENTORY_INFOS, cItem.getAmmo());
             arguments.putBoolean(FragmentInventoryPicker.ARG_INVENTORY_EQUIPED, cItem.isEquiped());

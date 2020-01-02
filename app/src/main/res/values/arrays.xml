@@ -52,19 +52,36 @@
 
     <string-array name="body_location">
         <item>Sans-emplacement</item>
-        <item>Armure</item>
         <item>Tête</item>
         <item>Front</item>
         <item>Yeux</item>
         <item>Cou</item>
         <item>Épaules</item>
         <item>Torse</item>
-        <item>Taille</item>
         <item>Avant-bras / poignets</item>
         <item>Main</item>
-        <item>Bouclier</item>
-        <item>Pied</item>
         <item>Doigts</item>
+        <item>Taille</item>
+        <item>Pied</item>
+        <item>Armure</item>
+        <item>Bouclier</item>
+    </string-array>
+
+    <string-array name="inventory_category">
+        <item>Non-classifié</item>
+        <item>Matériel divers</item>
+        <item>Arme de corps-à-corps</item>
+        <item>Arme à distance</item>
+        <item>Armure</item>
+        <item>Bouclier</item>
+        <item>Vêtement</item>
+        <item>Potion</item>
+        <item>Anneau</item>
+        <item>Sceptre</item>
+        <item>Parchemin</item>
+        <item>Bâton</item>
+        <item>Baguette</item>
+        <item>Objet merveilleux</item>
     </string-array>
 
     <string-array name="alignment">

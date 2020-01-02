@@ -493,6 +493,7 @@
     <string name="sheet_inventory_item_name">Nom:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_price">Valeur (prix):</string>
+    <string name="sheet_inventory_item_category">Categorie:</string>
     <string name="sheet_inventory_item_location">Emplacement:</string>
     <string name="sheet_inventory_item_equiped">Équipé</string>
     <string name="sheet_inventory_item_equiped_descr">Un objet non-équipé n\'apparaîtra pas dans la vue \"Équipement actif\" et les bonus qu\'il procure ne s\'appliqueront pas

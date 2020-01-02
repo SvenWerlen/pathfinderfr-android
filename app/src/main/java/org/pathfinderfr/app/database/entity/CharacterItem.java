@@ -3,19 +3,35 @@ package org.pathfinderfr.app.database.entity;
 public class CharacterItem extends DBEntity {
 
     public static final int LOCATION_NOLOC    = 0;
-    public static final int LOCATION_ARMOR    = 1;
-    public static final int LOCATION_HEAD     = 2;
-    public static final int LOCATION_FOREHEAD = 3;
-    public static final int LOCATION_EYE      = 4;
-    public static final int LOCATION_NECK     = 5;
-    public static final int LOCATION_SHOULDER = 6;
-    public static final int LOCATION_TORSO    = 7;
-    public static final int LOCATION_WAIST    = 8;
-    public static final int LOCATION_ARM      = 9;
-    public static final int LOCATION_HAND     = 10;
-    public static final int LOCATION_SHIELD   = 11;
-    public static final int LOCATION_FOOT     = 12;
-    public static final int LOCATION_FINGERS  = 13;
+    public static final int LOCATION_HEAD     = 1;
+    public static final int LOCATION_FOREHEAD = 2;
+    public static final int LOCATION_EYE      = 3;
+    public static final int LOCATION_NECK     = 4;
+    public static final int LOCATION_SHOULDER = 5;
+    public static final int LOCATION_TORSO    = 6;
+    public static final int LOCATION_ARM      = 7;
+    public static final int LOCATION_HAND     = 8;
+    public static final int LOCATION_FINGERS  = 9;
+    public static final int LOCATION_WAIST    = 10;
+    public static final int LOCATION_FOOT     = 11;
+    public static final int LOCATION_ARMOR    = 12;
+    public static final int LOCATION_SHIELD   = 13;
+
+    public static final int CATEGORY_UNCLASSIFIED  = 0;
+    public static final int CATEGORY_EQUIPMENT     = 1;
+    public static final int CATEGORY_WEAPON_HAND   = 2;
+    public static final int CATEGORY_WEAPON_RANGED = 3;
+    public static final int CATEGORY_ARMOR         = 4;
+    public static final int CATEGORY_SHIELD        = 5;
+    public static final int CATEGORY_CLOTH         = 6;
+    public static final int CATEGORY_POTION        = 7;
+    public static final int CATEGORY_RING          = 8;
+    public static final int CATEGORY_SCEPTER       = 9;
+    public static final int CATEGORY_SCROLL        = 10;
+    public static final int CATEGORY_STAFF         = 11;
+    public static final int CATEGORY_WAND          = 12;
+    public static final int CATEGORY_MAGIC         = 13;
+
 
     private static final long IDX_WEAPONS    = 0L;
     private static final long IDX_ARMORS     = 1000000L;
@@ -28,18 +44,21 @@ public class CharacterItem extends DBEntity {
     private long itemRef;
     private String ammo;
     private int location;
+
     private int order;
+    private int category;
     private boolean equiped;
 
     public CharacterItem() {}
 
-    public CharacterItem(long characterId, String name, int weight, long price, long itemRef, String ammo, int location) {
+    public CharacterItem(long characterId, String name, int weight, long price, long itemRef, String ammo, int category, int location) {
         this.characterId = characterId;
         this.name = name;
         this.weight = weight;
         this.price = price;
         this.itemRef = itemRef;
         this.ammo = ammo;
+        this.category = category;
         this.location = location;
         this.order = 0;
     }
@@ -122,7 +141,7 @@ public class CharacterItem extends DBEntity {
     }
 
     public void setLocation(int location) {
-        this.location = location < LOCATION_NOLOC || location > LOCATION_FINGERS ? LOCATION_NOLOC : location;
+        this.location = location < LOCATION_NOLOC || location > LOCATION_SHIELD ? LOCATION_NOLOC : location;
     }
 
     public int getOrder() {
@@ -163,6 +182,14 @@ public class CharacterItem extends DBEntity {
 
     public void setEquiped(boolean equiped) {
         this.equiped = equiped;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     @Override

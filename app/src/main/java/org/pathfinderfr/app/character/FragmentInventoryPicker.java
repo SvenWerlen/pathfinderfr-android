@@ -48,6 +48,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     public static final String ARG_INVENTORY_WEIGHT   = "arg_inventoryWeight";
     public static final String ARG_INVENTORY_PRICE    = "arg_inventoryPrice";
     public static final String ARG_INVENTORY_OBJID    = "arg_inventoryObjectId";
+    public static final String ARG_INVENTORY_CATEGORY = "arg_inventoryCategory";
     public static final String ARG_INVENTORY_LOCATION = "arg_inventoryLocation";
     public static final String ARG_INVENTORY_INFOS    = "arg_inventoryInfos";
     public static final String ARG_INVENTORY_EQUIPED  = "arg_inventoryActive";
@@ -94,10 +95,11 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             int itemWeight = getArguments().getInt(ARG_INVENTORY_WEIGHT);
             long itemPrice = getArguments().getLong(ARG_INVENTORY_PRICE);
             long itemObjectId = getArguments().getLong(ARG_INVENTORY_OBJID);
+            int itemCategory = getArguments().getInt(ARG_INVENTORY_CATEGORY);
             int itemLocation = getArguments().getInt(ARG_INVENTORY_LOCATION);
             String itemInfos = getArguments().getString(ARG_INVENTORY_INFOS);
             boolean active = getArguments().getBoolean(ARG_INVENTORY_EQUIPED);
-            initial = new CharacterItem(0L, itemName, itemWeight, itemPrice, itemObjectId, itemInfos, itemLocation);
+            initial = new CharacterItem(0L, itemName, itemWeight, itemPrice, itemObjectId, itemInfos, itemCategory, itemLocation);
             initial.setEquiped(active);
         }
 
@@ -171,6 +173,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             } else {
                 itemPrice.setText(String.valueOf(initial.getPrice()));
             }
+            ((AppCompatSpinner)rootView.findViewById(R.id.sheet_category_spinner)).setSelection(initial.getCategory());
             ((AppCompatSpinner)rootView.findViewById(R.id.sheet_body_location_spinner)).setSelection(initial.getLocation());
 
             if(initial.getItemRef() > 0) {
@@ -266,6 +269,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             String itemName = null;
             Integer itemWeight = null;
             Integer itemPrice = null;
+            Integer itemCategory = null;
             Integer itemLocation = null;
             String itemInfos = null;
             itemName = ((EditText) getView().findViewById(R.id.sheet_inventory_item_name)).getText().toString();
@@ -286,6 +290,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             } else if(idx == 2) { // gold
                 itemPrice *= 100;
             }
+            itemCategory = ((AppCompatSpinner)getView().findViewById(R.id.sheet_category_spinner)).getSelectedItemPosition();
             itemLocation = ((AppCompatSpinner)getView().findViewById(R.id.sheet_body_location_spinner)).getSelectedItemPosition();
 
             if(itemName.length() < 3) {
@@ -310,8 +315,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             else {
                 CharacterItem item = new CharacterItem(0L, itemName, itemWeight, itemPrice,
                         initial == null ? 0L : initial.getItemRef(),
-                        itemInfos, initial == null ? CharacterItem.LOCATION_NOLOC : initial.getLocation());
-                item.setLocation(itemLocation);
+                        itemInfos, itemCategory, itemLocation);
                 item.setEquiped(((Switch)getView().findViewById(R.id.sheet_inventory_item_equiped)).isChecked());
                 if(mListener != null) {
                     if(itemId > 0) {
