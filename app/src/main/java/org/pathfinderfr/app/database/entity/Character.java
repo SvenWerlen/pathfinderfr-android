@@ -1402,6 +1402,7 @@ public class Character extends DBEntity {
                 copy.add(m);
             }
         }
+        Collections.sort(copy);
         return copy;
     }
 

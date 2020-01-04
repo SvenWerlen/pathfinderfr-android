@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/sheet_main_inventory"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/main_table_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:shrinkColumns="1">
+
+        <TableRow
+            android:id="@+id/sheet_main_inventory_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+
+            <ImageView
+                android:id="@+id/sheet_main_inventory_header_filter"
+                android:layout_width="20dp"
+                android:layout_height="12dp"
+                android:layout_gravity="start|center"
+                app:srcCompat="@drawable/ic_filter" />
+
+            <TextView
+                android:id="@+id/sheet_main_inventory_header"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="@string/sheet_main_inventory_header_active"
+                android:textColor="@color/colorWhite"
+                android:paddingStart="5dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="@string/sheet_main_inventory_Header_location"
+                android:paddingEnd="5dp"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/sheet_inventory_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:stretchColumns="1"
+        android:shrinkColumns="1">
+
+        <TableRow
+            android:id="@+id/sheet_inventory_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/sheet_inventory_example_icon"
+                android:layout_width="22dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:srcCompat="@drawable/ic_person" />
+
+            <TextView
+                android:id="@+id/sheet_inventory_example_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sheet_inventory_example_name"
+                android:paddingStart="2dp"
+                android:paddingEnd="5dp"/>
+
+            <TextView
+                android:id="@+id/sheet_inventory_example_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/sheet_inventory_example_total"
+                android:layout_gravity="bottom"
+                android:textAlignment="center"/>
+
+            <ImageView
+                android:id="@+id/sheet_inventory_unequiped"
+                android:layout_width="20dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:srcCompat="@drawable/ic_bag" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0"
+        android:shrinkColumns="0">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+
+            <com.wefika.flowlayout.FlowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="start|top">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:textStyle="bold"
+                    android:text="@string/sheet_click_to_add_label" />
+
+                <TextView
+                    android:id="@+id/sheet_inventory_item_add_fromEquipment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_click_to_add_catalog" />
+
+                <TextView
+                    android:id="@+id/sheet_inventory_item_add_fromMagic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_click_to_add_magic" />
+
+                <TextView
+                    android:id="@+id/sheet_inventory_item_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/sheet_font_text_links"
+                    android:text="@string/sheet_click_to_add_manual" />
+
+            </com.wefika.flowlayout.FlowLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="start|top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:text="@string/sheet_inventory_label_total_weight" />
+
+        <TextView
+            android:id="@+id/sheet_inventory_item_totalweight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/sheet_inventory_total_weight" />
+
+    </com.wefika.flowlayout.FlowLayout>
+
+    <com.wefika.flowlayout.FlowLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:text="@string/sheet_money_total_title" />
+
+        <TextView
+            android:id="@+id/sheet_main_money_total_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textSize="@dimen/sheet_font_text_links"
+            android:text="@string/sheet_money_total_value" />
+
+    </com.wefika.flowlayout.FlowLayout>
+</LinearLayout>

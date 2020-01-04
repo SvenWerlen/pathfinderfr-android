@@ -27,7 +27,6 @@ import org.pathfinderfr.R;
 import org.pathfinderfr.app.ItemDetailActivity;
 import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterItem;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Modification;
@@ -37,6 +36,7 @@ import org.pathfinderfr.app.util.FragmentUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -62,6 +62,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
 
     private ImageView modifIconExample;
     private TextView modifNameExample;
+    private ImageView modifIconAdd;
+    private TextView modifNameAdd;
 
     public FragmentInventoryPicker() {
     }
@@ -128,6 +130,8 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
 
         modifIconExample = rootView.findViewById(R.id.sheet_main_modifs_example_icon);
         modifNameExample = rootView.findViewById(R.id.sheet_main_modifs_example_text);
+        modifIconAdd = rootView.findViewById(R.id.sheet_main_modifs_add_icon);
+        modifNameAdd = rootView.findViewById(R.id.sheet_main_modifs_add_text);
 
         rootView.findViewById(R.id.sheet_inventory_item_equiped_descr).setVisibility(View.GONE);
         tooltip = rootView.findViewById(R.id.sheet_inventory_item_equiped_descr);
@@ -221,11 +225,12 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
     private void updateModifs(View v) {
         // item not yet created
         if(characterId <= 0 || itemId <= 0) {
-            v.findViewById(R.id.sheet_inventory_item_modifs).setVisibility(View.GONE);
+            v.findViewById(R.id.sheet_inventory_item_modifications).setVisibility(View.GONE);
             return;
         }
         // retrieve all modifs matching character and item
         List<DBEntity> modifs = DBHelper.getInstance(v.getContext()).fetchAllEntitiesByForeignIds(new long[] {characterId}, ModificationFactory.getInstance());
+        Collections.sort(modifs);
         LinearLayout layout = v.findViewById(R.id.sheet_inventory_item_modifs);
         layout.removeAllViews();
         final int colorDisabled = v.getContext().getResources().getColor(R.color.colorBlack);
@@ -239,6 +244,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             LinearLayout modifLayout = new LinearLayout(v.getContext());
             modifLayout.setOrientation(LinearLayout.HORIZONTAL);
             modifLayout.setGravity(Gravity.START | Gravity.CENTER);
+            modifLayout.setPadding(0,5,0,0);
             ImageView icon = FragmentUtil.copyExampleImageFragment(modifIconExample);
             final int resourceId = v.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable", v.getContext().getPackageName());
             if(resourceId > 0) {
@@ -254,6 +260,14 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
             modifLayout.setOnLongClickListener(this);
             layout.addView(modifLayout);
         }
+        LinearLayout addLayout = new LinearLayout(v.getContext());
+        addLayout.setOrientation(LinearLayout.HORIZONTAL);
+        addLayout.setGravity(Gravity.START | Gravity.CENTER);
+        addLayout.setPadding(0,5,0,0);
+        addLayout.addView(FragmentUtil.copyExampleImageFragment(modifIconAdd));
+        addLayout.addView(FragmentUtil.copyExampleTextFragment(modifNameAdd));
+        layout.addView(addLayout);
+        addLayout.setOnClickListener(this);
     }
 
 
@@ -346,7 +360,7 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 context.startActivity(intent);
                 return;
             }
-        } else if(v instanceof LinearLayout) {
+        } else if(v instanceof LinearLayout && v.getTag() instanceof Modification) {
             // toggle modif status
             Modification modif = (Modification)v.getTag();
             modif.setEnabled(!modif.isEnabled());
@@ -357,40 +371,51 @@ public class FragmentInventoryPicker extends DialogFragment implements View.OnCl
                 parent.getCharacter().resyncModifs();
                 parent.updateSheet(parent.getView());
             }
+        } else if(v instanceof LinearLayout) {
+            openModifDialog(null);
         }
+    }
+
+    private boolean openModifDialog(Modification modif) {
+        if(!(mListener instanceof SheetMainFragment)) {
+            return false;
+        }
+
+        SheetMainFragment parent = (SheetMainFragment)mListener;
+        FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(SheetMainFragment.DIALOG_PICK_MODIFS);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        DialogFragment newFragment = FragmentModifPicker.newInstance(this);
+
+        Bundle arguments = new Bundle();
+        arguments.putString(FragmentModifPicker.ARG_MODIF_ITEMS, parent.getCharacter().getInventoryItemsAsString());
+        arguments.putLong(FragmentModifPicker.ARG_MODIF_ITEMID, itemId);
+        if(modif != null) {
+            arguments.putLong(FragmentModifPicker.ARG_MODIF_ID, modif.getId());
+            arguments.putString(FragmentModifPicker.ARG_MODIF_NAME, modif.getName());
+            ArrayList<Integer> modifIds = new ArrayList<>();
+            ArrayList<Integer> modifVals = new ArrayList<>();
+            for (int i = 0; i < modif.getModifCount(); i++) {
+                modifIds.add(modif.getModif(i).first);
+                modifVals.add(modif.getModif(i).second);
+            }
+            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
+            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
+            arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
+        }
+        newFragment.setArguments(arguments);
+        newFragment.show(ft, SheetMainFragment.DIALOG_PICK_MODIFS);
+        return true;
     }
 
     @Override
     public boolean onLongClick(View v) {
         Modification modif = (Modification)v.getTag();
         if(modif != null && mListener instanceof SheetMainFragment) {
-            SheetMainFragment parent = (SheetMainFragment)mListener;
-            FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-            Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(SheetMainFragment.DIALOG_PICK_MODIFS);
-            if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-            DialogFragment newFragment = FragmentModifPicker.newInstance(this);
-
-            Bundle arguments = new Bundle();
-            arguments.putLong(FragmentModifPicker.ARG_MODIF_ID, modif.getId());
-            arguments.putString(FragmentModifPicker.ARG_MODIF_NAME, modif.getName());
-            ArrayList<Integer> modifIds = new ArrayList<>();
-            ArrayList<Integer> modifVals = new ArrayList<>();
-            for(int i = 0; i<modif.getModifCount(); i++) {
-                modifIds.add(modif.getModif(i).first);
-                modifVals.add(modif.getModif(i).second);
-            }
-            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_IDS, modifIds);
-            arguments.putIntegerArrayList(FragmentModifPicker.ARG_MODIF_VALS, modifVals);
-            arguments.putLong(FragmentModifPicker.ARG_MODIF_ITEMID, modif.getItemId());
-            arguments.putString(FragmentModifPicker.ARG_MODIF_ITEMS, parent.getCharacter().getInventoryItemsAsString());
-            arguments.putString(FragmentModifPicker.ARG_MODIF_ICON, modif.getIcon());
-
-            newFragment.setArguments(arguments);
-            newFragment.show(ft, SheetMainFragment.DIALOG_PICK_MODIFS);
-            return true;
+            return openModifDialog(modif);
         }
         return false;
     }

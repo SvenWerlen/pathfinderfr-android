@@ -59,6 +59,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
     private Modification initial;
     private long modifId;
     private String items;
+    private long itemId;
 
     private static final String[] icons = new String[] {
             // character initiatin
@@ -242,6 +243,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         // item list must always be provided
         if(getArguments() != null && getArguments().containsKey(ARG_MODIF_ITEMS)) {
             items = getArguments().getString(ARG_MODIF_ITEMS);
+            itemId = getArguments().getLong(ARG_MODIF_ITEMID);
         } else {
             throw new IllegalStateException("Missing items list");
         }
@@ -253,15 +255,14 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             List<Integer> modifIds = getArguments().getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = getArguments().getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
-            long itemId = getArguments().getLong(ARG_MODIF_ITEMID);
             String icon = getArguments().getString(ARG_MODIF_ICON);
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<>(modifIds.get(i), modifVals.get(i)));
             }
             if(modifVals != null) {
                 initial = new Modification(name, modifs, icon);
-                initial.setItemId(itemId);
             }
+
         }
 
         // restore values that were selected
@@ -270,14 +271,13 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             List<Integer> modifIds = savedInstanceState.getIntegerArrayList(ARG_MODIF_IDS);
             List<Integer> modifVals = savedInstanceState.getIntegerArrayList(ARG_MODIF_VALS);
             List<Pair<Integer,Integer>> modifs = new ArrayList<>();
-            long itemId = savedInstanceState.getLong(ARG_MODIF_ITEMID);
+            itemId = savedInstanceState.getLong(ARG_MODIF_ITEMID);
             String icon = savedInstanceState.getString(ARG_MODIF_ICON);
             for(int i = 0; i<modifIds.size();i++) {
                 modifs.add(new Pair<>(modifIds.get(i), modifVals.get(i)));
             }
             if(modifVals != null) {
                 initial = new Modification(name, modifs, icon);
-                initial.setItemId(itemId);
             }
         }
     }
@@ -386,7 +386,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 Long itemId = Long.parseLong(val[0]);
                 String itemName = val[1];
                 listLinkedTo.add(new StringWithTag(itemName, itemId));
-                if(initial != null && initial.getItemId() == itemId) {
+                if(this.itemId == itemId) {
                     selected = idx;
                 }
                 idx++;
@@ -396,6 +396,7 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 android.R.layout.simple_spinner_item, listLinkedTo);
         dataAdapterLinkedTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLinkedTo.setAdapter(dataAdapterLinkedTo);
+        spinnerLinkedTo.setSelection(selected);
 
         // Icons
         FlowLayout layout = rootView.findViewById(R.id.sheet_modifs_layout_icons);
@@ -455,7 +456,6 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
                 Pair<Integer,Integer> modif = initial.getModif(i);
                 addBonusLine(rootView, modif.first, modif.second);
             }
-            spinnerLinkedTo.setSelection(selected);
         }
 
         rootView.findViewById(R.id.modifs_delete).setVisibility(modifId >= 0 ? View.VISIBLE : View.GONE);

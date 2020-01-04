@@ -489,7 +489,7 @@
 
     <!-- Inventory picker -->
     <string name="sheet_inventory_item_title">Élément de l\'inventaire:</string>
-    <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Les éléments ajoutés depuis le catalogue gardent une référence.</string>
+    <string name="sheet_inventory_item_description">Objet dans l\'inventaire du personnage. Privilégiez l\'ajout depuis le catalogue (plutôt que manuel) afin de conserver une référence à la description de l\'objet.</string>
     <string name="sheet_inventory_item_name">Nom:</string>
     <string name="sheet_inventory_item_weight">Poids (en gramme):</string>
     <string name="sheet_inventory_item_price">Valeur (prix):</string>
@@ -505,6 +505,7 @@
     <string name="sheet_inventory_item_ammo">Munitions:</string>
     <string name="sheet_inventory_item_modifs">Bonus octroyés (lorsque activé ET équipé):</string>
     <string name="sheet_inventory_item_modifs_text">Arme +5</string>
+    <string name="sheet_inventory_item_modifs_add">Ajouter une modification</string>
     <string name="sheet_inventory_error_name">Le nom doit comporter au moins 3 charactères!</string>
     <string name="sheet_inventory_error_weight">Veuiller spécifier un poids (ou inscrire "0")!</string>
     <string name="sheet_inventory_error_price">Veuiller spécifier un prix/valeur (ou inscrire "0")!</string>
