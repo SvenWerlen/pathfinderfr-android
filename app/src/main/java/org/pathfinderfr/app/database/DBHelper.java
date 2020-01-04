@@ -388,8 +388,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean deleteEntity(DBEntity entity) {
         SQLiteDatabase db = this.getWritableDatabase();
         if(entity instanceof Character || entity instanceof CharacterItem || entity instanceof Modification) {
-            String query = String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId());
-            db.execSQL(query);
+            db.execSQL(String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId()));
+            if(entity instanceof Character) {
+                db.execSQL(CharacterItemFactory.getQueryDeleteItemsForCharacter(entity.getId()));
+                db.execSQL(ModificationFactory.getQueryDeleteModificationsForCharacter(entity.getId()));
+            }
             return true;
         }
         // not supported for other tables

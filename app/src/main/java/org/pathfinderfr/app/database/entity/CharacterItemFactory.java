@@ -100,6 +100,10 @@ public class CharacterItemFactory extends DBEntityFactory {
         return String.format(Locale.CANADA, "SELECT * FROM %s WHERE %s=%d", TABLENAME, COLUMN_CHARACTER_ID, id[0]);
     }
 
+    public static String getQueryDeleteItemsForCharacter(long characterId) {
+        return String.format(Locale.CANADA, "DELETE FROM %s WHERE %s=%d", TABLENAME, COLUMN_CHARACTER_ID, characterId);
+    }
+
     @Override
     public ContentValues generateContentValuesFromEntity(@NonNull DBEntity entity) {
         Set<Integer> flags = new HashSet<Integer>();

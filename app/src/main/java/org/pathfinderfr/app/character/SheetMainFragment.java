@@ -1879,6 +1879,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 .putBoolean(MainActivity.KEY_RELOAD_REQUIRED, true)
                 .remove(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID).apply();
         DBHelper.getInstance(getContext()).deleteEntity(character);
+
         getActivity().finish();
     }
 

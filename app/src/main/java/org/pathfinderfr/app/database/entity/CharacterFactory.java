@@ -2,11 +2,11 @@ package org.pathfinderfr.app.database.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
@@ -35,7 +35,6 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_FEATS       = "feats";
     private static final String COLUMN_CLFEATURES  = "clfeatures";
     private static final String COLUMN_ALTTRAITS   = "alttraits";
-    private static final String COLUMN_MODIFS      = "modifs";
     private static final String COLUMN_HITPOINTS   = "hitpoints";
     private static final String COLUMN_HPTEMP      = "hitpointstemp";
     private static final String COLUMN_SPEED       = "speed";
@@ -43,7 +42,6 @@ public class CharacterFactory extends DBEntityFactory {
     private static final String COLUMN_SPEED_DIG   = "speeddig";
     private static final String COLUMN_SPEED_FLY   = "speedfly";
     private static final String COLUMN_SPEED_FLYM  = "speedflym";
-    private static final String COLUMN_INVENTORY   = "inventory";
     private static final String COLUMN_PLAYER      = "player";
     private static final String COLUMN_ALIGNMENT   = "align";
     private static final String COLUMN_DIVINITY    = "divinity";
@@ -105,7 +103,7 @@ public class CharacterFactory extends DBEntityFactory {
                         "%s text, %s text, " +                                          // race, classes
                         "%s integer, %s integer, %s integer, " +                        // str, dex, con
                         "%s integer, %s integer, %s integer," +                         // int, wis, cha
-                        "%s text, %s text, %s text, %s text, %s text, %s text," +       // skills, feats, features, traits, modifs, inventory
+                        "%s text, %s text, %s text, %s text, " +                        // skills, feats, features, traits
                         "%s integer," +                                                 // skill max ranks
                         "%s integer, %s integer, " +                                    // hitpoints, hitpointstemps
                         "%s integer, %s integer, %s integer, %s integer, %s integer," + // speed (reg, armor, dig, fly, maneuver)
@@ -122,7 +120,7 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_RACE, COLUMN_CLASSES,
                 COLUMN_ABILITY_STR, COLUMN_ABILITY_DEX, COLUMN_ABILITY_CON,
                 COLUMN_ABILITY_INT, COLUMN_ABILITY_WIS, COLUMN_ABILITY_CHA,
-                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS, COLUMN_MODIFS, COLUMN_INVENTORY,
+                COLUMN_SKILLS, COLUMN_FEATS, COLUMN_CLFEATURES, COLUMN_ALTTRAITS,
                 COLUMN_SKILLS_MAX,
                 COLUMN_HITPOINTS, COLUMN_HPTEMP,
                 COLUMN_SPEED, COLUMN_SPEED_ARMOR, COLUMN_SPEED_DIG, COLUMN_SPEED_FLY, COLUMN_SPEED_FLYM,
@@ -165,7 +163,7 @@ public class CharacterFactory extends DBEntityFactory {
      * @return SQL statement for upgrading DB from v3 to v4
      */
     public String getQueryUpgradeV4() {
-        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_MODIFS);
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), "modifs"); // deprecated
     }
 
     /**
@@ -193,7 +191,7 @@ public class CharacterFactory extends DBEntityFactory {
      * @return SQL statement for upgrading DB from v11 to v12
      */
     public String getQueryUpgradeV12() {
-        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), COLUMN_INVENTORY);
+        return String.format("ALTER TABLE %s ADD COLUMN %s text;", getTableName(), "inventory"); // deprecated
     }
 
     /**
@@ -401,48 +399,6 @@ public class CharacterFactory extends DBEntityFactory {
             } else {
                 contentValues.put(CharacterFactory.COLUMN_ALTTRAITS, "");
             }
-
-            // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1LinkTo>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif2LinkTo>
-            // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
-            // (assuming that modif ids won't change during data import)
-//            if (c.getModifsCount() > 0) {
-//                StringBuffer value = new StringBuffer();
-//                for (Character.CharacterModif modif : c.getModifs()) {
-//                    value.append(modif.getSource()).append(':');
-//                    for (int i = 0; i < modif.getModifCount(); i++) {
-//                        value.append(modif.getModif(i).first).append('|');
-//                        value.append(modif.getModif(i).second).append(',');
-//                    }
-//                    value.deleteCharAt(value.length() - 1).append(':');
-//                    value.append(modif.getIcon()).append(':');
-//                    value.append(modif.getLinkToWeapon());
-//                    value.append('#');
-//                }
-//                value.deleteCharAt(value.length() - 1);
-//                Log.d(CharacterFactory.class.getSimpleName(), "Modifs: " + value.toString());
-//                contentValues.put(CharacterFactory.COLUMN_MODIFS, value.toString());
-//            } else {
-//                contentValues.put(CharacterFactory.COLUMN_MODIFS, "");
-//            }
-
-            // inventory are stored using format  <inventory1>|<inventory1-weight>#<inventory2>|<inventory2-weight>#...
-//            List<CharacterItem> inventory = c.getInventoryItems();
-//            if (inventory.size() > 0) {
-//                StringBuffer value = new StringBuffer();
-//                for (CharacterItem item : inventory) {
-//                    value.append(item.getName()).append('|');
-//                    value.append(item.getWeight()).append('|');
-//                    value.append(item.getObjectId()).append('|');
-//                    value.append(item.getInfos() != null ? item.getInfos() : "").append('|');
-//                    value.append(item.getPrice());
-//                    value.append('#');
-//                }
-//                value.deleteCharAt(value.length() - 1);
-//                Log.d(CharacterFactory.class.getSimpleName(), "Inventory: " + value.toString());
-//                contentValues.put(CharacterFactory.COLUMN_INVENTORY, value.toString());
-//            } else {
-//                contentValues.put(CharacterFactory.COLUMN_INVENTORY, "");
-//            }
 
             // new 16 fields for PDF
             contentValues.put(CharacterFactory.COLUMN_SPEED_ARMOR, c.getSpeedWithArmor());
@@ -697,86 +653,6 @@ public class CharacterFactory extends DBEntityFactory {
                     Log.e(CharacterFactory.class.getSimpleName(), "Stored trait '" + traitsValue + "' is invalid (NFE)!");
                 }
             }
-
-            // inventory items are stored using format  using format  <inventory1>|<inventory1-weight>|<inventory1-objectId>|<inventory1-infos>#<inventory2>|<inventory2-weight>...
-//            String inventoryValue = extractValue(resource, CharacterFactory.COLUMN_INVENTORY);
-//            Log.d(CharacterFactory.class.getSimpleName(), "Inventory found: " + inventoryValue);
-//            if (inventoryValue != null && inventoryValue.length() > 0) {
-//                for (String item : inventoryValue.split("#")) {
-//                    String[] itemElements = item.split("\\|");
-//                    if (itemElements != null && itemElements.length >= 2) {
-//                        String name = itemElements[0];
-//                        int weight = 0;
-//                        try {
-//                            weight = Integer.parseInt(itemElements[1]);
-//                        } catch (NumberFormatException nfe) {
-//                            Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory weight '" + itemElements[1] + "' is invalid (NFE)!");
-//                        }
-//                        // item reference was introduced later
-//                        long objId = 0;
-//                        if (itemElements.length >= 3) {
-//                            try {
-//                                objId = Long.parseLong(itemElements[2]);
-//                            } catch (NumberFormatException nfe) {
-//                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory référence '" + itemElements[2] + "' is invalid (NFE)!");
-//                            }
-//                        }
-//                        // item additional info (ex: ammo)
-//                        String infos = null;
-//                        if (itemElements.length >= 4) {
-//                            infos = itemElements[3];
-//                        }
-//                        // item cost was introduced later
-//                        int price = 0;
-//                        if (itemElements.length >= 5) {
-//                            try {
-//                                price = Integer.parseInt(itemElements[4]);
-//                            } catch (NumberFormatException nfe) {
-//                                Log.e(CharacterFactory.class.getSimpleName(), "Stored inventory price '" + itemElements[4] + "' is invalid (NFE)!");
-//                            }
-//                        }
-//
-//                        Character.InventoryItem toAdd = new Character.InventoryItem(name, weight, price, objId, infos);
-//                        if (toAdd.isValid()) {
-//                            c.addInventoryItem(toAdd);
-//                        }
-//                    }
-//                }
-//            }
-
-            // modifs are stored using format  <modif1Source>:<modif1Bonuses>:<modif1Icon>:<modif1Linkto>#<modif2Source>:<modif2Bonuses>:<modif2Icon>:<modif1Linkto>
-            // where modif1Bonuses are stored using format <bonus1Id>|<bonus1Value,<bonus2Id>|<bonus2Value>
-            // (assuming that modif ids won't change during data import)
-            // fill modifs
-//            String modifsValue = extractValue(resource, CharacterFactory.COLUMN_MODIFS);
-//            Log.d(CharacterFactory.class.getSimpleName(), "Modifs found: " + modifsValue);
-//            if (modifsValue != null && modifsValue.length() > 0) {
-//                for (String modif : modifsValue.split("#")) {
-//                    String[] modElements = modif.split(":");
-//                    if (modElements != null && modElements.length >= 3) {
-//                        String source = modElements[0];
-//                        String icon = modElements[2];
-//                        int linkToWeapon = modElements.length >= 4 ? Integer.parseInt(modElements[3]) : 0;
-//                        List<Pair<Integer, Integer>> bonuses = new ArrayList<>();
-//                        for (String bonusVal : modElements[1].split(",")) {
-//                            String[] bonusElements = bonusVal.split("\\|");
-//                            if (bonusElements != null && bonusElements.length == 2) {
-//                                try {
-//                                    Integer bonusIdx = Integer.parseInt(bonusElements[0]);
-//                                    Integer bonusValue = Integer.parseInt(bonusElements[1]);
-//                                    bonuses.add(new Pair<Integer, Integer>(bonusIdx, bonusValue));
-//                                } catch (NumberFormatException nfe) {
-//                                    Log.e(CharacterFactory.class.getSimpleName(), "Stored modif '" + bonusVal + "' is invalid (NFE)!");
-//                                }
-//                            }
-//                        }
-//                        Character.CharacterModif toAdd = new Character.CharacterModif(source, bonuses, icon, linkToWeapon);
-//                        if (toAdd.isValid()) {
-//                            c.addModif(toAdd);
-//                        }
-//                    }
-//                }
-//            }
 
             // new 16 fields for PDF
             c.setSpeedWithArmor(extractValueAsInt(resource, CharacterFactory.COLUMN_SPEED_ARMOR));
