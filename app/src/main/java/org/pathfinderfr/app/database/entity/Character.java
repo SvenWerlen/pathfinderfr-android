@@ -1343,7 +1343,7 @@ public class Character extends DBEntity {
         }
         for(Modification el : modifs) {
             if(el.isEnabled()) {
-                buf.append(el.getSource()).append(", ");
+                buf.append(el.getName()).append(", ");
             }
         }
         if(buf.length()>0) {
@@ -1391,9 +1391,14 @@ public class Character extends DBEntity {
     public List<Modification> getModifications(long itemId) {
         if (modifs == null) {
             modifs = new ArrayList<>();
-            List<DBEntity> entities = DBHelper.getInstance(null).fetchAllEntitiesByForeignIds(new long[]{id}, ModificationFactory.getInstance());
-            for (DBEntity e : entities) {
-                modifs.add((Modification) e);
+            try {
+                List<DBEntity> entities = DBHelper.getInstance(null).fetchAllEntitiesByForeignIds(new long[]{id}, ModificationFactory.getInstance());
+                for (DBEntity e : entities) {
+                    modifs.add((Modification) e);
+                }
+            // special case for local testing
+            } catch(IllegalArgumentException exc) {
+                return modifs;
             }
         }
         List<Modification> copy = new ArrayList<>();
@@ -1426,16 +1431,18 @@ public class Character extends DBEntity {
     public List<CharacterItem> getInventoryItems() {
         if (inventory == null) {
             inventory = new ArrayList<>();
-            List<DBEntity> entities = DBHelper.getInstance(null).fetchAllEntitiesByForeignIds(new long[]{id}, CharacterItemFactory.getInstance());
-            for (DBEntity e : entities) {
-                inventory.add((CharacterItem) e);
+            try {
+                List<DBEntity> entities = DBHelper.getInstance(null).fetchAllEntitiesByForeignIds(new long[]{id}, CharacterItemFactory.getInstance());
+                for (DBEntity e : entities) {
+                    inventory.add((CharacterItem) e);
+                }
+            // special case for local testing
+            } catch(IllegalArgumentException exc) {
+                return inventory;
             }
-            Collections.sort(inventory);
         }
-        List<CharacterItem> copy = new ArrayList<>();
-        for(CharacterItem i : inventory) {
-            copy.add(i);
-        }
+        List<CharacterItem> copy = new ArrayList<>(inventory);
+        Collections.sort(inventory);
         return copy;
     }
 

@@ -9,10 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pathfinderfr.app.database.entity.Armor;
 import org.pathfinderfr.app.database.entity.Character;
+import org.pathfinderfr.app.database.entity.CharacterItem;
 import org.pathfinderfr.app.database.entity.Class;
 import org.pathfinderfr.app.database.entity.ClassFeature;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.Feat;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.Race;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -91,63 +93,61 @@ public class CharacterPDFTest {
         c.setEyes("Bruns");
         c.setLanguages("Commun, gobelin, elfique, draconique");
 
-
-
-        Character.CharacterModif modif = new Character.CharacterModif("Race", new ArrayList<Pair<Integer, Integer>>(), "-", 0,true);
-        c.addModif(modif);
+        List<Modification> modifications = c.getModifications();
+        Modification modif = new Modification("Race", new ArrayList<Pair<Integer, Integer>>(), "-", true);
+        modifications.add(modif);
 
         List<Pair<Integer, Integer>> modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_ARMOR, 7));
-        modif = new Character.CharacterModif("Armure de plates", modifs, "-",  0,true);
-        c.addModif(modif);
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_AC_ARMOR, 7));
+        modif = new Modification("Armure de plates", modifs, "-", true);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_SHIELD, 2));
-        modif = new Character.CharacterModif("Écu", modifs, "-",  0,true);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_AC_SHIELD, 2));
+        modif = new Modification("Écu", modifs, "-", true);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_NATURAL, 3));
-        modif = new Character.CharacterModif("Peau d'écorce", modifs, "-",  0,true);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_AC_NATURAL, 3));
+        modif = new Modification("Peau d'écorce", modifs, "-", true);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC_PARADE, 1));
-        modif = new Character.CharacterModif("Bracelets", modifs, "-",  0,true);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_AC_PARADE, 1));
+        modif = new Modification("Bracelets", modifs, "-", true);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_AC, -2));
-        modif = new Character.CharacterModif("Bague", modifs, "-",  0,true);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_AC, -2));
+        modif = new Modification("Bague", modifs, "-", true);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_REF, 1));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_REF, 1));
+        modif = new Modification("Objet réflexes", modifs, "-", false);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_FOR, 2));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_FOR, 2));
+        modif = new Modification("Objet réflexes", modifs, "-", false);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_ALL, 1));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_ALL, 2));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_SAVES_MAG_WIL, 3));
-        modif = new Character.CharacterModif("Objet réflexes", modifs, "-",  0,false);
-        c.addModif(modif);
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_ALL, 1));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_ALL, 2));
+        modifs.add(new Pair<>(Modification.MODIF_SAVES_MAG_WIL, 3));
+        modif = new Modification("Objet réflexes", modifs, "-", false);
+        modifications.add(modif);
 
-        modifs = new ArrayList<Pair<Integer, Integer>>();
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_MAG, 1));
-        modifs.add(new Pair<Integer, Integer>(Character.MODIF_COMBAT_INI, 2));
-        modif = new Character.CharacterModif("Objet combat", modifs, "-",  0,true);
-        c.addModif(modif);
-
+        modifs = new ArrayList<>();
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_MAG, 1));
+        modifs.add(new Pair<>(Modification.MODIF_COMBAT_INI, 2));
+        modif = new Modification("Objet combat", modifs, "-", true);
+        modifications.add(modif);
 
         List<DBEntity> skills = new ArrayList<>();
         skills.add(createSkill("Acrobatie", "Dex", false));
@@ -188,6 +188,7 @@ public class CharacterPDFTest {
 
         String logoPath = "/home/sven/AndroidStudioProjects/PathfinderFR/app/src/main/assets/pdf-logo.png";
 
+        List<CharacterItem> inventory = c.getInventoryItems();
         List<Weapon> weapons = new ArrayList<>();
         Weapon w = new Weapon();
         w.setName("Arc long");
@@ -197,7 +198,7 @@ public class CharacterPDFTest {
         w.setRange("30 m (20 c)");
         w.setType("P");
         weapons.add(w);
-        c.addInventoryItem(new Character.InventoryItem("Arc long", 1500, 1000L, Character.InventoryItem.IDX_WEAPONS + 5, null));
+        inventory.add(new CharacterItem(c.getId(), "Arc long", 1500, 1000L, CharacterItem.IDX_WEAPONS + 5, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
 
         w = new Weapon();
         w.setName("Arc court composite");
@@ -207,7 +208,7 @@ public class CharacterPDFTest {
         w.setRange("20 m (15 c)");
         w.setType("P");
         weapons.add(w);
-        c.addInventoryItem(new Character.InventoryItem("Arc long composite", 1500, 1000L, Character.InventoryItem.IDX_WEAPONS + 5, null));
+        inventory.add(new CharacterItem(c.getId(), "Arc long composite", 1500, 1000L, CharacterItem.IDX_WEAPONS + 5, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
 
         w = new Weapon();
         w.setName("Hache d'armes");
@@ -217,7 +218,7 @@ public class CharacterPDFTest {
         w.setRange("--");
         w.setType("T");
         weapons.add(w);
-        c.addInventoryItem(new Character.InventoryItem("Hache d'armes", 3000, 1000L, Character.InventoryItem.IDX_WEAPONS + 5, null));
+        inventory.add(new CharacterItem(c.getId(), "Hache d'armes", 3000, 1000L, CharacterItem.IDX_WEAPONS + 5, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
 
 
         List<Armor> armors = new ArrayList<>();
@@ -231,15 +232,15 @@ public class CharacterPDFTest {
         a.setCastFail("10%");
         a.setWeight("7,5 kg");
         armors.add(a);
-        c.addInventoryItem(new Character.InventoryItem("Armure de cuir en peau de dragon", 7500, 1000L, Character.InventoryItem.IDX_ARMORS + 5, null));
+        inventory.add(new CharacterItem(c.getId(), "Armure de cuir en peau de dragon", 7500, 1000L, CharacterItem.IDX_ARMORS + 5, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
 
 
-        c.addInventoryItem(new Character.InventoryItem("Corde en chanvre, 15 m", 5000, 1000L, 0, null));
-        c.addInventoryItem(new Character.InventoryItem("Cadenas (bon)", 500, 1000L, 0, null));
-        c.addInventoryItem(new Character.InventoryItem("1234567890 1234567890 1234567890 123", 1250, 1000L, 0, null));
+        inventory.add(new CharacterItem(c.getId(), "Corde en chanvre, 15 m", 5000, 1000L, 0, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
+        inventory.add(new CharacterItem(c.getId(), "Cadenas (bon)", 500, 1000L, 0, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
+        inventory.add(new CharacterItem(c.getId(), "1234567890 1234567890 1234567890 123", 1250, 1000L, 0, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
 
         for(int i = 1; i<= 40; i++) {
-            c.addInventoryItem(new Character.InventoryItem(String.format("Fill %02d", i), 100, 1000L, 0, null));
+            inventory.add(new CharacterItem(c.getId(), String.format("Fill %02d", i), 100, 1000L, 0, null, CharacterItem.CATEGORY_UNCLASSIFIED, CharacterItem.LOCATION_NOLOC));
         }
 
         c.getRace().getTraits().add(new Race.Trait("Taille moyenne",""));
