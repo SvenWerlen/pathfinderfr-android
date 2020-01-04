@@ -33,10 +33,10 @@ public class CharacterItem extends DBEntity {
     public static final int CATEGORY_MAGIC         = 13;
 
 
-    private static final long IDX_WEAPONS    = 0L;
-    private static final long IDX_ARMORS     = 1000000L;
-    private static final long IDX_EQUIPMENT  = 2000000L;
-    private static final long IDX_MAGICITEM  = 3000000L;
+    public static final long IDX_WEAPONS    = 0L;
+    public static final long IDX_ARMORS     = 1000000L;
+    public static final long IDX_EQUIPMENT  = 2000000L;
+    public static final long IDX_MAGICITEM  = 3000000L;
 
     private long characterId;
     private int weight;
@@ -63,13 +63,68 @@ public class CharacterItem extends DBEntity {
         this.order = 0;
     }
 
-//    public CharacterItem(CharacterItem copy) {
-//            this.name = copy.name;
-//            this.weight = copy.weight;
-//            this.price = copy.price;
-//            this.objectId = copy.objectId;
-//            this.infos = copy.infos;
-//    }
+    public static int getCategory(int type) {
+        if (type == MagicItem.TYPE_RING) {
+            return CATEGORY_RING;
+        } else if (type == MagicItem.TYPE_WEAPON) {
+            return CATEGORY_WEAPON_HAND;
+        } else if (type == MagicItem.TYPE_ARMOR_SHIELD) {
+            return CATEGORY_ARMOR;
+        } else if (type == MagicItem.TYPE_STAFF) {
+            return CATEGORY_STAFF;
+        } else if (type == MagicItem.TYPE_OBJECT) {
+            return CATEGORY_MAGIC;
+        } else if (type == MagicItem.TYPE_SCEPTER) {
+            return CATEGORY_SCEPTER;
+        } else if (type == MagicItem.TYPE_WAND) {
+            return CATEGORY_WAND;
+        } else if (type == MagicItem.TYPE_SCROLL) {
+            return CATEGORY_SCROLL;
+        } else if (type == MagicItem.TYPE_POTION) {
+            return CATEGORY_POTION;
+        } else {
+            return CATEGORY_UNCLASSIFIED;
+        }
+    }
+
+    // TODO: fix ugly language-specific correspondance function
+    public static int getLocation(String location) {
+        if(location == null || location.length() == 0) {
+            return LOCATION_NOLOC;
+        } else if (location.equalsIgnoreCase("anneau")) {
+            return LOCATION_FINGERS;
+        } else if (location.equalsIgnoreCase("armure")) {
+            return LOCATION_ARMOR;
+        } else if (location.equalsIgnoreCase("bouclier")) {
+            return LOCATION_SHIELD;
+        } else if (location.equalsIgnoreCase("ceinture")) {
+            return LOCATION_WAIST;
+        } else if (location.equalsIgnoreCase("corps")) {
+            return LOCATION_SHOULDER;
+        } else if (location.equalsIgnoreCase("cou")) {
+            return LOCATION_NECK;
+        } else if (location.equalsIgnoreCase("épaules")) {
+            return LOCATION_SHOULDER;
+        } else if (location.equalsIgnoreCase("front")) {
+            return LOCATION_FOREHEAD;
+        } else if (location.equalsIgnoreCase("mains")) {
+            return LOCATION_HAND;
+        } else if (location.equalsIgnoreCase("pied") || location.equalsIgnoreCase("pieds") || location.equalsIgnoreCase("sabots")) {
+            return LOCATION_FOOT;
+        } else if (location.equalsIgnoreCase("poignets")) {
+            return LOCATION_ARM;
+        } else if (location.equalsIgnoreCase("poitrine") || location.equalsIgnoreCase("torse")) {
+            return LOCATION_TORSO;
+        } else if (location.equalsIgnoreCase("taille")) {
+            return LOCATION_WAIST;
+        } else if (location.equalsIgnoreCase("tête")) {
+            return LOCATION_HEAD;
+        } else if (location.equalsIgnoreCase("yeux")) {
+            return LOCATION_EYE;
+        } else {
+            return LOCATION_NOLOC;
+        }
+    }
 
     @Override
     public void setReference(String reference) {

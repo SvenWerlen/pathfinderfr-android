@@ -9,7 +9,7 @@ public class MagicItem extends DBEntity {
     public static int TYPE_POTION       = 3;
     public static int TYPE_RING         = 4;
     public static int TYPE_SCEPTER      = 5;
-    public static int TYPE_PARCHMENT    = 6;
+    public static int TYPE_SCROLL       = 6;
     public static int TYPE_STAFF        = 7;
     public static int TYPE_WAND         = 8;
     public static int TYPE_OBJECT       = 9;

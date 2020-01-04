@@ -156,7 +156,7 @@ public class MagicItemFactory extends DBEntityFactory {
         } else if("Sceptre".equals(type)) {
             item.setType(MagicItem.TYPE_SCEPTER);
         } else if("Parchemin".equals(type)) {
-            item.setType(MagicItem.TYPE_PARCHMENT);
+            item.setType(MagicItem.TYPE_SCROLL);
         } else if("Bâton".equals(type)) {
             item.setType(MagicItem.TYPE_STAFF);
         } else if("Baguette".equals(type)) {

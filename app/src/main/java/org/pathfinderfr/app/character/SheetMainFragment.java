@@ -1115,7 +1115,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             row.addView(nameLayout);
             if(item.isEquiped()) {
                 TextView location = FragmentUtil.copyExampleTextFragment(inventoryLocationExample);
-                location.setText(ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("sheet_inventory_location_" + item.getLocation()));
+                location.setText(ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("sheet.inventory.location." + item.getLocation()));
                 location.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 row.addView(location);
             } else {
@@ -1646,7 +1646,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     menuIds.add(CONTEXT_EQUIP); icons.add(R.drawable.ic_putin); colors.add(0);
                     titles.add(parent.getResources().getString(R.string.sheet_inventory_ctx_unequip));
                 } else {
-                    String location = ConfigurationUtil.getInstance(ctx).getProperties().getProperty("sheet_inventory_location_" + item.getLocation());
+                    String location = ConfigurationUtil.getInstance(ctx).getProperties().getProperty("sheet.inventory.location." + item.getLocation());
                     menuIds.add(CONTEXT_EQUIP); icons.add(R.drawable.ic_takeout); colors.add(0);
                     titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_equip), location));
                 }
