@@ -16,6 +16,7 @@ public class CharacterItem extends DBEntity {
     public static final int LOCATION_FOOT     = 11;
     public static final int LOCATION_ARMOR    = 12;
     public static final int LOCATION_SHIELD   = 13;
+    // if you add new locations, make sure to adapt CharacterImportExport and setters below
 
     public static final int CATEGORY_UNCLASSIFIED  = 0;
     public static final int CATEGORY_EQUIPMENT     = 1;
@@ -31,7 +32,7 @@ public class CharacterItem extends DBEntity {
     public static final int CATEGORY_STAFF         = 11;
     public static final int CATEGORY_WAND          = 12;
     public static final int CATEGORY_MAGIC         = 13;
-
+    // if you add new categories, make sure to adapt CharacterImportExport and setters below
 
     public static final long IDX_WEAPONS    = 0L;
     public static final long IDX_ARMORS     = 1000000L;

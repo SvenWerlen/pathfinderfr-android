@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.LongSparseArray;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -16,6 +17,8 @@ import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
+import org.pathfinderfr.app.database.entity.CharacterItem;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.Pair;
 
@@ -24,7 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ImportCharacterActivity extends AppCompatActivity {
 
@@ -102,8 +107,7 @@ public class ImportCharacterActivity extends AppCompatActivity {
         }
         content.append(getString(R.string.importcharacter_info_read)).append("<br/>");
 
-        Pair<Character, List<Integer>> result =
-                CharacterImportExport.importCharacterAsYML(text, findViewById(android.R.id.content));
+        CharacterImportExport.CharacterImportData result = CharacterImportExport.importCharacterAsYML(text, findViewById(android.R.id.content));
 
         if(result == null) {
             content.append("<font color=\"red\">" + getString(R.string.importcharacter_error_parsing) + "</font>");
@@ -111,13 +115,30 @@ public class ImportCharacterActivity extends AppCompatActivity {
         }
         content.append(getString(R.string.importcharacter_info_parse)).append("<br/>");
         if(!simulate) {
-            DBHelper.getInstance(getApplicationContext()).insertEntity(result.first);
+            DBHelper helper = DBHelper.getInstance(getApplicationContext());
+            long characterId = helper.insertEntity(result.character);
+            // import inventory
+            LongSparseArray<Long> map = new LongSparseArray<>();
+            for(CharacterItem item : result.items) {
+                long oldId = item.getId();
+                item.setCharacterId(characterId);
+                long newId = helper.insertEntity(item);
+                map.put(oldId, newId);
+            }
+            // import modifs
+            for(Modification m : result.modifs) {
+                m.setCharacterId(characterId);
+                if(m.getItemId() != 0) {
+                    m.setItemId(map.get(m.getItemId()));
+                }
+                helper.insertEntity(m);
+            }
         }
         content.append(getString(R.string.importcharacter_info_import)).append("<br/>");
 
-        if(result.second.size() > 0) {
+        if(result.errors.size() > 0) {
             content.append(getString(R.string.importcharacter_info_errors)).append("<br/><font color=\"red\">");
-            for(int errorNo : result.second) {
+            for(int errorNo : result.errors) {
                 content.append("- ").append(ConfigurationUtil.getInstance(getApplicationContext()).getProperties().get("importcharacter.error" + errorNo)).append("<br/>");
             }
             content.append("</font>");

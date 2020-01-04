@@ -38,7 +38,8 @@ public class MsgBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Pair<Character, List<Integer>> result = CharacterImportExport.importCharacterAsYML(character, activity.getCurrentFocus());
+            Pair<Character, List<Integer>> result = null;
+                    //CharacterImportExport.importCharacterAsYML(character, activity.getCurrentFocus());
 
             long id = DBHelper.getInstance(context).fetchCharacterIdByUUID(uuid);
             if(id > 0) {
