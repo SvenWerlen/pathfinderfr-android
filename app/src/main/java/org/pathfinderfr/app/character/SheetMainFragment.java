@@ -32,6 +32,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -125,6 +126,18 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     private ImageView inventoryIconBagExample;
     private TextView inventoryNameExample;
     private TextView inventoryLocationExample;
+
+    private boolean isFABOpen;
+    private LinearLayout fabClass;
+    private LinearLayout fabModif;
+    private LinearLayout fabItem;
+    private LinearLayout fabItemMagic;
+    private LinearLayout fabItemManual;
+    private TextView fabClassText;
+    private TextView fabModifText;
+    private TextView fabItemText;
+    private TextView fabItemMagicText;
+    private TextView fabItemManualText;
 
     private long characterId;
     ProfileListener listener;
@@ -272,6 +285,29 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.sheet_main_classpicker).setVisibility(View.GONE);
 
         final CharacterSheetActivity act = ((CharacterSheetActivity)getActivity());
+
+        // FAB
+        FloatingActionButton fab = view.findViewById(R.id.fabAdd);
+        fabClass = view.findViewById(R.id.fabAddClass); fabClass.setOnClickListener(listener);
+        fabModif = view.findViewById(R.id.fabAddModif); fabModif.setOnClickListener(listener);
+        fabItem = view.findViewById(R.id.fabAddItem); fabItem.setOnClickListener(listener);
+        fabItemMagic = view.findViewById(R.id.fabAddMagic); fabItemMagic.setOnClickListener(listener);
+        fabItemManual = view.findViewById(R.id.fabAddObject); fabItemManual.setOnClickListener(listener);
+        fabClassText = view.findViewById(R.id.fabAddClassText); fabClassText.setAlpha(0);
+        fabModifText = view.findViewById(R.id.fabAddModifText); fabModifText.setAlpha(0);
+        fabItemText = view.findViewById(R.id.fabAddItemText); fabItemText.setAlpha(0);
+        fabItemMagicText = view.findViewById(R.id.fabAddMagicText); fabItemMagicText.setAlpha(0);
+        fabItemManualText = view.findViewById(R.id.fabAddObjectText); fabItemManualText.setAlpha(0);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isFABOpen){
+                    showFABMenu();
+                }else{
+                    closeFABMenu();
+                }
+            }
+        });
 
         // ACTIONS
         ImageView actionPin = view.findViewById(R.id.actionPin);
@@ -691,9 +727,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         }
 
         // inventory
-        view.findViewById(R.id.sheet_inventory_item_add).setOnClickListener(listener);
-        view.findViewById(R.id.sheet_inventory_item_add_fromEquipment).setOnClickListener(listener);
-        view.findViewById(R.id.sheet_inventory_item_add_fromMagic).setOnClickListener(listener);
         inventory = view.findViewById(R.id.sheet_inventory_table);
         inventoryIconExample = view.findViewById(R.id.sheet_inventory_example_icon);
         inventoryIconBagExample = view.findViewById(R.id.sheet_inventory_unequiped);
@@ -792,15 +825,41 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_bab), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_ability), minHeight, scale);
 
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add), 0, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add_fromEquipment), 0, scale);
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_inventory_item_add_fromMagic), 0, scale);
-
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_money_total_value), 0, scale);
         }
 
         return view;
     }
+
+    private void showFABMenu() {
+        isFABOpen=true;
+        fabClass.animate().translationY(-550);
+        fabModif.animate().translationY(-450);
+        fabItem.animate().translationY(-350);
+        fabItemManual.animate().translationY(-250);
+        fabItemMagic.animate().translationY(-150);
+        fabClassText.animate().alpha(1);
+        fabModifText.animate().alpha(1);
+        fabItemText.animate().alpha(1);
+        fabItemManualText.animate().alpha(1);
+        fabItemMagicText.animate().alpha(1);
+    }
+
+    private void closeFABMenu() {
+        isFABOpen=false;
+        fabClass.animate().translationY(0);
+        fabModif.animate().translationY(0);
+        fabItem.animate().translationY(0);
+        fabItemMagic.animate().translationY(0);
+        fabItemManual.animate().translationY(0);
+        fabClassText.animate().alpha(0);
+        fabModifText.animate().alpha(0);
+        fabItemText.animate().alpha(0);
+        fabItemManualText.animate().alpha(0);
+        fabItemMagicText.animate().alpha(0);
+    }
+
+
 
     private void updateAdditionalInfos(View view) {
         TextView infosTv = view.findViewById(R.id.sheet_main_otherpicker);
@@ -1360,7 +1419,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 newFragment.show(ft, DIALOG_PICK_INFOS);
                 return;
             }
-            else if(v instanceof TextView && "class".equals(v.getTag())) {
+            else if("class".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_CLASS);
                 if (prev != null) {
@@ -1377,24 +1436,25 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     }
                     idx++;
                 }
-                // not found??
-                if(idx == parent.classPickers.size()) {
-                    Log.w(SheetMainFragment.class.getSimpleName(), "Class picker couldn't be found!!");
-                    return;
+
+                Triplet<Class, ClassArchetype,Integer> selClass = null;
+
+                // not found => new
+                if(idx < parent.classPickers.size()) {
+                    selClass = parent.character.getClass(idx);
                 }
-                Triplet<Class, ClassArchetype,Integer> curClass = parent.character.getClass(idx);
 
                 // prepare parameters
-                long[] excluded = parent.character.getOtherClassesIds(curClass == null ? -1 : curClass.first.getId());
-                int maxLevel = 20 - parent.character.getOtherClassesLevel(curClass == null ? -1 : curClass.first.getId());
+                long[] excluded = parent.character.getOtherClassesIds(selClass == null ? -1 : selClass.first.getId());
+                int maxLevel = 20 - parent.character.getOtherClassesLevel(selClass == null ? -1 : selClass.first.getId());
 
                 Bundle arguments = new Bundle();
-                if(curClass != null) {
-                    arguments.putLong(FragmentClassPicker.ARG_CLASS_ID, curClass.first.getId());
-                    if(curClass.second != null) {
-                        arguments.putLong(FragmentClassPicker.ARG_ARCHETYPE_ID, curClass.second.getId());
+                if(selClass != null) {
+                    arguments.putLong(FragmentClassPicker.ARG_CLASS_ID, selClass.first.getId());
+                    if(selClass.second != null) {
+                        arguments.putLong(FragmentClassPicker.ARG_ARCHETYPE_ID, selClass.second.getId());
                     }
-                    arguments.putInt(FragmentClassPicker.ARG_CLASS_LVL, curClass.third);
+                    arguments.putInt(FragmentClassPicker.ARG_CLASS_LVL, selClass.third);
                 }
                 arguments.putLongArray(FragmentClassPicker.ARG_CLASS_EXCL, excluded);
                 arguments.putInt(FragmentClassPicker.ARG_CLASS_MAX_LVL, maxLevel);
@@ -1402,7 +1462,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 newFragment.show(ft, DIALOG_PICK_CLASS);
                 return;
             }
-            else if(v instanceof TextView && "modif".equals(v.getTag())) {
+            else if("modif".equals(v.getTag())) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_MODIFS);
                 if (prev != null) {
@@ -1587,7 +1647,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     return;
                 }
             }
-            else if(v.getId() == R.id.sheet_inventory_item_add) {
+            else if(v.getId() == R.id.fabAddObject) {
                 FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
                 if (prev != null) {
@@ -1601,7 +1661,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 newFragment.show(ft, DIALOG_PICK_INVENTORY);
                 return;
             }
-            else if(v.getId() == R.id.sheet_inventory_item_add_fromEquipment) {
+            else if(v.getId() == R.id.fabAddItem) {
                 // set character as "selected"
                 PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
                         putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
@@ -1613,7 +1673,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 context.startActivity(intent);
                 parent.refreshNeeded = true;
             }
-            else if(v.getId() == R.id.sheet_inventory_item_add_fromMagic) {
+            else if(v.getId() == R.id.fabAddMagic) {
                 // set character as "selected"
                 PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
                         putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).

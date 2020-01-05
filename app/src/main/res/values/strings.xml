@@ -319,10 +319,6 @@
     <string name="sheet_class_archetype_value">classe de base</string>
     <string name="sheet_class_select">Niveau:</string>
     <string name="sheet_class_level_value">1</string>
-    <string name="sheet_click_to_add_label">Ajouter:</string>
-    <string name="sheet_click_to_add_catalog">Équipement</string>
-    <string name="sheet_click_to_add_magic">Obj. magique</string>
-    <string name="sheet_click_to_add_manual">Autre</string>
 
     <!-- Character modifications -->
     <string name="sheet_modifs">Modif(s):</string>
@@ -761,6 +757,13 @@
     <!-- Context menu -->
     <string name="contextmenu_title_example">Nom de l\'élément</string>
     <string name="contextmenu_name_example">Entrée de menu</string>
+
+    <!-- FAB -->
+    <string name="sheet_addclass">Classe</string>
+    <string name="sheet_addmodif">Modification</string>
+    <string name="sheet_additem">Objet</string>
+    <string name="sheet_addmagic">Objet magique</string>
+    <string name="sheet_addobject">Objet (manuel)</string>
 
 </resources>
 

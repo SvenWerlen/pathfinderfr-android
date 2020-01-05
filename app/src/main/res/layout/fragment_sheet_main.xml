@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="60dp">
+    android:orientation="vertical"
+    android:layout_marginBottom="60dp"
+    android:background="@color/colorWhite">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -245,1389 +252,7 @@
                     android:layout_height="wrap_content" />
             </ScrollView>
 
-
-            <com.wefika.flowlayout.FlowLayout
-                android:id="@+id/sheet_main_statistics"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="start|top">
-
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_label_char"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_label_value"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_label_modif"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_str"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_str"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_str_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability0"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_str_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_dex"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_dex"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_dex_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability1"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_dex_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_con"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_con"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_con_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability2"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_con_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_int"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_int"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_int_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability3"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_int_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_wis"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_wis"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_wis_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability4"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_wis_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ability_cha"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_cha"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ability_cha_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="ability5"
-                            android:text="@string/sheet_ability_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark" />
-
-                        <TextView
-                            android:id="@+id/ability_cha_modif"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ability_modif"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-                </TableLayout>
-
-
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp">
-
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_label_other"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_label_value"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_ini"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ini"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/initiative_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:minWidth="40dp"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_ac"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_ac"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/armorclass_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="3dp"
-                            android:text="@string/sheet_other_value_multiple"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_mag"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_mag"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/magicresistance_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack"></TextView>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_hp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_hp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/hitpoint_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="hitpoints"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark"></TextView>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_hptemp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_hptemp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/hitpointtemp_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="hitpoints"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark"></TextView>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/other_speed"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_sp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/speed_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:tag="speed"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimaryDark"></TextView>
-
-                    </TableRow>
-
-                </TableLayout>
-
-
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_saving"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_total"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_bonusbase"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_ability"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/savingthrows_ref"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_ref"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_reflex_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_reflex"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_reflex_ability"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/savingthrows_for"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_for"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_fortitude_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_fortitude"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_fortitude_ability"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/savingthrows_wil"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_wil"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_will_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_will"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/savingthrows_will_ability"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_combat"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_total"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_bab"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_savingthrows_ability"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/combat_bab"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_bab"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/base_attack_bonus_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:layout_span="3"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/combat_cmb"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_cmb"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/combat_cmb_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/combat_cmb_bab"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/combat_cmb_ability"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/combat_cmd"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_cmd"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/combat_cmd_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/combat_cmd_bab"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/combat_cmd_ability"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:layout_marginVertical="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_other_value"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout
-                    android:id="@+id/weapons_table"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_span="3"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingTop="4dp"
-                            android:paddingEnd="4dp"
-                            android:text="@string/sheet_weapons"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingTop="4dp"
-                            android:paddingEnd="4dp"
-                            android:text="@string/sheet_weapons_bonus"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingTop="4dp"
-                            android:paddingEnd="4dp"
-                            android:text="@string/sheet_weapons_critical"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingEnd="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="@string/sheet_weapons_type"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingEnd="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="@string/sheet_weapons_range"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingEnd="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="@string/sheet_weapons_ammo"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:layout_span="2"
-                            android:gravity="center_vertical"
-                            android:paddingStart="4dp"
-                            android:paddingEnd="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="@string/sheet_weapons_damages"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/sheet_font_labels"
-                            android:textStyle="italic" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:id="@+id/weapon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/weapon_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="2dp"
-                            android:layout_span="3"
-                            android:background="@color/colorPrimary"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:text="@string/sheet_weapon1"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/weapon_bonus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/weapon_critical"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/weapon_type"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/weapon_range"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/weapon_ammo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                        <TextView
-                            android:id="@+id/weapon_damages"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:layout_span="2"
-                            android:background="@drawable/text_box"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorBlack" />
-
-                    </TableRow>
-
-                </TableLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TableLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/money_cp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="2dp"
-                                android:background="@color/colorPrimary"
-                                android:gravity="center_vertical"
-                                android:padding="4dp"
-                                android:text="@string/sheet_money_cp"
-                                android:textColor="@color/colorWhite"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/money_cp_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="2dp"
-                                android:layout_marginVertical="2dp"
-                                android:background="@drawable/text_box"
-                                android:gravity="center_vertical"
-                                android:minWidth="40dp"
-                                android:padding="4dp"
-                                android:tag="money"
-                                android:text="@string/sheet_other_value"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorBlack" />
-
-                        </TableRow>
-                    </TableLayout>
-
-                    <TableLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/money_sp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="2dp"
-                                android:background="@color/colorPrimary"
-                                android:gravity="center_vertical"
-                                android:padding="4dp"
-                                android:text="@string/sheet_money_sp"
-                                android:textColor="@color/colorWhite"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/money_sp_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="2dp"
-                                android:layout_marginVertical="2dp"
-                                android:background="@drawable/text_box"
-                                android:gravity="center_vertical"
-                                android:minWidth="40dp"
-                                android:padding="4dp"
-                                android:tag="money"
-                                android:text="@string/sheet_other_value"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorBlack" />
-
-                        </TableRow>
-                    </TableLayout>
-
-                    <TableLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/money_gp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="2dp"
-                                android:background="@color/colorPrimary"
-                                android:gravity="center_vertical"
-                                android:padding="4dp"
-                                android:text="@string/sheet_money_gp"
-                                android:textColor="@color/colorWhite"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/money_gp_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="2dp"
-                                android:layout_marginVertical="2dp"
-                                android:background="@drawable/text_box"
-                                android:gravity="center_vertical"
-                                android:minWidth="40dp"
-                                android:padding="4dp"
-                                android:tag="money"
-                                android:text="@string/sheet_other_value"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorBlack" />
-
-                        </TableRow>
-                    </TableLayout>
-
-                    <TableLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/money_pp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="2dp"
-                                android:background="@color/colorPrimary"
-                                android:gravity="center_vertical"
-                                android:padding="4dp"
-                                android:text="@string/sheet_money_pp"
-                                android:textColor="@color/colorWhite"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/money_pp_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="2dp"
-                                android:layout_marginVertical="2dp"
-                                android:background="@drawable/text_box"
-                                android:gravity="center_vertical"
-                                android:minWidth="40dp"
-                                android:padding="4dp"
-                                android:tag="money"
-                                android:text="@string/sheet_other_value"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorBlack" />
-
-                        </TableRow>
-                    </TableLayout>
-                </LinearLayout>
-
-            </com.wefika.flowlayout.FlowLayout>
+            <include layout="@layout/fragment_sheet_main_stats" />
 
         </LinearLayout>
 
@@ -1635,4 +260,163 @@
 
     </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/fabAddClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:tag="class"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:padding="17dp">
+
+        <TextView
+            android:id="@+id/fabAddClassText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_addclass"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:background="@color/colorWhite">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:fabCustomSize="32dp"
+            app:srcCompat="@drawable/ic_fab_addclass" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/fabAddModif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:tag="modif"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:padding="17dp">
+
+        <TextView
+            android:id="@+id/fabAddModifText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_addmodif"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:background="@color/colorWhite">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:fabCustomSize="32dp"
+            app:srcCompat="@drawable/ic_fab_addmodif" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fabAddItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:padding="17dp">
+
+        <TextView
+            android:id="@+id/fabAddItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_additem"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:background="@color/colorWhite">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:fabCustomSize="32dp"
+            app:srcCompat="@drawable/ic_fab_addobject" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fabAddObject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:padding="17dp">
+
+        <TextView
+            android:id="@+id/fabAddObjectText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_addobject"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:background="@color/colorWhite">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:fabCustomSize="32dp"
+            app:srcCompat="@drawable/ic_fab_addobject" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fabAddMagic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:padding="17dp">
+
+        <TextView
+            android:id="@+id/fabAddMagicText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sheet_addmagic"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:background="@color/colorWhite">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:fabCustomSize="32dp"
+            app:srcCompat="@drawable/ic_fab_addmagic" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:srcCompat="@drawable/ic_add" />
+
+</RelativeLayout>
