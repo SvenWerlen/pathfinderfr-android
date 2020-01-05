@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.1] - 2019-01-05
+### Fixed
+- Drag-and-drop (order items) not working
+- Clickable zone around FAB button
+
 ## [3.8.0] - 2019-01-05
 ### Changed
 - Modifs & items: handled in separated tables
