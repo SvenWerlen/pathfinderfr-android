@@ -1822,8 +1822,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     Log.i(SheetMainFragment.class.getSimpleName(), "Item was moved!");
                     parent.character.resyncInventory();
                     parent.updateInventory(parent.getView());
-                    parent.updateWeapons(parent.getView());
-                    parent.characterDBUpdate();
                     break;
                 default: break;
             }

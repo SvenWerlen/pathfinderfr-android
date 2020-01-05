@@ -750,7 +750,7 @@ public class Character extends DBEntity {
         }
         // build list
         List<Integer> bab = new ArrayList<>();
-        while(maxBonus > 0) {
+        while(maxBonus >= 0) {
             bab.add(maxBonus);
             maxBonus -= 5;
             if(bab.size()==4) {
@@ -1436,13 +1436,13 @@ public class Character extends DBEntity {
                 for (DBEntity e : entities) {
                     inventory.add((CharacterItem) e);
                 }
+                Collections.sort(inventory);
             // special case for local testing
             } catch(IllegalArgumentException exc) {
                 return inventory;
             }
         }
         List<CharacterItem> copy = new ArrayList<>(inventory);
-        Collections.sort(inventory);
         return copy;
     }
 
