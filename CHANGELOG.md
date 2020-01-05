@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.0] - 2019-01-05
+### Changed
+- Modifs & items: handled in separated tables
+- Modifs can be linked to any item in inventory
+- Icons of modifs linked to items are not displayed any more
+- Items context menu
+### Added
+- New items fields: activated, category and location
+- Floating Action Button (FAB) for adding a class, a modification or a item 
+
 ## [3.7.0] - 2019-12-29
 ### Added
 - Character: add shortcut link to traits from classfeatures tab
