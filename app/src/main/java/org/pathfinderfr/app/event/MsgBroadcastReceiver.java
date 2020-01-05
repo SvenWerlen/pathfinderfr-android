@@ -5,12 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.util.LongSparseArray;
 import android.widget.Toast;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
+import org.pathfinderfr.app.database.entity.CharacterItem;
+import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.PreferenceUtil;
 
@@ -38,16 +41,35 @@ public class MsgBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Pair<Character, List<Integer>> result = null;
-                    //CharacterImportExport.importCharacterAsYML(character, activity.getCurrentFocus());
+            CharacterImportExport.CharacterImportData data = CharacterImportExport.importCharacterAsYML(character, activity.getCurrentFocus());
 
             long id = DBHelper.getInstance(context).fetchCharacterIdByUUID(uuid);
             if(id > 0) {
-                result.first.setId(id);
-                result.first.setUniqID(uuid);
-                DBHelper.getInstance(context).updateEntity(result.first);
+                DBHelper helper = DBHelper.getInstance(context);
+                // update character
+                data.character.setId(id);
+                data.character.setUniqID(uuid);
+                helper.updateEntity(data.character);
+                // clear inventory & modifs
+                helper.clearItemsAndModifsForCharacter(id);
+                // import inventory
+                LongSparseArray<Long> map = new LongSparseArray<>();
+                for(CharacterItem item : data.items) {
+                    long oldId = item.getId();
+                    item.setCharacterId(id);
+                    long newId = helper.insertEntity(item);
+                    map.put(oldId, newId);
+                }
+                // import modifs
+                for(Modification m : data.modifs) {
+                    m.setCharacterId(id);
+                    if(m.getItemId() != 0) {
+                        m.setItemId(map.get(m.getItemId()));
+                    }
+                    helper.insertEntity(m);
+                }
 
-                if(result.second.size() == 0) {
+                if(data.errors.size() == 0) {
                     Log.i(MsgBroadcastReceiver.class.getSimpleName(), "Character updated!");
                     Toast.makeText(activity, context.getResources().getString(R.string.sync_character_updated), Toast.LENGTH_LONG).show();
                 } else {

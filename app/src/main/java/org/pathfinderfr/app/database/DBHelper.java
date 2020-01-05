@@ -389,14 +389,17 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         if(entity instanceof Character || entity instanceof CharacterItem || entity instanceof Modification) {
             db.execSQL(String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId()));
-            if(entity instanceof Character) {
-                db.execSQL(CharacterItemFactory.getQueryDeleteItemsForCharacter(entity.getId()));
-                db.execSQL(ModificationFactory.getQueryDeleteModificationsForCharacter(entity.getId()));
-            }
+            clearItemsAndModifsForCharacter(entity.getId());
             return true;
         }
         // not supported for other tables
         return false;
+    }
+
+    public void clearItemsAndModifsForCharacter(long characterId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(CharacterItemFactory.getQueryDeleteItemsForCharacter(characterId));
+        db.execSQL(ModificationFactory.getQueryDeleteModificationsForCharacter(characterId));
     }
 
     /**
