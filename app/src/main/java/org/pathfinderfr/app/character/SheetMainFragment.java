@@ -293,11 +293,11 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         fabItem = view.findViewById(R.id.fabAddItem); fabItem.setOnClickListener(listener);
         fabItemMagic = view.findViewById(R.id.fabAddMagic); fabItemMagic.setOnClickListener(listener);
         fabItemManual = view.findViewById(R.id.fabAddObject); fabItemManual.setOnClickListener(listener);
-        fabClassText = view.findViewById(R.id.fabAddClassText); fabClassText.setAlpha(0);
-        fabModifText = view.findViewById(R.id.fabAddModifText); fabModifText.setAlpha(0);
-        fabItemText = view.findViewById(R.id.fabAddItemText); fabItemText.setAlpha(0);
-        fabItemMagicText = view.findViewById(R.id.fabAddMagicText); fabItemMagicText.setAlpha(0);
-        fabItemManualText = view.findViewById(R.id.fabAddObjectText); fabItemManualText.setAlpha(0);
+        fabClassText = view.findViewById(R.id.fabAddClassText); fabClassText.setVisibility(View.GONE);
+        fabModifText = view.findViewById(R.id.fabAddModifText); fabModifText.setVisibility(View.GONE);
+        fabItemText = view.findViewById(R.id.fabAddItemText); fabItemText.setVisibility(View.GONE);
+        fabItemMagicText = view.findViewById(R.id.fabAddMagicText); fabItemMagicText.setVisibility(View.GONE);
+        fabItemManualText = view.findViewById(R.id.fabAddObjectText); fabItemManualText.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -838,11 +838,11 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         fabItem.animate().translationY(-350);
         fabItemManual.animate().translationY(-250);
         fabItemMagic.animate().translationY(-150);
-        fabClassText.animate().alpha(1);
-        fabModifText.animate().alpha(1);
-        fabItemText.animate().alpha(1);
-        fabItemManualText.animate().alpha(1);
-        fabItemMagicText.animate().alpha(1);
+        fabClassText.setVisibility(View.VISIBLE);
+        fabModifText.setVisibility(View.VISIBLE);
+        fabItemText.setVisibility(View.VISIBLE);
+        fabItemManualText.setVisibility(View.VISIBLE);
+        fabItemMagicText.setVisibility(View.VISIBLE);
     }
 
     private void closeFABMenu() {
@@ -852,11 +852,11 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         fabItem.animate().translationY(0);
         fabItemMagic.animate().translationY(0);
         fabItemManual.animate().translationY(0);
-        fabClassText.animate().alpha(0);
-        fabModifText.animate().alpha(0);
-        fabItemText.animate().alpha(0);
-        fabItemManualText.animate().alpha(0);
-        fabItemMagicText.animate().alpha(0);
+        fabClassText.setVisibility(View.GONE);
+        fabModifText.setVisibility(View.GONE);
+        fabItemText.setVisibility(View.GONE);
+        fabItemManualText.setVisibility(View.GONE);
+        fabItemMagicText.setVisibility(View.GONE);
     }
 
 
@@ -1648,42 +1648,50 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 }
             }
             else if(v.getId() == R.id.fabAddObject) {
-                FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-                DialogFragment newFragment = FragmentInventoryPicker.newInstance(parent);
+                if(parent.isFABOpen) {
+                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_PICK_INVENTORY);
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentInventoryPicker.newInstance(parent);
 
-                Bundle arguments = new Bundle();
-                newFragment.setArguments(arguments);
-                newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                    Bundle arguments = new Bundle();
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_PICK_INVENTORY);
+                }
                 return;
             }
             else if(v.getId() == R.id.fabAddItem) {
-                // set character as "selected"
-                PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
-                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
-                        apply();
-                Context context = parent.getContext();
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
-                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, EquipmentFactory.FACTORY_ID);
-                context.startActivity(intent);
-                parent.refreshNeeded = true;
+                if(parent.isFABOpen) {
+                    // set character as "selected"
+                    PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
+                            putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
+                            apply();
+                    Context context = parent.getContext();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                    intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, EquipmentFactory.FACTORY_ID);
+                    context.startActivity(intent);
+                    parent.refreshNeeded = true;
+                }
+                return;
             }
             else if(v.getId() == R.id.fabAddMagic) {
-                // set character as "selected"
-                PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
-                        putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
-                        apply();
-                Context context = parent.getContext();
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
-                intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, MagicItemFactory.FACTORY_ID);
-                context.startActivity(intent);
-                parent.refreshNeeded = true;
+                if(parent.isFABOpen) {
+                    // set character as "selected"
+                    PreferenceManager.getDefaultSharedPreferences(parent.getContext()).edit().
+                            putLong(CharacterSheetActivity.PREF_SELECTED_CHARACTER_ID, parent.character.getId()).
+                            apply();
+                    Context context = parent.getContext();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra(MainActivity.KEY_CONTEXTUAL, true);
+                    intent.putExtra(MainActivity.KEY_CONTEXTUAL_NAV, MagicItemFactory.FACTORY_ID);
+                    context.startActivity(intent);
+                    parent.refreshNeeded = true;
+                }
+                return;
             }
             // inventory items
             else if(v instanceof TableRow && v.getTag() != null) {
