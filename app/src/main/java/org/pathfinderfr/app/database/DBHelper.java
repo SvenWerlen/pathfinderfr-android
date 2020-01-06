@@ -79,6 +79,8 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateTable());
         executeNoFail(db, SpellClassLevelFactory.getInstance().getQueryCreateIndex());
+        executeNoFail(db, ModificationFactory.getInstance().getQueryCreateIndex());
+        executeNoFail(db, CharacterItemFactory.getInstance().getQueryCreateIndex());
         executeNoFail(db, VersionFactory.getInstance().getQueryCreateTable());
     }
 

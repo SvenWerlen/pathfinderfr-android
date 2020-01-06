@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.2] - 2019-01-05
+### Fixed
+- New tables (modifs & items) not properly created on a newly installed application
+
 ## [3.8.1] - 2019-01-05
 ### Fixed
 - Drag-and-drop (order items) not working

@@ -17,7 +17,9 @@ public class EntityFactories {
             SkillFactory.getInstance(),
             SpellFactory.getInstance(),
             TraitFactory.getInstance(),
-            WeaponFactory.getInstance()
+            WeaponFactory.getInstance(),
+            ModificationFactory.getInstance(),
+            CharacterItemFactory.getInstance()
     };
 
 
