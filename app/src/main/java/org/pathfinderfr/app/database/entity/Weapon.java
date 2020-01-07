@@ -80,6 +80,8 @@ public class Weapon extends DBEntity {
             return strBonus;
         } else if (name.toLowerCase().contains("arc") && strBonus < 0) {
             return strBonus;
+        } else if (name.toLowerCase().contains("halfelin")) {
+            return strBonus;
         } else {
             return 0;
         }
