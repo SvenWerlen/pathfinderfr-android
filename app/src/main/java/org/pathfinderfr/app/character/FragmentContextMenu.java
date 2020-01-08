@@ -1,7 +1,10 @@
 package org.pathfinderfr.app.character;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.util.FragmentUtil;
 
 import java.util.List;
@@ -87,8 +91,14 @@ public class FragmentContextMenu extends DialogFragment {
         TextView exampleText = rootView.findViewById(R.id.contextmenu_text_example);
         layout.removeAllViews();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(rootView.getContext());
+        int lineHeight = Integer.parseInt(prefs.getString(MainActivity.PREF_LINEHEIGHT, "0"));
+        int height = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, lineHeight, rootView.getResources().getDisplayMetrics());
+
         for(int i = 0; i< icons.size(); i++) {
             LinearLayout itemLayout = new LinearLayout(rootView.getContext());
+            itemLayout.setMinimumHeight(height);
             itemLayout.setOrientation(LinearLayout.HORIZONTAL);
             itemLayout.setGravity(Gravity.START | Gravity.CENTER);
             ImageView icon = FragmentUtil.copyExampleImageFragment(exampleImage);

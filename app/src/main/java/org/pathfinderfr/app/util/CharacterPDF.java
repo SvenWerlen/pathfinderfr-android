@@ -1198,9 +1198,11 @@ public class CharacterPDF {
         List<Object> entities = new ArrayList<>();
 
         // racial traits
-        for(Race.Trait t : character.getRace().getTraits()) {
-            if(character.traitIsReplaced(t.getName()) == null) {
-                entities.add(t);
+        if(character.getRace() != null) {
+            for (Race.Trait t : character.getRace().getTraits()) {
+                if (character.traitIsReplaced(t.getName()) == null) {
+                    entities.add(t);
+                }
             }
         }
         // traits (racial and regular)

@@ -72,7 +72,6 @@
                 android:id="@+id/sheet_inventory_example_icon"
                 android:layout_width="22dp"
                 android:layout_height="16dp"
-                android:layout_gravity="bottom|center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 app:srcCompat="@drawable/ic_person" />
@@ -93,14 +92,12 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text="@string/sheet_inventory_example_total"
-                android:layout_gravity="bottom"
                 android:textAlignment="center"/>
 
             <ImageView
                 android:id="@+id/sheet_inventory_unequiped"
                 android:layout_width="20dp"
                 android:layout_height="16dp"
-                android:layout_gravity="bottom|center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 app:srcCompat="@drawable/ic_bag" />

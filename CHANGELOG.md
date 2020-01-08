@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.3] - 2019-01-07
+### Fixed
+- Invalid bonus modifications applied
+- Missing adaptations for fat fingers and line height
+- NullPointerException on PDF when race was not chosen
+
 ## [3.8.2] - 2019-01-05
 ### Fixed
 - New tables (modifs & items) not properly created on a newly installed application

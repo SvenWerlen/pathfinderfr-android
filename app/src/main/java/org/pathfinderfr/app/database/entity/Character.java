@@ -144,6 +144,10 @@ public class Character extends DBEntity {
     }
 
     public int getAbilityValue(int ability, boolean withModif) {
+        return getAbilityValue(ability, 0L, withModif);
+    }
+
+    public int getAbilityValue(int ability, long itemId, boolean withModif) {
         if(ability <0  || ability >= abilities.length) {
             return 0;
         }
@@ -152,13 +156,13 @@ public class Character extends DBEntity {
         }
         // check if modif is applied
         int bonus = 0;
-        bonus += getAdditionalBonus(Modification.MODIF_ABILITY_ALL);
-        bonus += getAdditionalBonus(ability+2); // MODIF_ABILITY = ABILITY_ID + 2 (see above)
+        bonus += getAdditionalBonus(Modification.MODIF_ABILITY_ALL, itemId);
+        bonus += getAdditionalBonus(ability+2, itemId); // MODIF_ABILITY = ABILITY_ID + 2 (see above)
         return abilities[ability] + bonus;
     }
 
     public int getAbilityValue(int ability) {
-        return getAbilityValue(ability, true);
+        return getAbilityValue(ability, 0L, true);
     }
 
     public void setAbilityValue(int ability, int value) {
@@ -169,7 +173,11 @@ public class Character extends DBEntity {
     }
 
     public int getAbilityModif(int ability) {
-        return CharacterUtil.getAbilityBonus(getAbilityValue(ability));
+        return getAbilityModif(ability, 0L);
+    }
+
+    public int getAbilityModif(int ability, long itemId) {
+        return CharacterUtil.getAbilityBonus(getAbilityValue(ability, itemId, true));
     }
 
     public void setUniqID(String uuid) {
@@ -202,9 +210,11 @@ public class Character extends DBEntity {
 
     public int getStrength() { return getAbilityValue(ABILITY_STRENGH); }
     public int getStrengthModif() { return getAbilityModif(ABILITY_STRENGH); }
+    public int getStrengthModif(long itemId) { return getAbilityModif(ABILITY_STRENGH, itemId); }
     public void setStrength(int value) { setAbilityValue(ABILITY_STRENGH, value); }
     public int getDexterity() { return getAbilityValue(ABILITY_DEXTERITY); }
     public int getDexterityModif() { return getAbilityModif(ABILITY_DEXTERITY); }
+    public int getDexterityModif(long itemId) { return getAbilityModif(ABILITY_DEXTERITY, itemId); }
     public void setDexterity(int value) { setAbilityValue(ABILITY_DEXTERITY, value); }
     public int getConstitution() { return getAbilityValue(ABILITY_CONSTITUTION); }
     public int getConstitutionModif() { return getAbilityModif(ABILITY_CONSTITUTION); }
@@ -692,7 +702,7 @@ public class Character extends DBEntity {
      * @param itemId itemId for which bonus must be applied
      * @return bonus to be applied
      */
-    public int getAdditionalBonus(int bonusId, int itemId) {
+    public int getAdditionalBonus(int bonusId, long itemId) {
         // check if modif is applied
         int bonus = 0;
         List<Modification> modifs = getModifsForId(bonusId);
@@ -701,22 +711,21 @@ public class Character extends DBEntity {
             if(!mod.isEnabled()) {
                 continue;
             }
-            boolean applyBonus = false;
-            // bonus for specific item (weapons)
+            boolean applyBonus = true;
+            // bonus for specific item => consider weapon always equiped
             if(itemId > 0) {
-                if(itemId == mod.getItemId()) {
-                    applyBonus = true;
-                }
+                applyBonus = itemId == mod.getItemId();
             }
-            // bonus (for character) assigned to item.
+            // bonus assigned to item => check that item is equiped
             else if(mod.getItemId() > 0) {
-                // item must be equiped
-                if(isItemEquiped(mod.getItemId())) {
-                    applyBonus = true;
-                }
-            } else {
-                applyBonus = true;
+                applyBonus = isItemEquiped(mod.getItemId());
             }
+            // combat bonus can only be applied for weapons (see above rule 1)
+            else if((bonusId == Modification.MODIF_COMBAT_ATT_MELEE || bonusId == Modification.MODIF_COMBAT_ATT_RANGED
+                    || bonusId == Modification.MODIF_COMBAT_DAM_MELEE || bonusId == Modification.MODIF_COMBAT_DAM_RANGED)) {
+                applyBonus = false;
+            }
+
             bonus += applyBonus ? mod.getModif(0).second : 0;
         }
         return bonus;
@@ -791,22 +800,20 @@ public class Character extends DBEntity {
     /**
      * @return attack bonus (melee), as string
      */
-    public String getAttackBonusMeleeAsString(int weaponIdx) {
-        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_MELEE, weaponIdx);
+    public String getAttackBonusMeleeAsString(long weaponId) {
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_MELEE, weaponId);
         addBonus += getSizeModifierAttack();
-        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif()));
+        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getStrengthModif(weaponId)));
     }
 
     public String getAttackBonusAsString(boolean melee) {
         StringBuffer buf = new StringBuffer();
-        int idx = 1;
         for(Weapon w : getInventoryWeapons()) {
             if(melee != w.isRanged()) {
                 buf.append(w.getName()).append(", ");
-                buf.append(melee ? getAttackBonusMeleeAsString(idx) : getAttackBonusRangeAsString(idx)).append(" ");
-                buf.append('(').append(getDamage(w, idx)).append(") ");
+                buf.append(melee ? getAttackBonusMeleeAsString(w.getId()) : getAttackBonusRangeAsString(w.getId())).append(" ");
+                buf.append('(').append(getDamage(w, w.getId())).append(") ");
             }
-            idx++;
         }
         return buf.toString();
     }
@@ -814,24 +821,24 @@ public class Character extends DBEntity {
     /**
      * @return damage bonus
      */
-    public int getBonusDamage(Weapon w, int weaponIdx) {
+    public int getBonusDamage(Weapon w, long weaponId) {
         if(w == null) {
             return 0;
         }
-        int bonus = w.getDamageBonus(getStrengthModif());
-        bonus += getAdditionalBonus(w.isRanged() ? Modification.MODIF_COMBAT_DAM_RANGED : Modification.MODIF_COMBAT_DAM_MELEE, weaponIdx);;
+        int bonus = w.getDamageBonus(getStrengthModif(weaponId));
+        bonus += getAdditionalBonus(w.isRanged() ? Modification.MODIF_COMBAT_DAM_RANGED : Modification.MODIF_COMBAT_DAM_MELEE, weaponId);;
         return bonus;
     }
 
     /**
      * @return damage as string
      */
-    public String getDamage(Weapon w, int weaponIdx) {
+    public String getDamage(Weapon w, long weaponId) {
         if(w == null) {
             return "";
         }
         String baseDamage = w.getDamageForSize(getSizeType());
-        int damBonus = getBonusDamage(w, weaponIdx);
+        int damBonus = getBonusDamage(w, weaponId);
         if(damBonus == 0) {
             return baseDamage;
         } else {
@@ -843,19 +850,10 @@ public class Character extends DBEntity {
     /**
      * @return attack bonus (range), as string
      */
-    public String getAttackBonusRangeAsString(int weaponIdx) {
-        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_RANGED, weaponIdx);
+    public String getAttackBonusRangeAsString(long weaponId) {
+        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_RANGED, weaponId);
         addBonus += getSizeModifierAttack();
-        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif()));
-    }
-
-    /**
-     * @return attack bonus (melee)
-     */
-    public int getAttackBestBonusRange(int weaponIdx) {
-        int addBonus = getAdditionalBonus(Modification.MODIF_COMBAT_ATT_RANGED, weaponIdx);
-        int bestBonus = getBaseAttackBonusBest();
-        return bestBonus + addBonus + getDexterityModif();
+        return CharacterUtil.getAttackBonusAsString(getAttackBonus(addBonus + getDexterityModif(weaponId)));
     }
 
     /**
@@ -1359,7 +1357,9 @@ public class Character extends DBEntity {
         for(Modification el : modifs) {
             for(Pair<Integer,Integer> m: el.getModifs()) {
                 if(m.first.longValue() == id.longValue()) {
-                    result.add(el);
+                    Modification mod = new Modification(el.getName(), Arrays.asList(m), el.getIcon(), el.isEnabled());
+                    mod.setItemId(el.getItemId());
+                    result.add(mod);
                     break;
                 }
             }
@@ -1502,6 +1502,7 @@ public class Character extends DBEntity {
                 if(entity instanceof Weapon) {
                     Weapon w = (Weapon)entity;
                     if(!w.isAmmo()) {
+                        w.setId(el.getId());
                         w.setName(el.getName());
                         w.setDescription(el.getAmmo());
                         result.add(w);

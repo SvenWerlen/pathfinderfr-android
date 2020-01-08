@@ -215,13 +215,13 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
      * @param itemId applied for specific weapon
      * @return
      */
-    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate, int itemId) {
+    public static String generateOtherBonusText(Character character, int modifId, String tooltipTemplate, long itemId) {
         List<Modification> modifs = character.getModifsForId(modifId);
         StringBuffer buf = new StringBuffer();
         for(Modification modif: modifs) {
             if((modif.getItemId() > 0 && modif.getItemId() == itemId) ||
                     (modif.getItemId() == 0 && modif.isEnabled())) {
-                buf.append(String.format(tooltipTemplate, modif.getSource(), modif.getModif(0).second));
+                buf.append(String.format(tooltipTemplate, modif.getName(), modif.getModif(0).second));
             }
         }
         return buf.toString();
@@ -825,7 +825,14 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_bab), minHeight, scale);
             FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.combat_cmd_ability), minHeight, scale);
 
-            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.sheet_main_money_total_value), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_cp), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_cp_value), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_sp), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_sp_value), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_gp), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_gp_value), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_pp), 0, scale);
+            FragmentUtil.adaptForFatFingers((TextView) view.findViewById(R.id.money_pp_value), 0, scale);
         }
 
         return view;
@@ -992,11 +999,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         final String babTooltipEntry = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.bab.entry");
         final String tooltipBabModif = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.babmodif.entry");
 
-        int weaponIdx = 0;
         for(final Weapon weapon : weaponsList) {
-            final int curWeaponIdx = weaponIdx + 1;
-            final String attackBonus = weapon.isRanged() ? character.getAttackBonusRangeAsString(curWeaponIdx) : character.getAttackBonusMeleeAsString(curWeaponIdx);
-            String damageString = character.getDamage(weapon, curWeaponIdx);
+            final String attackBonus = weapon.isRanged() ? character.getAttackBonusRangeAsString(weapon.getId()) : character.getAttackBonusMeleeAsString(weapon.getId());
+            String damageString = character.getDamage(weapon, weapon.getId());
 
             TableRow row = new TableRow(view.getContext());
             TextView name = FragmentUtil.copyExampleTextFragment(weaponNameExample);
@@ -1036,7 +1041,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             ((TableRow.LayoutParams)damage.getLayoutParams()).setMargins(px2,px2,px2,px2);
             row.addView(damage);
             weapons.addView(row);
-            weaponIdx++;
 
             // fat fingers
             if(scale > 1) {
@@ -1048,6 +1052,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 FragmentUtil.adaptForFatFingers(critical, minHeight, scale);
                 FragmentUtil.adaptForFatFingers(type, minHeight, scale);
                 FragmentUtil.adaptForFatFingers(range, minHeight, scale);
+                FragmentUtil.adaptForFatFingers(ammo, minHeight, scale);
                 FragmentUtil.adaptForFatFingers(damage, minHeight, scale);
             }
 
@@ -1068,12 +1073,12 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     act.showTooltip(babTooltipTitle,String.format(
                             tooltipContent,
                             text,
-                            weapon.isRanged() ? character.getDexterityModif() : character.getStrengthModif(),
+                            weapon.isRanged() ? character.getDexterityModif(weapon.getId()) : character.getStrengthModif(weapon.getId()),
                             character.getSizeModifierAttack(),
                             generateOtherBonusText(character,
                                     weapon.isRanged() ? Modification.MODIF_COMBAT_ATT_RANGED : Modification.MODIF_COMBAT_ATT_MELEE,
                                     tooltipBabModif,
-                                    curWeaponIdx), // other
+                                    weapon.getId()), // other
                             attackBonus));
                 }
             });
@@ -1082,14 +1087,12 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 @Override
                 public void onClick(View v) {
                     // try to find matching inventory item
-                    int inventoryIdx = 0;
                     CharacterItem matchingItem = null;
                     for(CharacterItem item : character.getInventoryItems()) {
                         if(item.isWeapon() && item.getName().equals(weapon.getName())) {
                             matchingItem = item;
                             break;
                         }
-                        inventoryIdx++;
                     }
                     // not found
                     if(matchingItem == null) {
@@ -1150,8 +1153,16 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         ((TextView)view.findViewById(R.id.sheet_main_inventory_header)).setText(showAll ? R.string.sheet_main_inventory_header_all : R.string.sheet_main_inventory_header_active);
         view.findViewById(R.id.sheet_main_inventory_header_filter).setVisibility(showAll ? View.GONE : View.VISIBLE);
 
+        // determine size
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int lineHeight = Integer.parseInt(prefs.getString(MainActivity.PREF_LINEHEIGHT, "0"));
+        int height = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, lineHeight, view.getResources().getDisplayMetrics());
+
         for(CharacterItem item : items) {
             TableRow row = new TableRow(view.getContext());
+            row.setMinimumHeight(height);
+            row.setGravity(Gravity.CENTER);
             ImageView icon = FragmentUtil.copyExampleImageFragment(inventoryIconExample);
             TextView name = FragmentUtil.copyExampleTextFragment(inventoryNameExample);
             name.setText(item.getName());
