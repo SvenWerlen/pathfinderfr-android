@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.4] - 2019-01-12
+### Changed
+- Switch icon color for item context menu to match existing behaviour (modifs) 
+- Pull request to support "bâton halfelin"
+
 ## [3.8.3] - 2019-01-07
 ### Fixed
 - Invalid bonus modifications applied

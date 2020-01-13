@@ -83,7 +83,7 @@ public class FragmentContextMenu extends DialogFragment {
         if(title != null && title.length() > 0) {
             ((TextView) rootView.findViewById(R.id.contextmenu_title)).setText(title);
         } else {
-            ((TextView) rootView.findViewById(R.id.contextmenu_title)).setVisibility(View.GONE);
+            rootView.findViewById(R.id.contextmenu_title).setVisibility(View.GONE);
         }
 
         LinearLayout layout = rootView.findViewById(R.id.contextmenu_list);

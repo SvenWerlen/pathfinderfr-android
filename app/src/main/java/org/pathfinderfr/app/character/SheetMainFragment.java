@@ -1740,12 +1740,12 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                 for(Modification modif : modifs) {
                     final int resourceId = parent.getResources().getIdentifier("modif_" + modif.getIcon(), "drawable", ctx.getPackageName());
                     menuIds.add(CONTEXT_ENABLE + (int)modif.getId()); icons.add(resourceId);
-                    if(modif.isEnabled()) {
+                    if(!modif.isEnabled()) {
                         colors.add(ctx.getResources().getColor(R.color.colorBlack));
-                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_disable), modif.getName()));
+                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_enable), modif.getName()));
                     } else {
                         colors.add(ctx.getResources().getColor(R.color.colorPrimaryDark));
-                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_enable), modif.getName()));
+                        titles.add(String.format(parent.getResources().getString(R.string.sheet_inventory_ctx_disable), modif.getName()));
                     }
                 }
                 arguments.putLong(FragmentContextMenu.ARG_CONTEXT_ITEMID, item.getId());
