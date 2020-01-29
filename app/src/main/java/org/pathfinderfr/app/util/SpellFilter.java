@@ -91,7 +91,7 @@ public class SpellFilter {
      * @return true if filter is enabled for given school. false if disabled or "All" selected
      */
     public boolean isFilterSchoolEnabled(String school) {
-        return filterSchool.contains(school.toLowerCase());
+        return school != null && filterSchool.contains(school.toLowerCase());
     }
 
     public boolean hasFilterSchool() {

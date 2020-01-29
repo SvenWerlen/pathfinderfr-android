@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.5] - 2019-01-28
+### Fixed
+- NullPointer exception on spell filter
+
 ## [3.8.4] - 2019-01-12
 ### Changed
 - Switch icon color for item context menu to match existing behaviour (modifs) 
