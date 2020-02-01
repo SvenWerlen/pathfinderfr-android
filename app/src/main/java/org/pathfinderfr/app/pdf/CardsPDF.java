@@ -80,6 +80,7 @@ public class CardsPDF {
         public ImageData[] cardFront;
         public ImageData[] cardProp;
         public ImageData cardBack;
+        public boolean printBack = true;
     }
 
     public CardsPDF(List<Spell> spells, Params params) {
@@ -143,7 +144,7 @@ public class CardsPDF {
 
 
 
-    public void addCard(Document document, int left, int bottom, Spell spell) {
+    private void addCard(Document document, int left, int bottom, Spell spell) {
         // backgrounds
         int idx = 7;
         if(spell.getSchool().startsWith("Universel")) { idx = 0; }
@@ -156,9 +157,7 @@ public class CardsPDF {
         else if(spell.getSchool().startsWith("Nécromancie")) { idx = 7; }
         else if(spell.getSchool().startsWith("Transmutation")) { idx = 8; }
         cardImg[idx].setFixedPosition(left, bottom);
-        backImg.setFixedPosition(left + CARD_WIDTH, bottom);
         document.add(cardImg[idx]);
-        document.add(backImg);
         // texts
         document.add((new Paragraph(prepareText(spell.getName(), 20, true, true)))
                 .addStyle(STYLE_TITLE).setFont(params.titleFont)
@@ -210,6 +209,11 @@ public class CardsPDF {
                 .setFixedPosition(left + CARD_CONTENT_MARGIN, bottom + CARD_CONTENT, CARD_CONTENT_WIDTH));
     }
 
+    public void addBack(Document document, int left, int bottom) {
+        backImg.setFixedPosition(left, bottom);
+        document.add(backImg);
+    }
+
     public void generatePDF(OutputStream output) {
         PageSize pageSize = PageSize.A4.rotate();
         PdfDocument pdf = new PdfDocument(new PdfWriter(output));
@@ -217,14 +221,33 @@ public class CardsPDF {
         document.setMargins(20, 20,20,20);
 
         int posY1 = (int)Math.round(pageSize.getHeight() / 2);
-        int posY2 = (int)Math.round(pageSize.getHeight() / 2) - CARD_HEIGHT;
+        int posY2 = (int)Math.round(pageSize.getHeight() / 2) - CARD_HEIGHT - 5;
 
-        for(int i = 0; i<spells.size(); i++) {
-            int posY = i % 4 == 0 || i % 4 == 1 ? posY1 : posY2;
-            addCard(document, 2* CARD_WIDTH * (i % 2) + MARGIN, posY, spells.get(i));
-            if(i % 4 == 3) {
-                document.add(new AreaBreak());
+        if(params.printBack) {
+            for (int i = 0; i < spells.size(); i++) {
+                int posY = i % 4 <= 1 ? posY1 : posY2;
+                int left = (2 * CARD_WIDTH + 5) * (i % 2) + MARGIN;
+                addCard(document, left, posY, spells.get(i));
+                addBack(document, left + CARD_WIDTH, posY);
+                if (i % 4 == 3) {
+                    document.add(new AreaBreak());
+                }
             }
+        } else {
+            for (int i = 0; i < spells.size(); i++) {
+                int posY = i % 8 <= 3 ? posY1 : posY2;
+                int left = (CARD_WIDTH + 5) * (i % 4) + MARGIN;
+                addCard(document, left, posY, spells.get(i));
+                if (i % 8 == 7) {
+                    document.add(new AreaBreak());
+                }
+            }
+            // print back
+            document.add(new AreaBreak());
+            for(int j = 0; j < 8; j++) {
+                addBack(document, (CARD_WIDTH + 5) * (j % 4) + MARGIN, j % 8 <= 3 ? posY1 : posY2);
+            }
+
         }
         document.close();
     }

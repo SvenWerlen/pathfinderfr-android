@@ -78,6 +78,7 @@ public class CardsPDFTest {
         }
         params.cardBack = ImageDataFactory.create(String.format("%s/back.png", base));
         params.titleFont = font;
+        params.printBack = false;
         (new CardsPDF(spells, params)).generatePDF(fos);
         fos.close();
     }

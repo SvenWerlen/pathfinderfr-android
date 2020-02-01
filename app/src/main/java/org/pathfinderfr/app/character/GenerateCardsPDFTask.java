@@ -1,14 +1,19 @@
 package org.pathfinderfr.app.character;
 
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.pdf.CardsPDF;
 import org.pathfinderfr.app.pdf.CharacterPDF;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
@@ -17,7 +22,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Properties;
 
-public class GeneratePDFTask extends AsyncTask<Object, Void, Void> {
+public class GenerateCardsPDFTask extends AsyncTask<Object, Void, Void> {
 
     public interface IDataUI {
         void onProgressCompleted();
@@ -26,17 +31,15 @@ public class GeneratePDFTask extends AsyncTask<Object, Void, Void> {
 
     static class Input {
         Character character;
-        List<DBEntity> skills;
-        ImageData logo;
+        CardsPDF.Params params;
         FileOutputStream stream;
-        CharacterPDF.Options options;
     };
 
     private IDataUI caller;
     private String errorMessage;
     private Properties props;
 
-    GeneratePDFTask(@NonNull IDataUI caller) {
+    GenerateCardsPDFTask(@NonNull IDataUI caller) {
         this.caller = caller;
         this.errorMessage = null;
         this.props = ConfigurationUtil.getInstance().getProperties();
@@ -53,16 +56,21 @@ public class GeneratePDFTask extends AsyncTask<Object, Void, Void> {
         }
 
         // assuming that all inputs are properly filled
-        if(input.character == null || input.skills == null || input.stream == null || input.logo == null) {
+        if(input.character == null) {
             errorMessage = props.getProperty("generatepdf.error.invalidinput");
             return null;
         }
 
-        // save character to cache directory
+        if(input.character.getSpells().size() == 0) {
+            errorMessage = props.getProperty("generatepdf.error.nospell");
+            return null;
+        }
+
+        // save pdf to cache directory
         try {
-            new CharacterPDF(input.options, input.character, input.skills, input.character.getInventoryWeapons(), input.character.getInventoryArmors()).generatePDF(input.stream, input.logo);
+            new CardsPDF(input.character.getSpells(), input.params).generatePDF(input.stream);
         } catch (Throwable t) {
-            Log.w(GeneratePDFTask.class.getSimpleName(), "Error during PDF generation", t);
+            Log.w(GenerateCardsPDFTask.class.getSimpleName(), "Error during PDF generation", t);
             errorMessage = StringUtil.getStackTrace(t);
             return null;
         } finally {

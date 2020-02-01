@@ -123,12 +123,19 @@
         génération du PDF va probablement échouer avec un message d\'erreur!
     </string>
     <string name="generatepdf_error">Erreur lors de la génération du PDF:\n</string>
-    <string name="generatepdf_start">Générer PDF</string>
+    <string name="generatepdf_start">Personnage (PDF)</string>
     <string name="generatepdf_inprogress">en cours…</string>
     <string name="generatepdf_option_inksaving">Économie d\'encre</string>
     <string name="generatepdf_option_logo">Afficher logo</string>
     <string name="generatepdf_option_showweapons">Lister armes dans l\'inventaire</string>
     <string name="generatepdf_option_showarmors">Lister armures dans l\'inventaire</string>
+    <string name="generatepdf_cards_message">Optionnellement, vous pouvez générer un PDF pour imprimer
+        des cartes pour les sorts, dons, aptitudes, etc.
+    </string>
+    <string name="generatepdf_option_back">Verso des cartes sur page séparée</string>
+    <string name="generatepdf_option_spells">Sorts sélectionnés</string>
+    <string name="generatepdf_option_feats">Dons</string>
+    <string name="generatepdf_cards_start">Cartes (PDF)</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Général</string>
