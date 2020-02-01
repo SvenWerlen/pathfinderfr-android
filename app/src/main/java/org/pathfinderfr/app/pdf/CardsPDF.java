@@ -147,7 +147,8 @@ public class CardsPDF {
     private void addCard(Document document, int left, int bottom, Spell spell) {
         // backgrounds
         int idx = 7;
-        if(spell.getSchool().startsWith("Universel")) { idx = 0; }
+        if(cardImg.length == 1) { idx = 0; }
+        else if(spell.getSchool().startsWith("Universel")) { idx = 0; }
         else if(spell.getSchool().startsWith("Abjuration")) { idx = 1; }
         else if(spell.getSchool().startsWith("Divination")) { idx = 2; }
         else if(spell.getSchool().startsWith("Enchantement")) { idx = 3; }

@@ -68,13 +68,19 @@ public class CardsPDFTest {
 
         PdfFont font = PdfFontFactory.createFont(base + "/FOY1REG.TTF", "UTF-8", true);
         CardsPDF.Params params = new CardsPDF.Params();
-        params.cardFront = new ImageData[9];
-        for(int i=1; i<10; i++) {
-            params.cardFront[i-1] = ImageDataFactory.create(String.format("%s/card%d.png", base, i));
-        }
-        params.cardProp = new ImageData[9];
-        for(int i=1; i<10; i++) {
-            params.cardProp[i-1] = ImageDataFactory.create(String.format("%s/comp%d.png", base, i));
+        // full colors
+        if(false) {
+            params.cardFront = new ImageData[9];
+            for (int i = 1; i < 10; i++) {
+                params.cardFront[i - 1] = ImageDataFactory.create(String.format("%s/card%d.png", base, i));
+            }
+            params.cardProp = new ImageData[9];
+            for (int i = 1; i < 10; i++) {
+                params.cardProp[i - 1] = ImageDataFactory.create(String.format("%s/comp%d.png", base, i));
+            }
+        } else {
+            params.cardFront = new ImageData[] { ImageDataFactory.create(String.format("%s/card%d.png", base, 8)) };
+            params.cardProp = new ImageData[] { ImageDataFactory.create(String.format("%s/comp%d.png", base, 8)) };
         }
         params.cardBack = ImageDataFactory.create(String.format("%s/back.png", base));
         params.titleFont = font;

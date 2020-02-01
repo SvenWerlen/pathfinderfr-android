@@ -132,6 +132,7 @@
     <string name="generatepdf_cards_message">Optionnellement, vous pouvez générer un PDF pour imprimer
         des cartes pour les sorts, dons, aptitudes, etc.
     </string>
+    <string name="generatepdf_option_colors">9 couleurs</string>
     <string name="generatepdf_option_back">Verso des cartes sur page séparée</string>
     <string name="generatepdf_option_spells">Sorts sélectionnés</string>
     <string name="generatepdf_option_feats">Dons</string>

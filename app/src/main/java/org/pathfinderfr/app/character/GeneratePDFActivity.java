@@ -155,19 +155,35 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                             input.stream = stream;
                             input.params = new CardsPDF.Params();
                             input.params.cardBack =  ImageDataFactory.create(back.toByteArray());
-                            input.params.cardFront = new ImageData[9];
-                            for(int i=1; i<10; i++) {
-                                Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/card%d.png", i)));
-                                ByteArrayOutputStream image = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
-                                input.params.cardFront[i-1] = ImageDataFactory.create(image.toByteArray());
+                            // full color version
+                            if(((CheckBox)findViewById(R.id.option_9colors)).isChecked()) {
+                                input.params.cardFront = new ImageData[9];
+                                for (int i = 1; i < 10; i++) {
+                                    Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/card%d.png", i)));
+                                    ByteArrayOutputStream image = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
+                                    input.params.cardFront[i - 1] = ImageDataFactory.create(image.toByteArray());
+                                }
+                                input.params.cardProp = new ImageData[9];
+                                for (int i = 1; i < 10; i++) {
+                                    Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/comp%d.png", i)));
+                                    ByteArrayOutputStream image = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
+                                    input.params.cardProp[i - 1] = ImageDataFactory.create(image.toByteArray());
+                                }
                             }
-                            input.params.cardProp = new ImageData[9];
-                            for(int i=1; i<10; i++) {
-                                Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/comp%d.png", i)));
+                            // 1 color version
+                            else {
+                                input.params.cardFront = new ImageData[1];
+                                Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/card%d.png", 8)));
                                 ByteArrayOutputStream image = new ByteArrayOutputStream();
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
-                                input.params.cardProp[i-1] = ImageDataFactory.create(image.toByteArray());
+                                input.params.cardFront[0] = ImageDataFactory.create(image.toByteArray());
+                                input.params.cardProp = new ImageData[1];
+                                bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/comp%d.png", 8)));
+                                image = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
+                                input.params.cardProp[0] = ImageDataFactory.create(image.toByteArray());
                             }
                             input.params.printBack = !((CheckBox)findViewById(R.id.option_back)).isChecked();
                             input.params.titleFont = PdfFontFactory.createFont(AssetUtil.assetToBytes(getApplicationContext().getAssets().open("cards/FOY1REG.TTF")), StandardCharsets.UTF_8.toString());

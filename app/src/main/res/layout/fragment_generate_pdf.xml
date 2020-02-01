@@ -107,11 +107,17 @@
             android:layout_marginStart="10dp">
 
             <CheckBox
+                android:id="@+id/option_9colors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_colors"
+                android:layout_marginTop="15dp"/>
+
+            <CheckBox
                 android:id="@+id/option_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/generatepdf_option_back"
-                android:layout_marginTop="15dp"/>
+                android:text="@string/generatepdf_option_back" />
 
             <CheckBox
                 android:id="@+id/option_spells"
