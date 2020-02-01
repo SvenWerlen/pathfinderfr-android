@@ -12,7 +12,7 @@ import org.pathfinderfr.app.character.FragmentInfosPicker;
 import org.pathfinderfr.app.character.FragmentMoneyPicker;
 import org.pathfinderfr.app.character.FragmentSpeedPicker;
 import org.pathfinderfr.app.database.DBHelper;
-import org.pathfinderfr.app.util.CharacterPDF;
+import org.pathfinderfr.app.pdf.CharacterPDF;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.Pair;
 

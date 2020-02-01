@@ -4,7 +4,9 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -94,6 +96,24 @@ public class Spell extends DBEntity {
 
     public String getComponents() {
         return components;
+    }
+
+    public List<String> getComponentList() {
+        List<String> list = new ArrayList<>();
+        if(components == null) {
+            return list;
+        }
+        String components = this.components;
+        int idx = components.indexOf('(');
+        if(idx > 0) {
+            components = components.substring(0, idx);
+        }
+        String[] comps = components.split(",");
+        for(String c : comps) {
+            c = c.trim();
+            list.add(c.trim().toUpperCase());
+        }
+        return list;
     }
 
     public void setComponents(String components) {

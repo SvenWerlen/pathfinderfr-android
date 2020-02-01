@@ -9,7 +9,7 @@ import com.itextpdf.io.image.ImageData;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.DBEntity;
-import org.pathfinderfr.app.util.CharacterPDF;
+import org.pathfinderfr.app.pdf.CharacterPDF;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 

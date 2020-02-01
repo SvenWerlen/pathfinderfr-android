@@ -1,4 +1,4 @@
-package org.pathfinderfr.app.util;
+package org.pathfinderfr.app.pdf;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.Color;
@@ -35,6 +35,10 @@ import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
+import org.pathfinderfr.app.util.SpellFilter;
+import org.pathfinderfr.app.util.SpellTable;
+import org.pathfinderfr.app.util.SpellUtil;
+import org.pathfinderfr.app.util.Triplet;
 
 import java.io.OutputStream;
 import java.text.DecimalFormat;

@@ -20,6 +20,7 @@ import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.Spell;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.Weapon;
+import org.pathfinderfr.app.pdf.CharacterPDF;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;

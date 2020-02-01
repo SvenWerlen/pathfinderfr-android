@@ -24,7 +24,7 @@ import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.SkillFactory;
-import org.pathfinderfr.app.util.CharacterPDF;
+import org.pathfinderfr.app.pdf.CharacterPDF;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
