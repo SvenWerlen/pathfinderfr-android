@@ -5,6 +5,7 @@ import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -144,5 +145,13 @@ public class StringUtilTest {
         assertEquals("12 po, 6 pa", StringUtil.cost2String(1260L));
         assertEquals("12 po", StringUtil.cost2String(1200L));
         assertEquals("12 000 po", StringUtil.cost2String(1200000L));
+    }
+
+    @Test
+    public void extractCritical() {
+        assertArrayEquals(new int[] {20, 2, 0}, StringUtil.extractCritical("×2"));
+        assertArrayEquals(new int[] {20, 2, 3}, StringUtil.extractCritical("×2/×3"));
+        assertArrayEquals(new int[] {18, 2, 0}, StringUtil.extractCritical("18-20/×2"));
+        assertArrayEquals(new int[] {18, 2, 3}, StringUtil.extractCritical("18-20/×2/×3"));
     }
 }

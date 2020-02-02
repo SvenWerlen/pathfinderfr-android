@@ -430,6 +430,8 @@
     <string name="sheet_attack_distance">Bonus d\'attaque (à distance)</string>
     <string name="sheet_damage_melee">Bonus de dégâts (au corps-à-corps)</string>
     <string name="sheet_damage_distance">Bonus de dégâts (à distance)</string>
+    <string name="sheet_crit_area">Zone de critique</string>
+    <string name="sheet_crit_mult">Mult. de dégâts (critique)</string>
     <string name="sheet_money_cp">PC</string>
     <string name="sheet_money_cupperpieces">Pièces de cuivre</string>
     <string name="sheet_money_sp">PA</string>

@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.10.0] - 2019-02-
+### Fixed
+- Tooltip always displays attack modif even when not enabled (#22)
+### Added
+- New modifs for weapons: critical area and critical multiplier
+
+## [3.9.0] - 2019-02-01
+### Added
+- Spells as cards (export PDF)
+
 ## [3.8.5] - 2019-01-28
 ### Fixed
 - NullPointer exception on spell filter

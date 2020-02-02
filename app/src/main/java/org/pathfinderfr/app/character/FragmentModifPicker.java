@@ -185,6 +185,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
             case Modification.MODIF_COMBAT_DAM_MELEE: return getResources().getString(R.string.sheet_damage_melee);
             case Modification.MODIF_COMBAT_ATT_RANGED: return getResources().getString(R.string.sheet_attack_distance);
             case Modification.MODIF_COMBAT_DAM_RANGED: return getResources().getString(R.string.sheet_damage_distance);
+            case Modification.MODIF_COMBAT_CRIT_RANGE: return getResources().getString(R.string.sheet_crit_area);
+            case Modification.MODIF_COMBAT_CRIT_MULT: return getResources().getString(R.string.sheet_crit_mult);
             case Modification.MODIF_COMBAT_CMB: return getResources().getString(R.string.sheet_combat_man_bonus);
             case Modification.MODIF_COMBAT_CMD: return getResources().getString(R.string.sheet_combat_man_defense);
             case Modification.MODIF_SKILL_ALL: return getResources().getString(R.string.sheet_skill_all);
@@ -335,6 +337,8 @@ public class FragmentModifPicker extends DialogFragment implements View.OnClickL
         list.add(getStringWithTag(Modification.MODIF_COMBAT_DAM_MELEE));
         list.add(getStringWithTag(Modification.MODIF_COMBAT_ATT_RANGED));
         list.add(getStringWithTag(Modification.MODIF_COMBAT_DAM_RANGED));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_CRIT_RANGE));
+        list.add(getStringWithTag(Modification.MODIF_COMBAT_CRIT_MULT));
         list.add(getStringWithTag(Modification.MODIF_COMBAT_CMB));
         list.add(getStringWithTag(Modification.MODIF_COMBAT_CMD));
         // Skills

@@ -42,6 +42,8 @@ public class Modification extends DBEntity {
     public static final int MODIF_COMBAT_CMD = 34;
     public static final int MODIF_COMBAT_DAM_MELEE = 35;
     public static final int MODIF_COMBAT_DAM_RANGED = 36;
+    public static final int MODIF_COMBAT_CRIT_RANGE = 37;
+    public static final int MODIF_COMBAT_CRIT_MULT = 38;
 
     public static final int MODIF_SKILL_ALL = 41;
     public static final int MODIF_SKILL_FOR = 42;

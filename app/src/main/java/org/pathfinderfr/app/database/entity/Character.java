@@ -5,6 +5,7 @@ import android.util.Log;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.util.CharacterUtil;
 import org.pathfinderfr.app.util.Pair;
+import org.pathfinderfr.app.util.StringUtil;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.text.Collator;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -1505,6 +1507,22 @@ public class Character extends DBEntity {
                         w.setId(el.getId());
                         w.setName(el.getName());
                         w.setDescription(el.getAmmo());
+                        // adapt critical
+                        int bonusArea = getAdditionalBonus(Modification.MODIF_COMBAT_CRIT_RANGE, el.getId());
+                        int bonusCrit = getAdditionalBonus(Modification.MODIF_COMBAT_CRIT_MULT, el.getId());
+                        if(bonusArea != 0 || bonusCrit != 0) {
+                            int[] crit = StringUtil.extractCritical(w.getCritical());
+                            if(crit == null) {
+                                w.setCritical(w.getCritical() + "!!");
+                            } else {
+                                crit[0] = Math.min(20, Math.max(2, crit[0] - bonusArea)); // must be between 1 and 20
+                                crit[1] = Math.min(10, Math.max(1, crit[1] + bonusCrit)); // must be between ×1 and ×10
+                                crit[2] = crit[2] == 0 ? 0 : Math.min(10, Math.max(crit[1]+1, crit[2] + bonusCrit));
+                                String critArea = crit[0] < 20 ? String.format(Locale.CANADA, "%d-%d/", crit[0], 20) : "";
+                                String critMult = crit[2] > 0 ? String.format(Locale.CANADA, "×%d/×%d", crit[1], crit[2]) : String.format(Locale.CANADA, "×%d", crit[1]);
+                                w.setCritical(critArea + critMult);
+                            }
+                        }
                         result.add(w);
                     }
                 }

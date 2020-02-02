@@ -210,4 +210,18 @@ public class StringUtil {
         }
         return buf.toString();
     }
+
+    public static int[] extractCritical(String critical) {
+        Pattern pattern = Pattern.compile("(?:(\\d{2})-\\d{2}/)?×(\\d)(?:/×(\\d))?");
+        Matcher m = pattern.matcher(critical);
+        if(m.matches()) {
+            int[] result = new int[3];
+            result[0] = m.group(1) == null ? 20 : Integer.parseInt(m.group(1));
+            result[1] = m.group(2) == null ? 2 : Integer.parseInt(m.group(2));
+            result[2] = m.group(3) == null ? 0 : Integer.parseInt(m.group(3));
+            return result;
+        }
+        return null;
+    }
+
 }
