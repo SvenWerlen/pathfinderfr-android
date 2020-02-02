@@ -219,8 +219,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         List<Modification> modifs = character.getModifsForId(modifId);
         StringBuffer buf = new StringBuffer();
         for(Modification modif: modifs) {
-            if((modif.getItemId() > 0 && modif.getItemId() == itemId) ||
-                    (modif.getItemId() == 0 && modif.isEnabled())) {
+            if((modif.getItemId() == 0 || modif.getItemId() == itemId) && modif.isEnabled()) {
                 buf.append(String.format(tooltipTemplate, modif.getName(), modif.getModif(0).second));
             }
         }
