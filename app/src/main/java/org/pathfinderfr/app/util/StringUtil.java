@@ -203,12 +203,28 @@ public class StringUtil {
         return sw.toString(); // stack trace as a string
     }
 
-    public static String gererate(int count, String val) {
+    public static String generate(int count, String val) {
         StringBuffer buf = new StringBuffer();
         for(int i=0; i<count; i++) {
             buf.append(val);
         }
         return buf.toString();
+    }
+
+    /**
+     * Cut string in order to make it fit the maximum length
+     * Try to cut at a space
+     */
+    public static String smartSubstring(String s, int maxLength) {
+        if(maxLength > 0 && s.length() >  maxLength) {
+            int idx = s.substring(0, maxLength).lastIndexOf(' ');
+            if(idx > 0) {
+                return s.substring(0, idx);
+            } else {
+                return s.substring(0, maxLength);
+            }
+        }
+        return s;
     }
 
     public static int[] extractCritical(String critical) {

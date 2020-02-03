@@ -1,5 +1,6 @@
 package org.pathfinderfr.app.pdf;
 
+import com.google.android.gms.common.Feature;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -18,16 +19,25 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 
+import org.pathfinderfr.app.database.entity.ClassFeature;
+import org.pathfinderfr.app.database.entity.Feat;
 import org.pathfinderfr.app.database.entity.Spell;
+import org.pathfinderfr.app.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CardsPDF {
 
@@ -46,19 +56,28 @@ public class CardsPDF {
     private static final int CARD_CONTENT_MARGIN = 18;
     private static final int CARD_CONTENT_WIDTH = 145;
     private static final int CARD_CONTENT_MAXHEIGHT = CARD_HEIGHT - 45;
-    private static final int CARD_FOOTER = 2;
+    private static final float CARD_FOOTER = 1.5f;
     private static final int CARD_FOOTER_MARGIN = 17;
     private static final int CARD_FOOTER_WIDTH = 130;
+    private static final int CARD_BOX_X = CARD_WIDTH - 31;
+    private static final int CARD_BOX_Y = CARD_HEIGHT - 27;
+    private static final int CARD_BOX_WIDTH = 20;
 
     private static final String TEMPLATE_PROP = "<b><i>PROPNAME:</i></b> PROPVALUE<br/>";
-    private static final String TEMPLATE = "CASTINGTIME DURATION RANGE AREA TARGET SAVINGTHROW RESISTANCE<br/>DESCRIPTION";
+    private static final String TEMPLATE_FEAT = "CONDITIONS NORMAL<br/>DESCRIPTION";
+    private static final String TEMPLATE_SPELL = "CASTINGTIME DURATION RANGE AREA TARGET SAVINGTHROW RESISTANCE<br/>DESCRIPTION";
 
     private static final Style STYLE_TITLE;
     private static final Style STYLE_SUBTITLE;
     private static final Style STYLE_FOOTER;
+    private static final Style STYLE_BOX;
     private static final Style STYLE_COMPONENT;
+    private static final Style STYLE_BACK;
     private static final int FONTSIZE_CONTENT = 6;
 
+    List<String> classes;
+    private List<Feat> feats;
+    private List<ClassFeature> features;
     private List<Spell> spells;
     private Params params;
     private Image cardImg[];
@@ -71,7 +90,9 @@ public class CardsPDF {
         STYLE_TITLE = new Style().setFontSize(10).setItalic().setFontColor(ColorConstants.WHITE);
         STYLE_SUBTITLE = new Style().setFontSize(7).setItalic().setFontColor(ColorConstants.WHITE);
         STYLE_FOOTER = new Style().setFontSize(6).setItalic().setFontColor(ColorConstants.WHITE);
+        STYLE_BOX = new Style().setFontSize(16).setBold().setFontColor(ColorConstants.DARK_GRAY);
         STYLE_COMPONENT = new Style().setFontSize(6).setBold().setFontColor(ColorConstants.WHITE);
+        STYLE_BACK = new Style().setFontSize(15).setFontColor(ColorConstants.WHITE);
         simulDoc = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
     }
 
@@ -81,9 +102,15 @@ public class CardsPDF {
         public ImageData[] cardProp;
         public ImageData cardBack;
         public boolean printBack = true;
+        public boolean feats;
+        public boolean features;
+        public boolean spells;
     }
 
-    public CardsPDF(List<Spell> spells, Params params) {
+    public CardsPDF(List<String> classes, List<Feat> feats, List<ClassFeature> features, List<Spell> spells, Params params) {
+        this.classes = classes;
+        this.feats = feats;
+        this.features = features;
         this.spells = spells;
         this.params = params;
         cardImg = new Image[this.params.cardFront.length];
@@ -98,9 +125,7 @@ public class CardsPDF {
     }
 
     private static String prepareText(String s, int maxLength, boolean stripAccents, boolean upperCase) {
-        if(maxLength > 0 && s.length() > maxLength) {
-            s = s.substring(0, maxLength);
-        }
+        s = StringUtil.smartSubstring(s, maxLength);
         if(stripAccents) {
             s = Normalizer.normalize(s, Normalizer.Form.NFD);
             s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
@@ -143,7 +168,101 @@ public class CardsPDF {
     }
 
 
+    /**
+     * Generate a card for a Feat
+     */
+    private void addCard(Document document, int left, int bottom, Feat feat) {
+        // backgrounds
+        int idx = 7;
+        if(cardImg.length == 1) { idx = 0; }
+        cardImg[idx].setFixedPosition(left, bottom);
+        document.add(cardImg[idx]);
+        // texts
+        String title = prepareText(feat.getName(), 18, true, true);
+        String subtitle = feat.getName().length() > 18 ? feat.getName().substring(title.length()) : "";
+        document.add((new Paragraph(title))
+                .addStyle(STYLE_TITLE).setFont(params.titleFont)
+                .setTextAlignment(TextAlignment.RIGHT)
+                .setMaxHeight(15)
+                .setFixedPosition(left + CARD_TITLE_MARGIN, bottom + CARD_TITLE, CARD_TITLE_WIDTH));
+        document.add((new Paragraph(subtitle))
+                .addStyle(STYLE_SUBTITLE)
+                .setTextAlignment(TextAlignment.RIGHT)
+                .setMaxHeight(12)
+                .setFixedPosition(left + CARD_SUBTITLE_MARGIN, bottom + CARD_SUBTITLE, CARD_SUBTITLE_WIDTH));
+        document.add((new Paragraph(prepareText(feat.getCategory(), 45, false, false)))
+                .addStyle(STYLE_FOOTER)
+                .setMaxHeight(12)
+                .setFixedPosition(left + CARD_FOOTER_MARGIN, bottom + CARD_FOOTER, CARD_FOOTER_WIDTH));
 
+        // description
+        String html = TEMPLATE_FEAT.replaceAll("CONDITIONS", generateProp("Condition", feat.getConditions()))
+                .replaceAll("NORMAL", generateProp("Normal", feat.getNormal()))
+                .replaceAll("DESCRIPTION", feat.getDescription().replaceAll("\n", "<br/>"));
+        document.add(generateHTMLElement(html)
+                .setTextAlignment(TextAlignment.JUSTIFIED)
+                .setFixedPosition(left + CARD_CONTENT_MARGIN -7, bottom + CARD_CONTENT, CARD_CONTENT_WIDTH +8));
+    }
+
+
+    /**
+     * Generate a card for a Feature
+     */
+    private void addCard(Document document, int left, int bottom, ClassFeature feature) {
+        // backgrounds
+        int idx = 7;
+        if(cardImg.length == 1) { idx = 0; }
+        cardImg[idx].setFixedPosition(left, bottom);
+        document.add(cardImg[idx]);
+        // linkedTo ?
+        String linkedTo = null;
+        if(feature.getLinkedTo() != null) {
+            linkedTo = feature.getName();
+            feature = feature.getLinkedTo();
+        }
+        // split name (ex: Exploitation: Contresort => Exploitation AND Contresort)
+        String name = feature.getName();
+        String type = feature.getClass_().getName();
+        int idxType = name.indexOf(": ");
+        if(idxType > 0) {
+            type += ": " + name.substring(0, idxType);
+            name = name.substring(idxType + 2);
+        }
+        if(linkedTo != null) {
+            type = feature.getClass_().getName() + ": " + linkedTo;
+        }
+        // texts
+        String title = prepareText(name, 18, true, true);
+        String subtitle = name.length() > 18 ? name.substring(title.length()) : "";
+        document.add((new Paragraph(title))
+                .addStyle(STYLE_TITLE).setFont(params.titleFont)
+                .setTextAlignment(TextAlignment.RIGHT)
+                .setMaxHeight(15)
+                .setFixedPosition(left + CARD_TITLE_MARGIN, bottom + CARD_TITLE, CARD_TITLE_WIDTH));
+        document.add((new Paragraph(subtitle))
+                .addStyle(STYLE_SUBTITLE)
+                .setTextAlignment(TextAlignment.RIGHT)
+                .setMaxHeight(12)
+                .setFixedPosition(left + CARD_SUBTITLE_MARGIN, bottom + CARD_SUBTITLE, CARD_SUBTITLE_WIDTH));
+        document.add((new Paragraph(prepareText(type, 45, false, false)))
+                .addStyle(STYLE_FOOTER)
+                .setMaxHeight(12)
+                .setFixedPosition(left + CARD_FOOTER_MARGIN, bottom + CARD_FOOTER, CARD_FOOTER_WIDTH));
+        document.add((new Paragraph(String.valueOf(feature.getLevel())))
+                .addStyle(STYLE_BOX)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFixedPosition(left + CARD_BOX_X, bottom + CARD_BOX_Y, CARD_BOX_WIDTH));
+
+        // description
+        document.add(generateHTMLElement(feature.getDescription())
+                .setTextAlignment(TextAlignment.JUSTIFIED)
+                .setFixedPosition(left + CARD_CONTENT_MARGIN -7, bottom + CARD_CONTENT, CARD_CONTENT_WIDTH +8));
+    }
+
+    /**
+     * Generate a card for a Spell
+     */
     private void addCard(Document document, int left, int bottom, Spell spell) {
         // backgrounds
         int idx = 7;
@@ -160,20 +279,30 @@ public class CardsPDF {
         cardImg[idx].setFixedPosition(left, bottom);
         document.add(cardImg[idx]);
         // texts
-        document.add((new Paragraph(prepareText(spell.getName(), 20, true, true)))
+        String title = prepareText(spell.getName(), 18, true, true);
+        String subtitle = spell.getName().length() > 18 ? spell.getName().substring(title.length()) : "";
+        Integer level = retrieveLevel(spell.getLevel());
+        document.add((new Paragraph(title))
                 .addStyle(STYLE_TITLE).setFont(params.titleFont)
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setMaxHeight(15)
                 .setFixedPosition(left + CARD_TITLE_MARGIN, bottom + CARD_TITLE, CARD_TITLE_WIDTH));
-        document.add((new Paragraph(prepareText(spell.getSchool(), 0, false, false)))
+        document.add((new Paragraph(subtitle))
                 .addStyle(STYLE_SUBTITLE)
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setMaxHeight(12)
                 .setFixedPosition(left + CARD_SUBTITLE_MARGIN, bottom + CARD_SUBTITLE, CARD_SUBTITLE_WIDTH));
-        document.add((new Paragraph(prepareText(spell.getLevel(), 45, false, false)))
+        document.add((new Paragraph(prepareText(spell.getSchool(), 45, false, false)))
                 .addStyle(STYLE_FOOTER)
                 .setMaxHeight(12)
                 .setFixedPosition(left + CARD_FOOTER_MARGIN, bottom + CARD_FOOTER, CARD_FOOTER_WIDTH));
+        if(level != null) {
+            document.add((new Paragraph(String.valueOf(level)))
+                    .addStyle(STYLE_BOX)
+                    .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFixedPosition(left + CARD_BOX_X, bottom + CARD_BOX_Y, CARD_BOX_WIDTH));
+        }
         // components
         List<String> components = spell.getComponentList();
         for(int i = 0; i<components.size(); i++) {
@@ -197,7 +326,7 @@ public class CardsPDF {
         String target = generateProp("Cible", spell.getTarget());
         String saving = generateProp("Jet de sauvegarde", spell.getSavingThrow());
         String resistance = generateProp("Résistance à la magie", spell.getSpellResistance());
-        String html = TEMPLATE.replaceAll("CASTINGTIME", castingTime )
+        String html = TEMPLATE_SPELL.replaceAll("CASTINGTIME", castingTime )
                 .replaceAll( "DURATION", duration)
                 .replaceAll( "RANGE", range)
                 .replaceAll( "AREA", area)
@@ -210,9 +339,98 @@ public class CardsPDF {
                 .setFixedPosition(left + CARD_CONTENT_MARGIN, bottom + CARD_CONTENT, CARD_CONTENT_WIDTH));
     }
 
-    public void addBack(Document document, int left, int bottom) {
+    /**
+     * Retrieves the min spell caster level required for that spell
+     *
+     * @param levels spell levels (ex: Alc 6, Bar 5, Ens/Mag 6, Hyp 5, Spi 6)
+     * @return min level (ex: 5)
+     */
+    private Integer retrieveLevel(String levels) {
+        Integer minLevel = null;
+        for(String cl : classes) {
+            Pattern pattern = Pattern.compile(".*" + cl + "(?:/.{3})? (\\d).*");
+            Matcher m = pattern.matcher(levels);
+            if(m.matches()) {
+                int lvl = Integer.parseInt(m.group(1));
+                if(minLevel == null || lvl < minLevel) {
+                    minLevel = lvl;
+                }
+            }
+        }
+        return minLevel;
+    }
+
+    public void addBack(Document document, int left, int bottom, String name) {
         backImg.setFixedPosition(left, bottom);
         document.add(backImg);
+        // shadow
+        document.add((new Paragraph(name))
+                .addStyle(STYLE_BACK)
+                .setFont(params.titleFont)
+                .setFontColor(ColorConstants.BLACK)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFixedPosition(left+1, bottom + 34, CARD_WIDTH));
+        document.add((new Paragraph(name))
+                .addStyle(STYLE_BACK)
+                .setFont(params.titleFont)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFixedPosition(left, bottom + 35, CARD_WIDTH));
+    }
+
+
+    private boolean generateSection(Document document, PageSize pageSize, String backLabel, List<Object> objects) {
+        int posY1 = (int) Math.round(pageSize.getHeight() / 2);
+        int posY2 = (int) Math.round(pageSize.getHeight() / 2) - CARD_HEIGHT - 5;
+
+        if(objects.size() == 0) {
+            return false;
+        }
+
+        if(params.printBack) {
+            for (int i = 0; i < objects.size(); i++) {
+                int posY = i % 4 <= 1 ? posY1 : posY2;
+                int left = (2 * CARD_WIDTH + 5) * (i % 2) + MARGIN;
+                Object obj = objects.get(i);
+                if(obj instanceof Spell) {
+                    addCard(document, left, posY, (Spell) obj);
+                } else if (obj instanceof Feat) {
+                    addCard(document, left, posY, (Feat) obj);
+                } else if (obj instanceof ClassFeature) {
+                    addCard(document, left, posY, (ClassFeature) obj);
+                } else {
+                    throw new IllegalStateException("Not supported: " + obj.getClass().getSimpleName());
+                }
+                addBack(document, left + CARD_WIDTH, posY, backLabel);
+                if (i % 4 == 3) {
+                    document.add(new AreaBreak());
+                }
+            }
+        } else {
+            for (int i = 0; i < objects.size(); i++) {
+                int posY = i % 8 <= 3 ? posY1 : posY2;
+                int left = (CARD_WIDTH + 5) * (i % 4) + MARGIN;
+                Object obj = objects.get(i);
+                if(obj instanceof Spell) {
+                    addCard(document, left, posY, (Spell) obj);
+                } else if (obj instanceof Feat) {
+                    addCard(document, left, posY, (Feat) obj);
+                } else if (obj instanceof ClassFeature) {
+                    addCard(document, left, posY, (ClassFeature) obj);
+                } else {
+                    throw new IllegalStateException("Not supported: " + obj.getClass().getSimpleName());
+                }
+                if (i % 8 == 7) {
+                    document.add(new AreaBreak());
+                }
+            }
+            // print back
+            document.add(new AreaBreak());
+            for(int j = 0; j < 8; j++) {
+                addBack(document, (CARD_WIDTH + 5) * (j % 4) + MARGIN, j % 8 <= 3 ? posY1 : posY2, backLabel);
+            }
+        }
+        return true;
     }
 
     public void generatePDF(OutputStream output) {
@@ -221,35 +439,23 @@ public class CardsPDF {
         Document document = new Document(pdf, pageSize);
         document.setMargins(20, 20,20,20);
 
-        int posY1 = (int)Math.round(pageSize.getHeight() / 2);
-        int posY2 = (int)Math.round(pageSize.getHeight() / 2) - CARD_HEIGHT - 5;
-
-        if(params.printBack) {
-            for (int i = 0; i < spells.size(); i++) {
-                int posY = i % 4 <= 1 ? posY1 : posY2;
-                int left = (2 * CARD_WIDTH + 5) * (i % 2) + MARGIN;
-                addCard(document, left, posY, spells.get(i));
-                addBack(document, left + CARD_WIDTH, posY);
-                if (i % 4 == 3) {
-                    document.add(new AreaBreak());
-                }
-            }
-        } else {
-            for (int i = 0; i < spells.size(); i++) {
-                int posY = i % 8 <= 3 ? posY1 : posY2;
-                int left = (CARD_WIDTH + 5) * (i % 4) + MARGIN;
-                addCard(document, left, posY, spells.get(i));
-                if (i % 8 == 7) {
-                    document.add(new AreaBreak());
-                }
-            }
-            // print back
-            document.add(new AreaBreak());
-            for(int j = 0; j < 8; j++) {
-                addBack(document, (CARD_WIDTH + 5) * (j % 4) + MARGIN, j % 8 <= 3 ? posY1 : posY2);
-            }
-
+        boolean addBreak = false;
+        if(params.feats && feats.size() > 0) {
+            if(addBreak) { document.add(new AreaBreak()); }
+            List<Object> objects = new ArrayList<>(); objects.addAll(feats);
+            addBreak = generateSection(document, pageSize, "Don", objects);
         }
+        if(params.features && features.size() > 0) {
+            if(addBreak) { document.add(new AreaBreak()); }
+            List<Object> objects = new ArrayList<>(); objects.addAll(features);
+            addBreak = generateSection(document, pageSize, "Aptitude", objects);
+        }
+        if(params.spells && spells.size() > 0) {
+            if(addBreak) { document.add(new AreaBreak()); }
+            List<Object> objects = new ArrayList<>(); objects.addAll(spells);
+            addBreak = generateSection(document, pageSize, "Sort", objects);
+        }
+
         document.close();
     }
 }

@@ -134,8 +134,9 @@
     </string>
     <string name="generatepdf_option_colors">9 couleurs</string>
     <string name="generatepdf_option_back">Verso des cartes sur page séparée</string>
-    <string name="generatepdf_option_spells">Sorts sélectionnés</string>
-    <string name="generatepdf_option_feats">Dons</string>
+    <string name="generatepdf_option_feats">Inclure les dons</string>
+    <string name="generatepdf_option_features">Inclure les aptitudes</string>
+    <string name="generatepdf_option_spells">Inclure les sorts sélectionnés</string>
     <string name="generatepdf_cards_start">Cartes (PDF)</string>
 
     <!-- Strings related to Settings -->

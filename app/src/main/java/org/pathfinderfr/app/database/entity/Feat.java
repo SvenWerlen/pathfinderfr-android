@@ -46,7 +46,10 @@ public class Feat extends DBEntity {
     }
 
     public String getCategory() {
-        return category;
+        if(category == null) {
+            return "";
+        }
+        return category.substring(0,1).toUpperCase() + category.substring(1).toLowerCase();
     }
     public void setCategory(String category) {
         this.category = category;

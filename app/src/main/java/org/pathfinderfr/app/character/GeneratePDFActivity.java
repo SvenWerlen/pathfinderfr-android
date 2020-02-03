@@ -186,7 +186,10 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                                 input.params.cardProp[0] = ImageDataFactory.create(image.toByteArray());
                             }
                             input.params.printBack = !((CheckBox)findViewById(R.id.option_back)).isChecked();
-                            input.params.titleFont = PdfFontFactory.createFont(AssetUtil.assetToBytes(getApplicationContext().getAssets().open("cards/FOY1REG.TTF")), StandardCharsets.UTF_8.toString());
+                            input.params.feats = ((CheckBox)findViewById(R.id.option_feats)).isChecked();
+                            input.params.features = ((CheckBox)findViewById(R.id.option_features)).isChecked();
+                            input.params.spells = ((CheckBox)findViewById(R.id.option_spells)).isChecked();
+                            input.params.titleFont = PdfFontFactory.createFont(AssetUtil.assetToBytes(getApplicationContext().getAssets().open("cards/FOY1REG.TTF")), StandardCharsets.UTF_8.toString(), true);
                             taskInProgress.execute(input);
                         }
                     } catch( Exception exc ) {

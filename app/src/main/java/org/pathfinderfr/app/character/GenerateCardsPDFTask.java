@@ -19,6 +19,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -61,14 +62,13 @@ public class GenerateCardsPDFTask extends AsyncTask<Object, Void, Void> {
             return null;
         }
 
-        if(input.character.getSpells().size() == 0) {
-            errorMessage = props.getProperty("generatepdf.error.nospell");
-            return null;
-        }
-
         // save pdf to cache directory
         try {
-            new CardsPDF(input.character.getSpells(), input.params).generatePDF(input.stream);
+            List<String> classNames = new ArrayList<>();
+            for(int i=0; i<input.character.getClassesCount(); i++) {
+                classNames.add(input.character.getClass(i).first.getNameShort());
+            }
+            new CardsPDF(classNames, input.character.getFeats(), input.character.getClassFeatures(), input.character.getSpells(), input.params).generatePDF(input.stream);
         } catch (Throwable t) {
             Log.w(GenerateCardsPDFTask.class.getSimpleName(), "Error during PDF generation", t);
             errorMessage = StringUtil.getStackTrace(t);

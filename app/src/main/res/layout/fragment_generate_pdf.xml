@@ -111,6 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/generatepdf_option_colors"
+                android:checked="true"
                 android:layout_marginTop="15dp"/>
 
             <CheckBox
@@ -118,6 +119,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/generatepdf_option_back" />
+
+            <CheckBox
+                android:id="@+id/option_feats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_feats"
+                android:checked="true"/>
+
+            <CheckBox
+                android:id="@+id/option_features"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generatepdf_option_features"
+                android:checked="true"/>
 
             <CheckBox
                 android:id="@+id/option_spells"

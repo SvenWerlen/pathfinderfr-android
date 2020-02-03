@@ -134,7 +134,7 @@ public class FeatsUtil {
             if(cFeats.containsKey(u.getId())) {
                 Feat f = cFeats.get(u.getId());
                 f.setDepth(-depth);
-                f.setName(StringUtil.gererate(depth, SEP) + f.getName());
+                f.setName(StringUtil.generate(depth, SEP) + f.getName());
                 feats.add(f);
                 fillUnlockedFeatsRecursive(feats, f, depth+1, cFeats );
             }
@@ -150,7 +150,7 @@ public class FeatsUtil {
                 }
                 if(reqOK) {
                     u.setDepth(depth);
-                    u.setName(StringUtil.gererate(depth, SEP) + u.getName());
+                    u.setName(StringUtil.generate(depth, SEP) + u.getName());
                     feats.add(u);
                 }
             }
