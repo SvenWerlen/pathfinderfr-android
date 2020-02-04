@@ -53,8 +53,8 @@ public class CardsPDFTest {
     @Test
     public void test() throws IOException {
 
-        int FEATS = 3;
-        int SPELLS = 3;
+        int FEATS = 0;
+        int SPELLS = 0;
 
         String base = "/home/sven/AndroidStudioProjects/PathfinderFR/app/src/main/assets/cards";
 
@@ -98,11 +98,11 @@ public class CardsPDFTest {
         ClassFeature feature = new ClassFeature();
         feature.setName("Lignage Aquatique: Soulèvement des profondeurs (Mag)");
         feature.setLevel(15);
-        feature.setDescription("Au niveau 15, l’ensorceleur peut soulever de l’eau comme avec un" +
-                "sort de contrôle de l’eau sans que la présence d’eau ne soit nécessaire. L’eau" +
-                "ainsi créée est stationnaire et ne coule pas hors de la zone où elle est créée." +
-                "Elle reste en place 1 round par niveau d’ensorceleur puis disparaît. Au niveau" +
-                "20, les dimensions de cet effet sont doublées. L’ensorceleur peut utiliser cette" +
+        feature.setDescription("Au niveau 15, l’ensorceleur peut soulever de l’eau comme avec un " +
+                "sort de contrôle de l’eau sans que la présence d’eau ne soit nécessaire. L’eau " +
+                "ainsi créée est stationnaire et ne coule pas hors de la zone où elle est créée. " +
+                "Elle reste en place 1 round par niveau d’ensorceleur puis disparaît. Au niveau " +
+                "20, les dimensions de cet effet sont doublées. L’ensorceleur peut utiliser cette " +
                 "capacité une fois par jour.");
         feature.setClass(cl);
         features.add(feature);
@@ -111,23 +111,34 @@ public class CardsPDFTest {
         cl.setName("Roublard");
         feature = new ClassFeature();
         feature.setName("Talent de roublard #2");
+        feature.setAuto(true);
         feature.setLevel(6);
-        feature.setDescription("Aux niveaux 3, 6 et 9, le maître des ombres gagne une capacité qui" +
-                "lui permet de confondre ses adversaires. Cela fonctionne comme les talents de" +
-                "la classe de roublard. Il ne peut sélectionner un talent plus d''une fois. S''il" +
+        feature.setDescription("Aux niveaux 3, 6 et 9, le maître des ombres gagne une capacité qui " +
+                "lui permet de confondre ses adversaires. Cela fonctionne comme les talents de " +
+                "la classe de roublard. Il ne peut sélectionner un talent plus d''une fois. S''il " +
                 "a accès aux talents de maître roublard, il peut faire son choix dans cette liste.");
         feature.setClass(cl);
         ClassFeature featureLinked = new ClassFeature();
         featureLinked.setName("Talent: Acrobate inégalable (Ext)");
-        featureLinked.setDescription("Une fois par jour, un roublard disposant de ce talent peut lancer" +
-                "deux dés lors d’un test d’Acrobaties et choisir le résultat le plus avantageux." +
-                "Il doit décider d’utiliser cette capacité avant le test. Il peut utiliser cette" +
+        featureLinked.setDescription("Une fois par jour, un roublard disposant de ce talent peut lancer " +
+                "deux dés lors d’un test d’Acrobaties et choisir le résultat le plus avantageux. " +
+                "Il doit décider d’utiliser cette capacité avant le test. Il peut utiliser cette " +
                 "capacité une fois de plus par jour par tranche de 5 niveaux de roublard.");
         featureLinked.setClass(cl);
         featureLinked.setLevel(3);
+        featureLinked.setLinkedTo(feature);
         feature.setLinkedTo(featureLinked);
         features.add(feature);
-
+        features.add(featureLinked);
+        cl = new Class();
+        cl.setName("Roublard");
+        feature = new ClassFeature();
+        feature.setName("Don supplémentaire");
+        feature.setLevel(5);
+        feature.setDescription("Bla bla bla");
+        feature.setLinkedName("Combat à deux armes");
+        feature.setClass(cl);
+        features.add(feature);
 
         // get spells
         List<Spell> spells = new ArrayList<>();
@@ -155,7 +166,10 @@ public class CardsPDFTest {
             params.cardFront = new ImageData[] { ImageDataFactory.create(String.format("%s/card%d.png", base, 8)) };
             params.cardProp = new ImageData[] { ImageDataFactory.create(String.format("%s/comp%d.png", base, 8)) };
         }
-        params.cardBack = ImageDataFactory.create(String.format("%s/back.png", base));
+        params.cardBack = new ImageData[3];
+        params.cardBack[0] = ImageDataFactory.create(String.format("%s/back-yellow.jpg", base));
+        params.cardBack[1] = ImageDataFactory.create(String.format("%s/back-red.jpg", base));
+        params.cardBack[2] = ImageDataFactory.create(String.format("%s/back-blue.jpg", base));
         params.titleFont = font;
         params.printBack = true;
         params.feats = true;

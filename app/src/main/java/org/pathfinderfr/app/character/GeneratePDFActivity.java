@@ -140,12 +140,6 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                         File cachePath = new File(v.getContext().getCacheDir(), "characters");
                         cachePath.mkdirs(); // don't forget to make the directory
                         stream = new FileOutputStream(cachePath + "/cartes.pdf");
-                        // get logo
-                        InputStream ims = getApplicationContext().getAssets().open("cards/back.png");
-                        Bitmap bmp = BitmapFactory.decodeStream(ims);
-                        ByteArrayOutputStream back = new ByteArrayOutputStream();
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, back);
-
                         // execution
                         taskInProgress = new GenerateCardsPDFTask(GeneratePDFActivity.this);
                         DBEntity character = DBHelper.getInstance(v.getContext()).fetchEntity(characterId, CharacterFactory.getInstance());
@@ -154,7 +148,14 @@ public class GeneratePDFActivity extends AppCompatActivity implements GeneratePD
                             input.character = (Character)character;
                             input.stream = stream;
                             input.params = new CardsPDF.Params();
-                            input.params.cardBack =  ImageDataFactory.create(back.toByteArray());
+                            input.params.cardBack = new ImageData[3];
+                            String[] backNames = new String[] { "yellow", "red", "blue" };
+                            for (int i = 0; i < input.params.cardBack.length; i++) {
+                                Bitmap bitmap = BitmapFactory.decodeStream(getApplicationContext().getAssets().open(String.format(Locale.CANADA, "cards/back-%s.jpg", backNames[i])));
+                                ByteArrayOutputStream image = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
+                                input.params.cardBack[i] = ImageDataFactory.create(image.toByteArray());
+                            }
                             // full color version
                             if(((CheckBox)findViewById(R.id.option_9colors)).isChecked()) {
                                 input.params.cardFront = new ImageData[9];
