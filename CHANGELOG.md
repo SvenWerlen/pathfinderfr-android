@@ -6,11 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [3.10.0] - 2019-02-
+## [3.10.0] - 2019-02-04
 ### Fixed
 - Tooltip always displays attack modif even when not enabled (#22)
 ### Added
 - New modifs for weapons: critical area and critical multiplier
+- Feats and Features as cards (export PDF)
 
 ## [3.9.0] - 2019-02-01
 ### Added
