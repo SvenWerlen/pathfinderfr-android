@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.10.1] - 2019-02-08
+### Fixed
+- Exception for feats with empty category
+
 ## [3.10.0] - 2019-02-04
 ### Fixed
 - Tooltip always displays attack modif even when not enabled (#22)
