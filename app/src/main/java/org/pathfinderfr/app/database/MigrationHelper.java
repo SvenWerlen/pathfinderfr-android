@@ -104,7 +104,7 @@ public class MigrationHelper {
             String inventoryValue = res.getString(res.getColumnIndex("inventory"));
             // build weapon list
             List<CharacterItem> weapons = new ArrayList<>();
-            String[] items = inventoryValue.split("#");
+            String[] items = inventoryValue == null ? new String[0] : inventoryValue.split("#");
             for(String item : items) {
                 String[] props = item.split("\\|");
                 if (props.length >= 3) {
