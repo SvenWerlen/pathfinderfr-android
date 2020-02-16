@@ -714,14 +714,17 @@ public class Character extends DBEntity {
                 continue;
             }
             boolean applyBonus = true;
-            // bonus for specific item => consider weapon always equiped
+            // case 1: bonus for specific weapon => consider weapon always equiped
+            // apply bonus if that bonus is not specific to an item or if it matches the given itemId
             if(itemId > 0) {
-                applyBonus = itemId == mod.getItemId();
+                applyBonus = mod.getItemId() <=0 || itemId == mod.getItemId();
             }
-            // bonus assigned to item => check that item is equiped
+            // case 2: bonus not specific to a weapon
+            // if bonus assigned to item => check that item is equiped
             else if(mod.getItemId() > 0) {
                 applyBonus = isItemEquiped(mod.getItemId());
             }
+            // case 3: bonus not specific to a weapon AND bonus not associated to an item
             // combat bonus can only be applied for weapons (see above rule 1)
             else if((bonusId == Modification.MODIF_COMBAT_ATT_MELEE || bonusId == Modification.MODIF_COMBAT_ATT_RANGED
                     || bonusId == Modification.MODIF_COMBAT_DAM_MELEE || bonusId == Modification.MODIF_COMBAT_DAM_RANGED)) {
