@@ -418,7 +418,6 @@ public class MainActivity extends AppCompatActivity
             }
             if(charName.length() > 15) {
                 charName = charName.substring(0,15);
-                System.out.println(charName);
             }
             ((TextView)findViewById(R.id.welcome_selchar_text)).setText(charName);
             findViewById(R.id.welcome_selchar).setVisibility(View.VISIBLE);

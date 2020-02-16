@@ -99,6 +99,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", factory.getTableName()));
         db.execSQL(factory.getQueryCreateTable());
+        factory.cleanup();
     }
 
     // DEBUGING ONLY
@@ -535,7 +536,10 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
         while (res.isAfterLast() == false) {
-            list.add(factory.generateEntity(res));
+            DBEntity entity = factory.generateEntity(res);
+            if(entity != null && !entity.isDeleted()) {
+                list.add(entity);
+            }
             res.moveToNext();
         }
         res.close();
@@ -577,7 +581,10 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
         while (res.isAfterLast() == false) {
-            list.add(factory.generateEntity(res));
+            DBEntity entity = factory.generateEntity(res);
+            if(entity != null && !entity.isDeleted()) {
+                list.add(entity);
+            }
             res.moveToNext();
         }
         res.close();
@@ -600,7 +607,10 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
         while (res.isAfterLast() == false) {
-            list.add(factory.generateEntity(res));
+            DBEntity entity = factory.generateEntity(res);
+            if(entity != null && !entity.isDeleted()) {
+                list.add(entity);
+            }
             res.moveToNext();
         }
         res.close();
@@ -621,7 +631,10 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
-                list.add(factory.generateEntity(res));
+                DBEntity entity = factory.generateEntity(res);
+                if(entity != null && !entity.isDeleted()) {
+                    list.add(entity);
+                }
                 res.moveToNext();
             }
         } catch(SQLiteException exception) {
@@ -644,7 +657,10 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
-                list.add(factory.generateEntity(res));
+                DBEntity entity = factory.generateEntity(res);
+                if(entity != null && !entity.isDeleted()) {
+                    list.add(entity);
+                }
                 res.moveToNext();
             }
         } catch(SQLiteException exception) {

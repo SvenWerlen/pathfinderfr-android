@@ -236,4 +236,9 @@ public abstract class DBEntityFactory {
     protected String getTranslatedText(String key) {
         return ConfigurationUtil.getInstance().getProperties().getProperty(key);
     }
+
+    /**
+     * Reset any existing cache or similar
+     */
+    public void cleanup() {}
 }

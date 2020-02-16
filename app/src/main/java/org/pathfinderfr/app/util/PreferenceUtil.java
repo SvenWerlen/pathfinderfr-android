@@ -14,8 +14,12 @@ import java.util.UUID;
 public class PreferenceUtil {
 
     public static String[] getSources(Context ctx) {
-        List<String> list = new ArrayList<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        // all sources enabled?
+        if(preferences.getBoolean("source_all", true)) {
+            return new String[0];
+        }
+        List<String> list = new ArrayList<>();
         for(String source: ConfigurationUtil.getInstance().getAvailableSources()) {
             if(preferences.getBoolean("source_" + source, true)) {
                 list.add(source.toUpperCase());

@@ -11,10 +11,10 @@ import java.util.Properties;
 public class ConfigurationUtil {
 
     private static final String TEMPLATE_NAME = "templates.properties";
+    private static final String[] SOURCES = new String[] { "mj", "mjra", "mca", "mr", "ag", "am" };
     private static ConfigurationUtil instance;
 
     private Properties properties;
-    private String[] sources;
 
     private ConfigurationUtil(Context context) {
         properties = new Properties();
@@ -26,16 +26,6 @@ public class ConfigurationUtil {
             Log.e(ConfigurationUtil.class.getSimpleName(),
                     String.format("Properties %s couldn't be found!",TEMPLATE_NAME), e);
         }
-        // pre-load list of sources
-        List<String> list = new ArrayList<>();
-        for(String key: properties.stringPropertyNames()) {
-            if(key.startsWith("source.")) {
-                list.add(key.substring("source.".length()));
-            }
-        }
-        sources = list.toArray(new String[0]);
-        Log.i(ConfigurationUtil.class.getSimpleName(), "Available sources found: "
-                + StringUtil.listToString(sources, ','));
     }
 
     public static synchronized ConfigurationUtil getInstance(Context context) {
@@ -58,7 +48,7 @@ public class ConfigurationUtil {
 
 
     public String[] getAvailableSources() {
-        return sources;
+        return SOURCES;
     }
 
 

@@ -163,7 +163,6 @@ public class FragmentClassPicker extends DialogFragment implements View.OnClickL
 
         int lvl = 1;
         int maxClassLvl = (selectedClass == null ? maxLevel : selectedClass.getMaxLevel());
-        System.out.println("MAXLEVEL = " + maxClassLvl);
         for(TextView tv : levels) {
             if(lvl <= maxClassLvl) {
                 tv.setVisibility(View.VISIBLE);

@@ -47,6 +47,15 @@ public class ClassFeatureFactory extends DBEntityFactory {
         archetypesByName = new HashMap<>();
     }
 
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        classesById.clear();
+        classesByName.clear();
+        archetypesById.clear();
+        archetypesByName.clear();
+    }
+
     /**
      * @return then unique instance of that factory
      */
@@ -57,51 +66,43 @@ public class ClassFeatureFactory extends DBEntityFactory {
         return instance;
     }
 
-    private synchronized Class getClass(String name) {
-        if(classesByName.size() == 0) {
-            classesById.clear();
-            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
-            for(DBEntity e : fullList) {
-                classesById.put(e.getId(), (Class)e);
-                classesByName.put(e.getName(), (Class)e);
-            }
+    private synchronized void loadClasses() {
+        classesById.clear();
+        classesByName.clear();
+        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
+        for(DBEntity e : fullList) {
+            classesById.put(e.getId(), (Class)e);
+            classesByName.put(e.getName(), (Class)e);
         }
+    }
+
+    private synchronized Class getClass(String name) {
+        if(classesByName.size() == 0) { loadClasses(); }
         return classesByName.get(name);
     }
 
     private synchronized Class getClass(long id) {
-        if(classesById.size() == 0) {
-            classesByName.clear();
-            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
-            for(DBEntity e : fullList) {
-                classesById.put(e.getId(), (Class)e);
-                classesByName.put(e.getName(), (Class)e);
-            }
-        }
+        if(classesById.size() == 0) { loadClasses(); }
         return classesById.get(id);
     }
 
-    private synchronized ClassArchetype getArchetype(String name) {
-        if(archetypesByName.size() == 0) {
-            archetypesById.clear();
-            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
-            for(DBEntity e : fullList) {
-                archetypesById.put(e.getId(), (ClassArchetype)e);
-                archetypesByName.put(e.getName(), (ClassArchetype)e);
-            }
+    private synchronized void loadArchetypes() {
+        archetypesById.clear();
+        archetypesByName.clear();
+        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
+        for(DBEntity e : fullList) {
+            archetypesById.put(e.getId(), (ClassArchetype)e);
+            archetypesByName.put(e.getName(), (ClassArchetype)e);
         }
+    }
+
+    private synchronized ClassArchetype getArchetype(String name) {
+        if(archetypesByName.size() == 0) { loadArchetypes(); }
         return archetypesByName.get(name);
     }
 
     private synchronized ClassArchetype getArchetype(long id) {
-        if(archetypesById.size() == 0) {
-            archetypesByName.clear();
-            List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
-            for(DBEntity e : fullList) {
-                archetypesById.put(e.getId(), (ClassArchetype)e);
-                archetypesByName.put(e.getName(), (ClassArchetype)e);
-            }
-        }
+        if(archetypesById.size() == 0) { loadArchetypes(); }
         return archetypesById.get(id);
     }
 
@@ -173,7 +174,6 @@ public class ClassFeatureFactory extends DBEntityFactory {
     @Override
     public DBEntity generateEntity(@NonNull Cursor resource) {
         ClassFeature classFeature = new ClassFeature();
-
         classFeature.setId(resource.getLong(resource.getColumnIndex(ClassFeatureFactory.COLUMN_ID)));
         classFeature.setName(extractValue(resource, ClassFeatureFactory.COLUMN_NAME));
         classFeature.setDescription(extractValue(resource, ClassFeatureFactory.COLUMN_DESC));

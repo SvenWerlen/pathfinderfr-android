@@ -2069,7 +2069,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         character.setSpeedWithArmor(speedArmor);
         character.setSpeedDig(speedDig);
         character.setSpeedFly(speedFly);
-        System.out.println("Maneuver: " + speedManeuver);
         character.setSpeedManeuverability(speedManeuver);
         ((TextView)getView().findViewById(R.id.speed_value)).setText(String.valueOf(speed));
         // update sheet

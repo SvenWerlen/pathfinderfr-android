@@ -479,6 +479,7 @@ public class SheetClassFeatureFragment extends Fragment implements FragmentClass
                 Triplet<Class, ClassArchetype,Integer> level = character.getClass(i);
                 classes.put(level.first.getId(), level.third);
                 if(level.second != null) {
+                    System.out.println("Adding " + level.second.getName());
                     archetypes.add(level.second.getId());
                 }
             }

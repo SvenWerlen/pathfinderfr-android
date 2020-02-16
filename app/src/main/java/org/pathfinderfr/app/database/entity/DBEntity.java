@@ -43,6 +43,10 @@ public abstract class DBEntity implements Serializable, Comparable<DBEntity> {
     public String getSource() { return source; }
     public void setSource(String source) { this.source = source; }
 
+    public boolean isDeleted() {
+        return getName().contains("DELETED");
+    }
+
     public boolean isValid() {
         return getName() != null && getName().length() > 0
                 && getDescription() != null && getDescription().length() > 0;

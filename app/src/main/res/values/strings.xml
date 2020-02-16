@@ -156,6 +156,7 @@
     <string name="pref_description_showdetails_off">Les détails sont masqués par défaut</string>
 
     <string name="pref_sources_default">Cette source ne peut être désactivée</string>
+    <string name="pref_sources_all">Si activée: ne tient compte des autres options</string>
 
     <string name="pref_title_fat_fingers">Agrandir espaces cliquables</string>
     <string name="pref_title_line_height">Espacement vertical (listes)</string>
@@ -203,20 +204,37 @@
     <string name="magicitem_category">Catégorie:</string>
 
     <!-- Sources (if you add something, make sure to change templates.properties & pref_sources.xml) -->
-    <string name="source_mj">Manuel des joueurs</string>
-    <string name="source_mjra">Manuel des joueurs - règles avancées</string>
-    <string name="source_mca">Manuel du joueur - classes avancées</string>
-    <string name="source_mr">Manuel des races</string>
-    <string name="source_b1">Bestiaire 1</string>
+    <string name="source_all">Toutes les sources</string>
+    <string name="source_aa">Animal Archive</string>
+    <string name="source_ae">Armes et Équipement</string>
     <string name="source_ag">Art de la guerre</string>
     <string name="source_am">Art de la magie</string>
     <string name="source_ao">Aventures occultes</string>
-    <string name="source_iswg">Cadre de campagne: la mer intérieure</string>
+    <string name="source_b1">Bestiaire 1</string>
+    <string name="source_boa">Blood of angels</string>
+    <string name="source_bof">Blood of fiends</string>
+    <string name="source_ccmi">Cadre de campagne: la mer intérieure</string>
+    <string name="source_cm">Campagnes mythiques</string>
+    <string name="source_cob">Champions of balance</string>
+    <string name="source_dep">Dragon Empires Primer</string>
+    <string name="source_ff">Familiar Folio</string>
+    <string name="source_hots">Heroes of the street</string>
+    <string name="source_mc">Codex monstrueux</string>
+    <string name="source_mca">Manuel du joueur - classes avancées</string>
+    <string name="source_mj">Manuel des joueurs</string>
+    <string name="source_mjra">Manuel des joueurs - règles avancées</string>
+    <string name="source_mm">Merchant Manifest</string>
+    <string name="source_mmi">Magie de la Mer Intérieure</string>
+    <string name="source_mpnj">Manuel des PNJs</string>
+    <string name="source_mr">Manuel des races</string>
+    <string name="source_oog">Orcs of Golarion</string>
     <string name="source_paizo">Blog Paizo</string>
+    <string name="source_pmi">Pirates de la Mer Intérieure</string>
     <string name="source_rtt">Ranged Tactics Toolbox</string>
-    <string name="title_activity_character_sheet">CharacterSheetActivity</string>
+    <string name="source_sso">Source semi-officielle</string>
 
     <!-- Character sheet -->
+    <string name="title_activity_character_sheet">CharacterSheetActivity</string>
     <string name="sheet_menu_activity">Personnage</string>
     <string name="sheet_menu_main">Profil</string>
     <string name="sheet_menu_skills">Compétences</string>

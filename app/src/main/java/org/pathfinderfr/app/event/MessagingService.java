@@ -130,6 +130,5 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onDeletedMessages() {
-        System.out.println("DELETED!!!");
     }
 }

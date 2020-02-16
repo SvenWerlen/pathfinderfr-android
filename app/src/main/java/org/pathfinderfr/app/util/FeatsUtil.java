@@ -49,7 +49,6 @@ public class FeatsUtil {
             if(f == null || result.size() > requires.size()) {
                 break;
             }
-            System.out.println("Found : " + f.getName());
             result.add(f);
             added.add(f.getId());
         }
@@ -74,7 +73,6 @@ public class FeatsUtil {
             }
             Feat f = (Feat)e;
             boolean depNotMeet = false;
-            System.out.println("Considering : " + f.getName());
             for(long id : f.getRequires()) {
                 if(!treated.contains(id) && ids.contains(id)) {
                     depNotMeet = true;
