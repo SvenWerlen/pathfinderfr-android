@@ -531,7 +531,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // not found?
         if(res.getCount()<1) {
             res.close();
-            return null;
+            return new ArrayList<>();
         }
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();

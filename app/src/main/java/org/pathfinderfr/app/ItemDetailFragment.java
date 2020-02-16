@@ -376,7 +376,7 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
                             StringUtil.string2Cost(a.getCost()),
                             CharacterItem.IDX_ARMORS + a.getId(),
                             null,
-                            a.getCategory().equalsIgnoreCase("bouclier") ? CharacterItem.CATEGORY_SHIELD : CharacterItem.CATEGORY_ARMOR,
+                            "bouclier".equalsIgnoreCase(a.getCategory()) ? CharacterItem.CATEGORY_SHIELD : CharacterItem.CATEGORY_ARMOR,
                             CharacterItem.LOCATION_NOLOC);
                     if(DBHelper.getInstance(getContext()).insertEntity(item) > 0) {
                         message = String.format(getResources().getString(R.string.armor_added_success), cName);
