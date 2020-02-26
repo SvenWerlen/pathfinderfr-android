@@ -94,7 +94,7 @@
 | Inquisiteur (sorts)          | ok     |
 | Inquisiteur (archétypes)     | ok     |
 |                              |        |
-| Oracle (mystères)            | -      |
+| Oracle (mystères)            | ok     |
 | Oracle (malédictions)        | ok     |
 | Oracle (sorts)               | ok     |
 | Oracle (archétypes)          | ok     |
@@ -164,7 +164,7 @@
 |                              |        |
 | Lutteur (archétypes)         | ok     |
 |                              |        |
-| Prêtre combattant (bénédictions) | -      |
+| Prêtre combattant (bénédictions) | ok     |
 | Prêtre combattant (archétypes)   | ok     |
 |                              |        |
 | Sanguin (lignages)           | -      |
