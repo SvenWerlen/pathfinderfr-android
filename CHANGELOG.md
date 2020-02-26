@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.11.0] - 2019-02-16
+### Added
+- Support for new archetypes
+### Changed
+- Improve source filtering / configuration
+### Fixed
+- NullPointerException (seen on Android Vitals)
+
+## [3.10.2] - 2019-02-09
+### Fixed
+- NullPointerException during upgrade because of inventory 
+
 ## [3.10.1] - 2019-02-08
 ### Fixed
 - Exception for feats with empty category
