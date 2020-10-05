@@ -141,14 +141,9 @@ public class ClassFeatureFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for filtering)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_CLASS, COLUMN_ARCHETYPE, COLUMN_LEVEL, COLUMN_AUTOMATIC, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_CLASS, COLUMN_ARCHETYPE, COLUMN_LEVEL, COLUMN_AUTOMATIC, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
 
@@ -177,7 +172,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Cursor resource) {
         ClassFeature classFeature = new ClassFeature();
         classFeature.setId(resource.getLong(resource.getColumnIndex(ClassFeatureFactory.COLUMN_ID)));
-        classFeature.setVersion(resource.getInt(resource.getColumnIndex(ClassFeatureFactory.COLUMN_VERSION)));
+        classFeature.setVersion(extractValueAsInt(resource, ClassFeatureFactory.COLUMN_VERSION));
         classFeature.setName(extractValue(resource, ClassFeatureFactory.COLUMN_NAME));
         classFeature.setDescription(extractValue(resource, ClassFeatureFactory.COLUMN_DESC));
         classFeature.setReference(extractValue(resource, ClassFeatureFactory.COLUMN_REFERENCE));

@@ -83,19 +83,19 @@ public class CharacterItemFactory extends DBEntityFactory {
     }
 
     @Override
-    public String getQueryFetchAll(String... sources) {
-        return super.getQueryFetchAllWithAllFields();
+    public String getQueryFetchAll(Integer version, String... sources) {
+        return super.getQueryFetchAllWithAllFields(version);
     }
 
     @Override
-    public String getQueryFetchAllWithAllFields(String... sources) {
-        return super.getQueryFetchAllWithAllFields();
+    public String getQueryFetchAllWithAllFields(Integer version, String... sources) {
+        return super.getQueryFetchAllWithAllFields(version);
     }
 
     @Override
     public String getQueryFetchByForeignKeys(long... id) {
         if(id == null || id.length == 0) {
-            return getQueryFetchAll();
+            return getQueryFetchAll(-1);
         }
         return String.format(Locale.CANADA, "SELECT * FROM %s WHERE %s=%d", TABLENAME, COLUMN_CHARACTER_ID, id[0]);
     }

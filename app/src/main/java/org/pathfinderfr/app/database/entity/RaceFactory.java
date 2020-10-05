@@ -91,7 +91,7 @@ public class RaceFactory extends DBEntityFactory {
         Race race = new Race();
 
         race.setId(resource.getLong(resource.getColumnIndex(RaceFactory.COLUMN_ID)));
-        race.setVersion(resource.getInt(resource.getColumnIndex(RaceFactory.COLUMN_VERSION)));
+        race.setVersion(extractValueAsInt(resource, RaceFactory.COLUMN_VERSION));
         race.setName(extractValue(resource,RaceFactory.COLUMN_NAME));
         race.setDescription(extractValue(resource,RaceFactory.COLUMN_DESC));
         race.setReference(extractValue(resource,RaceFactory.COLUMN_REFERENCE));

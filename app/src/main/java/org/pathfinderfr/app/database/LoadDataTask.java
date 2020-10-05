@@ -164,7 +164,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
             String address = source.first;
             DBEntityFactory factory = source.second;
-            dbHelper.clear(factory);
+            // dbHelper.clear(factory); // since v4, tables are not cleared any more
 
             if(factory == SpellFactory.getInstance()) {
                 reIndexingRequired = true;
@@ -215,6 +215,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                                 }
                             }
 
+                            entity.setVersion(newVersion);
                             long id = dbHelper.insertEntity(entity);
                             if(id >= 0) {
                                 entity.setId(id);

@@ -84,7 +84,7 @@ public class MagicItemFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for display)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
+    public String getQueryFetchAll(Integer version, String... sources) {
         String filters = "";
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
@@ -124,7 +124,7 @@ public class MagicItemFactory extends DBEntityFactory {
         MagicItem item = new MagicItem();
 
         item.setId(resource.getLong(resource.getColumnIndex(MagicItemFactory.COLUMN_ID)));
-        item.setVersion(resource.getInt(resource.getColumnIndex(MagicItemFactory.COLUMN_VERSION)));
+        item.setVersion(extractValueAsInt(resource, MagicItemFactory.COLUMN_VERSION));
         item.setName(extractValue(resource, MagicItemFactory.COLUMN_NAME));
         item.setDescription(extractValue(resource, MagicItemFactory.COLUMN_DESC));
         item.setReference(extractValue(resource, MagicItemFactory.COLUMN_REFERENCE));

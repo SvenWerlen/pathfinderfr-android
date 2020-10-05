@@ -56,6 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 24;
 
     private static DBHelper instance;
+    private static Map<String, Integer> versions;
 
     public static synchronized DBHelper getInstance(Context context) {
         if(instance == null) {
@@ -571,7 +572,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
-        while (res.isAfterLast() == false) {
+        while (!res.isAfterLast()) {
             DBEntity entity = factory.generateEntity(res);
             if(entity != null && !entity.isDeleted()) {
                 list.add(entity);
@@ -589,7 +590,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public DBEntity fetchEntityByName(String name, DBEntityFactory factory) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
+        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name, getVersions().get(factory.getTableName())), null );
         // not found?
         if(res.getCount()<1) {
             res.close();
@@ -608,7 +609,8 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public List<DBEntity> fetchAllEntitiesByName(String name, DBEntityFactory factory) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name), null );
+        Integer version = getVersion(factory.getFactoryId().toLowerCase());
+        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name, version), null );
         // not found?
         if(res.getCount()<1) {
             res.close();
@@ -616,7 +618,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
-        while (res.isAfterLast() == false) {
+        while (!res.isAfterLast()) {
             DBEntity entity = factory.generateEntity(res);
             if(entity != null && !entity.isDeleted()) {
                 list.add(entity);
@@ -642,7 +644,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         res.moveToFirst();
         List<DBEntity> list = new ArrayList<>();
-        while (res.isAfterLast() == false) {
+        while (!res.isAfterLast()) {
             DBEntity entity = factory.generateEntity(res);
             if(entity != null && !entity.isDeleted()) {
                 list.add(entity);
@@ -663,10 +665,11 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            res = db.rawQuery(factory.getQueryFetchAll(sources), null);
+            Integer version = getVersion(factory.getFactoryId().toLowerCase());
+            res = db.rawQuery(factory.getQueryFetchAll(version, sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
-            while (res.isAfterLast() == false) {
+            while (!res.isAfterLast()) {
                 DBEntity entity = factory.generateEntity(res);
                 if(entity != null && !entity.isDeleted()) {
                     list.add(entity);
@@ -689,7 +692,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            res = db.rawQuery(factory.getQueryFetchAllWithAllFields(sources), null);
+            Integer version = getVersion(factory.getFactoryId().toLowerCase());
+            res = db.rawQuery(factory.getQueryFetchAllWithAllFields(version, sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
             while (res.isAfterLast() == false) {
@@ -741,7 +745,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     factory.getTableName()),null);
 
             res.moveToFirst();
-            while (res.isAfterLast() == false) {
+            while (!res.isAfterLast()) {
                 if(res.getColumnIndex("name")>=0 && factory.getColumnSource().equalsIgnoreCase(res.getString(res.getColumnIndex("name")))) {
                     count++;
                     break;
@@ -842,7 +846,7 @@ public class DBHelper extends SQLiteOpenHelper {
             res = db.rawQuery(SpellClassLevelFactory.getInstance().getQueryClassesWithSpells(), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
-            while (res.isAfterLast() == false) {
+            while (!res.isAfterLast()) {
                 list.add(res.getLong(0));
                 res.moveToNext();
             }
@@ -866,7 +870,7 @@ public class DBHelper extends SQLiteOpenHelper {
             res = db.rawQuery(SpellFactory.getInstance().getQuerySchools(), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
-            while (res.isAfterLast() == false) {
+            while (!res.isAfterLast()) {
                 String school = res.getString(0);
                 if(school != null && school.length() > 0) {
                     list.add(school);
@@ -934,26 +938,47 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Integer getVersion(String dataId) {
         Log.i(DBHelper.class.getSimpleName(), String.format("Retrieving version of data %s", dataId));
-        VersionFactory factory = VersionFactory.getInstance();
+        Map<String, Integer> versions = getVersions();
+        return versions.containsKey(dataId) ? versions.get(dataId) : Integer.valueOf(-1);
+    }
 
-        Cursor res = null;
-        try {
-            SQLiteDatabase db = this.getReadableDatabase();
-            res = db.rawQuery(factory.getQueryFetchVersion(dataId), null);
-            // not found?
-            if(res.getCount()<1) {
-                return null;
-            }
-            res.moveToFirst();
-            return res.getInt(res.getColumnIndex("version"));
-        } catch(SQLiteException exception) {
-            exception.printStackTrace();
-            return null;
-        } finally {
-            if(res != null) {
+    public synchronized Map<String, Integer> getVersions() {
+        return getVersions(false);
+    }
+
+    public synchronized Map<String, Integer> getVersions(boolean force) {
+        // retrieve versions (in cache)
+        if(DBHelper.versions == null || !force) {
+            DBHelper.versions = new HashMap<>();
+            Log.i(DBHelper.class.getSimpleName(), "Retrieving versions");
+            VersionFactory factory = VersionFactory.getInstance();
+
+            Cursor res = null;
+            try {
+                SQLiteDatabase db = this.getReadableDatabase();
+                res = db.rawQuery(factory.getQueryFetchAllVersion(), null);
+                // not found?
+                if (res.getCount() < 1) {
+                    return null;
+                }
+                res.moveToFirst();
+                while (!res.isAfterLast()) {
+                    String id = res.getString(res.getColumnIndex("id"));
+                    Integer version = res.getInt(res.getColumnIndex("version"));
+                    DBHelper.versions.put(id, version);
+                    res.moveToNext();
+                }
                 res.close();
+            } catch (SQLiteException exception) {
+                exception.printStackTrace();
+                return null;
+            } finally {
+                if (res != null) {
+                    res.close();
+                }
             }
         }
+        return DBHelper.versions;
     }
 
     public boolean updateVersion(String dataId, int version) {

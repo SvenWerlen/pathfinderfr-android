@@ -44,6 +44,15 @@ public class VersionFactory {
     }
 
     /**
+     * @return the query to fetch all versions
+     */
+    public String getQueryFetchAllVersion() {
+        String filters = "";
+        return String.format("SELECT %s as id, %s as version FROM %s",
+                COLUMN_DATAID, COLUMN_VERSION, TABLENAME);
+    }
+
+    /**
      * @return the query to insert a version
      */
     public String getQueryInsertVersion(String dataId, int version) {

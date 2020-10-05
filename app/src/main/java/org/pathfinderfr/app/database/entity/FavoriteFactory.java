@@ -58,7 +58,8 @@ public class FavoriteFactory extends DBEntityFactory {
      * No support for sources
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
+    public String getQueryFetchAll(Integer version, String... sources) {
+        // ignore versions and sources (not available for favorites)
         return String.format("SELECT %s,%s,%s,%s FROM %s ORDER BY %s COLLATE UNICODE",
                 COLUMN_ID, COLUMN_NAME, COLUMN_FACTORY_ID, COLUMN_ENTITY_ID, getTableName(),
                 COLUMN_FACTORY_ID + "," + COLUMN_NAME);

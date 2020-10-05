@@ -10,6 +10,7 @@ import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class FeatFactory extends DBEntityFactory {
@@ -95,8 +96,8 @@ public class FeatFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for filtering)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
+    public String getQueryFetchAll(Integer version, String... sources) {
+        String filters = String.format(Locale.CANADA,"WHERE %s=%d", COLUMN_VERSION, version);
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
             filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
@@ -138,7 +139,7 @@ public class FeatFactory extends DBEntityFactory {
         Feat feat = new Feat();
 
         feat.setId(resource.getLong(resource.getColumnIndex(FeatFactory.COLUMN_ID)));
-        feat.setVersion(resource.getInt(resource.getColumnIndex(FeatFactory.COLUMN_VERSION)));
+        feat.setVersion(extractValueAsInt(resource, FeatFactory.COLUMN_VERSION));
         feat.setName(extractValue(resource,FeatFactory.COLUMN_NAME));
         feat.setDescription(extractValue(resource,FeatFactory.COLUMN_DESC));
         feat.setReference(extractValue(resource,FeatFactory.COLUMN_REFERENCE));

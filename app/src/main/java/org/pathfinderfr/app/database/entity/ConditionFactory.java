@@ -76,7 +76,7 @@ public class ConditionFactory extends DBEntityFactory {
         Condition condition = new Condition();
 
         condition.setId(resource.getLong(resource.getColumnIndex(ConditionFactory.COLUMN_ID)));
-        condition.setVersion(resource.getInt(resource.getColumnIndex(ConditionFactory.COLUMN_VERSION)));
+        condition.setVersion(extractValueAsInt(resource, ConditionFactory.COLUMN_VERSION));
         condition.setName(extractValue(resource, ConditionFactory.COLUMN_NAME));
         condition.setDescription(extractValue(resource, ConditionFactory.COLUMN_DESC));
         condition.setReference(extractValue(resource, ConditionFactory.COLUMN_REFERENCE));

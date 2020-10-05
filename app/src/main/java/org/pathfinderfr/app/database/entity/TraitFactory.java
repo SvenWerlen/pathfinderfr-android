@@ -100,14 +100,9 @@ public class TraitFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for filtering)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_RACE, COLUMN_REPLACES, COLUMN_ALTERS, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_RACE, COLUMN_REPLACES, COLUMN_ALTERS, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
 
@@ -137,7 +132,7 @@ public class TraitFactory extends DBEntityFactory {
         Trait trait = new Trait();
 
         trait.setId(resource.getLong(resource.getColumnIndex(TraitFactory.COLUMN_ID)));
-        trait.setVersion(resource.getInt(resource.getColumnIndex(TraitFactory.COLUMN_VERSION)));
+        trait.setVersion(extractValueAsInt(resource, TraitFactory.COLUMN_VERSION));
         trait.setName(extractValue(resource, TraitFactory.COLUMN_NAME));
         trait.setDescription(extractValue(resource, TraitFactory.COLUMN_DESC));
         trait.setReference(extractValue(resource, TraitFactory.COLUMN_REFERENCE));

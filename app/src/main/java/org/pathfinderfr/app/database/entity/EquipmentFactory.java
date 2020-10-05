@@ -70,14 +70,9 @@ public class EquipmentFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for filtering)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_CATEGORY, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
     @Override
@@ -105,7 +100,7 @@ public class EquipmentFactory extends DBEntityFactory {
         Equipment equipment = new Equipment();
 
         equipment.setId(resource.getLong(resource.getColumnIndex(EquipmentFactory.COLUMN_ID)));
-        equipment.setVersion(resource.getInt(resource.getColumnIndex(EquipmentFactory.COLUMN_VERSION)));
+        equipment.setVersion(extractValueAsInt(resource, EquipmentFactory.COLUMN_VERSION));
         equipment.setName(extractValue(resource, EquipmentFactory.COLUMN_NAME));
         equipment.setDescription(extractValue(resource, EquipmentFactory.COLUMN_DESC));
         equipment.setReference(extractValue(resource, EquipmentFactory.COLUMN_REFERENCE));

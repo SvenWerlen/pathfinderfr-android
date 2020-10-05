@@ -125,7 +125,7 @@ public class ClassFactory extends DBEntityFactory {
         Class cl = new Class();
 
         cl.setId(resource.getLong(resource.getColumnIndex(ClassFactory.COLUMN_ID)));
-        cl.setVersion(resource.getInt(resource.getColumnIndex(ClassFactory.COLUMN_VERSION)));
+        cl.setVersion(extractValueAsInt(resource, ClassFactory.COLUMN_VERSION));
         cl.setName(extractValue(resource, ClassFactory.COLUMN_NAME));
         cl.setDescription(extractValue(resource, ClassFactory.COLUMN_DESC));
         cl.setReference(extractValue(resource, ClassFactory.COLUMN_REFERENCE));

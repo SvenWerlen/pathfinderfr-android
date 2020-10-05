@@ -63,15 +63,15 @@ public class SkillFactory extends DBEntityFactory {
     }
 
     @Override
-    public String getQueryFetchAll(String... sources) {
+    public String getQueryFetchAll(Integer version, String... sources) {
         // Skills have no sources
-        return super.getQueryFetchAll();
+        return super.getQueryFetchAll(version);
     }
 
     @Override
-    public String getQueryFetchAllWithAllFields(String... sources) {
+    public String getQueryFetchAllWithAllFields(Integer version, String... sources) {
         // Skills have no sources
-        return super.getQueryFetchAllWithAllFields();
+        return super.getQueryFetchAllWithAllFields(version);
     }
 
 
@@ -98,7 +98,7 @@ public class SkillFactory extends DBEntityFactory {
         Skill skill = new Skill();
 
         skill.setId(resource.getLong(resource.getColumnIndex(SkillFactory.COLUMN_ID)));
-        skill.setVersion(resource.getInt(resource.getColumnIndex(SkillFactory.COLUMN_VERSION)));
+        skill.setVersion(extractValueAsInt(resource, SkillFactory.COLUMN_VERSION));
         skill.setName(extractValue(resource,SkillFactory.COLUMN_NAME));
         skill.setDescription(extractValue(resource,SkillFactory.COLUMN_DESC));
         skill.setReference(extractValue(resource,SkillFactory.COLUMN_REFERENCE));

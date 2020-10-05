@@ -93,14 +93,9 @@ public class ArmorFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for display)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_BONUS, COLUMN_MALUS, COLUMN_CAST_FAIL, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_BONUS, COLUMN_MALUS, COLUMN_CAST_FAIL, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
     @Override
@@ -134,7 +129,7 @@ public class ArmorFactory extends DBEntityFactory {
         Armor armor = new Armor();
 
         armor.setId(resource.getLong(resource.getColumnIndex(ArmorFactory.COLUMN_ID)));
-        armor.setVersion(resource.getInt(resource.getColumnIndex(ArmorFactory.COLUMN_VERSION)));
+        armor.setVersion(extractValueAsInt(resource, ArmorFactory.COLUMN_VERSION));
         armor.setName(extractValue(resource, ArmorFactory.COLUMN_NAME));
         armor.setDescription(extractValue(resource, ArmorFactory.COLUMN_DESC));
         armor.setReference(extractValue(resource, ArmorFactory.COLUMN_REFERENCE));

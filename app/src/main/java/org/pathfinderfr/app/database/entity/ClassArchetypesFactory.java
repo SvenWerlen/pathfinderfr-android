@@ -96,7 +96,7 @@ public class ClassArchetypesFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for filtering)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
+    public String getQueryFetchAll(Integer version, String... sources) {
         String filters = "";
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
@@ -129,7 +129,7 @@ public class ClassArchetypesFactory extends DBEntityFactory {
         ClassArchetype archetype = new ClassArchetype();
 
         archetype.setId(resource.getLong(resource.getColumnIndex(ClassArchetypesFactory.COLUMN_ID)));
-        archetype.setVersion(resource.getInt(resource.getColumnIndex(ClassArchetypesFactory.COLUMN_VERSION)));
+        archetype.setVersion(extractValueAsInt(resource, ClassArchetypesFactory.COLUMN_VERSION));
         archetype.setName(extractValue(resource, ClassArchetypesFactory.COLUMN_NAME));
         archetype.setDescription(extractValue(resource, ClassArchetypesFactory.COLUMN_DESC));
         archetype.setReference(extractValue(resource, ClassArchetypesFactory.COLUMN_REFERENCE));

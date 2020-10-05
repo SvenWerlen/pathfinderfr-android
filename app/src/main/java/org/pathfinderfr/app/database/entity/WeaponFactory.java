@@ -82,14 +82,9 @@ public class WeaponFactory extends DBEntityFactory {
      * @return the query to fetch all entities (including fields required for display)
      */
     @Override
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s,%s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_DAMAGES_MEDIUM, COLUMN_CRITICAL, COLUMN_TYPE, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_DAMAGES_MEDIUM, COLUMN_CRITICAL, COLUMN_TYPE, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
     @Override
@@ -122,7 +117,7 @@ public class WeaponFactory extends DBEntityFactory {
         Weapon weapon = new Weapon();
 
         weapon.setId(resource.getLong(resource.getColumnIndex(WeaponFactory.COLUMN_ID)));
-        weapon.setVersion(resource.getInt(resource.getColumnIndex(WeaponFactory.COLUMN_VERSION)));
+        weapon.setVersion(extractValueAsInt(resource, WeaponFactory.COLUMN_VERSION));
         weapon.setName(extractValue(resource, WeaponFactory.COLUMN_NAME));
         weapon.setDescription(extractValue(resource, WeaponFactory.COLUMN_DESC));
         weapon.setReference(extractValue(resource, WeaponFactory.COLUMN_REFERENCE));

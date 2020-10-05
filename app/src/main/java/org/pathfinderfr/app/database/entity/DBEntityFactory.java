@@ -9,6 +9,7 @@ import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,8 +75,8 @@ public abstract class DBEntityFactory {
     /**
      * @return the query to fetch one entity (search by name)
      */
-    public String getQueryFetchByName(String name) {
-        return String.format("SELECT * FROM %s where %s=\"%s\"", getTableName(), COLUMN_NAME, name);
+    public String getQueryFetchByName(String name, int version) {
+        return String.format("SELECT * FROM %s where %s=\"%s\" and %s=%d ", getTableName(), COLUMN_NAME, name, COLUMN_VERSION, version);
     }
 
     /**
@@ -86,28 +87,37 @@ public abstract class DBEntityFactory {
     }
 
     /**
-     * @return the query to fetch all entities
+     * @param version data version
+     * @param sources enabled versions
+     * @return SQL filters
      */
-    public String getQueryFetchAll(String... sources) {
-        String filters = "";
+    protected String getFilters(Integer version, String... sources) {
+        String filters = String.format(Locale.CANADA,"WHERE %s=%d", COLUMN_VERSION, version);
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
+            filters += String.format(" AND %s IN (%s)", COLUMN_SOURCE, sourceList);
         }
+        return filters;
+    }
+
+    /**
+     * @return the query to fetch all entities
+     */
+    public String getQueryFetchAll(Integer version, String... sources) {
         return String.format("SELECT %s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
                 COLUMN_ID, COLUMN_NAME, getTableName(),
-                filters, // order by
+                getFilters(version, sources),
                 COLUMN_NAME);
     }
 
     /**
      * @return the query to fetch all entities
      */
-    public String getQueryFetchAllWithAllFields(String... sources) {
-        String filters = "";
+    public String getQueryFetchAllWithAllFields(Integer version, String... sources) {
+        String filters = String.format(Locale.CANADA,"WHERE %s=%d", COLUMN_VERSION, version);
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
+            filters += String.format(" AND %s IN (%s)", COLUMN_SOURCE, sourceList);
         }
         return String.format("SELECT * FROM %s %s ORDER BY %s COLLATE UNICODE",
                 getTableName(),
