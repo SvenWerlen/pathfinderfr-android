@@ -28,6 +28,7 @@ import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
 import org.pathfinderfr.app.database.entity.Modification;
 import org.pathfinderfr.app.database.entity.ModificationFactory;
+import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Spell;
@@ -52,7 +53,7 @@ import java.util.Set;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "pathfinderfr-data.db";
-    public static final int DATABASE_VERSION = 23;
+    public static final int DATABASE_VERSION = 24;
 
     private static DBHelper instance;
 
@@ -269,6 +270,27 @@ public class DBHelper extends SQLiteOpenHelper {
             oldVersion = 23;
             Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 23");
         }
+        /**
+         * MAJOR VERSION (4.x)
+         */
+        // version 24 introduced version for each catalog table
+        if(oldVersion == 23) {
+            executeNoFail(db, ArmorFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, ClassArchetypesFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, ClassFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, ClassFeatureFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, ConditionFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, EquipmentFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, MagicItemFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, RaceFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, SkillFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, SpellFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, TraitFactory.getInstance().getQueryUpgradeV4Version());
+            executeNoFail(db, WeaponFactory.getInstance().getQueryUpgradeV4Version());
+            oldVersion = 24;
+            Log.i(DBHelper.class.getSimpleName(), "Database properly migrated to version 24 (v4)");
+        }
     }
 
     /**
@@ -301,6 +323,20 @@ public class DBHelper extends SQLiteOpenHelper {
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV20());
         executeNoFail(db, CharacterFactory.getInstance().getQueryUpgradeV21());
         executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV22());
+        // version 4+
+        executeNoFail(db, ArmorFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, ClassArchetypesFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, ClassFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, ClassFeatureFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, ConditionFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, EquipmentFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, FeatFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, MagicItemFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, RaceFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, SkillFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, SpellFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, TraitFactory.getInstance().getQueryUpgradeV4Version());
+        executeNoFail(db, WeaponFactory.getInstance().getQueryUpgradeV4Version());
     }
 
     /**
