@@ -65,11 +65,12 @@ public class WeaponFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_COST, COLUMN_DAMAGES_SMALL, COLUMN_DAMAGES_MEDIUM, COLUMN_CRITICAL,
                 COLUMN_RANGE, COLUMN_WEIGHT, COLUMN_TYPE, COLUMN_SPECIAL);
@@ -98,6 +99,7 @@ public class WeaponFactory extends DBEntityFactory {
         }
         Weapon weapon = (Weapon) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, weapon.getVersion());
         contentValues.put(WeaponFactory.COLUMN_NAME, weapon.getName());
         contentValues.put(WeaponFactory.COLUMN_DESC, weapon.getDescription());
         contentValues.put(WeaponFactory.COLUMN_REFERENCE, weapon.getReference());
@@ -120,6 +122,7 @@ public class WeaponFactory extends DBEntityFactory {
         Weapon weapon = new Weapon();
 
         weapon.setId(resource.getLong(resource.getColumnIndex(WeaponFactory.COLUMN_ID)));
+        weapon.setVersion(resource.getInt(resource.getColumnIndex(WeaponFactory.COLUMN_VERSION)));
         weapon.setName(extractValue(resource, WeaponFactory.COLUMN_NAME));
         weapon.setDescription(extractValue(resource, WeaponFactory.COLUMN_DESC));
         weapon.setReference(extractValue(resource, WeaponFactory.COLUMN_REFERENCE));

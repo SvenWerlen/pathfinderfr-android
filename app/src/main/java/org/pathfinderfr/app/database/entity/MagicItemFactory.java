@@ -67,11 +67,12 @@ public class MagicItemFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s integer, %s text, %s text, %s text, " +
                         "%s text, %s integer, %s text, %s text " +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_TYPE, COLUMN_COST, COLUMN_LOCATION, COLUMN_WEIGHT,
                 COLUMN_AURA, COLUMN_SCL, COLUMN_MANUF_REQ, COLUMN_MANUF_COST);
@@ -100,6 +101,7 @@ public class MagicItemFactory extends DBEntityFactory {
         }
         MagicItem item = (MagicItem) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, item.getVersion());
         contentValues.put(MagicItemFactory.COLUMN_NAME, item.getName());
         contentValues.put(MagicItemFactory.COLUMN_DESC, item.getDescription());
         contentValues.put(MagicItemFactory.COLUMN_REFERENCE, item.getReference());
@@ -122,6 +124,7 @@ public class MagicItemFactory extends DBEntityFactory {
         MagicItem item = new MagicItem();
 
         item.setId(resource.getLong(resource.getColumnIndex(MagicItemFactory.COLUMN_ID)));
+        item.setVersion(resource.getInt(resource.getColumnIndex(MagicItemFactory.COLUMN_VERSION)));
         item.setName(extractValue(resource, MagicItemFactory.COLUMN_NAME));
         item.setDescription(extractValue(resource, MagicItemFactory.COLUMN_DESC));
         item.setReference(extractValue(resource, MagicItemFactory.COLUMN_REFERENCE));

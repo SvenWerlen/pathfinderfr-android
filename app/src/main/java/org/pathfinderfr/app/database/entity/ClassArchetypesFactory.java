@@ -82,10 +82,11 @@ public class ClassArchetypesFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s integer" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_CLASS);
         return query;
@@ -113,6 +114,7 @@ public class ClassArchetypesFactory extends DBEntityFactory {
         }
         ClassArchetype archetype = (ClassArchetype) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, archetype.getVersion());
         contentValues.put(ClassArchetypesFactory.COLUMN_NAME, archetype.getName());
         contentValues.put(ClassArchetypesFactory.COLUMN_DESC, archetype.getDescription());
         contentValues.put(ClassArchetypesFactory.COLUMN_REFERENCE, archetype.getReference());
@@ -127,6 +129,7 @@ public class ClassArchetypesFactory extends DBEntityFactory {
         ClassArchetype archetype = new ClassArchetype();
 
         archetype.setId(resource.getLong(resource.getColumnIndex(ClassArchetypesFactory.COLUMN_ID)));
+        archetype.setVersion(resource.getInt(resource.getColumnIndex(ClassArchetypesFactory.COLUMN_VERSION)));
         archetype.setName(extractValue(resource, ClassArchetypesFactory.COLUMN_NAME));
         archetype.setDescription(extractValue(resource, ClassArchetypesFactory.COLUMN_DESC));
         archetype.setReference(extractValue(resource, ClassArchetypesFactory.COLUMN_REFERENCE));

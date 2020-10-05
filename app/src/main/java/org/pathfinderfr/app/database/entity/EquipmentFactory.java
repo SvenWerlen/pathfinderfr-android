@@ -55,10 +55,11 @@ public class EquipmentFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_COST, COLUMN_WEIGHT, COLUMN_CATEGORY);
 
@@ -86,6 +87,7 @@ public class EquipmentFactory extends DBEntityFactory {
         }
         Equipment equipment = (Equipment) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, equipment.getVersion());
         contentValues.put(EquipmentFactory.COLUMN_NAME, equipment.getName());
         contentValues.put(EquipmentFactory.COLUMN_DESC, equipment.getDescription());
         contentValues.put(EquipmentFactory.COLUMN_REFERENCE, equipment.getReference());
@@ -103,6 +105,7 @@ public class EquipmentFactory extends DBEntityFactory {
         Equipment equipment = new Equipment();
 
         equipment.setId(resource.getLong(resource.getColumnIndex(EquipmentFactory.COLUMN_ID)));
+        equipment.setVersion(resource.getInt(resource.getColumnIndex(EquipmentFactory.COLUMN_VERSION)));
         equipment.setName(extractValue(resource, EquipmentFactory.COLUMN_NAME));
         equipment.setDescription(extractValue(resource, EquipmentFactory.COLUMN_DESC));
         equipment.setReference(extractValue(resource, EquipmentFactory.COLUMN_REFERENCE));

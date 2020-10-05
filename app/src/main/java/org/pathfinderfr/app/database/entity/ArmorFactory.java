@@ -67,12 +67,13 @@ public class ArmorFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +   // name, desc, ref, source
                         "%s text," +                              // category
                         "%s text, %s text, %s text, %s text," +   // cost, bonus, bonus_dex, malus
                         "%s text, %s text, %s text, %s text" +    // cast, speed9, speed6, weight
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_CATEGORY,
                 COLUMN_COST, COLUMN_BONUS, COLUMN_BONUS_DEX_MAX, COLUMN_MALUS,
@@ -109,6 +110,7 @@ public class ArmorFactory extends DBEntityFactory {
         }
         Armor armor = (Armor) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ArmorFactory.COLUMN_VERSION, armor.getVersion());
         contentValues.put(ArmorFactory.COLUMN_NAME, armor.getName());
         contentValues.put(ArmorFactory.COLUMN_DESC, armor.getDescription());
         contentValues.put(ArmorFactory.COLUMN_REFERENCE, armor.getReference());
@@ -132,6 +134,7 @@ public class ArmorFactory extends DBEntityFactory {
         Armor armor = new Armor();
 
         armor.setId(resource.getLong(resource.getColumnIndex(ArmorFactory.COLUMN_ID)));
+        armor.setVersion(resource.getInt(resource.getColumnIndex(ArmorFactory.COLUMN_VERSION)));
         armor.setName(extractValue(resource, ArmorFactory.COLUMN_NAME));
         armor.setDescription(extractValue(resource, ArmorFactory.COLUMN_DESC));
         armor.setReference(extractValue(resource, ArmorFactory.COLUMN_REFERENCE));

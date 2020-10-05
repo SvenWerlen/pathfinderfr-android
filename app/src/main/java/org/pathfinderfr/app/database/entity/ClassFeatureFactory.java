@@ -120,10 +120,11 @@ public class ClassFeatureFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s integer, %s integer, %s text, %s integer, %s integer" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_CLASS, COLUMN_ARCHETYPE, COLUMN_CONDITIONS, COLUMN_LEVEL, COLUMN_AUTOMATIC);
         return query;
@@ -158,6 +159,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
         }
         ClassFeature classFeature = (ClassFeature) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, classFeature.getVersion());
         contentValues.put(ClassFeatureFactory.COLUMN_NAME, classFeature.getName());
         contentValues.put(ClassFeatureFactory.COLUMN_DESC, classFeature.getDescription());
         contentValues.put(ClassFeatureFactory.COLUMN_REFERENCE, classFeature.getReference());
@@ -175,6 +177,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Cursor resource) {
         ClassFeature classFeature = new ClassFeature();
         classFeature.setId(resource.getLong(resource.getColumnIndex(ClassFeatureFactory.COLUMN_ID)));
+        classFeature.setVersion(resource.getInt(resource.getColumnIndex(ClassFeatureFactory.COLUMN_VERSION)));
         classFeature.setName(extractValue(resource, ClassFeatureFactory.COLUMN_NAME));
         classFeature.setDescription(extractValue(resource, ClassFeatureFactory.COLUMN_DESC));
         classFeature.setReference(extractValue(resource, ClassFeatureFactory.COLUMN_REFERENCE));

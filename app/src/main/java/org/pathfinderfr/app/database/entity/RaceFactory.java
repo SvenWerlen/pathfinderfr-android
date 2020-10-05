@@ -49,10 +49,11 @@ public class RaceFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_TRAITS);
         return query;
@@ -65,6 +66,7 @@ public class RaceFactory extends DBEntityFactory {
         }
         Race race = (Race) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, race.getVersion());
         contentValues.put(RaceFactory.COLUMN_NAME, race.getName());
         contentValues.put(RaceFactory.COLUMN_DESC, race.getDescription());
         contentValues.put(RaceFactory.COLUMN_REFERENCE, race.getReference());
@@ -89,6 +91,7 @@ public class RaceFactory extends DBEntityFactory {
         Race race = new Race();
 
         race.setId(resource.getLong(resource.getColumnIndex(RaceFactory.COLUMN_ID)));
+        race.setVersion(resource.getInt(resource.getColumnIndex(RaceFactory.COLUMN_VERSION)));
         race.setName(extractValue(resource,RaceFactory.COLUMN_NAME));
         race.setDescription(extractValue(resource,RaceFactory.COLUMN_DESC));
         race.setReference(extractValue(resource,RaceFactory.COLUMN_REFERENCE));

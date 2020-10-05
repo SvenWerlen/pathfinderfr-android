@@ -1,5 +1,6 @@
 package org.pathfinderfr.app.database.entity;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import java.util.Set;
 public abstract class DBEntityFactory {
 
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_VERSION = "version";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESC = "description";
     public static final String COLUMN_REFERENCE = "reference";
@@ -47,8 +49,16 @@ public abstract class DBEntityFactory {
     }
 
     /**
+     * @return Version 4 introduced a version for almost all tables
+     */
+    public String getQueryUpgradeV4Version() {
+        return String.format("ALTER TABLE %s ADD COLUMN %s integer;", getTableName(), COLUMN_VERSION);
+    }
+
+    /**
      * @return the query to fetch one entity (search by ID)
      */
+    @SuppressLint("DefaultLocale")
     public String getQueryFetchById(long id) {
         return String.format("SELECT * FROM %s where %s=%d", getTableName(), COLUMN_ID, id);
     }
@@ -114,6 +124,7 @@ public abstract class DBEntityFactory {
 
     /**
      * Generates the content values required for inserting the entity into the database.
+     * @param entity database entity
      * @param flags indicates which parts to update
      *
      * @return ContentValues filled with values from entity
@@ -193,7 +204,7 @@ public abstract class DBEntityFactory {
 
     protected static boolean extractValueAsBoolean(@NonNull final Cursor resource, String columnName) {
         if(resource.getColumnIndex(columnName)>=0) {
-            return resource.getInt(resource.getColumnIndex(columnName)) == 1 ? true : false;
+            return resource.getInt(resource.getColumnIndex(columnName)) == 1;
         } else {
             return false;
         }

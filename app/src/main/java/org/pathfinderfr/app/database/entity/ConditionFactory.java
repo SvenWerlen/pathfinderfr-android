@@ -46,9 +46,10 @@ public class ConditionFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE);
         return query;
     }
@@ -61,6 +62,7 @@ public class ConditionFactory extends DBEntityFactory {
         }
         Condition condition = (Condition) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, condition.getVersion());
         contentValues.put(ConditionFactory.COLUMN_NAME, condition.getName());
         contentValues.put(ConditionFactory.COLUMN_DESC, condition.getDescription());
         contentValues.put(ConditionFactory.COLUMN_REFERENCE, condition.getReference());
@@ -74,6 +76,7 @@ public class ConditionFactory extends DBEntityFactory {
         Condition condition = new Condition();
 
         condition.setId(resource.getLong(resource.getColumnIndex(ConditionFactory.COLUMN_ID)));
+        condition.setVersion(resource.getInt(resource.getColumnIndex(ConditionFactory.COLUMN_VERSION)));
         condition.setName(extractValue(resource, ConditionFactory.COLUMN_NAME));
         condition.setDescription(extractValue(resource, ConditionFactory.COLUMN_DESC));
         condition.setReference(extractValue(resource, ConditionFactory.COLUMN_REFERENCE));

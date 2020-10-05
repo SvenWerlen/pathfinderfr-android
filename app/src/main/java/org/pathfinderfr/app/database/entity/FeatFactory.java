@@ -67,10 +67,11 @@ public class FeatFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_SUMMARY, COLUMN_CATEGORY, COLUMN_CONDITIONS, COLUMN_REQUIRES, COLUMN_ADVANTAGE, COLUMN_SPECIAL,  COLUMN_NORMAL);
         return query;
@@ -111,6 +112,7 @@ public class FeatFactory extends DBEntityFactory {
         }
         Feat feat = (Feat) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, feat.getVersion());
         contentValues.put(FeatFactory.COLUMN_NAME, feat.getName());
         contentValues.put(FeatFactory.COLUMN_DESC, feat.getDescription());
         contentValues.put(FeatFactory.COLUMN_REFERENCE, feat.getReference());
@@ -136,6 +138,7 @@ public class FeatFactory extends DBEntityFactory {
         Feat feat = new Feat();
 
         feat.setId(resource.getLong(resource.getColumnIndex(FeatFactory.COLUMN_ID)));
+        feat.setVersion(resource.getInt(resource.getColumnIndex(FeatFactory.COLUMN_VERSION)));
         feat.setName(extractValue(resource,FeatFactory.COLUMN_NAME));
         feat.setDescription(extractValue(resource,FeatFactory.COLUMN_DESC));
         feat.setReference(extractValue(resource,FeatFactory.COLUMN_REFERENCE));

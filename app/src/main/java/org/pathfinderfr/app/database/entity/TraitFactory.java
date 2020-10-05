@@ -86,10 +86,11 @@ public class TraitFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s integer, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_RACE, COLUMN_REPLACES, COLUMN_ALTERS);
         return query;
@@ -117,6 +118,7 @@ public class TraitFactory extends DBEntityFactory {
         }
         Trait raceAltTrait = (Trait) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, raceAltTrait.getVersion());
         contentValues.put(TraitFactory.COLUMN_NAME, raceAltTrait.getName());
         contentValues.put(TraitFactory.COLUMN_DESC, raceAltTrait.getDescription());
         contentValues.put(TraitFactory.COLUMN_REFERENCE, raceAltTrait.getReference());
@@ -135,6 +137,7 @@ public class TraitFactory extends DBEntityFactory {
         Trait trait = new Trait();
 
         trait.setId(resource.getLong(resource.getColumnIndex(TraitFactory.COLUMN_ID)));
+        trait.setVersion(resource.getInt(resource.getColumnIndex(TraitFactory.COLUMN_VERSION)));
         trait.setName(extractValue(resource, TraitFactory.COLUMN_NAME));
         trait.setDescription(extractValue(resource, TraitFactory.COLUMN_DESC));
         trait.setReference(extractValue(resource, TraitFactory.COLUMN_REFERENCE));

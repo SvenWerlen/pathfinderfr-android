@@ -75,11 +75,12 @@ public class SpellFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_SCHOOL, COLUMN_LEVEL, COLUMN_CASTING,  COLUMN_COMPONENTS, COLUMN_RANGE,
                 COLUMN_TARGET, COLUMN_DURATION, COLUMN_SAVING, COLUMN_SPELL_RES);
@@ -149,6 +150,7 @@ public class SpellFactory extends DBEntityFactory {
         }
         Spell spell = (Spell) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, spell.getVersion());
         contentValues.put(SpellFactory.COLUMN_NAME, spell.getName());
         contentValues.put(SpellFactory.COLUMN_DESC, spell.getDescription());
         contentValues.put(SpellFactory.COLUMN_REFERENCE, spell.getReference());
@@ -171,6 +173,7 @@ public class SpellFactory extends DBEntityFactory {
         Spell spell = new Spell();
         
         spell.setId(resource.getLong(resource.getColumnIndex(SpellFactory.COLUMN_ID)));
+        spell.setVersion(resource.getInt(resource.getColumnIndex(SpellFactory.COLUMN_VERSION)));
         spell.setName(extractValue(resource,SpellFactory.COLUMN_NAME));
         spell.setDescription(extractValue(resource,SpellFactory.COLUMN_DESC));
         spell.setReference(extractValue(resource,SpellFactory.COLUMN_REFERENCE));

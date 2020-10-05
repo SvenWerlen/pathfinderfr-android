@@ -8,6 +8,7 @@ public abstract class DBEntity implements Serializable, Comparable<DBEntity> {
     public abstract DBEntityFactory getFactory();
 
     protected long id;
+    protected int version;
     protected String name;
     protected String description;
     protected String reference;
@@ -18,6 +19,14 @@ public abstract class DBEntity implements Serializable, Comparable<DBEntity> {
     }
     public void setId(long id) {
         this.id = id;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getName() {

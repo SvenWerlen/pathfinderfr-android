@@ -68,10 +68,11 @@ public class ClassFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text, %s text," +
                         "%s text, %s text, %s text, %s text, %s integer" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE, COLUMN_SOURCE,
                 COLUMN_ALIGNMENT, COLUMN_HITDIE, COLUMN_CLASSSKILLS, COLUMN_LEVELS, COLUMN_RANKSPERLVL);
         return query;
@@ -91,6 +92,7 @@ public class ClassFactory extends DBEntityFactory {
         }
         Class cl = (Class) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ArmorFactory.COLUMN_VERSION, cl.getVersion());
         contentValues.put(ClassFactory.COLUMN_NAME, cl.getName());
         contentValues.put(ClassFactory.COLUMN_DESC, cl.getDescription());
         contentValues.put(ClassFactory.COLUMN_REFERENCE, cl.getReference());
@@ -123,6 +125,7 @@ public class ClassFactory extends DBEntityFactory {
         Class cl = new Class();
 
         cl.setId(resource.getLong(resource.getColumnIndex(ClassFactory.COLUMN_ID)));
+        cl.setVersion(resource.getInt(resource.getColumnIndex(ClassFactory.COLUMN_VERSION)));
         cl.setName(extractValue(resource, ClassFactory.COLUMN_NAME));
         cl.setDescription(extractValue(resource, ClassFactory.COLUMN_DESC));
         cl.setReference(extractValue(resource, ClassFactory.COLUMN_REFERENCE));

@@ -52,10 +52,11 @@ public class SkillFactory extends DBEntityFactory {
     public String getQueryCreateTable() {
         String query = String.format( "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s integer PRIMARY key, " +
+                        "%s integer version, " +
                         "%s text, %s text, %s text," +
                         "%s text, %s text, %s text" +
                         ")",
-                TABLENAME, COLUMN_ID,
+                TABLENAME, COLUMN_ID, COLUMN_VERSION,
                 COLUMN_NAME, COLUMN_DESC, COLUMN_REFERENCE,
                 COLUMN_ABILITY, COLUMN_TRAINING, COLUMN_ARMORPENALTY);
         return query;
@@ -81,6 +82,7 @@ public class SkillFactory extends DBEntityFactory {
         }
         Skill skill = (Skill) entity;
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ClassArchetypesFactory.COLUMN_VERSION, skill.getVersion());
         contentValues.put(SkillFactory.COLUMN_NAME, skill.getName());
         contentValues.put(SkillFactory.COLUMN_DESC, skill.getDescription());
         contentValues.put(SkillFactory.COLUMN_REFERENCE, skill.getReference());
@@ -96,6 +98,7 @@ public class SkillFactory extends DBEntityFactory {
         Skill skill = new Skill();
 
         skill.setId(resource.getLong(resource.getColumnIndex(SkillFactory.COLUMN_ID)));
+        skill.setVersion(resource.getInt(resource.getColumnIndex(SkillFactory.COLUMN_VERSION)));
         skill.setName(extractValue(resource,SkillFactory.COLUMN_NAME));
         skill.setDescription(extractValue(resource,SkillFactory.COLUMN_DESC));
         skill.setReference(extractValue(resource,SkillFactory.COLUMN_REFERENCE));
