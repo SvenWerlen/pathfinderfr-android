@@ -69,7 +69,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private synchronized void loadClasses() {
         classesById.clear();
         classesByName.clear();
-        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance());
+        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassFactory.getInstance(),-1,null);
         for(DBEntity e : fullList) {
             classesById.put(e.getId(), (Class)e);
             classesByName.put(e.getName(), (Class)e);

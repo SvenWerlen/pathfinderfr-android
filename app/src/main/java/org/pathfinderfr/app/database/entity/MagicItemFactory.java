@@ -85,13 +85,8 @@ public class MagicItemFactory extends DBEntityFactory {
      */
     @Override
     public String getQueryFetchAll(Integer version, String... sources) {
-        String filters = "";
-        if(sources != null && sources.length > 0) {
-            String sourceList = StringUtil.listToString(sources, ',', '\'');
-            filters = String.format("WHERE %s IN (%s)", COLUMN_SOURCE, sourceList);
-        }
         return String.format("SELECT %s,%s,%s FROM %s %s ORDER BY %s COLLATE UNICODE",
-                COLUMN_ID, COLUMN_NAME, COLUMN_TYPE, getTableName(), filters, COLUMN_NAME);
+                COLUMN_ID, COLUMN_NAME, COLUMN_TYPE, getTableName(), getFilters(version, sources), COLUMN_NAME);
     }
 
     @Override
@@ -148,23 +143,23 @@ public class MagicItemFactory extends DBEntityFactory {
         item.setReference((String)attributes.get(YAML_REFERENCE));
         item.setSource((String)attributes.get(YAML_SOURCE));
         String type = (String)attributes.get(YAML_TYPE);
-        if("Armure/Bouclier".equals(type)) {
+        if("Armure/Bouclier".equals(type) || "Armures magiques spécifiques".equals(type) || "Boucliers magiques spécifiques".equals(type)) {
             item.setType(MagicItem.TYPE_ARMOR_SHIELD);
-        } else if("Arme".equals(type)) {
+        } else if("Arme".equals(type) || "Armes magiques spécifiques".equals(type)) {
             item.setType(MagicItem.TYPE_WEAPON);
         } else if("Potion".equals(type)) {
             item.setType(MagicItem.TYPE_POTION);
-        } else if("Anneau".equals(type)) {
+        } else if("Anneau".equals(type) || "Anneaux magiques".equals(type)) {
             item.setType(MagicItem.TYPE_RING);
-        } else if("Sceptre".equals(type)) {
+        } else if("Sceptre".equals(type) || "Sceptres magiques".equals(type)) {
             item.setType(MagicItem.TYPE_SCEPTER);
         } else if("Parchemin".equals(type)) {
             item.setType(MagicItem.TYPE_SCROLL);
-        } else if("Bâton".equals(type)) {
+        } else if("Bâton".equals(type) || "Bâtons magiques".equals(type)) {
             item.setType(MagicItem.TYPE_STAFF);
         } else if("Baguette".equals(type)) {
             item.setType(MagicItem.TYPE_WAND);
-        } else if("Objet merveilleux".equals(type)) {
+        } else if("Objet merveilleux".equals(type) || "Objets merveilleux".equals(type)) {
             item.setType(MagicItem.TYPE_OBJECT);
         }
         item.setCost((String)attributes.get(YAML_COST));

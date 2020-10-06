@@ -173,7 +173,7 @@ public class FilterClassFeaturesFragment extends DialogFragment implements View.
         for(ClassArchetype a : archetypes) {
             if(selectedClass == ClassFeatureFilter.FILTER_CLASS_SHOW_ALL) {
                 break;
-            } else if(selectedClass != a.getClass_().getId()) {
+            } else if(a.getClass_() == null || selectedClass != a.getClass_().getId()) {
                 continue;
             }
             listArchs.add(new StringWithTag(a.getName(), a.getId()));

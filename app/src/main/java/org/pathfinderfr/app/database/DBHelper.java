@@ -86,23 +86,19 @@ public class DBHelper extends SQLiteOpenHelper {
         executeNoFail(db, VersionFactory.getInstance().getQueryCreateTable());
     }
 
-    public void clear() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        for (DBEntityFactory f : EntityFactories.FACTORIES) {
-            // never drop favorites && characters!
-            if(!(f instanceof FavoriteFactory) && !(f instanceof CharacterFactory)) {
-                db.execSQL(String.format("DROP TABLE IF EXISTS %s", f.getTableName()));
-            }
-            db.execSQL(f.getQueryCreateTable());
-        }
-    }
-
     public void clear(DBEntityFactory factory) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", factory.getTableName()));
         db.execSQL(factory.getQueryCreateTable());
         factory.cleanup();
     }
+
+    public void clearDataWithVersion(DBEntityFactory factory) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(String.format("DELETE FROM %s WHERE version IS NOT NULL", factory.getTableName()));
+        factory.cleanup();
+    }
+
 
     // DEBUGING ONLY
     @Override
@@ -655,9 +651,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-
-
     public List<DBEntity> getAllEntities(DBEntityFactory factory, String... sources) {
+        return getAllEntities(factory, null, sources);
+    }
+
+    public List<DBEntity> getAllEntities(DBEntityFactory factory, Integer dataVersion, String... sources) {
         ArrayList<DBEntity> list = new ArrayList<>();
 
         Log.i(DBHelper.class.getSimpleName(), String.format("getAllEntities with %d filters", (sources == null ? 0 : sources.length)));
@@ -665,7 +663,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            Integer version = getVersion(factory.getFactoryId().toLowerCase());
+            Integer version = dataVersion == null ? getVersion(factory.getFactoryId().toLowerCase()) : dataVersion;
             res = db.rawQuery(factory.getQueryFetchAll(version, sources), null);
             Log.i(DBHelper.class.getSimpleName(),"Number of elements found in database: " + res.getCount());
             res.moveToFirst();
@@ -959,7 +957,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 res = db.rawQuery(factory.getQueryFetchAllVersion(), null);
                 // not found?
                 if (res.getCount() < 1) {
-                    return null;
+                    return DBHelper.versions;
                 }
                 res.moveToFirst();
                 while (!res.isAfterLast()) {
@@ -971,7 +969,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 res.close();
             } catch (SQLiteException exception) {
                 exception.printStackTrace();
-                return null;
+                return DBHelper.versions;
             } finally {
                 if (res != null) {
                     res.close();

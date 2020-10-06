@@ -153,10 +153,10 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
             progresses[idx].setOldVersion(oldVersion);
             progresses[idx].setNewVersion(newVersion);
 
-            //System.out.println("Version " + dataId + ": " + oldVersion + " => " + newVersion);
+            System.out.println("Version " + dataId + ": " + oldVersion + " => " + newVersion);
 
             // no update required => skip
-            if(!forceUpdate && oldVersion != null && newVersion != null && oldVersion.intValue() >= newVersion.intValue()) {
+            if(!forceUpdate && oldVersion != null && newVersion != null && oldVersion >= newVersion) {
                 progresses[idx].setStatus(UpdateStatus.STATUS_NOUPDATE_REQUIRED);
                 idx++;
                 continue;
@@ -165,6 +165,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
             String address = source.first;
             DBEntityFactory factory = source.second;
             // dbHelper.clear(factory); // since v4, tables are not cleared any more
+            dbHelper.clearDataWithVersion(factory);
 
             if(factory == SpellFactory.getInstance()) {
                 reIndexingRequired = true;

@@ -92,7 +92,12 @@ public abstract class DBEntityFactory {
      * @return SQL filters
      */
     protected String getFilters(Integer version, String... sources) {
-        String filters = String.format(Locale.CANADA,"WHERE %s=%d", COLUMN_VERSION, version);
+        String filters;
+        if(version == null || version <= 0) {
+            filters = String.format(Locale.CANADA,"WHERE (%s IS NULL OR %s > 0)", COLUMN_VERSION, COLUMN_VERSION);
+        } else {
+            filters = String.format(Locale.CANADA, "WHERE %s=%d", COLUMN_VERSION, version);
+        }
         if(sources != null && sources.length > 0) {
             String sourceList = StringUtil.listToString(sources, ',', '\'');
             filters += String.format(" AND %s IN (%s)", COLUMN_SOURCE, sourceList);
