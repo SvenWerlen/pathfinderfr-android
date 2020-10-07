@@ -18,9 +18,13 @@ import android.view.View;
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.MigrationHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
+import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+
+import java.util.List;
 
 public class CharacterSheetActivity extends AppCompatActivity implements SheetMainFragment.Callbacks, SheetClassFeatureFragment.Callbacks, SheetFeatFragment.Callbacks {
 
@@ -75,6 +79,13 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
         }
         // update character
         character = (Character)DBHelper.getInstance(getBaseContext()).fetchEntity(character.getId(),CharacterFactory.getInstance());
+
+        List<DBEntity> list = MigrationHelper.convert(character);
+        System.out.println("============================== MIGRATION ====================================== ");
+        for(DBEntity e : list) {
+            System.out.println("Missing: " + e.getName());
+        }
+        System.out.println("================================================================================ ");
 
         if(currentTab != TAB_HOME) {
             if (character.getClassesCount() == 0) {
