@@ -3,6 +3,7 @@ package org.pathfinderfr.app.database.entity;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
 import java.text.Collator;
+import java.util.Objects;
 
 public class ClassFeature extends DBEntity {
 
@@ -90,5 +91,20 @@ public class ClassFeature extends DBEntity {
         } else {
             return Integer.compare(getLevel(), ((ClassFeature) o).getLevel());
         }
+    }
+
+    /**
+     * Comparison based on name but also class and archetype (duplicated names exist)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (class_ == null || getClass() != o.getClass()) return false;
+        ClassFeature f = (ClassFeature)o;
+        String arch1 = archetype == null ? "" : archetype.getName();
+        String arch2 = f.getClassArchetype() == null ? "" : f.getClassArchetype().getName();
+        return name.equals(f.getName()) &&
+                class_.getName().equals(f.getClass_().getName()) &&
+                arch1.equals(arch2);
     }
 }

@@ -328,7 +328,7 @@ public class CharacterFactory extends DBEntityFactory {
                 StringBuffer value = new StringBuffer();
                 for (Long skillId : c.getSkills()) {
                     Skill skill = (Skill)DBHelper.getInstance(null).fetchEntity(skillId, SkillFactory.getInstance());
-                    if(skill != null) {
+                    if(skill != null && c.getSkillRank(skillId) > 0) {
                         value.append(skillId).append(':').append(c.getSkillRank(skillId));
                         if (!c.isClassSkillByDefault(skill) && c.isClassSkill(skill)) {
                             value.append(':').append(Boolean.TRUE);

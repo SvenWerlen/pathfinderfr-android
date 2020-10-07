@@ -586,7 +586,8 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public DBEntity fetchEntityByName(String name, DBEntityFactory factory) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name, getVersions().get(factory.getTableName())), null );
+        Integer version = getVersions().get(factory.getFactoryId().toLowerCase());
+        Cursor res =  db.rawQuery( factory.getQueryFetchByName(name, version == null ? -1 : version), null );
         // not found?
         if(res.getCount()<1) {
             res.close();
@@ -935,7 +936,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Integer getVersion(String dataId) {
-        Log.i(DBHelper.class.getSimpleName(), String.format("Retrieving version of data %s", dataId));
         Map<String, Integer> versions = getVersions();
         return versions.containsKey(dataId) ? versions.get(dataId) : Integer.valueOf(-1);
     }
