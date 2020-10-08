@@ -291,7 +291,7 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
         }
 
         // ==============================================
-        // Third part : migrate favorites
+        // Last part : update spell class indexes
         // ==============================================
         if(reIndexingRequired) {
             caller.onOptimisation();

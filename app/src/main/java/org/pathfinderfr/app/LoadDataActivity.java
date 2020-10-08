@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.pathfinderfr.R;
+import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.LoadDataTask;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.ClassArchetypesFactory;
@@ -29,6 +30,10 @@ import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.IDataUI {
 
@@ -57,6 +62,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     button.setText(getResources().getString(R.string.loaddata_stop));
                     findViewById(R.id.loaddataProgressBar).setVisibility(View.VISIBLE);
                     findViewById(R.id.loaddataInfos).setVisibility(View.VISIBLE);
+                    findViewById(R.id.migrationRequiredMessage).setVisibility(View.GONE);
                     boolean forceUpdate = ((CheckBox)findViewById(R.id.forceupdate)).isChecked();
 
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, forceUpdate);
@@ -164,12 +170,25 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     public void onProgressCompleted(Integer... counts) {
         findViewById(R.id.optimizeMessage).setVisibility(View.GONE);
 
-        // change status
+        // change status migrationRequiredMessage
         loadTaskInProgress = null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final String buttonText = getResources().getString(R.string.loaddata_start);
         final int progress = 100;
+
+        // migrate characters
+        Map<String, Integer> unmatched = DBHelper.getInstance(this.getBaseContext()).migrateCharacters(false);
+        if(unmatched.size() > 0) {
+            StringBuffer buf = new StringBuffer();
+            for(String name: unmatched.keySet()) {
+                buf.append(String.format(Locale.CANADA, ", %s (%d)", name, unmatched.get(name)));
+            }
+            if( buf.length() > 0 ) buf.delete(0, 2);
+            TextView tv = findViewById(R.id.migrationRequiredMessage);
+            tv.setText(String.format(ConfigurationUtil.getInstance(getBaseContext()).getProperties().getProperty("warning.migrationrequired"), buf.toString()));
+            tv.setVisibility(View.VISIBLE);
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -180,55 +199,5 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
             }
         });
     }
-
-    /**
-     * Generates debugging information about the migration of favorites
-     * @param progresses the progress information (when completed)
-     * @return html text to be displayed
-     */
-    private String favoriteMigrationText(LoadDataTask.UpdateStatus... progresses) {
-
-        String text = "";
-        for(LoadDataTask.UpdateStatus status : progresses) {
-            if(status == null) {
-                continue;
-            }
-            for(Pair<DBEntity,Integer> fav: status.getFavoriteStatus()) {
-                boolean error = false;
-                String statusText = null;
-                switch (fav.second) {
-                    case LoadDataTask.UpdateStatus.STATUS_MIGR_NOTCHANGED:
-                        statusText = getResources().getString(R.string.loaddata_status_notchanged);
-                        break;
-                    case LoadDataTask.UpdateStatus.STATUS_MIGR_CHANGED:
-                        statusText = getResources().getString(R.string.loaddata_status_changed);
-                        break;
-                    case LoadDataTask.UpdateStatus.STATUS_MIGR_NOTFOUND:
-                        statusText = getResources().getString(R.string.loaddata_status_notfound);
-                        error = true;
-                        break;
-                    case LoadDataTask.UpdateStatus.STATUS_MIGR_DELETED:
-                        statusText = getResources().getString(R.string.loaddata_status_deleted);
-                        error = true;
-                        break;
-                    default:
-                        statusText = getResources().getString(R.string.loaddata_status_error);
-                        error = true;
-                        break;
-                }
-                if (error) {
-                    text += String.format("<b>%s</b>: <span style=\"color:#cc0000\">%s</span><br/>",
-                            fav.first.getName(), statusText);
-                } else {
-                    text += String.format("<b>%s</b>: <span style=\"color:#006600\">%s</span><br/>",
-                            fav.first.getName(), statusText);
-                }
-            }
-        }
-
-        return text;
-    }
-
-
 
 }

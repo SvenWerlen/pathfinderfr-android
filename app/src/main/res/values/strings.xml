@@ -169,6 +169,7 @@
     <string name="apply_filters">Appliquer</string>
 
     <!-- Buttons -->
+    <string name="close">Fermer</string>
     <string name="cancel">Annuler</string>
     <string name="save">Enregistrer</string>
     <string name="delete">Supprimer</string>
@@ -793,6 +794,15 @@
     <string name="sheet_additem">Objet</string>
     <string name="sheet_addmagic">Objet magique</string>
     <string name="sheet_addobject">Objet (manuel)</string>
+
+    <!-- Strings related to data migration -->
+    <string name="migration_message">La liste ci-dessous énumère les éléments qui n\'ont pas pu
+        être migrés suite à la dernière mise à jour des données. Consultez le catalogue pour trouver
+        la correspondance et effectuez le changement en ajoutant le nouvel élément et en supprimant
+        la donnée désuète. Les données non-migrées ne reçoivent plus de mise à jour et pourraient
+        être incompatibles avec de futures évolutions.
+    </string>
+    <string name="sheet_migration_sample">Sort: Arc de glace</string>
 
 </resources>
 

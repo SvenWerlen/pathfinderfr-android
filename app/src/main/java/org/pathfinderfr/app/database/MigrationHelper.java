@@ -38,7 +38,9 @@ import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.Triplet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MigrationHelper {
 
@@ -196,27 +198,35 @@ public class MigrationHelper {
     /**
      * Tries to migrate a character data on the latest version (based on names)
      */
-    public static List<DBEntity> convert(Character c) {
+    public static List<DBEntity> migrate(Character c, boolean reportOnly) {
+        List<DBEntity> matched = new ArrayList<>();
         List<DBEntity> unmatched = new ArrayList<>();
         DBHelper helper = DBHelper.getInstance(null);
         // ABILITIES
         int skillVersion = helper.getVersion(SkillFactory.FACTORY_ID.toLowerCase());
         List<Long> ids = new ArrayList<>(c.getSkills()); // avoid ConcurrentModificationException
+        Set<Long> newIds = new HashSet<>();
+        List<DBEntity> skills = helper.getAllEntities(SkillFactory.getInstance());
+        for(DBEntity e : skills) {
+           ids.add(e.getId());
+        }
+
         for(long id : ids) {
-            Skill s = (Skill) helper.fetchEntity(id, SkillFactory.getInstance());
-            if(s == null) {
-                // something went wrong!! remove
-                c.setSkillRank(id, 0);
-                continue;
-            }
-            if(s.getVersion() != skillVersion) {
-                Skill skillNew = (Skill) helper.fetchEntityByName(s.getName(), SkillFactory.getInstance());
+            if(!newIds.contains(id)) {
+                Skill skillOld = (Skill) helper.fetchEntity(id, SkillFactory.getInstance());
+                if(skillOld == null) {
+                    // something went wrong!! remove
+                    c.setSkillRank(id, 0);
+                    continue;
+                }
+                Skill skillNew = (Skill) helper.fetchEntityByName(skillOld.getName(), SkillFactory.getInstance());
                 if (skillNew != null) {
                     int rank = c.getSkillRank(id);
                     c.setSkillRank(id, 0);
                     c.setSkillRank(skillNew.getId(), rank);
+                    matched.add(skillOld);
                 } else {
-                    unmatched.add(s);
+                    unmatched.add(skillOld);
                 }
             }
         }
@@ -228,6 +238,7 @@ public class MigrationHelper {
                 Feat newFeat = (Feat) helper.fetchEntityByName(f.getName(), FeatFactory.getInstance());
                 if(newFeat != null) {
                     f.setId(newFeat.getId());
+                    matched.add(f);
                 } else {
                     unmatched.add(f);
                 }
@@ -240,6 +251,7 @@ public class MigrationHelper {
                 Race newRace = (Race) helper.fetchEntityByName(c.getRaceName(), RaceFactory.getInstance());
                 if (newRace != null) {
                     c.getRace().setId(newRace.getId());
+                    matched.add(c.getRace());
                 } else {
                     unmatched.add(c.getRace());
                 }
@@ -252,6 +264,7 @@ public class MigrationHelper {
                 Trait newTrait = (Trait) helper.fetchEntityByName(t.getName(), TraitFactory.getInstance());
                 if(newTrait != null) {
                     t.setId(newTrait.getId());
+                    matched.add(t);
                 } else {
                     unmatched.add(t);
                 }
@@ -266,6 +279,7 @@ public class MigrationHelper {
                 Class newClass = (Class) helper.fetchEntityByName(class_.first.getName(), ClassFactory.getInstance());
                 if (newClass != null) {
                     class_.first.setId(newClass.getId());
+                    matched.add(class_.first);
                 } else {
                     unmatched.add(class_.first);
                 }
@@ -280,6 +294,7 @@ public class MigrationHelper {
                     }
                     if (newArchetype != null) {
                         class_.second.setId(newArchetype.getId());
+                        matched.add(class_.second);
                     } else {
                         unmatched.add(class_.second);
                     }
@@ -293,6 +308,7 @@ public class MigrationHelper {
                 Spell newSpell = (Spell)helper.fetchEntityByName(s.getName(), SpellFactory.getInstance());
                 if(newSpell != null) {
                     s.setId(newSpell.getId());
+                    matched.add(s);
                 } else {
                     unmatched.add(s);
                 }
@@ -312,12 +328,27 @@ public class MigrationHelper {
                 }
                 if(newFeature != null) {
                     cf.setId(newFeature.getId());
+                    matched.add(cf);
                 } else {
                     unmatched.add(cf);
                 }
                 // linkedTo??
                 if(cf.getLinkedTo() != null) {
-
+                    ClassFeature lf = cf.getLinkedTo();
+                    features = helper.fetchAllEntitiesByName(lf.getName(), ClassFeatureFactory.getInstance());
+                    newFeature = null;
+                    for(DBEntity e : features) {
+                        if(lf.equals(e)) {
+                            newFeature = (ClassFeature)e;
+                            break;
+                        }
+                    }
+                    if(newFeature != null) {
+                        cf.setLinkedTo(newFeature);
+                        matched.add(cf);
+                    } else {
+                        unmatched.add(cf);
+                    }
                 }
             }
         }
@@ -328,12 +359,15 @@ public class MigrationHelper {
         int magicVersion = DBHelper.getInstance(null).getVersion(MagicItemFactory.FACTORY_ID.toLowerCase());
         for(CharacterItem i : c.getInventoryItems()) {
             DBEntity e = helper.fetchObjectEntity(i);
+            boolean changed = false;
             if(e != null) {
                 if(e instanceof Armor) {
                     if(e.getVersion() != armorVersion) {
                         Armor newArmor = (Armor) helper.fetchEntityByName(e.getName(), ArmorFactory.getInstance());
                         if (newArmor != null) {
                             i.setItemRef(CharacterItem.IDX_ARMORS + newArmor.getId());
+                            matched.add(i);
+                            changed = true;
                         } else {
                             unmatched.add(i);
                         }
@@ -344,6 +378,8 @@ public class MigrationHelper {
                         Weapon newWeapon = (Weapon) helper.fetchEntityByName(e.getName(), WeaponFactory.getInstance());
                         if (newWeapon != null) {
                             i.setItemRef(CharacterItem.IDX_WEAPONS + newWeapon.getId());
+                            matched.add(i);
+                            changed = true;
                         } else {
                             unmatched.add(i);
                         }
@@ -354,6 +390,8 @@ public class MigrationHelper {
                         Equipment newEquip = (Equipment) helper.fetchEntityByName(e.getName(), EquipmentFactory.getInstance());
                         if (newEquip != null) {
                             i.setItemRef(CharacterItem.IDX_EQUIPMENT + newEquip.getId());
+                            matched.add(i);
+                            changed = true;
                         } else {
                             unmatched.add(i);
                         }
@@ -364,6 +402,8 @@ public class MigrationHelper {
                         MagicItem newMagic = (MagicItem) helper.fetchEntityByName(e.getName(), MagicItemFactory.getInstance());
                         if (newMagic != null) {
                             i.setItemRef(CharacterItem.IDX_MAGICITEM + newMagic.getId());
+                            matched.add(i);
+                            changed = true;
                         } else {
                             unmatched.add(i);
                         }
@@ -372,8 +412,18 @@ public class MigrationHelper {
                 else {
                     throw new IllegalStateException("Invalid entity : " + e.getClass().getSimpleName());
                 }
+                if(changed && !reportOnly) {
+                    helper.updateEntity(i);
+                }
             }
         }
+
+        // store character into database
+        if(matched.size() > 0 && !reportOnly) {
+            helper.updateEntity(c);
+            Log.i(MigrationHelper.class.getSimpleName(), matched.size() + " elements successfully migrated!");
+        }
+
         return unmatched;
     }
 }

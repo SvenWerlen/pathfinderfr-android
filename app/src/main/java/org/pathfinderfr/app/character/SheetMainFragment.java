@@ -42,6 +42,7 @@ import org.pathfinderfr.app.ItemDetailFragment;
 import org.pathfinderfr.app.MainActivity;
 import org.pathfinderfr.app.character.FragmentRacePicker.OnFragmentInteractionListener;
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.database.MigrationHelper;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterFactory;
 import org.pathfinderfr.app.database.entity.CharacterImportExport;
@@ -104,6 +105,7 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     protected static final String DIALOG_PICK_MONEY     = "money-picker";
     protected static final String DIALOG_PICK_INVENTORY = "inventory-picker";
     protected static final String DIALOG_SYNC_ACTION    = "sync-action";
+    protected static final String DIALOG_WARN_ACTION    = "warn-action";
     protected static final String DIALOG_CONTEXT_MENU   = "contextmenu";
 
     private static final int CONTEXT_EQUIP = 1;
@@ -324,7 +326,9 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         final View viewModifLabel = view.findViewById(R.id.sheet_main_modif_label);
         final View viewModifPicker = view.findViewById(R.id.sheet_main_modifpicker);
         final ImageView toggleview = view.findViewById(R.id.actionToggle);
+        final ImageView warningview = view.findViewById(R.id.actionWarning);
         final View viewSummary = view.findViewById(R.id.sheet_main_summary_view);
+        warningview.setOnClickListener(listener);
         toggleview.setBackground(null);
         toggleview.setImageResource(R.drawable.ic_toggle_pos1);
         toggleview.setOnClickListener(new View.OnClickListener() {
@@ -359,6 +363,8 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
             viewSummary.setVisibility(View.VISIBLE);
         }
 
+        boolean dataToMigrated = MigrationHelper.migrate(character, true).size() > 0;
+        warningview.setVisibility(dataToMigrated ? View.VISIBLE : View.GONE);
 
         // ABILITIES
         final String abTooltipTitle = ConfigurationUtil.getInstance(view.getContext()).getProperties().getProperty("tooltip.abilities.title");
@@ -1636,6 +1642,20 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     }
                     newFragment.setArguments(arguments);
                     newFragment.show(ft, DIALOG_SYNC_ACTION);
+                    return;
+                }
+                else if(v.getId() == R.id.actionWarning) {
+                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
+                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_WARN_ACTION);
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = FragmentMigration.newInstance();
+                    Bundle arguments = new Bundle();
+                    arguments.putLong(FragmentMigration.ARG_CHARACID, parent.character.getId());
+                    newFragment.setArguments(arguments);
+                    newFragment.show(ft, DIALOG_WARN_ACTION);
                     return;
                 }
                 // MODIFICATION ENABLED/DISABLED

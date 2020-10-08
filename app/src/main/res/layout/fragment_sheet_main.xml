@@ -72,6 +72,13 @@
                     android:layout_margin="@dimen/fab_margin"
                     android:background="@drawable/ic_sync" />
 
+                <ImageButton
+                    android:id="@+id/actionWarning"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:background="@drawable/ic_warning" />
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

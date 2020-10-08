@@ -80,13 +80,6 @@ public class CharacterSheetActivity extends AppCompatActivity implements SheetMa
         // update character
         character = (Character)DBHelper.getInstance(getBaseContext()).fetchEntity(character.getId(),CharacterFactory.getInstance());
 
-        List<DBEntity> list = MigrationHelper.convert(character);
-        System.out.println("============================== MIGRATION ====================================== ");
-        for(DBEntity e : list) {
-            System.out.println("Missing: " + e.getName());
-        }
-        System.out.println("================================================================================ ");
-
         if(currentTab != TAB_HOME) {
             if (character.getClassesCount() == 0) {
                 View root = findViewById(R.id.sheet_container);

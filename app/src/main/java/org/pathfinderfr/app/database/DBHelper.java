@@ -1006,5 +1006,21 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    /**
+     * Migrates all characters (based on latest dataset)
+     * Returns the list of characters with unmatched and old data
+     */
+    public Map<String, Integer> migrateCharacters(boolean reportOnly) {
+        Map<String, Integer> unmatched = new HashMap<>();
+        List<DBEntity> list = this.getAllEntities(CharacterFactory.getInstance());
+        for(DBEntity c : list) {
+            List<DBEntity> notFound = MigrationHelper.migrate((Character)c, reportOnly);
+            if(notFound.size() > 0) {
+                unmatched.put(c.getName(), notFound.size());
+            }
+        }
+        return unmatched;
+    }
 }
 
