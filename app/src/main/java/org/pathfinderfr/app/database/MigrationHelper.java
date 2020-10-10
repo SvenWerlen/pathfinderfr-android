@@ -202,8 +202,15 @@ public class MigrationHelper {
         List<DBEntity> matched = new ArrayList<>();
         List<DBEntity> unmatched = new ArrayList<>();
         DBHelper helper = DBHelper.getInstance(null);
+
+        reportOnly = true;
+
         // ABILITIES
         int skillVersion = helper.getVersion(SkillFactory.FACTORY_ID.toLowerCase());
+
+        // data not loaded yet!!
+        if(skillVersion < 5) { return unmatched; }
+
         List<Long> ids = new ArrayList<>(c.getSkills()); // avoid ConcurrentModificationException
         Set<Long> newIds = new HashSet<>();
         List<DBEntity> skills = helper.getAllEntities(SkillFactory.getInstance());
