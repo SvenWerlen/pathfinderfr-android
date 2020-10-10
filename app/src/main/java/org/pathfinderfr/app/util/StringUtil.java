@@ -240,4 +240,15 @@ public class StringUtil {
         return null;
     }
 
+    public static String cleanText(String text) {
+        if(text.trim().startsWith("\\.")) {
+            return text.trim().substring(0,1).trim();
+        } else {
+            return text.trim();
+        }
+    }
+
+    public static boolean isEmpty(String value) {
+        return value == null || value.trim().length() == 0;
+    }
 }

@@ -551,7 +551,7 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
     @Override
     public void onStart(){
         super.onStart();
-        text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + text;
+        text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /><body><div class=\"pfDescr\">" + text + "</div>";
         content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
         content.setBackgroundColor(Color.TRANSPARENT);
     }

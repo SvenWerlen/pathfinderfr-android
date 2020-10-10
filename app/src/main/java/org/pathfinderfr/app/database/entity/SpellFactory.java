@@ -6,11 +6,14 @@ import android.database.Cursor;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 public class SpellFactory extends DBEntityFactory {
 
@@ -29,7 +32,7 @@ public class SpellFactory extends DBEntityFactory {
     private static final String COLUMN_SPELL_RES  = "spellresistance";
 
     private static final String YAML_NAME       = "Nom";
-    private static final String YAML_DESC       = "Description";
+    private static final String YAML_DESC_HTML  = "DescriptionHTML";
     private static final String YAML_REFERENCE  = "Référence";
     private static final String YAML_SOURCE     = "Source";
     private static final String YAML_SCHOOL     = "École";
@@ -190,7 +193,7 @@ public class SpellFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Spell spell = new Spell();
         spell.setName((String)attributes.get(YAML_NAME));
-        spell.setDescription((String)attributes.get(YAML_DESC));
+        spell.setDescription((String)attributes.get(YAML_DESC_HTML));
         spell.setSchool(SpellUtil.cleanSchool((String)attributes.get(YAML_SCHOOL)));
         spell.setReference((String)attributes.get(YAML_REFERENCE));
         spell.setSource((String)attributes.get(YAML_SOURCE));
@@ -210,15 +213,24 @@ public class SpellFactory extends DBEntityFactory {
         }
     }
 
-
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
+        return "";
+    }
+
+    @Override
+    public String generateHTMLContent(@NonNull DBEntity entity) {
         if(!(entity instanceof Spell)) {
             return "";
         }
         Spell spell = (Spell)entity;
-        StringBuffer buf = new StringBuffer();
+
+        Properties cfg =  ConfigurationUtil.getInstance(null).getProperties();
+        String templateItem = cfg.getProperty("template.item.prop");
+
+        StringBuilder buf = new StringBuilder();
         String source = spell.getSource() == null ? null : getTranslatedText("source." + spell.getSource().toLowerCase());
+        buf.append("<ul class=\"props\">");
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_SCHOOL, spell.getSchool()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, spell.getLevel()));
@@ -229,7 +241,10 @@ public class SpellFactory extends DBEntityFactory {
         buf.append(generateItemDetail(templateItem, YAML_DURATION, spell.getDuration()));
         buf.append(generateItemDetail(templateItem, YAML_SAVING, spell.getSavingThrow()));
         buf.append(generateItemDetail(templateItem, YAML_SPELL_RES, spell.getSpellResistance()));
-        return String.format(templateList,buf.toString());
+        buf.append("</ul>");
+        buf.append(StringUtil.cleanText(spell.getDescription()));
+
+        return buf.toString();
     }
 
 }

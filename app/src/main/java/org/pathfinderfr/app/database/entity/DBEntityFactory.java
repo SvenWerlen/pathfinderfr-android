@@ -233,7 +233,7 @@ public abstract class DBEntityFactory {
      * @return "" if value is null
      */
     protected static String generateItemDetail(String template, String propKey, String propValue) {
-        if(propValue != null) {
+        if(!StringUtil.isEmpty(propValue)) {
             return String.format(template, propKey, propValue);
         } else {
             return "";

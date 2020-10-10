@@ -28,3 +28,63 @@ body {
     margin-top: 8px;
     margin-bottom: 2px;
 }
+
+.pfDescr {
+  padding: 5px;
+  text-align: justify;
+}
+
+.pfDescr ul {
+  padding-left: 18px;
+}
+
+.pfDescr ul.props {
+  text-align: left;
+  list-style-type: none;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  padding: 0px;
+}
+
+.pfDescr table {
+  margin: 3px;
+  border-collapse: collapse;
+  border: 1px solid #533213;
+}
+
+.pfDescr tr {
+  background-color: #fff;
+}
+
+.pfDescr tr:nth-child(2n+1) {
+  background-color: #F8EDDA;
+}
+
+.pfDescr table caption {
+  font-size: large;
+  font-weight: bold;
+  padding: 10px;
+  color: white;
+  background-color: #533213;
+  text-transform: uppercase;
+}
+
+.pfDescr tr.title {
+  background-color: #533213;
+  color: white;
+}
+
+.pfDescr td.note {
+  font-size: smaller;
+  font-style: italic;
+}
+
+.pfDescr td {
+  max-width: 300px;
+  text-align: center;
+  padding: 2px 5px 2px 5px;
+}
+
+.pfDescr td:first-child {
+  text-align: left;
+}

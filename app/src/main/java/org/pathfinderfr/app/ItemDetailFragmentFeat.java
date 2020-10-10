@@ -332,27 +332,10 @@ public class ItemDetailFragmentFeat extends Fragment implements View.OnClickList
         // Show the content as text in a TextView.
         if (feat != null) {
 
-            // if full content available, take it
             text = feat.getFactory().generateHTMLContent(feat);
-            // not available, build it (details + description)
-            if( text == null) {
-                // if no description is available, details must always be visible
-                if (feat.getDescription() == null) {
-                    text = "";
-                }
-
-                String detail = feat.getFactory().generateDetails(feat,
-                        templates.getProperty("template.spell.details"),
-                        templates.getProperty("template.spell.detail"));
-                text = detail + String.format(templates.getProperty("template.spell.description"),
-                        feat.getDescription() == null ? "" : feat.getDescription());
-
-                text = text.replaceAll("\n", "<br />");
-                text = "<div class=\"main\">" + text  + "</div>";
-                text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + text;
-                content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
-                content.setBackgroundColor(Color.TRANSPARENT);
-            }
+            text = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /><body><div class=\"pfDescr\">" + text + "</div></body>";
+            content.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
+            content.setBackgroundColor(Color.TRANSPARENT);
 
             isFavorite = DBHelper.getInstance(view.getContext()).isFavorite(feat.getFactory().getFactoryId(), feat.getId());
         }

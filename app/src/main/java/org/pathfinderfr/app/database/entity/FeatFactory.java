@@ -6,12 +6,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 public class FeatFactory extends DBEntityFactory {
 
@@ -26,17 +28,18 @@ public class FeatFactory extends DBEntityFactory {
     private static final String COLUMN_SPECIAL    = "special";
     private static final String COLUMN_NORMAL     = "normal";
 
-    private static final String YAML_NAME         = "Nom";
-    private static final String YAML_SUMMARY      = "Résumé";
-    private static final String YAML_DESC         = "Description"; // no description yet
-    private static final String YAML_REFERENCE    = "Référence";
-    private static final String YAML_SOURCE       = "Source";
-    private static final String YAML_CATEGORY     = "Catégorie";
-    private static final String YAML_CONDITIONS   = "Conditions";
-    private static final String YAML_CONDREFS     = "ConditionsRefs";
-    private static final String YAML_ADVANTAGE    = "Avantage";
-    private static final String YAML_SPECIAL      = "Spécial";
-    private static final String YAML_NORMAL       = "Normal";
+    private static final String YAML_NAME           = "Nom";
+    private static final String YAML_SUMMARY        = "Résumé";
+    private static final String YAML_DESC           = "Description"; // no description yet
+    private static final String YAML_REFERENCE      = "Référence";
+    private static final String YAML_SOURCE         = "Source";
+    private static final String YAML_CATEGORY       = "Catégorie";
+    private static final String YAML_CONDITIONS     = "Conditions";
+    private static final String YAML_CONDREFS       = "ConditionsRefs";
+    private static final String YAML_ADVANTAGE      = "Avantage";
+    private static final String YAML_ADVANTAGE_HTML = "AvantageHTML";
+    private static final String YAML_SPECIAL        = "Spécial";
+    private static final String YAML_NORMAL         = "Normal";
 
 
     private static FeatFactory instance;
@@ -184,27 +187,41 @@ public class FeatFactory extends DBEntityFactory {
                 }
             }
         }
-        feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE));
+        if(attributes.containsKey(YAML_ADVANTAGE_HTML)) {
+            feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE_HTML));
+        } else {
+            feat.setAdvantage((String) attributes.get(YAML_ADVANTAGE));
+        }
         feat.setSpecial((String)attributes.get(YAML_SPECIAL));
         feat.setNormal((String)attributes.get(YAML_NORMAL));
         feat.setSummary((String)attributes.get(YAML_SUMMARY));
         return feat.isValid() ? feat : null;
     }
 
-
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
+        return "";
+    }
+
+    @Override
+    public String generateHTMLContent(@NonNull DBEntity entity) {
         if(!(entity instanceof Feat)) {
             return "";
         }
         Feat feat = (Feat)entity;
-        StringBuffer buf = new StringBuffer();
+
+        Properties cfg =  ConfigurationUtil.getInstance(null).getProperties();
+        String templateItem = cfg.getProperty("template.item.prop");
+
+        StringBuilder buf = new StringBuilder();
         String source = feat.getSource() == null ? null : getTranslatedText("source." + feat.getSource().toLowerCase());
+        buf.append("<ul class=\"props\">");
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
         buf.append(generateItemDetail(templateItem, YAML_CATEGORY, feat.getCategory()));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, feat.getConditions()));
-        buf.append(generateItemDetail(templateItem, YAML_SPECIAL, feat.getSpecial()));
-        buf.append(generateItemDetail(templateItem, YAML_NORMAL, feat.getNormal()));
-        return String.format(templateList,buf.toString());
+        buf.append("</ul>");
+        buf.append(StringUtil.cleanText(feat.getAdvantage()));
+
+        return buf.toString();
     }
 }

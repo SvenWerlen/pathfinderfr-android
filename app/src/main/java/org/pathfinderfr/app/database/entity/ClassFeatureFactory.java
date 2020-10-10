@@ -5,11 +5,13 @@ import android.database.Cursor;
 import androidx.annotation.NonNull;
 
 import org.pathfinderfr.app.database.DBHelper;
+import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class ClassFeatureFactory extends DBEntityFactory {
 
@@ -23,7 +25,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private static final String COLUMN_LEVEL      = "level";
 
     private static final String YAML_NAME         = "Nom";
-    private static final String YAML_DESC         = "Description";
+    private static final String YAML_DESC_HTML    = "DescriptionHTML";
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_SOURCE       = "Source";
     private static final String YAML_LINKED_TO    = "Lié à";
@@ -189,7 +191,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         ClassFeature classFeature = new ClassFeature();
         classFeature.setName((String)attributes.get((String)YAML_NAME));
-        classFeature.setDescription((String)attributes.get(YAML_DESC));
+        classFeature.setDescription((String)attributes.get(YAML_DESC_HTML));
         classFeature.setReference((String)attributes.get(YAML_REFERENCE));
         classFeature.setSource((String)attributes.get(YAML_SOURCE));
         classFeature.setClass(getClass((String)attributes.get(YAML_CLASS)));
@@ -200,29 +202,33 @@ public class ClassFeatureFactory extends DBEntityFactory {
         return classFeature.isValid() ? classFeature : null;
     }
 
-
-
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
+        return "";
+    }
+
+    @Override
+    public String generateHTMLContent(@NonNull DBEntity entity) {
         if(!(entity instanceof ClassFeature)) {
             return "";
         }
         ClassFeature classFeature = (ClassFeature)entity;
-        StringBuffer buf = new StringBuffer();
+
+        Properties cfg =  ConfigurationUtil.getInstance(null).getProperties();
+        String templateItem = cfg.getProperty("template.item.prop");
+
+        StringBuilder buf = new StringBuilder();
         String source = classFeature.getSource() == null ? null : getTranslatedText("source." + classFeature.getSource().toLowerCase());
-        buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_().getName()));
-        if(classFeature.getClassArchetype() != null) {
-            buf.append(generateItemDetail(templateItem, YAML_ARCHETYPE, classFeature.getClassArchetype().getName()));
-        }
-        if(classFeature.getLinkedTo() != null) {
-            buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedTo().getNameShort()));
-        }
-        if(classFeature.getLinkedName() != null) {
-            buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedName()));
-        }
+        buf.append("<ul class=\"props\">");
         buf.append(generateItemDetail(templateItem, YAML_SOURCE, source));
+        if(classFeature.getClass_() != null) buf.append(generateItemDetail(templateItem, YAML_CLASS, classFeature.getClass_().getName()));
+        if(classFeature.getClassArchetype() != null) buf.append(generateItemDetail(templateItem, YAML_ARCHETYPE, classFeature.getClassArchetype().getName()));
+        if(classFeature.getLinkedTo() != null) buf.append(generateItemDetail(templateItem, YAML_LINKED_TO, classFeature.getLinkedTo().getNameShort()));
         buf.append(generateItemDetail(templateItem, YAML_CONDITIONS, classFeature.getConditions()));
         buf.append(generateItemDetail(templateItem, YAML_LEVEL, String.valueOf(classFeature.getLevel())));
-        return String.format(templateList,buf.toString());
+        buf.append("</ul>");
+        buf.append(StringUtil.cleanText(classFeature.getDescription()));
+
+        return buf.toString();
     }
 }
