@@ -25,6 +25,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private static final String COLUMN_LEVEL      = "level";
 
     private static final String YAML_NAME         = "Nom";
+    private static final String YAML_DESC         = "Description";
     private static final String YAML_DESC_HTML    = "DescriptionHTML";
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_SOURCE       = "Source";
@@ -191,7 +192,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         ClassFeature classFeature = new ClassFeature();
         classFeature.setName((String)attributes.get((String)YAML_NAME));
-        classFeature.setDescription((String)attributes.get(YAML_DESC_HTML));
+        classFeature.setDescription(extractDescription(attributes, YAML_DESC, YAML_DESC_HTML));
         classFeature.setReference((String)attributes.get(YAML_REFERENCE));
         classFeature.setSource((String)attributes.get(YAML_SOURCE));
         classFeature.setClass(getClass((String)attributes.get(YAML_CLASS)));

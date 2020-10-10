@@ -187,11 +187,7 @@ public class FeatFactory extends DBEntityFactory {
                 }
             }
         }
-        if(attributes.containsKey(YAML_ADVANTAGE_HTML)) {
-            feat.setAdvantage((String)attributes.get(YAML_ADVANTAGE_HTML));
-        } else {
-            feat.setAdvantage((String) attributes.get(YAML_ADVANTAGE));
-        }
+        feat.setAdvantage(extractDescription(attributes, YAML_ADVANTAGE, YAML_ADVANTAGE_HTML));
         feat.setSpecial((String)attributes.get(YAML_SPECIAL));
         feat.setNormal((String)attributes.get(YAML_NORMAL));
         feat.setSummary((String)attributes.get(YAML_SUMMARY));

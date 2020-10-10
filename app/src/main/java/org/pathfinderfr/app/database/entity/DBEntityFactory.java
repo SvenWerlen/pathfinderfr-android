@@ -225,6 +225,22 @@ public abstract class DBEntityFactory {
         }
     }
 
+    protected static String extractDescription(@NonNull Map<String, Object> attributes, String field, String fieldHTML) {
+        String description = null;
+        if(attributes.containsKey(fieldHTML)) {
+            description = (String) attributes.get(fieldHTML);
+        }
+        else {
+            description = (String)attributes.get(field);
+            if(description != null) {
+                description = description.replaceAll("\\n", "<br />");
+            } else {
+                description = "-";
+            }
+        }
+        return description;
+    }
+
     /**
      * Utility function that returns the template with regex replaced
      * @param template template (@see assets/templates.properties)

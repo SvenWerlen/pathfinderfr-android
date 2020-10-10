@@ -9,6 +9,7 @@ import android.util.Pair;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 import org.pathfinderfr.app.LoadDataActivity;
+import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
 import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.FavoriteFactory;
@@ -227,6 +228,8 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                                 referencesMap.put(entity.getReference(), entity);
                                 count[idx]++;
                             }
+                        } else {
+                            System.out.println("Cannot be imported!!");
                         }
                     }
 
@@ -243,6 +246,9 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
 
                 // update version into database
                 dbHelper.updateVersion(dataId, newVersion);
+
+                // cleanup factory
+                factory.cleanup();
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1013,7 +1013,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public Map<String, Integer> migrateCharacters(boolean reportOnly) {
         Map<String, Integer> unmatched = new HashMap<>();
-        List<DBEntity> list = this.getAllEntities(CharacterFactory.getInstance());
+        List<DBEntity> list = this.getAllEntitiesWithAllFields(CharacterFactory.getInstance());
         for(DBEntity c : list) {
             List<DBEntity> notFound = MigrationHelper.migrate((Character)c, reportOnly);
             if(notFound.size() > 0) {

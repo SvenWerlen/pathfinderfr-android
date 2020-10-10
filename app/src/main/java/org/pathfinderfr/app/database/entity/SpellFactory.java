@@ -32,6 +32,7 @@ public class SpellFactory extends DBEntityFactory {
     private static final String COLUMN_SPELL_RES  = "spellresistance";
 
     private static final String YAML_NAME       = "Nom";
+    private static final String YAML_DESC       = "Description";
     private static final String YAML_DESC_HTML  = "DescriptionHTML";
     private static final String YAML_REFERENCE  = "Référence";
     private static final String YAML_SOURCE     = "Source";
@@ -193,7 +194,7 @@ public class SpellFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Spell spell = new Spell();
         spell.setName((String)attributes.get(YAML_NAME));
-        spell.setDescription((String)attributes.get(YAML_DESC_HTML));
+        spell.setDescription(extractDescription(attributes, YAML_DESC, YAML_DESC_HTML));
         spell.setSchool(SpellUtil.cleanSchool((String)attributes.get(YAML_SCHOOL)));
         spell.setReference((String)attributes.get(YAML_REFERENCE));
         spell.setSource((String)attributes.get(YAML_SOURCE));

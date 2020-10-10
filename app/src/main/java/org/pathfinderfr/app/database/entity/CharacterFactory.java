@@ -160,6 +160,13 @@ public class CharacterFactory extends DBEntityFactory {
                 COLUMN_ID, COLUMN_NAME, COLUMN_RACE, COLUMN_CLASSES, getTableName(), COLUMN_NAME);
     }
 
+    @Override
+    public String getQueryFetchAllWithAllFields(Integer version, String... sources) {
+        // ignore versions and sources (not available for characters)
+        return String.format("SELECT * FROM %s ORDER BY %s COLLATE UNICODE",
+                getTableName(), COLUMN_NAME);
+    }
+
     /**
      * @return SQL statement for upgrading DB from v3 to v4
      */

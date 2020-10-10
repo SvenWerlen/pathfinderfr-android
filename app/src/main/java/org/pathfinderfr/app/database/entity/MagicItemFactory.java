@@ -24,6 +24,7 @@ public class MagicItemFactory extends DBEntityFactory {
     private static final String COLUMN_MANUF_COST     = "mcost";
 
     private static final String YAML_NAME           = "Nom";
+    private static final String YAML_DESC           = "Description";
     private static final String YAML_DESC_HTML      = "DescriptionHTML";
     private static final String YAML_REFERENCE      = "Référence";
     private static final String YAML_SOURCE         = "Source";
@@ -138,7 +139,7 @@ public class MagicItemFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         MagicItem item = new MagicItem();
         item.setName((String)attributes.get(YAML_NAME));
-        item.setDescription((String)attributes.get(YAML_DESC_HTML));
+        item.setDescription(extractDescription(attributes, YAML_DESC, YAML_DESC_HTML));
         item.setReference((String)attributes.get(YAML_REFERENCE));
         item.setSource((String)attributes.get(YAML_SOURCE));
         String type = (String)attributes.get(YAML_TYPE);

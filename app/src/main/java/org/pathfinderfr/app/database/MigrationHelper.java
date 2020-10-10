@@ -203,8 +203,6 @@ public class MigrationHelper {
         List<DBEntity> unmatched = new ArrayList<>();
         DBHelper helper = DBHelper.getInstance(null);
 
-        reportOnly = true;
-
         // ABILITIES
         int skillVersion = helper.getVersion(SkillFactory.FACTORY_ID.toLowerCase());
 
@@ -326,6 +324,10 @@ public class MigrationHelper {
         for(ClassFeature cf : c.getClassFeatures()) {
             if(cf.getVersion() != classFeatureVersion) {
                 List<DBEntity> features = helper.fetchAllEntitiesByName(cf.getName(), ClassFeatureFactory.getInstance());
+                if(features == null) {
+                    unmatched.add(cf);
+                    continue;
+                }
                 ClassFeature newFeature = null;
                 for(DBEntity e : features) {
                     if(cf.equals(e)) {

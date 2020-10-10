@@ -20,6 +20,7 @@ public class SkillFactory extends DBEntityFactory {
     private static final String COLUMN_ARMORPENALTY = "armor";
 
     private static final String YAML_NAME         = "Nom";
+    private static final String YAML_DESC         = "Description";
     private static final String YAML_DESC_HTML    = "DescriptionHTML";
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_ABILITY      = "Caractéristique associée";
@@ -116,7 +117,7 @@ public class SkillFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Skill skill = new Skill();
         skill.setName((String)attributes.get(YAML_NAME));
-        skill.setDescription((String)attributes.get(YAML_DESC_HTML));
+        skill.setDescription(extractDescription(attributes, YAML_DESC, YAML_DESC_HTML));
         skill.setReference((String)attributes.get(YAML_REFERENCE));
         skill.setAbility((String)attributes.get(YAML_ABILITY));
         skill.setTraining((String)attributes.get(YAML_TRAINING));
