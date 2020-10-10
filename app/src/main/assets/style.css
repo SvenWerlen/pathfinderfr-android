@@ -18,6 +18,7 @@ body {
 }
 
 .main {
+    text-align: left;
     padding: 3px 5px;
 }
 
@@ -44,6 +45,10 @@ body {
   margin-top: 8px;
   margin-bottom: 20px;
   padding: 0px;
+}
+
+.pfDescr li {
+  text-align: left;
 }
 
 .pfDescr table {

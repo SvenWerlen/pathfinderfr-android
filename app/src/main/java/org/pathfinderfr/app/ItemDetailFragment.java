@@ -218,20 +218,9 @@ public class ItemDetailFragment extends Fragment implements FragmentLinkedFeatur
                             templates.getProperty("template.spell.detail"));
                     text = detail + String.format(templates.getProperty("template.spell.description"),
                             mItem.getDescription() == null ? "" : mItem.getDescription());
-
-                    if(mItem instanceof ClassFeature) {
-                        ClassFeature cf = (ClassFeature)mItem;
-                        if(cf.getLinkedTo() != null) {
-                            String subtitle = String.format(templates.getProperty("template.details.subtitle"), cf.getLinkedTo().getName());
-                            String detailLinked = cf.getLinkedTo().getFactory().generateDetails(cf.getLinkedTo(),
-                                    templates.getProperty("template.spell.details"),
-                                    templates.getProperty("template.spell.detail"));
-                            text += subtitle + detailLinked + String.format(templates.getProperty("template.spell.description"), cf.getLinkedTo().getDescription());
-                        }
-                    }
                     text = text.replaceAll("\n", "<br />");
                 }
-                text = "<div class=\"main\">" + text  + "</div>";
+                text = "<div class=\"pfDescr\">" + text  + "</div>";
             }
             content = (WebView) rootView.findViewById(R.id.item_full_description);
 

@@ -5,7 +5,6 @@ import android.database.Cursor;
 import androidx.annotation.NonNull;
 
 import org.pathfinderfr.app.util.ConfigurationUtil;
-import org.pathfinderfr.app.util.StringUtil;
 
 import java.util.Map;
 import java.util.Properties;
@@ -25,7 +24,7 @@ public class MagicItemFactory extends DBEntityFactory {
     private static final String COLUMN_MANUF_COST     = "mcost";
 
     private static final String YAML_NAME           = "Nom";
-    private static final String YAML_DESC           = "Description";
+    private static final String YAML_DESC_HTML      = "DescriptionHTML";
     private static final String YAML_REFERENCE      = "Référence";
     private static final String YAML_SOURCE         = "Source";
     private static final String YAML_TYPE           = "Type";
@@ -139,7 +138,7 @@ public class MagicItemFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         MagicItem item = new MagicItem();
         item.setName((String)attributes.get(YAML_NAME));
-        item.setDescription((String)attributes.get(YAML_DESC));
+        item.setDescription((String)attributes.get(YAML_DESC_HTML));
         item.setReference((String)attributes.get(YAML_REFERENCE));
         item.setSource((String)attributes.get(YAML_SOURCE));
         String type = (String)attributes.get(YAML_TYPE);
@@ -215,7 +214,7 @@ public class MagicItemFactory extends DBEntityFactory {
 
         // prepare description
         if(item.getDescription() != null && item.getDescription().length() > 0) {
-            buf.append(String.format(tmplSect, "DESCRIPTION", item.getDescription().replaceAll("\n", "<br />")));
+            buf.append(String.format("<div class=\"title\">DESCRIPTION</div>%s", item.getDescription()));
         }
 
         // prepare manufacturing details
@@ -230,6 +229,7 @@ public class MagicItemFactory extends DBEntityFactory {
         if(manuf.length() > 0) {
             buf.append(String.format(tmplSect, "FABRICATION", manuf.toString()));
         }
+
 
         return buf.toString();
     }

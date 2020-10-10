@@ -4,7 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
 
+import org.pathfinderfr.app.util.ConfigurationUtil;
+import org.pathfinderfr.app.util.StringUtil;
+
 import java.util.Map;
+import java.util.Properties;
 
 public class SkillFactory extends DBEntityFactory {
 
@@ -16,7 +20,7 @@ public class SkillFactory extends DBEntityFactory {
     private static final String COLUMN_ARMORPENALTY = "armor";
 
     private static final String YAML_NAME         = "Nom";
-    private static final String YAML_DESC         = "Description";
+    private static final String YAML_DESC_HTML    = "DescriptionHTML";
     private static final String YAML_REFERENCE    = "Référence";
     private static final String YAML_ABILITY      = "Caractéristique associée";
     private static final String YAML_TRAINING     = "Formation nécessaire";
@@ -112,7 +116,7 @@ public class SkillFactory extends DBEntityFactory {
     public DBEntity generateEntity(@NonNull Map<String, Object> attributes) {
         Skill skill = new Skill();
         skill.setName((String)attributes.get(YAML_NAME));
-        skill.setDescription((String)attributes.get(YAML_DESC));
+        skill.setDescription((String)attributes.get(YAML_DESC_HTML));
         skill.setReference((String)attributes.get(YAML_REFERENCE));
         skill.setAbility((String)attributes.get(YAML_ABILITY));
         skill.setTraining((String)attributes.get(YAML_TRAINING));
@@ -120,17 +124,29 @@ public class SkillFactory extends DBEntityFactory {
         return skill.isValid() ? skill : null;
     }
 
-
     @Override
     public String generateDetails(@NonNull DBEntity entity, @NonNull String templateList, @NonNull String templateItem) {
+        return "";
+    }
+
+    @Override
+    public String generateHTMLContent(@NonNull DBEntity entity) {
         if(!(entity instanceof Skill)) {
             return "";
         }
         Skill skill = (Skill)entity;
-        StringBuffer buf = new StringBuffer();
+
+        Properties cfg =  ConfigurationUtil.getInstance(null).getProperties();
+        String templateItem = cfg.getProperty("template.item.prop");
+
+        StringBuilder buf = new StringBuilder();
+        buf.append("<ul class=\"props\">");
         buf.append(generateItemDetail(templateItem, YAML_ABILITY, skill.getAbility()));
         buf.append(generateItemDetail(templateItem, YAML_TRAINING, skill.getTraining()));
         buf.append(generateItemDetail(templateItem, YAML_ARMORPENALTY, skill.getArmorpenalty()));
-        return String.format(templateList,buf.toString());
+        buf.append("</ul>");
+        buf.append(StringUtil.cleanText(skill.getDescription()));
+
+        return buf.toString();
     }
 }
