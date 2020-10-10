@@ -62,7 +62,6 @@ import org.pathfinderfr.app.database.entity.RaceFactory;
 import org.pathfinderfr.app.database.entity.Skill;
 import org.pathfinderfr.app.database.entity.SkillFactory;
 import org.pathfinderfr.app.database.entity.Weapon;
-import org.pathfinderfr.app.event.MessageBroker;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.FragmentUtil;
 import org.pathfinderfr.app.util.Pair;
@@ -82,14 +81,14 @@ import java.util.List;
 /**
  * Skill tab on character sheet
  */
-public class SheetMainFragment extends Fragment implements MessageBroker.ISender,
+public class SheetMainFragment extends Fragment implements
         FragmentAbilityPicker.OnFragmentInteractionListener, FragmentAbilityCalc.OnFragmentInteractionListener,
         OnFragmentInteractionListener, FragmentClassPicker.OnFragmentInteractionListener,
         FragmentModifPicker.OnFragmentInteractionListener, FragmentHitPointsPicker.OnFragmentInteractionListener,
         FragmentSpeedPicker.OnFragmentInteractionListener, FragmentNamePicker.OnFragmentInteractionListener,
         FragmentDeleteAction.OnFragmentInteractionListener, FragmentInventoryPicker.OnFragmentInteractionListener,
         FragmentInfosPicker.OnFragmentInteractionListener, FragmentMoneyPicker.OnFragmentInteractionListener,
-        FragmentSync.OnFragmentInteractionListener, FragmentContextMenu.OnFragmentInteractionListener {
+        FragmentContextMenu.OnFragmentInteractionListener {
 
     private static final String ARG_CHARACTER_ID      = "character_id";
     protected static final String DIALOG_PICK_ABILITY   = "ability-picker";
@@ -104,7 +103,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
     protected static final String DIALOG_PICK_MODIFS    = "modifs-picker";
     protected static final String DIALOG_PICK_MONEY     = "money-picker";
     protected static final String DIALOG_PICK_INVENTORY = "inventory-picker";
-    protected static final String DIALOG_SYNC_ACTION    = "sync-action";
     protected static final String DIALOG_WARN_ACTION    = "warn-action";
     protected static final String DIALOG_CONTEXT_MENU   = "contextmenu";
 
@@ -278,7 +276,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         view.findViewById(R.id.ability_cha_value).setOnClickListener(listener);
 
         view.findViewById(R.id.actionShare).setOnClickListener(listener);
-        view.findViewById(R.id.actionSync).setOnClickListener(listener);
         view.findViewById(R.id.actionDelete).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_namepicker).setOnClickListener(listener);
         view.findViewById(R.id.sheet_main_racepicker).setOnClickListener(listener);
@@ -1622,28 +1619,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
                     newFragment.show(ft, DIALOG_DELETE_ACTION);
                     return;
                 }
-                else if(v.getId() == R.id.actionSync) {
-                    FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_SYNC_ACTION);
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-                    DialogFragment newFragment = FragmentSync.newInstance(parent);
-
-                    Bundle arguments = new Bundle();
-                    String name = parent.character.getName();
-                    if(name != null) {
-                        arguments.putString(FragmentSync.ARG_NAME, name);
-                    }
-                    String uuid = parent.character.getShortUniqID();
-                    if(uuid != null) {
-                        arguments.putString(FragmentSync.ARG_UUID, uuid);
-                    }
-                    newFragment.setArguments(arguments);
-                    newFragment.show(ft, DIALOG_SYNC_ACTION);
-                    return;
-                }
                 else if(v.getId() == R.id.actionWarning) {
                     FragmentTransaction ft = parent.getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment prev = parent.getActivity().getSupportFragmentManager().findFragmentByTag(DIALOG_WARN_ACTION);
@@ -2178,45 +2153,6 @@ public class SheetMainFragment extends Fragment implements MessageBroker.ISender
         }
         refreshNeeded = false;
     }
-
-    @Override
-    public void onCompleted(Integer status) {
-        View root = getActivity().findViewById(R.id.sheet_container);
-        if (root != null) {
-            if(status == 201) {
-                Snackbar.make(root, getView().getResources().getString(R.string.sync_character_success),
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            } else {
-                Snackbar.make(root, String.format(getView().getResources().getString(R.string.sync_character_failure), status),
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        }
-    }
-
-    @Override
-    public void onSync() {
-        final View root = getActivity().findViewById(R.id.sheet_container);
-        if(!character.hasUUID()) {
-            // force generating UUID (for old characters)
-            character.getUniqID();
-            if (!DBHelper.getInstance(getContext()).updateEntity(character)) {
-                if (root != null) {
-                    Snackbar.make(root, getView().getResources().getString(R.string.sync_character_noguid),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-                return;
-            }
-        }
-        Snackbar.make(root, getView().getResources().getString(R.string.sync_character_inprogress),
-                Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-
-        // send synchronisation message
-        String sender = PreferenceUtil.getApplicationUUID(getContext());
-        String content = CharacterImportExport.exportCharacterAsYML(character, getContext());
-        MessageBroker broker = new MessageBroker(this, sender, character.getUniqID(), MessageBroker.TYPE_SYNC, content);
-        broker.execute();
-    }
-
 
     @Override
     public void onContextMenu(long itemId, int menuId) {

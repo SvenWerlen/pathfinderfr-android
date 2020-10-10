@@ -162,10 +162,14 @@ public class LoadDataTask extends AsyncTask<Pair<String,DBEntityFactory>, LoadDa
                 continue;
             }
 
+            // clear data of same version
+
+
             String address = source.first;
             DBEntityFactory factory = source.second;
             // dbHelper.clear(factory); // since v4, tables are not cleared any more
-            dbHelper.clearDataWithVersion(factory);
+            // clean any existing data with that version to avoid duplicates (data may have been forced!)
+            dbHelper.clearDataWithVersion(factory, newVersion);
 
             if(factory == SpellFactory.getInstance()) {
                 reIndexingRequired = true;

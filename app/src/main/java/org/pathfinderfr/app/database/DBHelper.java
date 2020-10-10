@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,12 +94,11 @@ public class DBHelper extends SQLiteOpenHelper {
         factory.cleanup();
     }
 
-    public void clearDataWithVersion(DBEntityFactory factory) {
+    public void clearDataWithVersion(DBEntityFactory factory, int version) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(String.format("DELETE FROM %s WHERE version IS NOT NULL", factory.getTableName()));
+        db.execSQL(String.format(Locale.CANADA, "DELETE FROM %s WHERE version = %d", factory.getTableName(), version));
         factory.cleanup();
     }
-
 
     // DEBUGING ONLY
     @Override

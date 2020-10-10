@@ -3,7 +3,6 @@ package org.pathfinderfr.app;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,9 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,21 +30,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.pathfinderfr.R;
 import org.pathfinderfr.app.character.CharacterSheetActivity;
-import org.pathfinderfr.app.character.SheetFeatFragment;
 import org.pathfinderfr.app.database.DBHelper;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
@@ -68,8 +58,6 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.Trait;
 import org.pathfinderfr.app.database.entity.TraitFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
-import org.pathfinderfr.app.event.MessagingService;
-import org.pathfinderfr.app.event.MsgBroadcastReceiver;
 import org.pathfinderfr.app.util.ClassFeatureFilter;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 import org.pathfinderfr.app.util.EquipmentFilter;
@@ -146,7 +134,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         dbhelper = DBHelper.getInstance(getBaseContext());
-        receiver = new MsgBroadcastReceiver(this);
 
         if(!getIntent().getBooleanExtra(KEY_CONTEXTUAL, false)) {
             // listen to welcome page
@@ -1000,50 +987,5 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        try {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        Log.w(MainActivity.class.getSimpleName(), "getInstanceId failed", task.getException());
-                        return;
-                    }
-
-                    String[] uuids = dbhelper.fetchCharacterUUIDs();
-                    if (uuids == null || uuids.length == 0) {
-                        return;
-                    }
-                    for (final String uuid : uuids) {
-                        FirebaseMessaging.getInstance().subscribeToTopic(uuid).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                String msg = getString(R.string.msg_subscribed);
-                                if (!task.isSuccessful()) {
-                                    msg = getString(R.string.msg_subscribe_failed);
-                                }
-                                Log.d(MainActivity.class.getSimpleName(), String.format(msg, uuid));
-                            }
-                        });
-                    }
-                }
-            });
-
-            LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-                    new IntentFilter(MessagingService.REQUEST_ACCEPT)
-            );
-        } catch(Exception e) {
-            Log.w(MainActivity.class.getSimpleName(), "Error during messaging initialization!");
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-    }
 
 }

@@ -1,6 +1,5 @@
 package org.pathfinderfr.app.pdf;
 
-import com.google.android.gms.common.Feature;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -19,7 +18,6 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -33,8 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
