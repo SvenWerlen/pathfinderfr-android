@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.0.0] - 2019-02-16
 ### Added
 - Support for multiple versions
+- HTML descriptions for class features, spells, feats, magic items and skills
 ### Removed
 - Sync capabilities (based on Firebase)
 
