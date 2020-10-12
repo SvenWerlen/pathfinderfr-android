@@ -43,6 +43,18 @@ public abstract class DBEntityFactory {
     public abstract String getQueryCreateTable();
 
     /**
+     * @return the query to delete all entries except specified version and ids
+     */
+    @SuppressLint("DefaultLocale")
+    public String getQueryDeleteAllBut(int version, Long[] ids) {
+        String query = String.format("DELETE FROM %s WHERE (%s IS NULL OR %s != %d)", getTableName(), COLUMN_VERSION, COLUMN_VERSION, version);
+        if(ids != null && ids.length > 0) {
+            query += String.format(" AND %s NOT IN (%s)", COLUMN_ID, StringUtil.listToString(ids, ","));
+        }
+        return query;
+    }
+
+    /**
      * @return SQL statement for upgrading DB from v1 to v2
      */
     public String getQueryUpgradeV2() {

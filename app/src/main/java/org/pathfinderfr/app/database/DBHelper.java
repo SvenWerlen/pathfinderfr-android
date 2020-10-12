@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
+import org.pathfinderfr.app.LoadDataActivity;
 import org.pathfinderfr.app.database.entity.ArmorFactory;
 import org.pathfinderfr.app.database.entity.Character;
 import org.pathfinderfr.app.database.entity.CharacterItem;
@@ -37,7 +39,6 @@ import org.pathfinderfr.app.database.entity.SpellClassLevelFactory;
 import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.VersionFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
-import org.pathfinderfr.app.util.Pair;
 import org.pathfinderfr.app.util.SpellFilter;
 import org.pathfinderfr.app.util.SpellUtil;
 import org.pathfinderfr.app.util.StringUtil;
@@ -800,8 +801,8 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         for(DBEntity spell : spells) {
-            List<Pair<String,Integer>> classLevels = SpellUtil.cleanClasses(((Spell)spell).getLevel());
-            for(Pair<String,Integer> clLvl: classLevels) {
+            List<org.pathfinderfr.app.util.Pair<String,Integer>> classLevels = SpellUtil.cleanClasses(((Spell)spell).getLevel());
+            for(org.pathfinderfr.app.util.Pair<String,Integer> clLvl: classLevels) {
                 // find matching class
                 if(classMap.containsKey(clLvl.first)) {
                     SpellClassLevel entity = new SpellClassLevel();
@@ -1011,13 +1012,41 @@ public class DBHelper extends SQLiteOpenHelper {
      * Migrates all characters (based on latest dataset)
      * Returns the list of characters with unmatched and old data
      */
-    public Map<String, Integer> migrateCharacters(boolean reportOnly) {
+    public Map<String, Integer> migrateCharacters() {
         Map<String, Integer> unmatched = new HashMap<>();
+        Map<String,List<Long>> dontRemove = new HashMap<>();
         List<DBEntity> list = this.getAllEntitiesWithAllFields(CharacterFactory.getInstance());
         for(DBEntity c : list) {
-            List<DBEntity> notFound = MigrationHelper.migrate((Character)c, reportOnly);
+            List<DBEntity> notFound = MigrationHelper.migrate((Character)c, false);
             if(notFound.size() > 0) {
                 unmatched.put(c.getName(), notFound.size());
+                for(DBEntity e : notFound) {
+                    String factoryId = e.getFactory().getFactoryId();
+                    if(e instanceof CharacterItem) {
+                        DBEntity realObj = fetchObjectEntity((CharacterItem)e);
+                        factoryId = realObj.getFactory().getFactoryId();
+                    }
+                    if(!dontRemove.containsKey(factoryId)) {
+                        dontRemove.put(factoryId, new ArrayList<Long>());
+                    }
+                    if(!dontRemove.get(factoryId).contains(e.getId())) {
+                        dontRemove.get(factoryId).add(e.getId()); // add ID to exclude
+                    }
+                }
+            }
+        }
+        // delete all old entries except those that have not been yet migrated
+        SQLiteDatabase db = this.getWritableDatabase();
+        for(Pair<String, DBEntityFactory> c : LoadDataActivity.getCatalog()) {
+            Integer version = getVersions().get(c.second.getFactoryId().toLowerCase());
+            if(version != null) {
+                // retrieve all IDs to exclude
+                List<Long> excludeIds = dontRemove.containsKey(c.second.getFactoryId()) ? dontRemove.get(c.second.getFactoryId()) : new ArrayList<Long>();
+                // build delete query
+                String query = c.second.getQueryDeleteAllBut(version, excludeIds.toArray(new Long[0]));
+                // delete!
+                Log.i(DBHelper.class.getSimpleName(), "Delete all entries: " + query);
+                //db.execSQL(query);
             }
         }
         return unmatched;

@@ -21,6 +21,7 @@ import org.pathfinderfr.app.database.entity.ClassFeatureFactory;
 import org.pathfinderfr.app.database.entity.ClassFactory;
 import org.pathfinderfr.app.database.entity.ConditionFactory;
 import org.pathfinderfr.app.database.entity.DBEntity;
+import org.pathfinderfr.app.database.entity.DBEntityFactory;
 import org.pathfinderfr.app.database.entity.EquipmentFactory;
 import org.pathfinderfr.app.database.entity.FeatFactory;
 import org.pathfinderfr.app.database.entity.MagicItemFactory;
@@ -31,6 +32,7 @@ import org.pathfinderfr.app.database.entity.SpellFactory;
 import org.pathfinderfr.app.database.entity.WeaponFactory;
 import org.pathfinderfr.app.util.ConfigurationUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +43,24 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
     public static final String VERSION = SOURCE + "/data/versions.yml";
 
     private LoadDataTask loadTaskInProgress;
+
+    public static List<Pair<String, DBEntityFactory>> getCatalog() {
+        List<Pair<String, DBEntityFactory>> catalog = new ArrayList<>();
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/races.yml", RaceFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/classes.yml", ClassFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/class-archetypes.yml", ClassArchetypesFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/traits.yml", TraitFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/competences.yml", SkillFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/dons.yml", FeatFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/spells.yml", SpellFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/conditions.yml", ConditionFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/armes.yml", WeaponFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/armures.yml", ArmorFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/equipement.yml", EquipmentFactory.getInstance()));
+        catalog.add(new Pair<String, DBEntityFactory>(SOURCE + "/data/magic.yml", MagicItemFactory.getInstance()));
+        return catalog;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,22 +85,9 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
                     findViewById(R.id.migrationRequiredMessage).setVisibility(View.GONE);
                     boolean forceUpdate = ((CheckBox)findViewById(R.id.forceupdate)).isChecked();
 
+                    Pair<String, DBEntityFactory>[] example = new Pair[0];
                     loadTaskInProgress = new LoadDataTask(LoadDataActivity.this, forceUpdate);
-                    loadTaskInProgress.execute(
-                            new Pair(SOURCE + "/data/races.yml", RaceFactory.getInstance()),
-                            new Pair(SOURCE + "/data/classes.yml", ClassFactory.getInstance()),
-                            new Pair(SOURCE + "/data/class-archetypes.yml", ClassArchetypesFactory.getInstance()),
-                            new Pair(SOURCE + "/data/traits.yml", TraitFactory.getInstance()),
-                            new Pair(SOURCE + "/data/competences.yml", SkillFactory.getInstance()),
-                            new Pair(SOURCE + "/data/dons.yml", FeatFactory.getInstance()),
-                            new Pair(SOURCE + "/data/classfeatures.yml", ClassFeatureFactory.getInstance()),
-                            new Pair(SOURCE + "/data/spells.yml", SpellFactory.getInstance()),
-                            new Pair(SOURCE + "/data/conditions.yml", ConditionFactory.getInstance()),
-                            new Pair(SOURCE + "/data/armes.yml", WeaponFactory.getInstance()),
-                            new Pair(SOURCE + "/data/armures.yml", ArmorFactory.getInstance()),
-                            new Pair(SOURCE + "/data/equipement.yml", EquipmentFactory.getInstance()),
-                            new Pair(SOURCE + "/data/magic.yml", MagicItemFactory.getInstance())
-                            );
+                    loadTaskInProgress.execute(getCatalog().toArray(example));
 
                 } else {
                     Button button = findViewById(R.id.loaddataButton);
@@ -178,7 +185,7 @@ public class LoadDataActivity extends AppCompatActivity implements LoadDataTask.
         final int progress = 100;
 
         // migrate characters
-        Map<String, Integer> unmatched = DBHelper.getInstance(this.getBaseContext()).migrateCharacters(false);
+        Map<String, Integer> unmatched = DBHelper.getInstance(this.getBaseContext()).migrateCharacters();
         if(unmatched.size() > 0) {
             StringBuffer buf = new StringBuffer();
             for(String name: unmatched.keySet()) {
