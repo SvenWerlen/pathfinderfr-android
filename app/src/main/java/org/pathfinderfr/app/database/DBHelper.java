@@ -426,7 +426,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         if(entity instanceof Character || entity instanceof CharacterItem || entity instanceof Modification) {
             db.execSQL(String.format("DELETE FROM %s WHERE id=%d", entity.getFactory().getTableName(), entity.getId()));
-            clearItemsAndModifsForCharacter(entity.getId());
+            if( entity instanceof Character ) {
+                clearItemsAndModifsForCharacter(entity.getId());
+            }
             return true;
         }
         // not supported for other tables

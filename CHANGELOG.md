@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HTML descriptions for class features, spells, feats, magic items and skills
 ### Removed
 - Sync capabilities (based on Firebase)
+### Fixed
+- When deleting an item or modif, inventory & modifs are completely cleared!
 
 ## [3.11.0] - 2019-02-16
 ### Added
