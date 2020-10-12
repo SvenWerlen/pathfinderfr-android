@@ -1022,15 +1022,18 @@ public class DBHelper extends SQLiteOpenHelper {
                 unmatched.put(c.getName(), notFound.size());
                 for(DBEntity e : notFound) {
                     String factoryId = e.getFactory().getFactoryId();
+                    long id = e.getId();
+                    // Get referenced item from CharacterItem
                     if(e instanceof CharacterItem) {
                         DBEntity realObj = fetchObjectEntity((CharacterItem)e);
                         factoryId = realObj.getFactory().getFactoryId();
+                        id = realObj.getId();
                     }
                     if(!dontRemove.containsKey(factoryId)) {
                         dontRemove.put(factoryId, new ArrayList<Long>());
                     }
-                    if(!dontRemove.get(factoryId).contains(e.getId())) {
-                        dontRemove.get(factoryId).add(e.getId()); // add ID to exclude
+                    if(!dontRemove.get(factoryId).contains(id)) {
+                        dontRemove.get(factoryId).add(id); // add ID to exclude
                     }
                 }
             }
@@ -1046,7 +1049,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 String query = c.second.getQueryDeleteAllBut(version, excludeIds.toArray(new Long[0]));
                 // delete!
                 Log.i(DBHelper.class.getSimpleName(), "Delete all entries: " + query);
-                //db.execSQL(query);
+                db.execSQL(query);
             }
         }
         return unmatched;
