@@ -97,7 +97,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void clearDataWithVersion(DBEntityFactory factory, int version) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(String.format(Locale.CANADA, "UPDATE %s SET version = -version WHERE version = %d", factory.getTableName(), version));
+        db.execSQL(String.format(Locale.CANADA, "UPDATE %s SET version = 0 WHERE version = %d", factory.getTableName(), version));
         factory.cleanup();
     }
 

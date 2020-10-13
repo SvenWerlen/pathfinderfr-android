@@ -106,7 +106,7 @@ public abstract class DBEntityFactory {
     protected String getFilters(Integer version, String... sources) {
         String filters;
         if(version == null || version <= 0) {
-            filters = String.format(Locale.CANADA,"WHERE (%s IS NULL OR %s > 0)", COLUMN_VERSION, COLUMN_VERSION);
+            filters = String.format(Locale.CANADA,"WHERE (%s IS NULL OR %s >= 0)", COLUMN_VERSION, COLUMN_VERSION);
         } else {
             filters = String.format(Locale.CANADA, "WHERE %s=%d", COLUMN_VERSION, version);
         }

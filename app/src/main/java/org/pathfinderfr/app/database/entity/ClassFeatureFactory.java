@@ -97,7 +97,7 @@ public class ClassFeatureFactory extends DBEntityFactory {
     private synchronized void loadArchetypes() {
         archetypesById.clear();
         archetypesByName.clear();
-        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance());
+        List<DBEntity> fullList = DBHelper.getInstance(null).getAllEntities(ClassArchetypesFactory.getInstance(), -1);
         for(DBEntity e : fullList) {
             archetypesById.put(e.getId(), (ClassArchetype)e);
             archetypesByName.put(e.getName(), (ClassArchetype)e);
