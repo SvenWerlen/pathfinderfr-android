@@ -66,6 +66,8 @@ public class ClassFeature extends DBEntity {
     public Class getClass_() { return class_; }
     public void setClass(Class class_) { this.class_ = class_; }
 
+    public String getClassName() { return class_ == null ? "??" : class_.getNameShort(); }
+
     public ClassArchetype getClassArchetype() { return archetype; }
     public void setClassArchetype(ClassArchetype archetype) { this.archetype = archetype; }
 

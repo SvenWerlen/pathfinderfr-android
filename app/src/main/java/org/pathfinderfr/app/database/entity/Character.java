@@ -1247,7 +1247,7 @@ public class Character extends DBEntity {
      */
     public boolean isValidClassFeature(ClassFeature feature) {
         for(Triplet<Class,ClassArchetype,Integer> cl: classes) {
-            if(feature.getClass_().getId() == cl.first.getId() && feature.getLevel() <= cl.third) {
+            if(feature.getClass_() != null && feature.getClass_().getId() == cl.first.getId() && feature.getLevel() <= cl.third) {
                 if((feature.getClassArchetype() == null) ||
                         (feature.getClassArchetype() != null && cl.second != null && feature.getClassArchetype().getId() == cl.second.getId())) {
                     return true;

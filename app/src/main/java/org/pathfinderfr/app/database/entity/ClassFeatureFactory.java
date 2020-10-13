@@ -51,6 +51,11 @@ public class ClassFeatureFactory extends DBEntityFactory {
     }
 
     @Override
+    public String getColumnSource() {
+        return super.getColumnSource();
+    }
+
+    @Override
     public void cleanup() {
         super.cleanup();
         classesById.clear();
