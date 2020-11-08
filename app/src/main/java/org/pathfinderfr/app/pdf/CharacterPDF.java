@@ -918,7 +918,7 @@ public class CharacterPDF {
         table.addCell(createLabel("","Critique").setMinWidth(45).setBorderTop(Border.NO_BORDER).setBorderLeft(Border.NO_BORDER).setBorderRight(Border.NO_BORDER));
 
         table.addCell(createInfoText(w == null ? "" : w.getName(), 3, TextAlignment.LEFT, true).setMinHeight(15).setPaddingLeft(3));
-        String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString(weaponIdx+1) : character.getAttackBonusMeleeAsString(weaponIdx+1));
+        String attackBonus = w == null ? "" : (w.isRanged() ? character.getAttackBonusRangeAsString(w.getId()) : character.getAttackBonusMeleeAsString(w.getId()));
         table.addCell(createInfoText(attackBonus, 1, TextAlignment.CENTER, true));
         table.addCell(createInfoText(w == null ? "" : w.getCritical(), 1, TextAlignment.CENTER, true));
         table.addCell(createLabel("","Type").setWidth(20));
@@ -928,7 +928,7 @@ public class CharacterPDF {
         table.addCell(createInfoText(w == null ? "" : w.getType(), 1, TextAlignment.CENTER, true).setMinHeight(15));
         table.addCell(createInfoText(w == null ? "" : w.getRangeInMeters(), 1, TextAlignment.CENTER, true));
         table.addCell(createInfoText(w == null ? "" : (w.isRanged() ? stringMax(w.getDescription(), 20) : "-"), 1, TextAlignment.CENTER, true));
-        String damage = w == null ? "" : character.getDamage(w, weaponIdx+1);
+        String damage = w == null ? "" : character.getDamage(w, w.getId());
         table.addCell(createInfoText(damage, 2, TextAlignment.CENTER, true));
 
         return table;
