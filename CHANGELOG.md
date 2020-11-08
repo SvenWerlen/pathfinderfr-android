@@ -6,7 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [4.0.0] - 2019-02-16
+## [4.0.3] - 2019-11-08
+### Fixed
+- Buffs not correctly applied on weapons in PDF
+
+## [4.0.2] - 2019-10-12
+### Fixed
+- Stabilization for multi-version support
+
+
+## [4.0.1] - 2019-10-10
+### Fixed
+- Multiple bugs in 4.0.0 (support for multiple versions)
+
+## [4.0.0] - 2020-10-09
 ### Added
 - Support for multiple versions
 - HTML descriptions for class features, spells, feats, magic items and skills
