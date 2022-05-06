@@ -1,5 +1,7 @@
 # Pathfinder FR
 
+_(!!!) WARNING (!!!) : this application is not actively supported any more. No update or new release is planned. _
+
 Pathfinder FR is an android application which provides a quick reference for Pathfinder (french rules).
 
 * **Catalog**: the application currently supports skills (_compétences_), feats (_dons_) and spells (_sorts_)
