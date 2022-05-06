@@ -1,6 +1,6 @@
 # Pathfinder FR
 
-_(!!!) WARNING (!!!) : this application is not actively supported any more. No update or new release is planned. _
+***(!!!) WARNING (!!!) : this application is not actively supported any more. No update or new release is planned.***
 
 Pathfinder FR is an android application which provides a quick reference for Pathfinder (french rules).
 
